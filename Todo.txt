@@ -1,0 +1,72 @@
+Write up about PsikyoSH scaling, and how it works for TAP.
+
+Provide a test suite to compare gameplay recordings of TAR vs. running the
+recording in a hacked TAP in MAME, with the recording written into TAP's ROM,
+and the end-game-state written as well, with comparison code added to TAP, that
+displays a "Replay Check: OK/FAIL" message. And vice versa.
+
+Make everything const-correct.
+
+Change some struct names to *Data, that describe other objects, and no "Data"
+on structs that aren't extra data describing objects.
+
+Init all data per the data in the program init data. And, to allow resets (and
+easier porting to libretro) structure the game code to be in a library,
+separate from main, so main can fully reset the game, with global inits being
+run again.
+
+Move the graphics code intended to be called by the game into the frontends, so
+they can skip over directly emulating the PS6406B (except for the software and
+PsikyoSH frontends); a frontend could then special-case graphics handling, such
+as the line clear explosions, and skip over per-pixel palette handling. That
+might allow the code to run at a playable speed on Raspberry Pi 3. But do
+provide an optimized software renderer alongside the PS6406B emulating
+renderer, so new platforms can be ported to without much difficulty, and
+hopefully with decent performance.
+
+Might be faster on Raspberry Pi 3 to dynamically generate shader programs that
+are hard-coded with the palettes for graphics with highly variable palettes,
+since all those graphics are 4bpp.
+
+And the optimized renderers might be able to significantly reduce VRAM usage by
+flushing the graphics cache on screen transitions, with longer-than-PsikyoSH
+load times being acceptable at those points.
+
+Investigate whether creating a texture per object is faster and uses less
+memory than a sprite atlas. Check the max number of textures that raspi
+supports first; if it's 894 or more, then it's guaranteed to work. Though
+that'd not allow for really big batches of objects per draw call, but if sprite
+graphics are cached for a duration of frames until they're freed, it might keep
+memory usage on raspi down, which may matter more than precaching all graphics
+for best execution speed. But try and keep palette-cycled objects rendered with
+per-pixel paletted rendering, rather than caching the objects in 32bpp textures
+(this resulted in the line clear explosions filling up all of memory in the
+first draft). And, since the object handling will be done by the frontend
+rather than with the PsikyoSH code, layers can be directly rendered in-order,
+allowing per-layer batching.
+
+Probably move the Show* functions' sources into a Graphics subdirectory, since
+they appear to be grouped in the original program binary.
+
+This may be related to the "object group" (or whatever they are) functions,
+that haven't been explored much yet.
+#include "Video.h"
+#include <stdint.h>
+#include <stdbool.h>
+bool _0x6024DF0(int16_t arg0) {
+	int32_t var0 = arg0 - arg0 % 16;
+	if (var0 < 0) {
+		var0 += 15;
+	}
+	// var0 is now the largest multiple of 16 less than or equal to arg0.
+
+	int16_t var1 = var0 / 16;
+	if (var1 >= 15) {
+		var1 = 14;
+	}
+	else if (var1 < 0) {
+		var1 = 0;
+	}
+
+	return _0x60618F0[var1]++ & true;
+}

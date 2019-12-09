@@ -1,0 +1,31 @@
+Object data tables:
+0xA5D00 - Appears to be the only one used. The others might just be extra copies of this one.
+0xADD00
+0xB5D00
+0xBDD00
+0xC5D00
+0xCDD00
+0xD5D00
+0xDDD00
+0xE5D00
+0xEDD00
+0xF5D00
+0xFDD00
+
+The only palette data table is at 0x60088. The palette entries start at 0x60090.
+
+Variable data starts at 0x6060000.
+System data used by the game and managed by the system: 0x6060000 ... 0x6064767
+Game data: 0x6064870 ... 0x607CF0F
+System data only managed by the system: 0x607CF10 ... 0x60B19B4
+Some only-system-managed data is read by the game code.
+Some system data is used by the C library.
+
+The game code begins at main() (0x6000000) up to ShowRankingCode() (0x60236BE).
+The system code begins at 0x6023788 up to 0x60304AE.
+The C library starts at Div32s (0x60305C0) up to the last function, MemSet (0x6030C64).
+
+The _start() function is in ROM (0x400), and appears to have been written by
+Psikyo, in hand-written assembly, and not modified by Arika. A C version of
+_start has been written as a reference of what it does, until the C version is
+rewritten in SH-2 assembly.
