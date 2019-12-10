@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Frame.h"
-
 // All lesser pause modes are active for a given pause mode. So PAUSEMODE_GAME
 // enables pausing of the background, too.
 typedef enum PauseMode {
