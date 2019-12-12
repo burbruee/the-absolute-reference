@@ -1,10 +1,10 @@
-#include "NewChallenger.h"
+#include "ShowNewChallenger.h"
 #include "Graphics.h"
 #include "Sound.h"
 #include "Video.h"
 #include "GamePalNum.h"
 #include "Pal.h"
-#include "Pause.h"
+#include "Frame.h"
 #include "Object.h"
 #include "Layer.h"
 #include "Player.h"
@@ -31,7 +31,7 @@ enum NewChallengerState {
 #define displayFrames values[0]
 static void UpdateEntityNewChallenger(Entity* entity);
 
-void NewChallenger(Player* player) {
+void ShowNewChallenger(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityNewChallenger;

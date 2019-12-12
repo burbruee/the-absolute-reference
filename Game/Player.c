@@ -5,12 +5,11 @@
 // frontends define EEPROM access using functions.
 // TODO: Make all functions and data only used here private.
 #include "Player.h"
-#include "Player.h"
 #include "Ranking.h"
 #include "Item.h"
 #include "ShowBlockField.h"
 #include "ShowGameStatus.h"
-#include "NewChallenger.h"
+#include "ShowNewChallenger.h"
 #include "DisplayObject.h"
 #include "Debug.h"
 #include "HwInput.h"
@@ -840,7 +839,7 @@ void UpdatePlayers() {
 			player->values[0] = 0;
 			if (Game.numVersusRounds == 0u) {
 				GameFlags |= GAME_CHALLENGEDELAY;
-				NewChallenger(player);
+				ShowNewChallenger(player);
 			}
 		}
 

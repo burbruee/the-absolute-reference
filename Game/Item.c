@@ -4,7 +4,7 @@
 #include "ShowBlockField.h"
 #include "Video.h"
 #include "Pal.h"
-#include "Pause.h"
+#include "Frame.h"
 
 void RemoveItems(Player* player) {
 	for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
@@ -315,7 +315,6 @@ void InitItems() {
 		}
 
 		uint8_t* itemData = (uint8_t*)ItemHeap[i].data;
-		// j was int16_t in the original code, but it really should be size_t.
 		for (size_t j = 0; j < sizeoffield(Item, data); j++) {
 			itemData[j] = 0u;
 		}
@@ -333,17 +332,16 @@ Item* AllocItem() {
 					ItemHeapTail = item;
 					item->previous = NULL;
 					item->next = NULL;
-					return;
+					return item;
 				}
 				else {
 					item->next = ItemHeapTail->next;
 					ItemHeapTail->next = item;
 					item->previous = ItemHeapTail;
 					ItemHeapTail = item;
-					return;
+					return item;
 				}
 			}
-			// TODO
 		}
 	}
 	return NULL;

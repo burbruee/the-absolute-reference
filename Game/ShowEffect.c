@@ -1,4 +1,4 @@
-#include "Effect.h"
+#include "ShowEffect.h"
 #include "Graphics.h"
 #include "Loop.h"
 #include "DisplayObject.h"

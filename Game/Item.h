@@ -132,7 +132,6 @@ void UpdateItemMirrorBlock(Item* item);
 void UpdateItemDarkBlock(Item* item);
 void UpdateItemHardBlock(Item* item);
 void UpdateItemLaser(Item* item);
-int16_t LaserColumn(Player* player);
 void UpdateItemRollRoll(Item* item);
 void UpdateItemTransform(Item* item);
 void UpdateItemXRay(Item* item);
