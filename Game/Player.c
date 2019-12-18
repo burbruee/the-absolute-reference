@@ -1418,7 +1418,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 						// position/rotation. I-blocks don't kick, so those are
 						// blocked at this point. Otherwise, ARS kicks are
 						// attempted.
-						if ((player->activeBlock & BLOCK_TYPE) == BLOCKTYPE_I) {
+						if ((player->activeBlock & BLOCK_TYPE) != BLOCKTYPE_I) {
 							// Reject rotations blocked in the middle column of 3x3 blocks.
 							if (defCol == 1) {
 								return true;
@@ -1622,7 +1622,7 @@ void UpdatePlayActiveBlock(Player* player) {
 		// Test staff roll; GM can be awarded.
 		if (GameButtonsDown[player->num] & BUTTON_UP) {
 			player->section = 8u;
-			player->level = 899;
+			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
 			F16I(Grades[player->num].gradeLevel) = GradeLevels[PLAYERGRADE_S9];
@@ -1638,7 +1638,7 @@ void UpdatePlayActiveBlock(Player* player) {
 		}
 		else {
 			player->nowFlags |= NOW_NOINVISIBLE;
-			FieldVisible(player);
+			FieldVisible(player); // TODO
 		}
 	}
 

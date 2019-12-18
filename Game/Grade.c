@@ -199,7 +199,7 @@ void UpdatePlayerGrade(Player* player) {
 }
 
 // Doesn't update anything and returns MODE_MASTER if the mode isn't master nor
-// T.A. death. Otherwise, updates, then returns MODE_NONE.
+// T.A. death. Otherwise, updates, then returns false.
 ModeFlag UpdateSectionGrade(Player* player) {
 	// BUG: The original probably was intended to return bool, with a false return
 	// intended if it updated, but it didn't have a return statement if it doesn't

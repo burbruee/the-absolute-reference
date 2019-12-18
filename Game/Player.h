@@ -241,7 +241,7 @@ struct Player {
 	uint8_t matrixHeight;
 	uint8_t matrixWidth;
 	int16_t fieldShift[2];
-	int16_t versusItemType; // Only used in UpdateVersusItems(), which is an unused function. That function could be a relic of TGM1's code, or was for an older version of TGM2.
+	//int16_t versusItemType; // Only used in UpdateVersusItems(), which is an unused function. That function could be a relic of TGM1's code, or was for an older version of TGM2.
 	Player *otherPlayer;
 	Player *itemPlayer;
 	uint8_t subStates[4];
