@@ -3243,13 +3243,13 @@ Fixed32 CurrentGravity(Player* player) {
 void UpdatePlayStaffTransition(Player* player) {
 	player->miscFlags &= ~MISC_RECOVERING;
 	if (++player->values[0] % 6) {
-		ShowSingleRowClear(player, player->values[1]);
+		ShowSingleRowClear(player, player->values[1]); // TODO
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, player->values[1], col).block = NULLBLOCK;
 		}
 		if (++player->values[1] == player->matrixHeight - 1) {
 			player->nowFlags |= NOW_STAFF;
-			ShowStaff(player);
+			ShowStaff(player); // TODO
 			player->modeFlags |= MODE_INVISIBLE;
 			NextPlayBlockEntry(player, true);
 		}

@@ -6,6 +6,8 @@
 
 #define warningFrames values[0]
 
+static void UpdateEntityItemWarningNegaField(Entity* entity);
+
 void ShowItemWarningNegaField(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
@@ -23,7 +25,7 @@ void ShowItemWarningNegaField(Player* player) {
 	}
 }
 
-void UpdateEntityItemWarningNegaField(Entity* entity) {
+static void UpdateEntityItemWarningNegaField(Entity* entity) {
 	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 

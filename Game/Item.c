@@ -258,7 +258,7 @@ void _0x601886C() {
 #include "UpdateItemExchgField.h"
 #include "UpdateItemMirrorBlock.h"
 #include "UpdateItemDarkBlock.h"
-static void (*const ItemUpdaters[NUMITEMTYPES])(Item*) = {
+static void (const* ItemUpdaters[NUMITEMTYPES])(Item*) = {
 	UpdateItemDeathBlock,
 	UpdateItemNegaField,
 	UpdateItemColorBlock,
@@ -314,7 +314,7 @@ void InitItems() {
 			ItemHeap[i].states[j] = 0u;
 		}
 
-		uint8_t* itemData = (uint8_t*)ItemHeap[i].data;
+		uint8_t* itemData = ItemHeap[i].data;
 		for (size_t j = 0; j < sizeoffield(Item, data); j++) {
 			itemData[j] = 0u;
 		}

@@ -329,7 +329,7 @@ void CheckNextSection(Player* player) {
 					else {
 						player->section++;
 					}
-					_0x6066188._0x10 |= player->num == PLAYER1 ? 0x02 : 0x04;
+					_0x6066188._0x10 |= player->num == PLAYER1 ? (PLAYER1 + 1) << 1 : (PLAYER2 + 1) << 1;
 					if (player->modeFlags & MODE_VERSUS) {
 						if (player->section >= *maxVersusSection + 1u) {
 							sectionUp = true;

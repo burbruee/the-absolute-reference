@@ -6,6 +6,8 @@
 
 #define warningFrames values[0]
 
+static void UpdateEntityItemWarningDeathBlock(Entity* entity);
+
 void ShowItemWarningDeathBlock(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity())) {
@@ -23,7 +25,7 @@ void ShowItemWarningDeathBlock(Player* player) {
 	}
 }
 
-void UpdateEntityItemWarningDeathBlock(Entity* entity) {
+static void UpdateEntityItemWarningDeathBlock(Entity* entity) {
 	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
