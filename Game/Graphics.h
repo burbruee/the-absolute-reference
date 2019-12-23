@@ -56,10 +56,10 @@ struct Entity {
 //
 // For extra data not in the EntityData union, declare a struct for your
 // entity, and access the struct using ENTITY_INSTANCE_DATA_PTR.
-#define ENTITY_CUSTOM_DATA_PTR(type, ptr, e) type* ptr = (type*)(e)->data
-#define ENTITY_DATA(e) (*(EntityData*)e->data)
-#define ENTITY_DATA_PTR(ptr, e) ENTITY_CUSTOM_DATA_PTR(EntityData, ptr, e)
-#define ENTITY_INSTANCE_DATA_PTR(type, ptr, e) type* ptr = (type*)((EntityData*)(e)->data)->instanceData
+#define ENTITY_CUSTOM_DATA_PTR(type, ptr, entity) type* ptr = (type*)(entity)->data
+#define ENTITY_DATA(entity) (*(EntityData*)entity->data)
+#define ENTITY_DATA_PTR(ptr, entity) ENTITY_CUSTOM_DATA_PTR(EntityData, ptr, entity)
+#define ENTITY_INSTANCE_DATA_PTR(type, ptr, entity) type* ptr = (type*)((EntityData*)(entity)->data)->instanceData
 
 void InitEntities();
 Entity* AllocEntity();
