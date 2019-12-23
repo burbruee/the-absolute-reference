@@ -70,6 +70,10 @@ typedef enum ItemStatus {
 	ITEMSTATUS_INACTIVE
 } ItemStatus;
 
+typedef enum ItemState {
+	ITEMSTATE_DEFAULT = 99
+} ItemState;
+
 typedef struct Item Item;
 struct Item {
 	ItemStatus status;
