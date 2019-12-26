@@ -15,9 +15,9 @@ enum NegaFieldState {
 	STATE_DEACTIVATE
 };
 
-typedef struct ItemNegaFieldData {
+typedef struct NegaFieldData {
 	int16_t topNegaRow;
-} ItemNegaFieldData;
+} NegaFieldData;
 
 // STATE_DELAYINITROW
 #define initRowFrames values[0]
@@ -35,7 +35,7 @@ typedef struct ItemNegaFieldData {
 void UpdateItemNegaField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemNegaFieldData, data, item);
+	ITEM_DATA_PTR(NegaFieldData, data, item);
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:

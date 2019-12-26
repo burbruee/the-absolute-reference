@@ -1,3 +1,7 @@
+Reorganize sources so there isn't such a strict distinction between reverse
+engineered TAP code vs. platform-specific code: Sources/Item/Item.h,
+Sources/Platform/PsikyoSH/Main.c, etc.
+
 Write up about PsikyoSH scaling, and how it works for TAP.
 
 Provide a test suite to compare gameplay recordings of TAR vs. running the

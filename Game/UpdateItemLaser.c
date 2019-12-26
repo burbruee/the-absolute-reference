@@ -16,7 +16,7 @@ enum LaserState {
 	STATE_DEACTIVATE
 };
 
-typedef struct ItemLaserData {
+typedef struct LaserData {
 	int16_t laserCenterColumn;
 	int16_t unused;
 	int16_t laserFrames;
@@ -24,7 +24,7 @@ typedef struct ItemLaserData {
 	int8_t numRotations[2];
 	int8_t laserWidth;
 	int8_t laserColumns[FIELD_SINGLEWIDTH];
-} ItemLaserData;
+} LaserData;
 
 typedef enum NumShifts {
 	NUMSHIFTS_RIGHT,
@@ -50,7 +50,7 @@ static int16_t LaserCenterColumn(Player* player);
 void UpdateItemLaser(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemLaserData, data, item);
+	ITEM_DATA_PTR(LaserData, data, item);
 
 	if (!CheckDeactivateItem(item)) {
 		// BUG: Though laserCenterColumn isn't initialized on the first call of

@@ -19,12 +19,12 @@ enum MirrorBlockState {
 	STATE_DEACTIVATE
 };
 
-typedef struct ItemMirrorBlockData {
+typedef struct MirrorBlockData {
 	int16_t topRow;
 	int16_t unused;
 	int16_t numBlocks;
 	Square matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
-} ItemMirrorBlockData;
+} MirrorBlockData;
 
 #define mirrorFrames values[0]
 
@@ -35,7 +35,7 @@ typedef struct ItemMirrorBlockData {
 void UpdateItemMirrorBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemMirrorBlockData, data, item);
+	ITEM_DATA_PTR(MirrorBlockData, data, item);
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

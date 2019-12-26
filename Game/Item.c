@@ -356,7 +356,7 @@ void UpdateItems() {
 		for (Item* item = ItemHeapHead; item != NULL; item = item->next) {
 			switch (item->status) {
 			case ITEMSTATUS_ACTIVE:
-				if (item->type >= ITEMTYPE_DEATHBLOCK && item->type <= ITEMTYPE_DARKBLOCK) {
+				if (item->type >= 1 && item->type <= NUMITEMTYPES) {
 					ItemUpdaters[TOITEMNUM(item->type)](item);
 				}
 				else {
@@ -388,6 +388,7 @@ void UpdateItems() {
 				for (int16_t i = 0; i < lengthoffield(Item, states); i++) {
 					item->states[i] = 0u;
 				}
+
 				NumFreeItems++;
 				break;
 			}

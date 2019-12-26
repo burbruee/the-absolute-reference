@@ -12,9 +12,9 @@ enum TransformState {
 	STATE_DEACTIVATE
 };
 
-typedef struct ItemTransformData {
+typedef struct TransformData {
 	int16_t numStartBlocks;
-} ItemTransformData;
+} TransformData;
 
 #define numTransformBlocks values[0]
 #define initTransformFrames values[2]
@@ -22,7 +22,7 @@ typedef struct ItemTransformData {
 void UpdateItemTransform(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemTransformData, data, item);
+	ITEM_DATA_PTR(TransformData, data, item);
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:

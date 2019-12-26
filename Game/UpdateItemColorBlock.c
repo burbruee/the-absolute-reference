@@ -14,12 +14,12 @@ enum ColorBlockState {
 	STATE_DEACTIVATE
 };
 
-typedef struct ItemColorBlockData {
+typedef struct ColorBlockData {
 	int16_t matrixBrightnesses[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
 	int16_t numBlocks;
 	int16_t numStartBlocks;
 	bool stopAnim;
-} ItemColorBlockData;
+} ColorBlockData;
 
 // STATE_*
 #define frames values[0]
@@ -30,7 +30,7 @@ typedef struct ItemColorBlockData {
 void UpdateItemColorBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemColorBlockData, data, item);
+	ITEM_DATA_PTR(ColorBlockData, data, item);
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

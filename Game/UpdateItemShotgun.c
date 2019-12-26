@@ -16,11 +16,11 @@ enum ShotgunState {
 	STATE_DELAYDEACTIVATE,
 	STATE_DEACTIVATE
 };
-typedef struct ItemShotgunData {
+typedef struct ShotgunData {
 	Block matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
 	int16_t shotColumns[MATRIX_HEIGHT];
 	int16_t numShots;
-} ItemShotgunData;
+} ShotgunData;
 
 // STATE_*
 #define frames values[0]
@@ -34,7 +34,7 @@ typedef struct ItemShotgunData {
 void UpdateItemShotgun(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ItemShotgunData, data, item);
+	ITEM_DATA_PTR(ShotgunData, data, item);
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:
