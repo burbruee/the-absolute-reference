@@ -6,8 +6,8 @@
 
 enum XRayState {
 	STATE_START,
-	STATE_DELAYINITXRAY,
-	STATE_INITXRAY,
+	STATE_DELAY,
+	STATE_INIT,
 	STATE_XRAY,
 	STATE_SETVISIBLE,
 	STATE_DEACTIVATE
@@ -39,14 +39,14 @@ void UpdateItemXRay(Item* item) {
 			}
 			break;
 
-		case STATE_DELAYINITXRAY:
+		case STATE_DELAY:
 			if (--item->frames < 0) {
 				itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_INITXRAY:
+		case STATE_INIT:
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 				MATRIX(itemPlayer, MATRIX_HEIGHT - 1, col).block = NULLBLOCK;
 			}

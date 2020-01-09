@@ -89,7 +89,7 @@ struct Item {
 	Item* next;
 };
 
-#define ITEM_DATA_PTR(type, ptr, item) type* ptr = (type*)(item)->data;
+#define ITEM_DATA_PTR(type, data, item) type* data = (type*)(item)->data;
 
 struct Player;
 typedef struct Player Player;

@@ -1377,13 +1377,6 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 									return true;
 								} 
 
-								// Appears the intent here was to allow kicking
-								// by 1 column increments with big blocks. But
-								// the code was changed to always kick 2
-								// columns. So the loops are no longer
-								// necessary, since only one kick column step
-								// is checked for right/left kicks.
-
 								// Kick right by default.
 								for (int16_t kick = 1; kick < 2; kick++) {
 									if (!Blocked(player, col + kick * 2 + 2, fieldRowBelow, rotation)) {

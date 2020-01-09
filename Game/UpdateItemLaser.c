@@ -9,9 +9,9 @@
 
 enum LaserState {
 	STATE_START,
-	STATE_INITDELAYFIRELASER,
-	STATE_DELAYFIRELASER,
-	STATE_FIRELASER,
+	STATE_INIT,
+	STATE_DELAY,
+	STATE_LASER,
 	STATE_DELAYDEACTIVATE,
 	STATE_DEACTIVATE
 };
@@ -39,10 +39,10 @@ typedef enum NumRotations {
 // STATE_*
 #define frames values[0]
 
-// STATE_DELAYFIRELASER
+// STATE_DELAY
 #define lockOnFrames values[1]
 
-// STATE_FIRELASER
+// STATE_LASER
 #define deleteRow values[1]
 
 static int16_t LaserCenterColumn(Player* player);
@@ -88,7 +88,7 @@ void UpdateItemLaser(Item* item) {
 			}
 			break;
 
-		case STATE_INITDELAYFIRELASER:
+		case STATE_INIT:
 			if (--item->frames == 0) {
 				item->frames = 30;
 				item->lockOnFrames = 0;
@@ -96,7 +96,7 @@ void UpdateItemLaser(Item* item) {
 			}
 			break;
 
-		case STATE_DELAYFIRELASER:
+		case STATE_DELAY:
 			if (data->laserFrames > 0) {
 				if (GameButtonsNew[itemPlayer->num] & BUTTON_RIGHT) {
 					data->numShifts[NUMSHIFTS_RIGHT]++;
@@ -181,7 +181,7 @@ void UpdateItemLaser(Item* item) {
 			}
 			break;
 
-		case STATE_FIRELASER:
+		case STATE_LASER:
 			if (data->laserWidth > 0) {
 				for (int16_t i = 0; i < data->laserWidth; i++) {
 					ShowLaserReticle(itemPlayer, 20, data->laserColumns[i], 0);

@@ -2,20 +2,20 @@
 #include "Player.h"
 #include "ShowBlockField.h"
 #include "ShowItemWarningMirrorBlock.h"
-#include "ShowMirrorMarker.h"
+#include "ShowColumnMarker.h"
 #include "Sound.h"
 #include <stdint.h>
 
 enum MirrorBlockState {
 	STATE_START,
-	STATE_DELAY,
+	STATE_NEXT,
 	STATE_INIT,
 	STATE_MIRRORFIRST,
 	STATE_END,
 	STATE_STARTNEXT,
 	STATE_INITNEXT,
 	STATE_MIRRORNEXT,
-	STATE_NEXT,
+	STATE_CHECKNEXT,
 	STATE_DEACTIVATE
 };
 
@@ -26,10 +26,13 @@ typedef struct MirrorBlockData {
 	Square matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
 } MirrorBlockData;
 
-#define mirrorFrames values[0]
+// STATE_*
+#define frames values[0]
 
+// STATE_MIRROR*
 #define mirrorColumn values[1]
 
+// STATE_NEXT
 #define firstBlockFrames values[1]
 
 void UpdateItemMirrorBlock(Item* item) {
@@ -55,7 +58,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			}
 			break;
 
-		case STATE_DELAY:
+		case STATE_NEXT:
 			if (--item->firstBlockFrames <= 0) {
 				item->states[0]++;
 			}
@@ -77,7 +80,7 @@ void UpdateItemMirrorBlock(Item* item) {
 				}
 			}
 
-			item->mirrorFrames = 46;
+			item->frames = 46;
 			item->mirrorColumn = 1;
 			item->states[0]++;
 			break;
@@ -87,7 +90,7 @@ void UpdateItemMirrorBlock(Item* item) {
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 			}
 
-			if (item->mirrorFrames > 0) {
+			if (item->frames > 0) {
 				if (item->mirrorColumn < MATRIX_SINGLEWIDTH - 1) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
@@ -95,7 +98,7 @@ void UpdateItemMirrorBlock(Item* item) {
 					ShowMirrorMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;
 				}
-				item->mirrorFrames--;
+				item->frames--;
 			}
 			else {
 				item->values[0] = 0;
@@ -137,7 +140,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			}
 
 			if (data->topRow > 0) {
-				item->mirrorFrames = 15;
+				item->frames = 15;
 				item->mirrorColumn = 1;
 				item->states[0]++;
 			}
@@ -147,7 +150,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			break;
 
 		case STATE_MIRRORNEXT:
-			if (item->mirrorFrames > 0) {
+			if (item->frames > 0) {
 				if (item->mirrorColumn < MATRIX_SINGLEWIDTH - 1) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
@@ -155,7 +158,7 @@ void UpdateItemMirrorBlock(Item* item) {
 					ShowMirrorMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;
 				}
-				item->mirrorFrames--;
+				item->frames--;
 			}
 			else {
 				item->values[0] = 0;
@@ -164,7 +167,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			}
 			break;
 
-		case STATE_NEXT:
+		case STATE_CHECKNEXT:
 			if (data->numBlocks < 3) {
 				item->states[0] = STATE_END;
 			}

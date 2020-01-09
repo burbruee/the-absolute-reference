@@ -7,9 +7,9 @@
 
 enum NegaFieldState {
 	STATE_START,
-	STATE_DELAYINITROW,
-	STATE_INITROW,
-	STATE_NEGAROW,
+	STATE_DELAY,
+	STATE_INIT,
+	STATE_NEGAFIELD,
 	STATE_CHECKLOCKBLOCK,
 	STATE_DELAYDEACTIVATE,
 	STATE_DEACTIVATE
@@ -19,10 +19,10 @@ typedef struct NegaFieldData {
 	int16_t topNegaRow;
 } NegaFieldData;
 
-// STATE_DELAYINITROW
+// STATE_DELAY
 #define initRowFrames values[0]
 
-// STATE_NEGAROW
+// STATE_NEGAFIELD
 #define negaRowFrames values[0]
 #define negaRow values[1]
 
@@ -51,13 +51,13 @@ void UpdateItemNegaField(Item* item) {
 			}
 			break;
 
-		case STATE_DELAYINITROW:
+		case STATE_DELAY:
 			if (--item->initRowFrames == 0) {
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_INITROW:
+		case STATE_INIT:
 			// Erase top row.
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
 				Square* square = &MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col);
@@ -85,7 +85,7 @@ void UpdateItemNegaField(Item* item) {
 			}
 			break;
 
-		case STATE_NEGAROW:
+		case STATE_NEGAFIELD:
 			if (item->negaRowFrames % 4 == 0) {
 				PlaySoundEffect(SOUNDEFFECT_SELECT);
 				for(int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {

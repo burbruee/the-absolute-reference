@@ -9,8 +9,8 @@
 
 enum ShotgunState {
 	STATE_START,
-	STATE_DELAYSHOTGUN,
-	STATE_INITSHOTGUN,
+	STATE_DELAY,
+	STATE_INIT,
 	STATE_INDICATESHOTS,
 	STATE_SHOTGUN,
 	STATE_DELAYDEACTIVATE,
@@ -25,7 +25,7 @@ typedef struct ShotgunData {
 // STATE_*
 #define frames values[0]
 
-// STATE_DELAYSHOTGUN
+// STATE_DELAY
 #define delayShotgunFrames values[1]
 
 // STATE_SHOTGUN
@@ -52,14 +52,14 @@ void UpdateItemShotgun(Item* item) {
 			}
 			break;
 
-		case STATE_DELAYSHOTGUN:
+		case STATE_DELAY:
 			if (--item->delayShotgunFrames == 0) {
 				data->numShots = 0;
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_INITSHOTGUN:
+		case STATE_INIT:
 			for (int16_t row = 0; row < MATRIX_HEIGHT; row++) {
 				for (int16_t col = 0; col < MATRIX_SINGLEWIDTH; col++) {
 					data->matrix[row][col] = MATRIX(itemPlayer, row, col).block;
@@ -113,7 +113,7 @@ void UpdateItemShotgun(Item* item) {
 			break;
 
 		// NOTE: This state depends on item->values[1] initially being 0;
-		// STATE_DELAYSHOTGUN leaves it 0 when finished, without explicitly
+		// STATE_DELAY leaves it 0 when finished, without explicitly
 		// initializing it.
 		case STATE_SHOTGUN:
 			if (++item->frames >= MATRIX_HEIGHT - 1) {

@@ -6,8 +6,8 @@
 
 enum TransformState {
 	STATE_START,
-	STATE_DELAYINITTRANSFORM,
-	STATE_INITTRANSFORM,
+	STATE_NEXT,
+	STATE_INIT,
 	STATE_TRANSFORM,
 	STATE_DEACTIVATE
 };
@@ -17,7 +17,9 @@ typedef struct TransformData {
 } TransformData;
 
 #define numTransformBlocks values[0]
-#define initTransformFrames values[2]
+
+// STATE_NEXT
+#define frames values[2]
 
 void UpdateItemTransform(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
@@ -34,20 +36,20 @@ void UpdateItemTransform(Item* item) {
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 				ShowItemWarningTransform(itemPlayer);
 				PlaySoundEffect(SOUNDEFFECT_BADITEM);
-				item->initTransformFrames = 100;
+				item->frames = 100;
 				item->numTransformBlocks = 0;
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_DELAYINITTRANSFORM:
-			if (--item->initTransformFrames == 0) {
+		case STATE_NEXT:
+			if (--item->frames == 0) {
 				itemPlayer->nextBlock |= BLOCK_TRANSFORM;
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_INITTRANSFORM:
+		case STATE_INIT:
 			itemPlayer->play.flags &= PLAYFLAG_FORCEENTRY;
 			itemPlayer->nowFlags &= NOW_NOGARBAGE;
 			item->numTransformBlocks++;
@@ -69,7 +71,7 @@ void UpdateItemTransform(Item* item) {
 					itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 				}
 				else if (item->numTransformBlocks < 3) {
-					item->states[0] = STATE_INITTRANSFORM;
+					item->states[0] = STATE_INIT;
 				}
 				else {
 					item->states[0]++;

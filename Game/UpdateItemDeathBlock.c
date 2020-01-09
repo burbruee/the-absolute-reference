@@ -6,12 +6,13 @@
 
 enum DeathBlockState {
 	STATE_START,
-	STATE_SEND,
+	STATE_DEATHBLOCK,
 	STATE_NEXT,
 	STATE_DEACTIVATE
 };
 
-#define sendFrames values[0]
+// STATE_DEATHBLOCK
+#define frames values[0]
 
 void UpdateItemDeathBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
@@ -30,18 +31,18 @@ void UpdateItemDeathBlock(Item* item) {
 
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
-				itemPlayer->sendFrames = 98u;
+				itemPlayer->frames = 98u;
 			}
 
 		case STATE_NEXT:
 			item->states[0]++;
 			break;
 
-		case STATE_SEND:
-			if (item->sendFrames == 30u) {
+		case STATE_DEATHBLOCK:
+			if (item->frames == 30u) {
 				itemPlayer->nextBlock |= BLOCK_BIG;
 			}
-			if (--item->sendFrames == 0u) {
+			if (--item->frames == 0u) {
 				item->states[0]++;
 			}
 			break;

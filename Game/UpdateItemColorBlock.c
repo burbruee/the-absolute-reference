@@ -6,9 +6,9 @@
 
 enum ColorBlockState {
 	STATE_START,
-	STATE_DELAY,
-	STATE_INITBRIGHTNESS,
-	STATE_STARTCOLORBLOCK,
+	STATE_NEXT,
+	STATE_INIT,
+	STATE_FIRSTBLOCK,
 	STATE_COLORBLOCK,
 	STATE_RESETBRIGHTNESS,
 	STATE_DEACTIVATE
@@ -55,13 +55,13 @@ void UpdateItemColorBlock(Item* item) {
 			}
 			break;
 
-		case STATE_DELAY:
+		case STATE_NEXT:
 			if (--item->frames == 0) {
 				item->states[0]++;
 			}
 			break;
 
-		case STATE_INITBRIGHTNESS:
+		case STATE_INIT:
 			switch (activatingPlayer->numBlocks % 3) {
 			case 0:
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
@@ -103,7 +103,7 @@ void UpdateItemColorBlock(Item* item) {
 			item->states[0]++;
 			break;
 
-		case STATE_STARTCOLORBLOCK:
+		case STATE_FIRSTBLOCK:
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			data->numBlocks++;

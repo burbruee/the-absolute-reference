@@ -11,6 +11,7 @@ enum HardBlockState {
 	STATE_DEACTIVATE
 };
 
+// STATE_HARDBLOCK
 #define frames values[0]
 
 void UpdateItemHardBlock(Item* item) {
