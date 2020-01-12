@@ -50,7 +50,7 @@ static int16_t LaserCenterColumn(Player* player);
 void UpdateItemLaser(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(LaserData, data, item);
+	LaserData* data = item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		// BUG: Though laserCenterColumn isn't initialized on the first call of

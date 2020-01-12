@@ -35,7 +35,8 @@ typedef struct NegaFieldData {
 void UpdateItemNegaField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(NegaFieldData, data, item);
+	NegaFieldData* data = item->data;
+
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:

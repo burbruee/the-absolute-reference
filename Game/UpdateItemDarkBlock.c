@@ -25,7 +25,7 @@ typedef struct DarkBlockData {
 void UpdateItemDarkBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(DarkBlockData, data, item);
+	DarkBlockData* data = item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

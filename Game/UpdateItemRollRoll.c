@@ -27,7 +27,7 @@ typedef struct RollRollData {
 void UpdateItemRollRoll(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(RollRollData, data, item);
+	RollRollData* data = item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

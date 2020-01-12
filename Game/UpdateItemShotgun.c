@@ -34,7 +34,8 @@ typedef struct ShotgunData {
 void UpdateItemShotgun(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(ShotgunData, data, item);
+	ShotgunData* data = item->data;
+
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:

@@ -469,7 +469,7 @@ void UpdatePlayerPlaying(Player* player) {
 			player->clearTime++;
 		}
 
-		if (player->otherPlayer->activeItemType != ITEMTYPE_180DEGREEFIELD) {
+		if (player->otherPlayer->activeItemType != ITEMTYPE_FLIPFIELD) {
 			UpdateSiren(player);
 		}
 

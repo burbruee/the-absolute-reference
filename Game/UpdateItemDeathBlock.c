@@ -17,6 +17,7 @@ enum DeathBlockState {
 void UpdateItemDeathBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
+
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:

@@ -38,7 +38,7 @@ typedef struct MirrorBlockData {
 void UpdateItemMirrorBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ITEM_DATA_PTR(MirrorBlockData, data, item);
+	MirrorBlockData* data = item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
