@@ -40,5 +40,5 @@ typedef struct Square {
 	Block block;
 	int8_t brightness;
 	ItemType itemType;
-	int16_t numVisibleFrames;
+	int16_t visibleFrames;
 } Square;

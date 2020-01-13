@@ -1710,7 +1710,7 @@ void UpdatePlayActiveBlock(Player* player) {
 	LandActiveBlock(player, gravity);
 }
 
-static inline void WriteBlockToMatrix(Player* player, const LockType lockType, const BlockType lockBlockType, const int16_t lockCol, const int16_t lockRow, const Rotation lockRotation, const int16_t lockBlockSize, int16_t numVisibleFrames) {
+static inline void WriteBlockToMatrix(Player* player, const LockType lockType, const BlockType lockBlockType, const int16_t lockCol, const int16_t lockRow, const Rotation lockRotation, const int16_t lockBlockSize, int16_t visibleFrames) {
 	BlockDefSquare* blockDef = BLOCKDEF(lockBlockType);
 	for (int16_t blockRow = 0; blockRow < lockBlockSize; blockRow++) {
 		int16_t matrixRow = lockRow - blockRow;
@@ -1730,9 +1730,9 @@ static inline void WriteBlockToMatrix(Player* player, const LockType lockType, c
 						MATRIX(player, matrixRow, lockCol + blockCol).itemType = player->activeBlockItemType;
 					}
 
-					if ((player->modeFlags & MODE_INVISIBLE) && lockType != LOCKTYPE_GAMEOVER && numVisibleFrames != 0) {
+					if ((player->modeFlags & MODE_INVISIBLE) && lockType != LOCKTYPE_GAMEOVER && visibleFrames != 0) {
 						MATRIX(player, matrixRow, lockCol + blockCol).block |= BLOCK_INVISIBLE;
-						MATRIX(player, matrixRow, lockCol + blockCol).numVisibleFrames = numVisibleFrames;
+						MATRIX(player, matrixRow, lockCol + blockCol).visibleFrames = visibleFrames;
 					}
 
 					if (lockType == LOCKTYPE_BLOCKING) {
@@ -1755,23 +1755,23 @@ void LockActiveBlock(Player* player, LockType lockType) {
 	const Rotation activeRotation = player->activeRotation;
 	const BlockType activeBlockType = player->activeBlock & BLOCK_TYPE;
 
-	int16_t numVisibleFrames;
+	int16_t visibleFrames;
 	if ((player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED) {
-		numVisibleFrames = 3;
+		visibleFrames = 3;
 	}
 	else {
-		numVisibleFrames = 300;
+		visibleFrames = 300;
 	}
 
 	if (Debug && (player->nowFlags & NOW_NOINVISIBLE)) {
-		numVisibleFrames = 0;
+		visibleFrames = 0;
 	}
 
 	if (player->activeBlock & BLOCK_BIG) {
-		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol - 2, activeRow, activeRotation, 8, numVisibleFrames);
+		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol - 2, activeRow, activeRotation, 8, visibleFrames);
 	}
 	else {
-		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol, activeRow, activeRotation, 4, numVisibleFrames);
+		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol, activeRow, activeRotation, 4, visibleFrames);
 	}
 
 	if (lockType == LOCKTYPE_NORMAL) {

@@ -101,10 +101,10 @@ void UpdateItemNegaField(Item* item) {
 								square->block |= BLOCK_FADING;
 							}
 							if (activatingPlayer->grade == PLAYERGRADE_M) {
-								square->numVisibleFrames = 45;
+								square->visibleFrames = 45;
 							}
 							else {
-								square->numVisibleFrames = 300;
+								square->visibleFrames = 300;
 							}
 						}
 					}

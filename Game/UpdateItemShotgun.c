@@ -29,7 +29,7 @@ typedef struct ShotgunData {
 #define delayShotgunFrames values[1]
 
 // STATE_SHOTGUN
-#define delayDeleteSoundFrames values[1]
+#define delayDelSoundFrames values[1]
 
 void UpdateItemShotgun(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
@@ -130,14 +130,14 @@ void UpdateItemShotgun(Item* item) {
 					}
 					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).block = NULLBLOCK;
 					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).itemType = ITEMTYPE_NULL;
-					if (item->delayDeleteSoundFrames == 0) {
+					if (item->delayDelSoundFrames == 0) {
 						PlaySoundEffect(SOUNDEFFECT_19);
-						item->delayDeleteSoundFrames++;
+						item->delayDelSoundFrames++;
 					}
 				}
 
-				if (item->delayDeleteSoundFrames != 0 && ++item->delayDeleteSoundFrames > 5) {
-					item->delayDeleteSoundFrames = 0;
+				if (item->delayDelSoundFrames != 0 && ++item->delayDelSoundFrames > 5) {
+					item->delayDelSoundFrames = 0;
 				}
 			}
 			break;

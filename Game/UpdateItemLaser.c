@@ -43,7 +43,7 @@ typedef enum NumRotations {
 #define lockOnFrames values[1]
 
 // STATE_LASER
-#define deleteRow values[1]
+#define delRow values[1]
 
 static int16_t LaserCenterColumn(Player* player);
 
@@ -175,7 +175,7 @@ void UpdateItemLaser(Item* item) {
 			else {
 				if (--item->frames == 0) {
 					item->frames = 0;
-					item->deleteRow = MATRIX_HEIGHT - 1;
+					item->delRow = MATRIX_HEIGHT - 1;
 					item->states[0]++;
 				}
 			}
@@ -195,9 +195,9 @@ void UpdateItemLaser(Item* item) {
 			}
 
 			if (++item->frames < FIELD_HEIGHT - 1) {
-				item->deleteRow -= 2;
+				item->delRow -= 2;
 				for (int16_t i = 0; i < data->laserWidth; i++) {
-					for (int16_t rowsDeleted = 0, row = item->deleteRow; rowsDeleted < 2; row--, rowsDeleted++) {
+					for (int16_t numDelRows = 0, row = item->delRow; numDelRows < 2; row--, numDelRows++) {
 						Square* square = &MATRIX(itemPlayer, row, data->laserColumns[i]);
 						if (square->block != NULLBLOCK && row > 0 && row < MATRIX_SINGLEWIDTH - 1) {
 							ShowSquareExplosion(itemPlayer, row, data->laserColumns[i]);
