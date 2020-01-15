@@ -17,9 +17,9 @@ void ShowItemWarningTransform(Player* player) {
 		entity->warningFrames = 0;
 		data->x = 4;
 		data->x =
-			player->fieldPos[0] + player->fieldShift[0] -
+			player->screenPos[0] + player->screenOffset[0] -
 			((player->matrixWidth / 2) * 8 + (data->x + 2) * 8);
-		data->y = player->fieldPos[1] + player->fieldShift[1] - 96;
+		data->y = player->screenPos[1] + player->screenOffset[1] - 96;
 		data->objectTable = OBJECTTABLE_ITEMWARNINGTRANSFORM;
 		data->palNum = 183u;
 	}

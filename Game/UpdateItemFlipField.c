@@ -89,8 +89,8 @@ void UpdateItemFlipField(Item* item) {
 			break;
 
 		case STATE_LOWER:
-			itemPlayer->fieldShift[1] += 4;
-			if (itemPlayer->fieldShift[1] > 48) {
+			itemPlayer->screenOffset[1] += 4;
+			if (itemPlayer->screenOffset[1] > 48) {
 				item->states[0]++;
 				item->frames = 10;
 			}
@@ -103,8 +103,8 @@ void UpdateItemFlipField(Item* item) {
 			break;
 
 		case STATE_RISE:
-			itemPlayer->fieldShift[1] -= 32;
-			if (itemPlayer->fieldShift[1] <= 16) {
+			itemPlayer->screenOffset[1] -= 32;
+			if (itemPlayer->screenOffset[1] <= 16) {
 				item->states[0]++;
 			}
 			break;
@@ -118,7 +118,7 @@ void UpdateItemFlipField(Item* item) {
 
 		case STATE_FLIPFIELD:
 			if (data->numFlipRows == FIELD_HEIGHT) {
-				itemPlayer->fieldShift[1] = 0;
+				itemPlayer->screenOffset[1] = 0;
 			}
 
 			if (data->numFlipRows < 2 * FIELD_HEIGHT - 1 && item->flipFrames >= data->flipDelay) {
@@ -169,8 +169,8 @@ void UpdateItemFlipField(Item* item) {
 		default:
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
-			for (int16_t i = 0; i < lengthoffield(Player, fieldShift); i++) {
-				itemPlayer->fieldShift[i] = 0;
+			for (int16_t i = 0; i < lengthoffield(Player, screenOffset); i++) {
+				itemPlayer->screenOffset[i] = 0;
 			}
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			itemPlayer->nowFlags &= ~NOW_BIT15;

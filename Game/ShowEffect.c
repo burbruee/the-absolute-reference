@@ -41,8 +41,8 @@ void ShowSquareExplosion(Player* player, int16_t row, int16_t col) {
 
 		entity->values[SQUAREEXPLOSION_FRAME] = 0;
 
-		instanceData->x = player->fieldPos[0] + 8 * col - 8 * ((player->matrixWidth + (player->matrixWidth < 0)) / 2);
-		instanceData->y = player->fieldPos[1] - 8 * row - 6;
+		instanceData->x = player->screenPos[0] + 8 * col - 8 * ((player->matrixWidth + (player->matrixWidth < 0)) / 2);
+		instanceData->y = player->screenPos[1] - 8 * row - 6;
 		instanceData->objectTable = ObjectTablesSquareExplosions[Rand(8u) % 8];
 		instanceData->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
 	}

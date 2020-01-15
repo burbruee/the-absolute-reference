@@ -24,8 +24,8 @@ void RemoveItems(Player* player) {
 bool CheckDeactivateItem(Item* item) {
 	if (!(GameFlags & GAME_ITEMSNOUSE)) {
 		Player* activatingPlayer = item->activatingPlayer;
-		for (int16_t i = 0; i < lengthoffield(Player, fieldShift); i++) {
-			activatingPlayer->fieldShift[i] = 0;
+		for (int16_t i = 0; i < lengthoffield(Player, screenOffset); i++) {
+			activatingPlayer->screenOffset[i] = 0;
 		}
 
 		Player* itemPlayer = item->activatingPlayer->itemPlayer;

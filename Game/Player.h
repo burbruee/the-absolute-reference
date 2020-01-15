@@ -240,7 +240,7 @@ struct Player {
 	uint8_t fieldWidth;
 	uint8_t matrixHeight;
 	uint8_t matrixWidth;
-	int16_t fieldShift[2];
+	int16_t screenOffset[2];
 	//int16_t versusItemType; // Only used in UpdateVersusItems(), which is an unused function. That function could be a relic of TGM1's code, or was for an older version of TGM2.
 	Player *otherPlayer;
 	Player *itemPlayer;
@@ -250,7 +250,7 @@ struct Player {
 	ModeFlag modeFlags;
 	PlayerNum num;
 	uint32_t seed;
-	int16_t fieldPos[2];
+	int16_t screenPos[2];
 	Fixed16 nextScale;
 	Fixed16 nextScaleV;
 	Fixed16 nextScaleA;

@@ -222,8 +222,8 @@ void UpdateItemLaser(Item* item) {
 
 		case STATE_DEACTIVATE:
 		default:
-			for (int16_t i = 0; i < lengthoffield(Player, fieldShift); i++) {
-				itemPlayer->fieldShift[i] = 0;
+			for (int16_t i = 0; i < lengthoffield(Player, screenOffset); i++) {
+				itemPlayer->screenOffset[i] = 0;
 			}
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;

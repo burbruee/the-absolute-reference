@@ -92,7 +92,7 @@ void UpdateItemFreeFall(Item* item) {
 			break;
 
 		case STATE_SLAM:
-			activatingPlayer->fieldShift[1] -= 8;
+			activatingPlayer->screenOffset[1] -= 8;
 			if (--item->frames == 0) {
 				item->frames = 2;
 				item->states[0]++;
@@ -100,7 +100,7 @@ void UpdateItemFreeFall(Item* item) {
 			break;
 
 		case STATE_RISE:
-			activatingPlayer->fieldShift[1] += 16;
+			activatingPlayer->screenOffset[1] += 16;
 			if (--item->frames == 0) {
 				PlaySoundEffect(SOUNDEFFECT_COLLAPSE);
 				item->states[0]++;
@@ -109,7 +109,7 @@ void UpdateItemFreeFall(Item* item) {
 
 		case STATE_NEXT:
 			if (++data->numSlams >= 2) {
-				activatingPlayer->fieldShift[1] = 0;
+				activatingPlayer->screenOffset[1] = 0;
 				item->frames = 0;
 				item->states[0]++;
 			}
@@ -256,7 +256,7 @@ void UpdateItemFreeFall(Item* item) {
 				if (GameFlags & GAME_VERSUS) {
 					SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
 				}
-				activatingPlayer->fieldShift[1] = 0;
+				activatingPlayer->screenOffset[1] = 0;
 				activatingPlayer->nowFlags &= ~NOW_NOGARBAGE;
 				activatingPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 				DeactivateItem(item);

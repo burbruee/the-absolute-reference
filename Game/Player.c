@@ -81,17 +81,17 @@ const int16_t FieldPos[8] = {
 
 void SetFieldPos(Player* player, bool versusPos) {
 	if (GameFlags & GAME_DOUBLES) {
-		player->fieldPos[0] = 160;
-		player->fieldPos[1] = FieldPos[player->num * 2 + 2 * 0 + 1];
+		player->screenPos[0] = 160;
+		player->screenPos[1] = FieldPos[player->num * 2 + 2 * 0 + 1];
 	}
 	else {
 		if ((GameFlags & GAME_VERSUS) && versusPos) {
-			player->fieldPos[0] = FieldPos[player->num * 2 + 2 * 2 + 0];
+			player->screenPos[0] = FieldPos[player->num * 2 + 2 * 2 + 0];
 		}
 		else {
-			player->fieldPos[0] = FieldPos[player->num * 2 + 2 * 0 + 0];
+			player->screenPos[0] = FieldPos[player->num * 2 + 2 * 0 + 0];
 		}
-		player->fieldPos[1] = FieldPos[player->num * 2 + 2 * 0 + 1];
+		player->screenPos[1] = FieldPos[player->num * 2 + 2 * 0 + 1];
 	}
 }
 
@@ -299,7 +299,7 @@ void InitPlayer(PlayerNum playerNum) {
 
 	// GRS.
 	InitGrade(player);
-	InitMedals(player, 67, player->fieldPos[0] + 49);
+	InitMedals(player, 67, player->screenPos[0] + 49);
 
 	ItemDescriptions[player->num] = ITEMTYPE_NULL;
 
@@ -489,15 +489,15 @@ void UpdatePlayerAbsent(Player* player) {
 	if (player->otherPlayer->nowFlags & NOW_SELECTING) {
 		// TODO: Detail how this works. It controls displaying the "PLEASE WAIT" message on and off.
 		if (NumScreenFrames & 0x60) {
-			DisplayObject(OBJECT_PLEASEWAIT, 120, player->fieldPos[0], 0u, 110u);
+			DisplayObject(OBJECT_PLEASEWAIT, 120, player->screenPos[0], 0u, 110u);
 		}
 	}
 	else {
 		ShowStartRequirement(player);
 
 		if (player->otherPlayer->refusingChallenges) {
-			ShowText(player->fieldPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
-			ShowText(player->fieldPos[0] - TextWidth("CHALLENGER") / 2, 77, "CHALLENGER", 15u, false);
+			ShowText(player->screenPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
+			ShowText(player->screenPos[0] - TextWidth("CHALLENGER") / 2, 77, "CHALLENGER", 15u, false);
 		}
 
 		if (CanStart(player->num, false)) {
@@ -539,7 +539,7 @@ void UpdatePlayerWaiting(Player* player) {
 	}
 
 	if (Game.numVersusRounds == 0 && (!(player->nowFlags & NOW_WAITING) || !(player->otherPlayer->nowFlags & NOW_WAITING)) && (player->values[0] & 0x60)) {
-		DisplayObject(OBJECT_PLEASEWAIT, 120, player->fieldPos[0], 0u, 110u);
+		DisplayObject(OBJECT_PLEASEWAIT, 120, player->screenPos[0], 0u, 110u);
 	}
 }
 
@@ -650,10 +650,10 @@ void UpdatePlayerSelecting(Player* player) {
 				SelectScales[player->num][i] = UNSCALED;
 			}
 		}
-		DisplayObjectEx(OBJECT_SELECTMODE, 70, player->fieldPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][0], false);
+		DisplayObjectEx(OBJECT_SELECTMODE, 70, player->screenPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][0], false);
 
 		#define SHOWSELECTMODEOPTION(mode, y, modeSelection) \
-		ShowText(player->fieldPos[0] - TextWidth((mode)) / 2, (y), (mode), player->values[0] == (modeSelection) ? 15u : 14u, false);
+		ShowText(player->screenPos[0] - TextWidth((mode)) / 2, (y), (mode), player->values[0] == (modeSelection) ? 15u : 14u, false);
 		SHOWSELECTMODEOPTION("NORMAL", 90, MODESELECTION_NORMAL);
 		SHOWSELECTMODEOPTION("MASTER", 105, MODESELECTION_MASTER);
 		SHOWSELECTMODEOPTION("TGM+", 122, MODESELECTION_TGMPLUS);
@@ -731,11 +731,11 @@ void UpdatePlayerSelecting(Player* player) {
 					SelectScales[player->num][i] = UNSCALED;
 				}
 			}
-			DisplayObjectEx(OBJECT_CHALLENGE, 70, player->fieldPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][0], false);
+			DisplayObjectEx(OBJECT_CHALLENGE, 70, player->screenPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][0], false);
 			int16_t y = 100;
 			for (ChallengeSelection challenge = CHALLENGE_YES; challenge < CHALLENGE_INVALID; challenge++, y += 20) {
 				if (SelectScales[player->num][challenge + 1] > 0) {
-					DisplayObjectEx(&ObjectTablesConfirm[challenge][player->values[0] == challenge ? CHALLENGE_YES : CHALLENGE_NO], y, player->fieldPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][challenge + 1], false);
+					DisplayObjectEx(&ObjectTablesConfirm[challenge][player->values[0] == challenge ? CHALLENGE_YES : CHALLENGE_NO], y, player->screenPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][challenge + 1], false);
 				}
 			}
 
@@ -1224,7 +1224,7 @@ void NextPlayGameOver(Player* player) {
 			*medal = MEDALCOLOR_NULL;
 		}
 		InitGrade(player);
-		InitMedals(player, 67, player->fieldPos[0] + 49);
+		InitMedals(player, 67, player->screenPos[0] + 49);
 	}
 
 	SetFieldBorderColor(player, ITEMTYPE_NULL);
@@ -2692,10 +2692,10 @@ void UpdatePlayGameOver(Player* player) {
 		return;
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->values[3] >= 5) {
-		DisplayObject(OBJECT_SECRETGRADE, 158, player->fieldPos[0] - 35, 2u, 110u);
+		DisplayObject(OBJECT_SECRETGRADE, 158, player->screenPos[0] - 35, 2u, 110u);
 		int16_t y = -((SecretGradeScales[player->num] - UNSCALED) << 14) % UNSCALED;
 		int16_t x = -((SecretGradeScales[player->num] - UNSCALED) << 14) / UNSCALED;
-		DisplayObjectEx(ObjectTableGrades[player->values[3] - 1], 170 + y, player->fieldPos[0] + x, 1u, 110u, SecretGradeScales[player->num], SecretGradeScales[player->num], false);
+		DisplayObjectEx(ObjectTableGrades[player->values[3] - 1], 170 + y, player->screenPos[0] + x, 1u, 110u, SecretGradeScales[player->num], SecretGradeScales[player->num], false);
 
 		SecretGradeScales[player->num] -= 2;
 		if (SecretGradeScales[player->num] < UNSCALED) {
@@ -2709,10 +2709,10 @@ void UpdatePlayGameOver(Player* player) {
 	}
 
 	if (player->values[2]) {
-		DisplayObject(_0xA6F14, 100, player->fieldPos[0], 0u, 125u);
+		DisplayObject(_0xA6F14, 100, player->screenPos[0], 0u, 125u);
 		if (player->otherPlayer->refusingChallenges) {
-			ShowText(player->fieldPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
-			ShowText(player->fieldPos[0] - TextWidth("CHALLENGER"), 77, "CHALLENGER", 15u, false);
+			ShowText(player->screenPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
+			ShowText(player->screenPos[0] - TextWidth("CHALLENGER"), 77, "CHALLENGER", 15u, false);
 		}
 	}
 
@@ -2927,13 +2927,13 @@ void UpdatePlayVersusOver(Player* player) {
 			ShowFireworks(player, Rand(13) + 5, arg2, arg3);
 		}
 		if (GameFlags & GAME_BIT19) {
-			DisplayObject(_0xAAEB0, 140, player->fieldPos[0], 0u, 110u);
+			DisplayObject(_0xAAEB0, 140, player->screenPos[0], 0u, 110u);
 		}
 		else if (GameFlags & GAME_BIT18) {
-			DisplayObject(_0xAAEBC, 140, player->fieldPos[0] - 35, 0u, 110u);
-			DisplayObject(_0xAAEC8, 153, player->fieldPos[0] - 8, 0u, 110u);
-			ShowStatusNumberEx(player->level, 150, player->fieldPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
-			ShowStatusNumberEx(player->otherPlayer->level, 150, player->fieldPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+			DisplayObject(_0xAAEBC, 140, player->screenPos[0] - 35, 0u, 110u);
+			DisplayObject(_0xAAEC8, 153, player->screenPos[0] - 8, 0u, 110u);
+			ShowStatusNumberEx(player->level, 150, player->screenPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+			ShowStatusNumberEx(player->otherPlayer->level, 150, player->screenPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 		}
 	}
 	else {
@@ -2951,7 +2951,7 @@ void UpdatePlayVersusOver(Player* player) {
 	// here relates to the scale value. I believe it adjusts the position of
 	// the object to be centered as it scales at a screen position.
 	int32_t var0 = ((player->values[1] - UNSCALED) << 10) / UNSCALED;
-	DisplayObjectEx(&_0x3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->fieldPos[0] + (-(var1 * var0) >> 10), palNum, 125u, player->values[1], player->values[1], false);
+	DisplayObjectEx(&_0x3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->screenPos[0] + (-(var1 * var0) >> 10), palNum, 125u, player->values[1], player->values[1], false);
 }
 
 enum ReadyGoState {
@@ -2987,7 +2987,7 @@ void UpdatePlayStart(Player* player) {
 			player->values[READYGO_Y] = 70;
 
 		case READYGOSTATE_READYENTRY:
-			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->fieldPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
+			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
 				player->values[READYGO_NUMFRAMES] = 30;
@@ -2999,7 +2999,7 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_READYDELAY:
-			DisplayObject(OBJECT_READY, player->values[READYGO_Y], player->fieldPos[0], 0, 110);
+			DisplayObject(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
 				player->values[READYGO_NUMFRAMES] = 10;
@@ -3007,7 +3007,7 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_READYEXIT:
-			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->fieldPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
+			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
 				player->values[READYGO_NUMFRAMES] = 10;
@@ -3019,7 +3019,7 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_GOENTRY:
-			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->fieldPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
+			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
 				player->values[READYGO_NUMFRAMES] = 30;
@@ -3031,7 +3031,7 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_GODELAY:
-			DisplayObject(OBJECT_GO, player->values[READYGO_Y], player->fieldPos[0], 0, 110);
+			DisplayObject(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
 				player->values[READYGO_NUMFRAMES] = 10;
@@ -3039,7 +3039,7 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_GOEXIT:
-			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->fieldPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
+			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
 			if (--player->values[READYGO_NUMFRAMES] == 0) {
 				player->numGarbageRows = 0u;
 				NextPlay(player, (PlayData) { .flags = PLAYFLAG_NONE, .state = PLAYSTATE_NEXTBLOCK });

@@ -15,8 +15,8 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 		entity->laserFrames = 0;
 		entity->laserAnimIndex = 0;
 		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
-		data->x = player->fieldPos[0] - player->matrixWidth * 8 - 4 + col * 8;
-		data->y = player->fieldPos[1] - (player->matrixHeight - 1) * 8 + (player->matrixHeight - row - 1) * 8 - 6;
+		data->x = player->screenPos[0] - player->matrixWidth * 8 - 4 + col * 8;
+		data->y = player->screenPos[1] - (player->matrixHeight - 1) * 8 + (player->matrixHeight - row - 1) * 8 - 6;
 		data->objectTable = OBJECTTABLE_LASER;
 		data->palNum = 180u;
 	}
@@ -73,8 +73,8 @@ void ShowLaserReticle(Player* player, int16_t row, int16_t col, int16_t animInde
 	}
 	DisplayObject(
 		ObjectTableLaserReticle[15 - animIndex],
-		player->fieldPos[1] + (player->matrixHeight - row) * 8 - (player->matrixHeight - 1) * 8 - 10,
-		player->fieldPos[0] + col * 8 - (player->matrixWidth / 2) * 8 + 4,
+		player->screenPos[1] + (player->matrixHeight - row) * 8 - (player->matrixHeight - 1) * 8 - 10,
+		player->screenPos[0] + col * 8 - (player->matrixWidth / 2) * 8 + 4,
 		181u,
 		124u);
 }

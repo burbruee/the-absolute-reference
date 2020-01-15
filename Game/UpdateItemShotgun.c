@@ -120,10 +120,10 @@ void UpdateItemShotgun(Item* item) {
 			if (++item->frames >= MATRIX_HEIGHT - 1) {
 				item->frames = 40;
 				item->states[0]++;
-				itemPlayer->fieldShift[1] = 0;
+				itemPlayer->screenOffset[1] = 0;
 			}
 			else {
-				itemPlayer->fieldShift[1] = (item->frames & 2) == 0 ? 3 : -3;
+				itemPlayer->screenOffset[1] = (item->frames & 2) == 0 ? 3 : -3;
 				if (data->shotColumns[item->frames] != 0) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 						ShowSquareExplosion(itemPlayer, row, data->shotColumns[row]);
