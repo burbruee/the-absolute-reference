@@ -119,22 +119,3 @@ void InitItems();
 Item* AllocItem();
 void DeactivateItem(Item* item);
 void UpdateItems();
-
-// TODO: Define these in their own source files, only using their headers in Item.c.
-void UpdateItemColorBlock(Item* item);
-void UpdateItemTopDelField(Item* item);
-void UpdateItemBottomDelField(Item* item);
-void UpdateItemRightMovField(Item* item);
-void UpdateItemLeftMovField(Item* item);
-void UpdateItemDelEven(Item* item);
-void UpdateItemShotgun(Item* item);
-void UpdateItemFreeFall(Item* item);
-void UpdateItemExchgField(Item* item);
-void UpdateItemMirrorBlock(Item* item);
-void UpdateItemDarkBlock(Item* item);
-void UpdateItemHardBlock(Item* item);
-void UpdateItemLaser(Item* item);
-void UpdateItemRollRoll(Item* item);
-void UpdateItemTransform(Item* item);
-void UpdateItemXRay(Item* item);
-void UpdateItemFlipField(Item* item); // 180° item.
