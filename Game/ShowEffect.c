@@ -6,6 +6,7 @@
 #include "Block.h"
 #include "Object.h"
 #include "ShowBlockField.h"
+#include "Frame.h"
 
 typedef struct EntityInstanceDataSquareExplosion {
 	ObjectData* objectTable;

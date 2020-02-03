@@ -2,9 +2,11 @@
 #include "Game/Text.h"
 #include "Game/Debug.h"
 #include "Game/BuildData.h"
-#include "Game/Warning.h"
+#include "Game/RegionWarning.h"
 #include "Game/Fixed.h"
 #include "Game/Setting.h"
+#include "Game/Sound.h"
+#include "Game/HwData.h"
 #include "Platform/Util/Macros.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -21,7 +23,7 @@ void main() {
 	NumScreenFrames = 0u;
 	InitSound();
 	NumVideoOps = 0u;
-	PlayEffect(EFFECT_READY);
+	PlaySoundEffect(SOUNDEFFECT_READY);
 	_0x6023790();
 	InitCredits();
 	InitVideo();

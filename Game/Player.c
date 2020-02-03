@@ -10,6 +10,7 @@
 #include "ShowBlockField.h"
 #include "ShowGameStatus.h"
 #include "ShowNewChallenger.h"
+#include "ShowStaff.h"
 #include "DisplayObject.h"
 #include "Debug.h"
 #include "HwInput.h"
@@ -2964,7 +2965,7 @@ enum ReadyGoState {
 	READYGOSTATE_GOEXIT
 };
 
-#define READYGO_NUMFRAMES 0
+#define READYGO_FRAMES 0
 #define READYGO_Y 1
 #define READYGO_ROTATENEXTBLOCK 0
 
@@ -2983,14 +2984,14 @@ void UpdatePlayStart(Player* player) {
 	switch (player->subStates[SUBSTATE_READYGO]) {
 		case READYGOSTATE_INIT:
 			player->subStates[SUBSTATE_READYGO]++;
-			player->values[READYGO_NUMFRAMES] = 10;
+			player->values[READYGO_FRAMES] = 10;
 			player->values[READYGO_Y] = 70;
 
 		case READYGOSTATE_READYENTRY:
-			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_FRAMES] + UNSCALED, UNSCALED, false);
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
-				player->values[READYGO_NUMFRAMES] = 30;
+				player->values[READYGO_FRAMES] = 30;
 				PlaySoundEffect(SOUNDEFFECT_READY);
 			}
 			else {
@@ -3000,17 +3001,17 @@ void UpdatePlayStart(Player* player) {
 
 		case READYGOSTATE_READYDELAY:
 			DisplayObject(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
-				player->values[READYGO_NUMFRAMES] = 10;
+				player->values[READYGO_FRAMES] = 10;
 			}
 			break;
 
 		case READYGOSTATE_READYEXIT:
-			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			DisplayObjectEx(OBJECT_READY, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_FRAMES] + 0x0D, UNSCALED, false);
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
-				player->values[READYGO_NUMFRAMES] = 10;
+				player->values[READYGO_FRAMES] = 10;
 				player->values[READYGO_Y] = 70;
 			}
 			else {
@@ -3019,10 +3020,10 @@ void UpdatePlayStart(Player* player) {
 			break;
 
 		case READYGOSTATE_GOENTRY:
-			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_NUMFRAMES] + UNSCALED, UNSCALED, false);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, -5 * player->values[READYGO_FRAMES] + UNSCALED, UNSCALED, false);
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
-				player->values[READYGO_NUMFRAMES] = 30;
+				player->values[READYGO_FRAMES] = 30;
 				PlaySoundEffect(SOUNDEFFECT_GO);
 			}
 			else {
@@ -3032,15 +3033,15 @@ void UpdatePlayStart(Player* player) {
 
 		case READYGOSTATE_GODELAY:
 			DisplayObject(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->subStates[SUBSTATE_READYGO]++;
-				player->values[READYGO_NUMFRAMES] = 10;
+				player->values[READYGO_FRAMES] = 10;
 			}
 			break;
 
 		case READYGOSTATE_GOEXIT:
-			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_NUMFRAMES] + 0x0D, UNSCALED, false);
-			if (--player->values[READYGO_NUMFRAMES] == 0) {
+			DisplayObjectEx(OBJECT_GO, player->values[READYGO_Y], player->screenPos[0], 0, 110, 5 * player->values[READYGO_FRAMES] + 0x0D, UNSCALED, false);
+			if (--player->values[READYGO_FRAMES] == 0) {
 				player->numGarbageRows = 0u;
 				NextPlay(player, (PlayData) { .flags = PLAYFLAG_NONE, .state = PLAYSTATE_NEXTBLOCK });
 				GameFlags &= ~GAME_BIT11;
@@ -3133,7 +3134,7 @@ void GenNextBlockItem(Player* player) {
 	}
 }
 
-void StartStaff(Player* player) {
+void Staff(Player* player) {
 	player->nowFlags |= NOW_STAFF;
 	ShowStaff(player);
 }

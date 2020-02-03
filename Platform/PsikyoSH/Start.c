@@ -4,7 +4,8 @@
 #include "Start.h"
 #include "Game/HwSprite.h"
 #include "PlatformTypes.h"
-#include "HwData.h"
+#include "Game/HwData.h"
+#include "Game/Math.h"
 #include "Platform/Util/Macros.h"
 
 // TODO: In the SH-2 assembly, define the interrupt vector table. It
