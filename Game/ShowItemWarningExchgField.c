@@ -9,7 +9,7 @@ void ShowItemWarningExchgField(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningExchgField;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		ENTITY_DATA(entity).player = player;
 		entity->warningFrames = 0;
 		data->x = 4;
@@ -21,7 +21,7 @@ void ShowItemWarningExchgField(Player* player) {
 }
 
 void UpdateEntityItemWarningExchgField(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {

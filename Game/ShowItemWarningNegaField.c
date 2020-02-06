@@ -13,7 +13,7 @@ void ShowItemWarningNegaField(Player* player) {
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningNegaField;
 		ENTITY_DATA(entity).player = player;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		entity->warningFrames = 0;
 		data->x = 4;
 		data->x =
@@ -26,7 +26,7 @@ void ShowItemWarningNegaField(Player* player) {
 }
 
 static void UpdateEntityItemWarningNegaField(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {

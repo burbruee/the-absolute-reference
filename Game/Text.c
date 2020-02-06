@@ -58,7 +58,7 @@ void InitSystemTextPal() {
 }
 
 void ShowCenteredSystemText(int16_t y, const char* text, bool alpha) {
-	ShowSystemText((VIDEODIM_WIDTH - TextWidth(text)) / 2, y, text, alpha);
+	ShowSystemText((VIDEO_WIDTH - TextWidth(text)) / 2, y, text, alpha);
 }
 
 void ShowSystemText(int16_t x, int16_t y, const char* text, bool alpha) {

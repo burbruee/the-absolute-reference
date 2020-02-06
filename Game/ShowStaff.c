@@ -1,4 +1,5 @@
 #include "ShowStaff.h"
+#include "Frame.h"
 #include "Graphics.h"
 #include "Object.h"
 #include "Video.h"
@@ -36,7 +37,7 @@ enum StaffSection {
 	NUMSTAFFSECTIONS = STAFF_SOUND
 };
 
-#define NUMSTAFFMASTERGMLINES 32u
+#define NUMSTAFFGMLINES 32u
 
 static const ObjectData* ObjectTableBgDesignStaff[13];
 static const ObjectData* ObjectTableEffectDesignStaff[2];
@@ -47,16 +48,24 @@ static const ObjectData* ObjectTableEndStaff[14];
 static const int8_t StaffSections[6];
 static const int16_t EndStaffRows[13];
 
+typedef enum ScrollRate {
+	SCROLLRATE_NORMAL = 1,
+	SCROLLRATE_FAST = 3
+} ScrollRate;
+
 typedef struct StaffData {
-	uint16_t scrollRate;
+	ScrollRate scrollRate;
 	int16_t scrollDivisor;
 	int16_t pixelX[NUMSTAFFOBJECTS];
 	int16_t pixelY[NUMSTAFFOBJECTS];
 	int16_t bottomPixelY;
 	int16_t topPixelY;
-	int16_t completePixelY;
+	int16_t exitPixelY;
 	bool skip;
 } StaffData;
+
+#define scrollY values[0]
+#define scrollPixels values[2]
 
 void ShowStaff(Player* player) {
 	ObjectData* objectTableBgDesignStaff[lengthof(ObjectTableBgDesignStaff)];
@@ -93,7 +102,7 @@ void ShowStaff(Player* player) {
 	int16_t staffObjectIndex = 1;
 	int16_t staffRows[NUMSTAFFOBJECTS] = { 1 };
 	int16_t staffRow;
-	#define STAFF_OBJECTS(section, objectTable) \
+	#define SET_STAFF_OBJECTS(section, objectTable) \
 		case section: \
 			for (int16_t j = 0; j < lengthof(objectTable); j++) { \
 				staffRows[staffObjectIndex] = staffRow; \
@@ -104,17 +113,17 @@ void ShowStaff(Player* player) {
 			break
 	for (int16_t i = 0; i < NUMSTAFFSECTIONS; i++) {
 		switch (staffSections[i]) {
-		STAFF_OBJECTS(STAFF_BGDESIGN, objectTableBgDesignStaff);
-		STAFF_OBJECTS(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff);
-		STAFF_OBJECTS(STAFF_VISUALDESIGN, objectTableVisualDesignStaff);
-		STAFF_OBJECTS(STAFF_PROGRAMMER, objectTableProgrammerStaff);
-		STAFF_OBJECTS(STAFF_SOUND, objectTableSoundStaff);
+		SET_STAFF_OBJECTS(STAFF_BGDESIGN, objectTableBgDesignStaff);
+		SET_STAFF_OBJECTS(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff);
+		SET_STAFF_OBJECTS(STAFF_VISUALDESIGN, objectTableVisualDesignStaff);
+		SET_STAFF_OBJECTS(STAFF_PROGRAMMER, objectTableProgrammerStaff);
+		SET_STAFF_OBJECTS(STAFF_SOUND, objectTableSoundStaff);
 
 		default:
 			break;
 		}
 	}
-	#undef STAFF_OBJECTS
+	#undef SET_STAFF_OBJECTS
 
 	for (int16_t i = 0; i < lengthof(objectTableEndStaff); i++, staffObjectIndex++) {
 		staffRows[staffObjectIndex] = endStaffRows[i] + staffRow;
@@ -127,15 +136,15 @@ void ShowStaff(Player* player) {
 		ENTITY_DATA(staffEntity).player = player;
 		StaffFireworkFrames[player->num] = 15u;
 		// TODO: Name these values.
-		staffEntity->values[0] = 0;
+		staffEntity->scrollY = 0;
 		staffEntity->values[1] = 0;
-		staffEntity->values[2] = 240;
+		staffEntity->scrollPixels = VIDEO_HEIGHT;
 		staffEntity->values[3] = 1;
-		ENTITY_INSTANCE_DATA_PTR(StaffData, data, staffEntity);
+		ENTITY_INST_DATA_PTR(StaffData, data, staffEntity);
 		data->skip = false;
 		data->bottomPixelY = player->screenPos[1] + (player->matrixHeight - 1) * 8 - (player->matrixHeight - 1) * 8 - 6;
 		data->topPixelY = player->screenPos[1] + (player->matrixHeight - MATRIX_HEIGHT) * 8 - (player->matrixHeight - 1) * 8 - 6;
-		data->completePixelY = player->screenPos[1] + (player->matrixHeight - MATRIX_HEIGHT + 8) * 8 - (player->matrixHeight - 1) * 8 - 6;
+		data->exitPixelY = player->screenPos[1] + (player->matrixHeight - MATRIX_HEIGHT + 8) * 8 - (player->matrixHeight - 1) * 8 - 6;
 		for (int16_t i = 0; i < NUMSTAFFOBJECTS; i++) {
 			if (player->modeFlags & MODE_DOUBLES) {
 				data->pixelX[i] = player->screenPos[0] - (player->matrixWidth / 2) * 8 + 24;
@@ -166,32 +175,222 @@ static void UpdateEntityStaff(Entity* entity) {
 		player->nowFlags &= ~NOW_SHOWRANKINGCODE;
 	}
 
-	ENTITY_INSTANCE_DATA_PTR(StaffData, data, entity);
+	ENTITY_INST_DATA_PTR(StaffData, data, entity);
 	if (!(player->modeFlags & (MODE_NORMAL | MODE_TGMPLUS | MODE_TADEATH)) || !(GameButtonsDown[player->num] & BUTTON_START)) {
 		if ((player->modeFlags & MODE_DOUBLES) && ((GameButtonsDown[PLAYER1] & BUTTON_START) || (GameButtonsDown[PLAYER2] & BUTTON_START))) {
-			data->scrollRate = 3u;
+			data->scrollRate = SCROLLRATE_FAST;
 			data->scrollDivisor = 1;
 		}
 		else {
 			int16_t divisor;
 			if (player->modeFlags & MODE_MASTER) {
-				data->scrollRate = 1u;
+				data->scrollRate = SCROLLRATE_NORMAL;
 				divisor = 4;
 			}
 			else {
-				data->scrollRate = 1u;
+				data->scrollRate = SCROLLRATE_NORMAL;
 				divisor = 2;
 			}
 			data->scrollDivisor = divisor;
 		}
 	}
 	else {
-		data->scrollRate = 3u;
+		data->scrollRate = SCROLLRATE_FAST;
 		data->scrollDivisor = 1u;
 	}
 
-	// TODO
+	for (int16_t i = 0; i < NUMSTAFFOBJECTS; i++) {
+		if (
+			data->pixelY[i] > data->topPixelY && !(entity->scrollY % data->scrollDivisor) &&
+			(
+				i < NUMSTAFFOBJECTS - 2 ||
+				(i == NUMSTAFFOBJECTS - 2 && data->pixelY[i] > data->exitPixelY) ||
+				(i == NUMSTAFFOBJECTS - 1 && data->pixelY[i] > data->exitPixelY + 16)
+				)
+			) {
+			data->pixelY[i] -= data->scrollRate;
+		}
+
+		if (entity->scrollPixels > 0 && !data->skip && data->pixelY[i] > data->topPixelY && data->pixelY[i] < data->bottomPixelY) {
+			if (data->pixelY[i] > data->bottomPixelY - 8) {
+				DisplayObjectEx(
+					ObjectTableStaff[i],
+					data->pixelY[i] + player->screenOffset[1],
+					data->pixelX + player->screenOffset[0],
+					178u,
+					70u,
+					(data->pixelY[i] - data->bottomPixelY + 8) * -5 * UNSCALED,
+					UNSCALED,
+					false
+				);
+			}
+			else if (data->pixelY[i] < data->topPixelY + 8) {
+				DisplayObjectEx(
+					ObjectTableStaff[i],
+					data->pixelY[i] + player->screenOffset[1],
+					data->pixelX + player->screenOffset[0],
+					178u,
+					70u,
+					(data->pixelY[i] - data->topPixelY) * 5 + 0x17,
+					UNSCALED,
+					false
+				);
+			}
+			else {
+				DisplayObjectEx(
+					ObjectTableStaff[i],
+					data->pixelY[i] + player->screenOffset[1],
+					data->pixelX + player->screenOffset[0],
+					178u,
+					70u,
+					UNSCALED,
+					UNSCALED,
+					false
+				);
+			}
+		}
+	}
+
+	if (player->modeFlags & MODE_MASTER) {
+		if (entity->scrollY > 3700) {
+			data->skip = true;
+			player->miscFlags |= MISC_ORANGELINE;
+			player->nowFlags |= NOW_NOUPDATE;
+			if ((player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED && !(player->modeFlags & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE))) {
+				// Qualified for grade M in normal, master, and doubles.
+				// Invisible mode might be enabled. Also qualified in versus.
+				// No other mode settings allowed (such as item mode).
+				if (player->numMGradeLines >= NUMSTAFFGMLINES) {
+					player->grade = PLAYERGRADE_GM;
+					PlaySoundEffect(SOUNDEFFECT_LEVELUP);
+					ShowGrandMasterCongratulations(player);
+				}
+				else {
+					player->grade = PLAYERGRADE_GM;
+					PlaySoundEffect(SOUNDEFFECT_LEVELUP);
+					ShowGrandMasterCongratulations(player);
+				}
+			}
+			else {
+				ShowRetryForGrandMaster(player);
+			}
+			LockActiveBlock(player, LOCKTYPE_GAMEOVER);
+
+			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
+				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
+					MATRIX(player, row, col).block &= ~(BLOCK_FADING | BLOCK_INVISIBLE);
+				}
+			}
+			FreeEntity(entity);
+		}
+		else if (player->nowFlags & NOW_STOPPED) {
+			if ((player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED && !(player->modeFlags & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE))) {
+				PlaySoundEffect(SOUNDEFFECT_LEVELUP);
+				player->grade = PLAYERGRADE_M;
+			}
+			FreeEntity(entity);
+		}
+	}
+	else if (entity->scrollY >= 2220) {
+		player->nowFlags &= NOW_NOUPDATE;
+		if (!(player->nowFlags & NOW_STOPPED)) {
+			player->miscFlags |= MISC_ORANGELINE;
+			LockActiveBlock(player, LOCKTYPE_GAMEOVER);
+			if (GameFlags & GAME_DOUBLES) {
+				LockActiveBlock(player->otherPlayer, LOCKTYPE_GAMEOVER);
+			}
+		}
+		NextPlayGameOver(player);
+		FreeEntity(entity);
+	}
+	else if (entity->scrollPixels <= 0) {
+		data->skip = true;
+		if (player->modeFlags & MODE_TADEATH) {
+			if (player->level >= 999u) {
+				UpdateEntityDeathComplete(entity);
+			}
+			else {
+				UpdateEntityDeathIncomplete(entity);
+			}
+		}
+		else if (player->modeFlags & MODE_TGMPLUS) {
+			UpdateEntityTgmPlusComplete(entity);
+		}
+		else if (player->modeFlags & MODE_NORMAL) {
+			UpdateEntityNormalComplete(entity);
+		}
+		else {
+			UpdateEntityDoublesComplete(entity);
+		}
+	}
+
+	if (CurrentPauseMode < PAUSEMODE_GAME) {
+		entity->scrollY += data->scrollRate == SCROLLRATE_FAST ? data->scrollRate * 2u : data->scrollRate;
+
+		if (data->pixelY[NUMSTAFFOBJECTS - 2] <= data->exitPixelY) {
+			entity->scrollPixels -= data->scrollRate == SCROLLRATE_FAST ? data->scrollRate * 2 : data->scrollRate;
+		}
+	}
 }
+
+#undef scrollPixels
+#undef scrollY
+
+#define frames values[0]
+#define scale values[0]
+
+static void ShowGrandMasterCongratulations(Player* player) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntityGrandMasterCongratulations;
+		entity->frames = 600;
+		entity->values[1] = 1;
+		ENTITY_DATA(entity).player = player;
+		player->scale = 123;
+	}
+}
+
+static void UpdateEntityGrandMasterCongratulations(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
+		player->nowFlags |= NOW_SHOWRANKINGCODE;
+	}
+	if (player->modeFlags & (MODE_20G | MODE_BIG | MODE_ITEM | MODE_TLS)) {
+		player->nowFlags &= NOW_SHOWRANKINGCODE;
+	}
+
+	player->nowFlags |= NOW_NOUPDATE;
+
+	if (player->scale > UNSCALED) {
+		player->scale -= 0x02;
+	}
+	else {
+		player->scale = UNSCALED;
+	}
+
+	int32_t scalePixelOffset = ((player->scale - UNSCALED) << 10) / UNSCALED;
+	DisplayObjectEx(
+		OBJECT_GRANDMASTERCONGRATULATIONS,
+		120 + (scalePixelOffset * -12) >> 10,
+		player->screenPos[0] + (scalePixelOffset * -40) >> 10,
+		179u,
+		125u,
+		player->scale,
+		player->scale,
+		false
+	);
+
+	if (CurrentPauseMode < PAUSEMODE_GAME) {
+		UpdateStaffFireworks(entity, player, 15u);
+		if (--entity->frames == 0) {
+			player->nowFlags &= ~NOW_NOUPDATE;
+			NextPlayGameOver(player);
+			FreeEntity(entity);
+		}
+	}
+}
+
 // TODO
 
 static const ObjectData* ObjectTableBgDesignStaff[13] = {

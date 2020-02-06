@@ -14,7 +14,7 @@ void ShowItemWarningDeathBlock(Player* player) {
 		entity->update = UpdateEntityItemWarningDeathBlock;
 		ENTITY_DATA(entity).player = player;
 		entity->warningFrames = 0;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = 4;
 		data->x =
 			player->screenPos[0] + player->screenOffset[0] +
@@ -26,7 +26,7 @@ void ShowItemWarningDeathBlock(Player* player) {
 }
 
 static void UpdateEntityItemWarningDeathBlock(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {

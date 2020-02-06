@@ -35,7 +35,7 @@ void ShowSquareExplosion(Player* player, int16_t row, int16_t col) {
 	if (entity = AllocEntity()) {
 		entity->update = UpdateEntitySquareExplosion;
 
-		ENTITY_INSTANCE_DATA_PTR(EntityInstanceDataSquareExplosion, instanceData, entity);
+		ENTITY_INST_DATA_PTR(EntityInstanceDataSquareExplosion, instanceData, entity);
 		ENTITY_DATA_PTR(data, entity);
 
 		data->player = player;
@@ -50,7 +50,7 @@ void ShowSquareExplosion(Player* player, int16_t row, int16_t col) {
 }
 
 static void UpdateEntitySquareExplosion(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(EntityInstanceDataSquareExplosion, data, entity);
+	ENTITY_INST_DATA_PTR(EntityInstanceDataSquareExplosion, data, entity);
 	DisplayObject(&data->objectTable[entity->values[SQUAREEXPLOSION_FRAME]], data->y, data->x, data->palNum + 9u, 115u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->values[SQUAREEXPLOSION_FRAME] < 32) {

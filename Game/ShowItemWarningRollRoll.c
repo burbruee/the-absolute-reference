@@ -11,7 +11,7 @@ void ShowItemWarningRollRoll(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningRollRoll;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		ENTITY_DATA(entity).player = player;
 		entity->warningFrames = 0;
 		data->x = 4;
@@ -23,7 +23,7 @@ void ShowItemWarningRollRoll(Player* player) {
 }
 
 static void UpdateEntityItemWarningRollRoll(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {
 		FreeEntity(entity);

@@ -55,11 +55,11 @@ struct Entity {
 // EntityData struct stored in Entity::data.
 //
 // For extra data not in the EntityData union, declare a struct for your
-// entity, and access the struct using ENTITY_INSTANCE_DATA_PTR.
+// entity, and access the struct using ENTITY_INST_DATA_PTR.
 #define ENTITY_CUSTOM_DATA_PTR(type, ptr, entity) type* ptr = (type*)(entity)->data
 #define ENTITY_DATA(entity) (*(EntityData*)entity->data)
 #define ENTITY_DATA_PTR(ptr, entity) ENTITY_CUSTOM_DATA_PTR(EntityData, ptr, entity)
-#define ENTITY_INSTANCE_DATA_PTR(type, ptr, entity) type* ptr = (type*)((EntityData*)(entity)->data)->instanceData
+#define ENTITY_INST_DATA_PTR(type, ptr, entity) type* ptr = (type*)((EntityData*)(entity)->data)->instanceData
 
 void InitEntities();
 Entity* AllocEntity();

@@ -12,7 +12,7 @@ void ShowItemWarningHardBlock(Player* player) {
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningHardBlock;
 		ENTITY_DATA(entity).player = player;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		entity->warningFrames = 0;
 		data->x = 4;
 		data->x = player->screenPos[0] + player->screenOffset[0] - (player->matrixWidth / 2) * 8 + (data->x + 2) * 8;
@@ -23,7 +23,7 @@ void ShowItemWarningHardBlock(Player* player) {
 }
 
 static void UpdateEntityItemWarningHardBlock(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {

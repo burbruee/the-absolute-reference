@@ -388,6 +388,8 @@ extern BlockDefSquare BlockDefs[9 * 4 * 4 * 4];
 
 void NextPlayLockBlock(Player* player);
 
+void NextPlayGameOver(Player* player);
+
 typedef enum LockType {
 	LOCKTYPE_NORMAL,
 	LOCKTYPE_BLOCKING,

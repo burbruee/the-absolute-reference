@@ -32,7 +32,7 @@ uint32_t Mod32u(uint32_t denom, uint32_t numer) {
 	else return numer % denom;
 }
 
-void MemCopy(size_t n, void *dest, void *src) {
+void MemCopy(size_t n, void* dest, void* src) {
 #ifdef USESTDC
 	memcpy(dest, src, n);
 #else

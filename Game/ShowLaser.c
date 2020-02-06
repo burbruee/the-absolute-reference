@@ -14,7 +14,7 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 		ENTITY_DATA(entity).player = player;
 		entity->laserFrames = 0;
 		entity->laserAnimIndex = 0;
-		ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = player->screenPos[0] - player->matrixWidth * 8 - 4 + col * 8;
 		data->y = player->screenPos[1] - (player->matrixHeight - 1) * 8 + (player->matrixHeight - row - 1) * 8 - 6;
 		data->objectTable = OBJECTTABLE_LASER;
@@ -23,7 +23,7 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 }
 
 void UpdateEntityLaser(Entity* entity) {
-	ENTITY_INSTANCE_DATA_PTR(BasicEntityInstanceData, data, entity);
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->laserAnimIndex], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME) {

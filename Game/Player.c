@@ -575,7 +575,7 @@ void StartChallenger(Player* player) {
 }
 
 void SetMode(Player* player, ModeSelection modeSelection) {
-	player->modeFlags &= ~(MODE_NORMAL | MODE_MASTER |MODE_TGMPLUS | MODE_TADEATH | MODE_DOUBLES);
+	player->modeFlags &= ~(MODE_NORMAL | MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH | MODE_DOUBLES);
 	switch (modeSelection) {
 	case MODESELECTION_NORMAL : player->modeFlags |= MODE_NORMAL ; break;
 	case MODESELECTION_MASTER : player->modeFlags |= MODE_MASTER ; break;

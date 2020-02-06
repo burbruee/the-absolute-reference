@@ -1,8 +1,8 @@
 #pragma once
 
 typedef enum VideoDimension {
-	VIDEODIM_WIDTH = 320,
-	VIDEODIM_HEIGHT = 240
+	VIDEO_WIDTH = 320,
+	VIDEO_HEIGHT = 240
 } VideoDimension;
 
 typedef enum Bpp {
