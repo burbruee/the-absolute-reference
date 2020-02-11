@@ -3,7 +3,7 @@
 // TODO: Consider renaming ShowGameStatus.* to ShowPlayersStatus.*; if only ShowPlayersStatus is used outside of ShowGameStatus.c, then for sure rename.
 
 #include "Player.h"
-#include "Text.h"
+#include "ShowText.h"
 #include "DisplayObject.h"
 #include <stdint.h>
 #include <stdbool.h>

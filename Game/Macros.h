@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define lengthof(array) (sizeof(array) / sizeof(*array))
+#define lengthof(array) (sizeof(array) / sizeof(*(array)))
 #define sizeoffield(type, field) sizeof(((type*)0)->field)
 #define lengthoffield(type, field) lengthof(((type*)0)->field)
 

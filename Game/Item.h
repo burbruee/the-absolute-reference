@@ -92,18 +92,18 @@ struct Item {
 struct Player;
 typedef struct Player Player;
 
-void RemoveItems(Player* player);
-bool CheckDeactivateItem(Item* item);
-bool FreeFall(Player* player);
-bool _0x6018584(Player* player); // Unused.
-ItemCategory NoDisableGarbage(Item* item);
-
 typedef enum ItemCategory {
 	ITEMCAT_NONE,
 	ITEMCAT_GOOD,
 	ITEMCAT_BAD,
 	ITEMCAT_NEUTRAL
 } ItemCategory;
+
+void RemoveItems(Player* player);
+bool CheckDeactivateItem(Item* item);
+bool FreeFall(Player* player);
+bool _0x6018584(Player* player); // Unused.
+ItemCategory NoDisableGarbage(Item* item);
 
 bool ItemGood(Player* player);
 bool ItemBad(Player* player);

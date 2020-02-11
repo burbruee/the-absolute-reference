@@ -11,6 +11,7 @@
 #include "ShowGameStatus.h"
 #include "ShowNewChallenger.h"
 #include "ShowStaff.h"
+#include "ShowGameOverFade.h"
 #include "DisplayObject.h"
 #include "Debug.h"
 #include "HwInput.h"
@@ -1188,6 +1189,8 @@ void NextPlayGarbageEntry(Player* player) {
 
 static int16_t SecretGradeScales[NUMPLAYERS];
 
+#define showGameOver values[2]
+
 void NextPlayGameOver(Player* player) {
 	NewRankingData* newRanking = &NewRankings[player->num];
 
@@ -1204,8 +1207,8 @@ void NextPlayGameOver(Player* player) {
 		player->values[0] = TIME(0, 3, 0);
 	}
 	else {
-		player->values[2] = 0;
-		GameOver(player);
+		player->showGameOver = false;
+		ShowGameOverFade(player);
 	}
 	player->nowFlags &= ~NOW_STAFF;
 	player->nowFlags |= NOW_STOPPED;
@@ -2359,7 +2362,7 @@ void UpdatePlayNextBlock(Player* player) {
 				// Entry is blocked by the matrix, so game over.
 				if ((player->nowFlags & NOW_STAFF) && (player->otherPlayer->nowFlags & NOW_STAFF)) {
 					Players[PLAYER1].values[1] = 1;
-					Players[PLAYER1].values[2] = 0;
+					Players[PLAYER1].showGameOver = false;
 
 					ShowGameOverFade(&Players[PLAYER1]);
 
@@ -2377,7 +2380,7 @@ void UpdatePlayNextBlock(Player* player) {
 				else {
 					LockActiveBlock(player, LOCKTYPE_NORMAL);
 
-					GameOver(player);
+					ShowGameOverFade(player);
 				}
 			}
 		}
@@ -2410,7 +2413,7 @@ void UpdatePlayNextBlock(Player* player) {
 
 				player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
 
-				GameOver(player);
+				ShowGameOverFade(player);
 			}
 		}
 	}
@@ -2709,7 +2712,7 @@ void UpdatePlayGameOver(Player* player) {
 		PlaySoundEffect(SOUNDEFFECT_GAMEOVER);
 	}
 
-	if (player->values[2]) {
+	if (player->showGameOver) {
 		DisplayObject(_0xA6F14, 100, player->screenPos[0], 0u, 125u);
 		if (player->otherPlayer->refusingChallenges) {
 			ShowText(player->screenPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
@@ -2913,7 +2916,7 @@ void UpdatePlayVersusOver(Player* player) {
 		if (Game._0x2 > 10 && (player->values[3]-- == 0 || player->values[0] % 5 == 0)) {
 			player->values[3] = 20;
 			player->values[0] = 1;
-			player->values[2] = (player->values[2] + 1) % 2;
+			player->showGameOver = (player->showGameOver + 1) % 2;
 			PlaySoundEffect(SOUNDEFFECT_SHOTGUN);
 			// BUG: I would assume the original code had these Rand() calls as
 			// direct arguments to ShowFireworks. Per standard C, it's

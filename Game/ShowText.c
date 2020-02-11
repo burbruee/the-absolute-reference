@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "ShowText.h"
 #include "Object.h"
 #include "HwSprite.h"
 #include "VideoDefs.h"

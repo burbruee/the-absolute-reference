@@ -1,4 +1,6 @@
 #include "ShowStaff.h"
+#include "ShowEffect.h"
+#include "ShowText.h"
 #include "Frame.h"
 #include "Graphics.h"
 #include "Object.h"
@@ -19,7 +21,7 @@ static void UpdateEntityRetryForGrandMaster(Entity* entity);
 static void UpdateEntityNormalComplete(Entity* entity);
 static void UpdateEntityTgmPlusComplete(Entity* entity);
 static void UpdateEntityDoublesComplete(Entity* entity);
-static void UpdateStaffFireworks(Entity* staffFireworks, Player* player, uint16_t delay);
+static void UpdateStaffFireworks(Entity* entity, Player* player, uint16_t delay);
 static void UpdateEntityDeathComplete(Entity* entity);
 static void UpdateEntityDeathIncomplete(Entity* entity);
 
@@ -66,6 +68,7 @@ typedef struct StaffData {
 
 #define scrollY values[0]
 #define scrollPixels values[2]
+#define fireworksCycleFrames values[3]
 
 void ShowStaff(Player* player) {
 	ObjectData* objectTableBgDesignStaff[lengthof(ObjectTableBgDesignStaff)];
@@ -135,11 +138,10 @@ void ShowStaff(Player* player) {
 		staffEntity->update = UpdateEntityStaff;
 		ENTITY_DATA(staffEntity).player = player;
 		StaffFireworkFrames[player->num] = 15u;
-		// TODO: Name these values.
 		staffEntity->scrollY = 0;
 		staffEntity->values[1] = 0;
 		staffEntity->scrollPixels = VIDEO_HEIGHT;
-		staffEntity->values[3] = 1;
+		staffEntity->fireworksCycleFrames = 1;
 		ENTITY_INST_DATA_PTR(StaffData, data, staffEntity);
 		data->skip = false;
 		data->bottomPixelY = player->screenPos[1] + (player->matrixHeight - 1) * 8 - (player->matrixHeight - 1) * 8 - 6;
@@ -333,8 +335,8 @@ static void UpdateEntityStaff(Entity* entity) {
 	}
 }
 
-#undef scrollPixels
 #undef scrollY
+#undef scrollPixels
 
 #define frames values[0]
 #define scale values[0]
@@ -391,7 +393,103 @@ static void UpdateEntityGrandMasterCongratulations(Entity* entity) {
 	}
 }
 
-// TODO
+#undef scale
+
+static void ShowRetryForGrandMaster(Player* player) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntityRetryForGrandMaster;
+		entity->frames = 600;
+		entity->values[1] = 1;
+		ENTITY_DATA(entity).player = player;
+	}
+}
+
+static void UpdateEntityRetryForGrandMaster(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
+		player->nowFlags |= NOW_SHOWRANKINGCODE;
+	}
+	if (player->modeFlags & (MODE_20G | MODE_BIG | MODE_ITEM | MODE_TLS)) {
+		player->nowFlags |= ~NOW_SHOWRANKINGCODE;
+	}
+
+	DisplayObject(OBJECTPTR(0x2FB), 100, player->screenPos[0], 0u, 125u);
+	DisplayObject(OBJECT_RETRYFORGRANDMASTER, 140, player->screenPos[0], 0u, 125u);
+
+	if (CurrentPauseMode < PAUSEMODE_GAME && --entity->frames == 0) {
+		player->nowFlags &= ~NOW_NOUPDATE;
+		NextPlayGameOver(player);
+		FreeEntity(entity);
+	}
+}
+
+static void UpdateEntityNormalComplete(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	player->nowFlags |= NOW_NOUPDATE;
+
+
+	UpdateStaffFireworks(entity, player, 15u);
+
+	DisplayObject(OBJECTPTR(0x2F9), 120, player->screenPos[0], 0u, 125u);
+}
+
+static void UpdateEntityTgmPlusComplete(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	player->nowFlags |= NOW_NOUPDATE;
+
+	UpdateStaffFireworks(entity, player, 15u);
+
+	ShowText(player->screenPos[0] - TextWidth("EXCELLENT!") / 2, 120, "EXCELLENT!", 15u, false);
+}
+
+static void UpdateEntityDoublesComplete(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	player->nowFlags |= NOW_NOUPDATE;
+	player->otherPlayer->nowFlags |= NOW_NOUPDATE;
+
+	UpdateStaffFireworks(entity, player, 15u);
+
+	DisplayObject(OBJECTPTR(0x2FD), 120, player->screenPos[0], 0u, 125u);
+}
+
+static void UpdateStaffFireworks(Entity* entity, Player* player, uint16_t delay) {
+	if (GameButtonsNew[player->num] & ~BUTTON_START) {
+		entity->fireworksCycleFrames++;
+	}
+
+	if (StaffFireworkFrames[player->num]-- == 0 || entity->fireworksCycleFrames % 10 == 0) {
+		StaffFireworkFrames[player->num] = delay;
+		entity->fireworksCycleFrames = 1;
+		uint32_t seed = Rand(10u);
+		int16_t col = Rand(10u);
+		int16_t row = Rand(5u) + 13u;
+		ShowFireworks(player, row, col, seed);
+		PlaySoundEffect(SOUNDEFFECT_SHOTGUN);
+	}
+}
+
+static void UpdateEntityDeathComplete(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	DisplayObjectEx(OBJECT_RETRYFORGRANDMASTER, 100, player->screenPos[0], 179u, 125u, 0x3F, 0x3F, false);
+
+	UpdateStaffFireworks(entity, player, 15u);
+}
+
+static void UpdateEntityDeathIncomplete(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+
+	player->nowFlags |= NOW_NOUPDATE;
+
+	ShowText(player->screenPos[0] - TextWidth("EXCELLENT!") / 2, 120, "EXCELLENT!", 15u, false);
+
+	UpdateStaffFireworks(entity, player, 30u);
+}
 
 static const ObjectData* ObjectTableBgDesignStaff[13] = {
 	// TODO: Name these.

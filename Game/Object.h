@@ -10,7 +10,7 @@ typedef struct ObjectDataTable {
 
 // TODO: Define in PlatformSupport/DataTable.c
 extern ROMDATA ObjectDataTable Objects;
-#define OBJECTPTR(i) ((const ObjectData*)&Objects.data[(i)])
+#define OBJECTPTR(i) ((ROMDATA ObjectData*)&Objects.data[(i)])
 
 // TODO: Define all objects here.
 
@@ -102,4 +102,4 @@ extern ROMDATA ObjectDataTable Objects;
 #define MODECODE_HEIGHT 8
 
 // TODO: Last object.
-#define OBJECT_TRYAGAIN OBJECTPTR(0x6DB)
+#define OBJECT_RETRYFORGRANDMASTER OBJECTPTR(0x6DB)
