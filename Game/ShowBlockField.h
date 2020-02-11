@@ -4,7 +4,9 @@
 #include "Item.h"
 #include <stdbool.h>
 
-extern const uint16_t PalNumTableNormalBlocks[11];
+extern const uint16_t PalNumTableNormalBlocks[NUMBLOCKTYPES];
+extern const uint16_t PalNumTableItemBlocks[NUMITEMTYPES];
+extern const uint16_t PalTableItemFieldBorder[NUMITEMTYPES];
 
 void SetFieldBorderColor(Player* player, ItemType itemType);
 

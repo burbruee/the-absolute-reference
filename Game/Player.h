@@ -272,7 +272,7 @@ struct Player {
 	uint8_t numComboClears;
 	uint16_t numFieldSquares;
 	uint8_t normalItemIndex;
-	int8_t numLockFrames;
+	int8_t lockFrames;
 	int8_t lockDelay;
 	uint8_t numAutoshiftFrames;
 	uint32_t gameTime; // Complete time duration of a game; includes ready-go time, for example. Also, Save->gameTime is a total of this field from all games.
@@ -378,9 +378,8 @@ void InitPlayer(PlayerNum playerNum);
 // only present so BLOCKTYPE_* constants can be used as indices.
 typedef const uint8_t BlockDefSquare;
 extern BlockDefSquare BlockDefs[9 * 4 * 4 * 4];
-// TODO: Move some/all of these macros into Player.c?
 #define BLOCKDEF(type) (&BlockDefs[(type) * 4 * 4 * 4])
-#define BLOCKDEFROW(blockDef, rotation, row) (&(blockDef)[(rotation) * 4 + (row) * 4 * 4])
+#define BLOCKDEFROW(blockDef, rotation, row) (&((blockDef)[(rotation) * 4 + (row) * 4 * 4]))
 #define BLOCKDEFROWBIG(blockDef, rotation, row) (&(blockDef)[(rotation) * 4 + (row)])
 #define BLOCKDEFSQUARE(blockDefRow, col) ((blockDefRow)[(col)])
 #define BLOCKDEFSQUAREBIG(blockDefRow, col) ((blockDefRow)[(col) / 2])

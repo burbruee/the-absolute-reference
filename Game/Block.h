@@ -37,7 +37,8 @@ typedef enum BlockType {
 	BLOCKTYPE_L,
 	BLOCKTYPE_O,
 	BLOCKTYPE_T,
-	BLOCKTYPE_GARBAGE
+	BLOCKTYPE_GARBAGE,
+	NUMBLOCKTYPES
 } BlockType;
 
 #define TOBLOCKNUM(blockType) ((blockType) - 2u)

@@ -8,6 +8,7 @@
 #include "Ranking.h"
 #include "Item.h"
 #include "ShowBlockField.h"
+#include "ShowEffect.h"
 #include "ShowGameStatus.h"
 #include "ShowNewChallenger.h"
 #include "ShowStaff.h"
@@ -138,7 +139,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->nowFlags |= NOW_BIT15 | NOW_SHOWFIELD;
 
 	// Active block delays.
-	player->numLockFrames = 30;
+	player->lockFrames = 30;
 	player->lockDelay = 30;
 	player->numAutoshiftFrames = 0;
 
@@ -1097,13 +1098,13 @@ void NextPlayActiveBlock(Player* player) {
 		player->lockDelay = LockDelay[499u];
 	}
 
-	player->numLockFrames = player->lockDelay;
+	player->lockFrames = player->lockDelay;
 }
 
 void NextPlayLockBlock(Player* player) {
 	player->play.state = PLAYSTATE_LOCKBLOCK;
 
-	player->numLockFrames = 0u;
+	player->lockFrames = 0u;
 	ManualLockUnprotected[player->num] = false;
 	player->nowFlags &= NOW_SHOWTLSBLOCK;
 	player->nowFlags |= NOW_LOCKING;
@@ -1518,7 +1519,7 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 	Fixed32 landingRow = StepGravity(player, gravityStep);
 	if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
 		if (F32I(landingRow) < F32I(player->activePos[1]) ) {
-			player->numLockFrames = player->lockDelay;
+			player->lockFrames = player->lockDelay;
 		}
 		F32I(player->activePos[1]) = landingRow;
 	}
@@ -1526,35 +1527,35 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 	BlockEntryData* blockEntry = Temp;
 	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]) - 1, player->activeRotation)) {
 		if (!(player->modeFlags & MODE_DOUBLES) || blockEntry->numMatrixBlockings != 0) {
-			if (player->numLockFrames == player->lockDelay) {
+			if (player->lockFrames == player->lockDelay) {
 				PlaySoundEffect(SOUNDEFFECT_LAND);
 			}
 
-			if (player->numLockFrames != 0) {
-				player->numLockFrames--;
+			if (player->lockFrames != 0) {
+				player->lockFrames--;
 			}
 
 			if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_DOWN) {
 				if (player->modeFlags & MODE_TADEATH) {
 					if (player->level >= 0u) {
 						if (ManualLockUnprotected[player->num]) {
-							player->numLockFrames = 0;
+							player->lockFrames = 0;
 						}
 					}
 					else {
-						player->numLockFrames = 0;
+						player->lockFrames = 0;
 					}
 				}
 				else if (player->level >= 900u) {
 					if (ManualLockUnprotected[player->num]) {
-						player->numLockFrames = 0;
+						player->lockFrames = 0;
 					}
 				}
 			}
 		}
 	}
 
-	if (player->numLockFrames <= 0 && (GameFlags & GAME_DOUBLES)) {
+	if (player->lockFrames <= 0 && (GameFlags & GAME_DOUBLES)) {
 		player->otherPlayer->nowFlags |= NOW_NOUPDATE;
 	}
 }
@@ -1595,6 +1596,7 @@ Fixed32 StepGravity(Player* player, Fixed32 gravity) {
 void UpdatePlayActiveBlock(Player* player) {
 	if (player->play.flags & PLAYFLAG_FORCEENTRY) {
 		ThrowOutActiveBlock(player);
+		NextPlayBlockEntry(player, false);
 		return;
 	}
 
@@ -1750,7 +1752,7 @@ static inline void WriteBlockToMatrix(Player* player, const LockType lockType, c
 
 void LockActiveBlock(Player* player, LockType lockType) {
 	if (player->play.flags & PLAYFLAG_FORCEENTRY) {
-		NextPlayEntry(player, false);
+		NextPlayBlockEntry(player, false);
 		return;
 	}
 
