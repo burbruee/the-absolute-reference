@@ -2694,7 +2694,7 @@ void UpdatePlayBlockEntry(Player* player) {
 
 void UpdatePlayGameOver(Player* player) {
 	if ((GameFlags & GAME_TWIN) && (player->nowFlags & NOW_SHOWRANKINGCODE)) {
-		ShowRankingCode(player);
+		ShowRankingCode(player); // TODO
 		return;
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->values[3] >= 5) {
@@ -2730,7 +2730,7 @@ void UpdatePlayGameOver(Player* player) {
 			player->values[0] = 10;
 		}
 		if ((GameFlags & GAME_DOUBLES) && player->values[0] == 10) {
-			_0x6029546(2u, 10, 0, 7);
+			_0x6029546(2u, 10, 0, 7); // TODO
 		}
 
 		player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
@@ -2938,6 +2938,7 @@ void UpdatePlayVersusOver(Player* player) {
 		else if (GameFlags & GAME_BIT18) {
 			DisplayObject(_0xAAEBC, 140, player->screenPos[0] - 35, 0u, 110u);
 			DisplayObject(_0xAAEC8, 153, player->screenPos[0] - 8, 0u, 110u);
+			// TODO
 			ShowStatusNumberEx(player->level, 150, player->screenPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 			ShowStatusNumberEx(player->otherPlayer->level, 150, player->screenPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 		}
