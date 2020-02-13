@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void ShowNextBlockLabel(Player* player, int16_t x);
+void ShowNextLabel(Player* player, int16_t x);
 void ShowScoreLabel(Player* player);
 void ShowLevelLabel(Player* player, int16_t y, int16_t x);
 

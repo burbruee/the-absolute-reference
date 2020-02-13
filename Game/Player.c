@@ -1243,7 +1243,7 @@ void NextPlayGameOver(Player* player) {
 		player->masteringTime = player->clearTime;
 	}
 
-	SetMatrixVisible(player);
+	SetFieldVisible(player);
 
 	player->refusingChallenges = false;
 }
@@ -1278,7 +1278,7 @@ void NextPlayStaffTransition(Player* player) {
 	ItemDescriptions[player->num] = ITEMTYPE_NULL;
 }
 
-void UpdateActiveBlockAutoshift(Player* player) {
+void UpdateAutoshift(Player* player) {
 	if (GameButtonsDown[player->num] & (BUTTON_LEFT | BUTTON_RIGHT)) {
 		player->numAutoshiftFrames++;
 	}
@@ -1700,7 +1700,7 @@ void UpdatePlayActiveBlock(Player* player) {
 	}
 	else if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_UP) {
 		gravity = F32(20, 0x0000);
-		int16_t droppedRows = F32I(player->activePos[1]) - F32I(StepGravity(player, gravity));
+		int16_t droppedRows = F32I(player->activePos[1]) - F32IRVALUE(StepGravity(player, gravity));
 		if (droppedRows < 0) {
 			droppedRows = 0;
 		}
@@ -1835,7 +1835,7 @@ bool Line(Player* player, int16_t row) {
 	return true;
 }
 
-uint32_t StartClear(Player* player, LineFlag lineFlags) {
+LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		if ((1 << row) & lineFlags) {
 			ShowClear(player, row);
@@ -2505,7 +2505,7 @@ void UpdatePlayBlockedEntry(Player* player) {
 }
 
 void UpdatePlayGarbageEntry(Player* player) {
-	UpdateActiveBlockAutoshift(player);
+	UpdateAutoshift(player);
 
 	switch (player->subStates[SUBSTATE_GARBAGE]) {
 	case GARBAGE_ENTRY:
@@ -2660,7 +2660,7 @@ void UpdateTgmPlusGarbage(Player* player) {
 
 void UpdatePlayBlockEntry(Player* player) {
 	if (--player->values[0] != 0) {
-		UpdateActiveBlockAutoshift(player);
+		UpdateAutoshift(player);
 		if (player->modeFlags & MODE_TGMPLUS) {
 			UpdateTgmPlusGarbage(player);
 		}
@@ -2938,9 +2938,8 @@ void UpdatePlayVersusOver(Player* player) {
 		else if (GameFlags & GAME_BIT18) {
 			DisplayObject(_0xAAEBC, 140, player->screenPos[0] - 35, 0u, 110u);
 			DisplayObject(_0xAAEC8, 153, player->screenPos[0] - 8, 0u, 110u);
-			// TODO
-			ShowStatusNumberEx(player->level, 150, player->screenPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
-			ShowStatusNumberEx(player->otherPlayer->level, 150, player->screenPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+			ShowStatusNumEx(player->level, 150, player->screenPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+			ShowStatusNumEx(player->otherPlayer->level, 150, player->screenPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 		}
 	}
 	else {
@@ -3062,7 +3061,7 @@ void UpdatePlayStart(Player* player) {
 	}
 
 skipReadyGo:
-	UpdateActiveBlockAutoshift(player);
+	UpdateAutoshift(player);
 
 	if ((GameFlags & GAME_VERSUS) && player->values[READYGO_ROTATENEXTBLOCK] < 70 && ROTATED_ANY(GameButtonsDown[player->num])) {
 		Rotation newRotation;
@@ -3086,7 +3085,7 @@ void UpdatePlayGarbageCheck(Player* player) {
 		}
 	}
 
-	UpdateActiveBlockAutoshift(player);
+	UpdateAutoshift(player);
 }
 
 static const uint8_t InitItemSeed[NUMITEMTYPES] = { 50u, 1u, 250u, 250u, 100u, 50u, 3u, 150u, 100u, 5u, 50u, 250u, 150u, 250u, 3u, 150u, 3u, 150u, 5u };
@@ -3201,7 +3200,7 @@ uint8_t NumSecretGradeRows(Player* player) {
 	return numSecretGradeRows;
 }
 
-void SetMatrixVisible(Player* player) {
+void SetFieldVisible(Player* player) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		Square* square = &MATRIX(player, row, 1);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++, square++) {

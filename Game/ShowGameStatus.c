@@ -10,7 +10,7 @@
 #include "ShowObject.h"
 #include "HwSprite.h"
 
-void ShowNextBlockLabel(Player* player, int16_t x) {
+void ShowNextLabel(Player* player, int16_t x) {
 	if (player->modeFlags & MODE_ITEM) {
 		player->nextScale += player->nextScaleV;
 		if (player->nextScale < F16(0, 0x00)) {
@@ -107,8 +107,8 @@ static const ObjectData* ObjectTableGravityBars[21] = {
 };
 
 void ShowLevel(Player* player, int16_t nextSectionLevel, int16_t y, int16_t x, uint8_t palNum) {
-	ShowStatusNumberEx(player->level, y, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
-	ShowStatusNumberEx(nextSectionLevel, y + 15, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
+	ShowStatusNumEx(player->level, y, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
+	ShowStatusNumEx(nextSectionLevel, y + 15, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
 
 	size_t gravityBarWidth = player->gravity >> 15;
 	if (gravityBarWidth > 20u) {
@@ -255,17 +255,18 @@ void ShowItemDescription(Player* player) {
 }
 
 void ShowOtherItemDescriptions(Item* item) {
-	uint8_t numPlayerCatItems[NUMPLAYERS] = { 0u, 0u };
+	uint8_t numPlayerItems[NUMPLAYERS] = { 0u, 0u };
 	ItemCategory itemCats[NUMPLAYERS] = { ITEMCAT_NONE, ITEMCAT_NONE };
 	// 0: Player 1 good + player 2 bad
 	// 1: Player 1 bad + player 2 good
 	// 2: Player 1 neutral
 	// 3: Player 2 neutral
-	uint8_t itemCatTotals[4];
-	itemCatTotals[0] = 0u;
+	// NOTE: The original code only initializes index 0; standard compilers
+	// will zero initialize the whole array, though, fixing a bug below.
+	uint8_t itemCatTotals[4] = {0};
 	ItemCategory itemCat = GetItemCategory(item->type);
 	if (itemCat != ITEMCAT_NONE) {
-		numPlayerCatItems[item->activatingPlayer->num]++;
+		numPlayerItems[item->activatingPlayer->num]++;
 		itemCats[item->activatingPlayer->num] = itemCat;
 		item = item->next;
 		for (int16_t itemNum = 0; itemNum < NUMITEMTYPES - 1; itemNum++) {
@@ -288,22 +289,19 @@ void ShowOtherItemDescriptions(Item* item) {
 				// BAD: 0
 				// NEUTRAL: 3
 				int16_t totalSelect = (itemCat - 1) ^ player->num;
-				numPlayerCatItems[player->num]++;
+				numPlayerItems[player->num]++;
 				itemCats[player->num] = itemCat;
-				if (numPlayerCatItems[PLAYER1] == 1u && numPlayerCatItems[PLAYER2] == 1u) {
-					if (itemCats[PLAYER1] == itemCats[PLAYER2]) {
-						continue;
-					}
+				if (numPlayerItems[PLAYER1] == 1u && numPlayerItems[PLAYER2] == 1u && itemCats[PLAYER1] == itemCats[PLAYER2]) {
+					continue;
 				}
 
-				if (numPlayerCatItems[player->num] == 1u) {
-					if (player->activeItemType == curItem->type) {
-						continue;
-					}
+				if (numPlayerItems[player->num] == 1u && player->activeItemType == curItem->type) {
+					continue;
 				}
 
-				// BUG: This might increment uninitialized indices of this
-				// array; they're never read, though, so the bug is harmless.
+				// BUG: In the original code, indices 1 and up aren't
+				// initialized. But the values are never used, so the bug has
+				// no effect on behavior.
 				itemCatTotals[totalSelect]++;
 
 				// Good & player 1: 1
@@ -674,7 +672,7 @@ void ShowPlayersStatus() {
 		uint8_t* progressPalNum = &statusPalNums[STATUS_PROGRESS];
 		levelY += 13;
 
-		ShowNextBlockLabel(Players, 92);
+		ShowNextLabel(Players, 92);
 		ShowGameTime(Players->clearTime, 104, GAMEPALNUM_SMALLTEXT);
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++, player++) {
 			SelectPlayerStatusColor(player, statusPalNums);
@@ -691,7 +689,7 @@ void ShowPlayersStatus() {
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++, player++) {
 			SelectPlayerStatusColor(player, statusPalNums);
 
-			ShowNextBlockLabel(player, playerNum == PLAYER1 ? 12 : 172);
+			ShowNextLabel(player, playerNum == PLAYER1 ? 12 : 172);
 			ShowScoreLabel(player);
 			ShowLevelLabel(player, levelY, playerNum == PLAYER1 ? 108 : 268);
 
@@ -725,7 +723,7 @@ void ShowPlayersStatus() {
 		uint8_t* progressPalNum = &statusPalNums[STATUS_PROGRESS];
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++, player++) {
 			SelectPlayerStatusColor(player, statusPalNums);
-			ShowNextBlockLabel(player, playerNum == PLAYER1 ? 16 : 212);
+			ShowNextLabel(player, playerNum == PLAYER1 ? 16 : 212);
 			if (!(player->modeFlags & (MODE_CEMENT | MODE_NOITEM))) {
 				ShowItemProgress(player);
 			}
