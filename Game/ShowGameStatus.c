@@ -173,7 +173,7 @@ void ShowGrade(Player* player, uint8_t palNum) {
 	}
 }
 
-void ShowItemProgress(Player* player) {
+void ShowItemBar(Player* player) {
 	uint8_t palNum = 13u;
 	int16_t x = player->num == PLAYER1 ? 111 : 197;
 
@@ -725,7 +725,7 @@ void ShowPlayersStatus() {
 			SelectPlayerStatusColor(player, statusPalNums);
 			ShowNextLabel(player, playerNum == PLAYER1 ? 16 : 212);
 			if (!(player->modeFlags & (MODE_CEMENT | MODE_NOITEM))) {
-				ShowItemProgress(player);
+				ShowItemBar(player);
 			}
 			ShowVersusRounds(player);
 			ShowLevelLabel(player, 167, playerNum == PLAYER1 ? 111 : 178);

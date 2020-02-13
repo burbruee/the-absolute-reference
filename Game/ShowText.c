@@ -46,7 +46,7 @@ static const ObjectData* ObjectTableChars[0x80] = {
 
 int16_t TextWidth(const char* text) {
 	int16_t textWidth = 0;
-	for (const char* c = text; c != '\0'; c++) {
+	for (const char* c = text; *c != '\0'; c++) {
 		textWidth += CharWidths[*c];
 	}
 	return textWidth;

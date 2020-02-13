@@ -6,7 +6,7 @@
 #include "Macros.h"
 #include <stdbool.h>
 
-static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint8_t layer, uint8_t scaleY, uint8_t scaleX, uint8_t etc) {
+static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, uint8_t etc) {
 	SPRITE_SETY(TempSprite, y + SPRITE_GETY(*object));
 	SPRITE_SETX(TempSprite, x + SPRITE_GETX(*object));
 

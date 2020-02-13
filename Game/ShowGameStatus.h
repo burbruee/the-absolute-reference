@@ -19,7 +19,7 @@ void ShowGameTime(uint32_t time, int16_t x, uint8_t palNum);
 extern const ObjectData* ObjectTableGrades[NUMPLAYERGRADES];
 void ShowGrade(Player* player, uint8_t palNum);
 
-void ShowItemProgress(Player* player);
+void ShowItemBar(Player* player);
 void ShowVersusRounds(Player* player);
 void ShowVersusWins(bool versus);
 void ShowItemDescription(Player* player);
