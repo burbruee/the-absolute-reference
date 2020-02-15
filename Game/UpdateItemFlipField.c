@@ -20,7 +20,7 @@ typedef struct FlipFieldData {
 	int16_t topRow;
 	int16_t topFlipRow;
 	int16_t flipDelay;
-	Square matrix[NUMSQUARES_SINGLE];
+	MatrixBlock matrix[NUMMATRIXBLOCKS_SINGLE];
 } FlipFieldData;
 
 // STATE_*

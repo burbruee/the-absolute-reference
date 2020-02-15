@@ -42,7 +42,7 @@ typedef struct BasicEntityInstanceData {
 typedef struct Entity Entity;
 struct Entity {
 	bool allocated;
-	uint8_t states[3];
+	uint8_t states[4];
 	int16_t values[4];
 	void (*update)(Entity* entity);
 	DATA(data, 0x100);

@@ -11,6 +11,7 @@ static inline void InitEntity(Entity* entity) {
 	entity->values[1] = 0;
 	entity->values[0] = 0;
 
+	entity->states[3] = 0u;
 	entity->states[2] = 0u;
 	entity->states[1] = 0u;
 	entity->states[0] = 0u;

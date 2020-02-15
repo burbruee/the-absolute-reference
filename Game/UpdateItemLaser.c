@@ -1,6 +1,6 @@
 #include "UpdateItemLaser.h"
 #include "Player.h"
-#include "Field.h"
+#include "Matrix.h"
 #include "ShowLaser.h"
 #include "ShowBlockField.h"
 #include "ShowEffect.h"
@@ -198,9 +198,9 @@ void UpdateItemLaser(Item* item) {
 				item->delRow -= 2;
 				for (int16_t i = 0; i < data->laserWidth; i++) {
 					for (int16_t numDelRows = 0, row = item->delRow; numDelRows < 2; row--, numDelRows++) {
-						Square* square = &MATRIX(itemPlayer, row, data->laserColumns[i]);
+						MatrixBlock* square = &MATRIX(itemPlayer, row, data->laserColumns[i]);
 						if (square->block != NULLBLOCK && row > 0 && row < MATRIX_SINGLEWIDTH - 1) {
-							ShowSquareExplosion(itemPlayer, row, data->laserColumns[i]);
+							ShowFieldBlockExplosion(itemPlayer, row, data->laserColumns[i]);
 							square->block = NULLBLOCK;
 							square->itemType = ITEMTYPE_NULL;
 							PlaySoundEffect(SOUNDEFFECT_19);

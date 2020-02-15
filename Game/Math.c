@@ -1,7 +1,5 @@
 #include "Math.h"
 #include "Frame.h"
-#include "Loop.h"
-#include "Types.h"
 
 // TrigTable is indexed with an angle, but the table requires that each quadrant
 // be mapped into the range 0 to 64.

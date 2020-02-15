@@ -53,21 +53,27 @@ typedef struct RankingData {
 typedef struct NameEntryData {
 	Player *player;
 
-	uint8_t numWaitFrames;
-	uint16_t numTimeoutFrames;
+	uint8_t waitFrames;
+	uint16_t timeoutFrames;
 
 	int8_t numChars;
 	int8_t charIndex;
-	int8_t numAutoshiftFrames;
+	int8_t autoshiftFrames;
 
 	char name[5];
 } NameEntryData;
+
+typedef enum NewRankingState {
+	NEWRANKING_INIT,
+	NEWRANKING_NAMEENTRY,
+	NEWRANKING_END
+} NewRankingState;
 
 typedef struct NewRankingData {
 	Player *player;
 
 	NewRankingState state;
-	int16_t numFlashFrames;
+	int16_t flashFrames;
 
 	RankingFlag flags;
 	RankingPlace place;
@@ -75,7 +81,7 @@ typedef struct NewRankingData {
 
 	NameEntryData nameEntries[NUMPLAYERS];
 
-	uint16_t numLabelScaleFrames;
+	uint16_t labelScaleFrames;
 	SpriteScale labelScaleX;
 } NewRankingData;
 

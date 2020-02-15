@@ -23,7 +23,7 @@ typedef struct MirrorBlockData {
 	int16_t topRow;
 	int16_t unused;
 	int16_t numBlocks;
-	Square matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
+	MatrixBlock matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
 } MirrorBlockData;
 
 // STATE_*

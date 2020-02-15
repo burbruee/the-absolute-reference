@@ -30,35 +30,36 @@ static const ObjectData* ObjectTablesSquareExplosions[NUMSQUAREEXPLOSIONTYPES] =
 	&OBJECTTABLES_SQUAREEXPLOSIONS[7 * NUMSQUAREEXPLOSIONS]
 };
 
-static void UpdateEntitySquareExplosion(Entity* entity);
-#define SQUAREEXPLOSION_FRAME 0
-void ShowSquareExplosion(Player* player, int16_t row, int16_t col) {
+static void UpdateEntityFieldBlockExplosion(Entity* entity);
+
+#define frames values[0]
+
+void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if (entity = AllocEntity()) {
-		entity->update = UpdateEntitySquareExplosion;
+		entity->update = UpdateEntityFieldBlockExplosion;
+		entity->frames = 0;
 
-		ENTITY_INST_DATA_PTR(SquareExplosionData, instanceData, entity);
-		ENTITY_DATA_PTR(data, entity);
+		ENTITY_DATA(entity).player = player;
 
-		data->player = player;
-
-		entity->values[SQUAREEXPLOSION_FRAME] = 0;
-
-		instanceData->x = player->screenPos[0] + 8 * col - 8 * ((player->matrixWidth + (player->matrixWidth < 0)) / 2);
-		instanceData->y = player->screenPos[1] - 8 * row - 6;
-		instanceData->objectTable = ObjectTablesSquareExplosions[Rand(8u) % 8];
-		instanceData->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+		ENTITY_INST_DATA_PTR(SquareExplosionData, data, entity);
+		data->x = player->screenPos[0] + 8 * col - 8 * ((player->matrixWidth + (player->matrixWidth < 0)) / 2);
+		data->y = player->screenPos[1] - 8 * row - 6;
+		data->objectTable = ObjectTablesSquareExplosions[Rand(8u) % 8];
+		data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
 	}
 }
 
-static void UpdateEntitySquareExplosion(Entity* entity) {
+static void UpdateEntityFieldBlockExplosion(Entity* entity) {
 	ENTITY_INST_DATA_PTR(SquareExplosionData, data, entity);
-	DisplayObject(&data->objectTable[entity->values[SQUAREEXPLOSION_FRAME]], data->y, data->x, data->palNum + 9u, 115u);
+	DisplayObject(&data->objectTable[entity->frames], data->y, data->x, data->palNum + 9u, 115u);
 
-	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->values[SQUAREEXPLOSION_FRAME] < 32) {
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames] < 32) {
 		FreeEntity(entity);
 	}
 }
+
+#undef frames
 
 void ShowFireworks(Player* player, int16_t row, int16_t col, uint32_t seed) {
 		// TODO

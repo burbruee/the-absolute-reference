@@ -1,7 +1,7 @@
 #include "UpdateItemShotgun.h"
 #include "Player.h"
 #include "Block.h"
-#include "Field.h"
+#include "Matrix.h"
 #include "ShowBlockField.h"
 #include "ShowEffect.h"
 #include "Sound.h"
@@ -126,7 +126,7 @@ void UpdateItemShotgun(Item* item) {
 				itemPlayer->screenOffset[1] = (item->frames & 2) == 0 ? 3 : -3;
 				if (data->shotColumns[item->frames] != 0) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-						ShowSquareExplosion(itemPlayer, row, data->shotColumns[row]);
+						ShowFieldBlockExplosion(itemPlayer, row, data->shotColumns[row]);
 					}
 					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).block = NULLBLOCK;
 					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).itemType = ITEMTYPE_NULL;

@@ -3,13 +3,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// - My interpretation of Arika's meaning of "block", along with some explanation of "square" -
-// Tetrominoes are blocks.
-// But the Block type is also used for matrix squares.
-// So "block" doesn't necessarily indicate tetrominoes, but usually does when seen in identifiers.
-// Though both tetrominoes and matrices are composed of squares.
-// So matrices can be thought to be composed of blocks or squares.
-// And "blocked" or "blocking" are used to describe blocks being obstructed, with "block(s)" never used for that meaning.
+// - My interpretation of Arika's meaning of "block" -
+// Tetrominoes are blocks. But individual squares that compose a tetromino or a
+// matrix/field are also blocks. So "block" is a bit ambiguous, and its exact
+// meaning is context sensitive. But "matrix block" always means a block of a
+// matrix or field.
 
 #define NULLBLOCK 0x0000
 typedef enum Block {

@@ -65,7 +65,7 @@ typedef struct BlockEntryData {
 
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
 
-static Square MatrixSquares[NUMSQUARES_SHARED];
+static MatrixBlock MatrixSquares[NUMMATRIXBLOCKS_SHARED];
 void InitPlayers() {
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Players[playerNum].num = playerNum;
@@ -264,7 +264,7 @@ void InitPlayer(PlayerNum playerNum) {
 		player->matrixWidth = MATRIX_DOUBLESWIDTH;
 	}
 	else {
-		player->matrix = &MatrixSquares[playerNum * NUMSQUARES_SINGLE];
+		player->matrix = &MatrixSquares[playerNum * NUMMATRIXBLOCKS_SINGLE];
 		player->fieldHeight = FIELD_HEIGHT;
 		player->fieldWidth = FIELD_SINGLEWIDTH;
 		player->matrixHeight = MATRIX_HEIGHT;
@@ -1308,7 +1308,7 @@ static inline void CountBlockings(const Player* player, const int16_t col, const
 	for (int16_t blockRow = 0; blockRow < size; blockRow++) {
 		int16_t matrixRow = row - blockRow;
 		if (matrixRow < player->matrixHeight) {
-			Square* matrixSquare = &MATRIX(player, matrixRow, col);
+			MatrixBlock* matrixSquare = &MATRIX(player, matrixRow, col);
 			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, blockRow);
 			for (int16_t blockCol = 0; blockCol < size; blockCol++, matrixSquare++) { 
 				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != BLOCKDEFSQUARE_EMPTY && (matrixSquare->block & ~BLOCK_INVISIBLE)) {
@@ -1839,7 +1839,7 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		if ((1 << row) & lineFlags) {
 			ShowClear(player, row);
-			Square* square = &MATRIX(player, row, 1);
+			MatrixBlock* square = &MATRIX(player, row, 1);
 			for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 				if (square->block & BLOCK_HARD) {
 					lineFlags |= LINEFLAG_HARDCLEAR;
@@ -3202,7 +3202,7 @@ uint8_t NumSecretGradeRows(Player* player) {
 
 void SetFieldVisible(Player* player) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
-		Square* square = &MATRIX(player, row, 1);
+		MatrixBlock* square = &MATRIX(player, row, 1);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++, square++) {
 			square->block &= ~(BLOCK_FLASH | BLOCK_FADING | BLOCK_INVISIBLE);
 		}
@@ -3257,7 +3257,7 @@ void UpdatePlayStaffTransition(Player* player) {
 
 void CheckDisableItemDescription(Player* player) {
 	for (int16_t row = 1; row < player->matrixHeight; row++) {
-		Square* square = &MATRIX(player, row, 1);
+		MatrixBlock* square = &MATRIX(player, row, 1);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++, square++) {
 			if ((square->block & BLOCK_ITEM) && square->itemType == ItemDescriptions[player->num]) {
 				return;

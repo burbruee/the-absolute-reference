@@ -1,6 +1,6 @@
 #include "UpdateItemNegaField.h"
 #include "Player.h"
-#include "Field.h"
+#include "Matrix.h"
 #include "ShowBlockField.h"
 #include "ShowItemWarningNegaField.h"
 #include "Sound.h"
@@ -61,7 +61,7 @@ void UpdateItemNegaField(Item* item) {
 		case STATE_INIT:
 			// Erase top row.
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-				Square* square = &MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col);
+				MatrixBlock* square = &MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col);
 				square->block = NULLBLOCK;
 				square->itemType = ITEMTYPE_NULL;
 			}
@@ -90,7 +90,7 @@ void UpdateItemNegaField(Item* item) {
 			if (item->negaRowFrames % 4 == 0) {
 				PlaySoundEffect(SOUNDEFFECT_SELECT);
 				for(int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					Square* square = &MATRIX(itemPlayer, data->topNegaRow, col);
+					MatrixBlock* square = &MATRIX(itemPlayer, data->topNegaRow, col);
 					if (!(square->block & BLOCK_ITEM)) {
 						if (square->block & BLOCK_TYPE != BLOCKTYPE_EMPTY) {
 							square->block = NULLBLOCK;

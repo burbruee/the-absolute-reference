@@ -2,7 +2,7 @@
 
 #include "Player.h"
 #include "Block.h"
-#include "Field.h"
+#include "Matrix.h"
 #include "Medal.h"
 #include "Item.h"
 #include "RankingCode.h"
@@ -234,7 +234,7 @@ typedef enum Rotation {
 // Look at init functions for ordering and grouping.
 typedef struct Player Player;
 struct Player {
-	Square *matrix;
+	MatrixBlock *matrix;
 	Block garbage[MATRIX_SINGLEWIDTH * GARBAGEHEIGHT];
 	uint8_t fieldHeight;
 	uint8_t fieldWidth;
@@ -245,7 +245,7 @@ struct Player {
 	Player *otherPlayer;
 	Player *itemPlayer;
 	uint8_t subStates[4];
-	uint8_t values[4];
+	int16_t values[4];
 	NowFlag nowFlags;
 	ModeFlag modeFlags;
 	PlayerNum num;

@@ -433,11 +433,11 @@ static void AddNewRanking(NewRankingData* newRanking) {
 static void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 	nameEntry->player = player;
 
-	nameEntry->numTimeoutFrames = TIME(0, 30, 0);
+	nameEntry->timeoutFrames = TIME(0, 30, 0);
 
 	nameEntry->numChars = 0u;
 	nameEntry->charIndex = 0u;
-	nameEntry->numAutoshiftFrames = 12u;
+	nameEntry->autoshiftFrames = 12u;
 
 	nameEntry->name[3] = *NameEntryChars[39];
 	nameEntry->name[2] = *NameEntryChars[39];
@@ -450,8 +450,8 @@ static void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 static bool UpdateNameEntry(NameEntryData* nameEntry) {
 	bool done = false;
 
-	if (nameEntry->numWaitFrames != 0u) {
-		nameEntry->numWaitFrames--;
+	if (nameEntry->waitFrames != 0u) {
+		nameEntry->waitFrames--;
 	}
 
 	ButtonInput buttonsDown = GameButtonsDown[nameEntry->player->num];
@@ -466,7 +466,7 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 			if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
 				nameEntry->charIndex = 41;
 			}
-			nameEntry->numAutoshiftFrames = 12;
+			nameEntry->autoshiftFrames = 12;
 		}
 
 		if (buttonsNew & BUTTON_LEFT) {
@@ -476,11 +476,11 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 			if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
 				nameEntry->charIndex = 39;
 			}
-			nameEntry->numAutoshiftFrames = 12;
+			nameEntry->autoshiftFrames = 12;
 		}
 
 		if (buttonsDown & (BUTTON_LEFT | BUTTON_RIGHT)) {
-			if (nameEntry->numAutoshiftFrames-- == 0) {
+			if (nameEntry->autoshiftFrames-- == 0) {
 				if (buttonsDown & BUTTON_RIGHT) {
 					nameEntry->charIndex++;
 					nameEntry->charIndex %= 42;
@@ -497,10 +497,10 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 					}
 				}
 			}
-			nameEntry->numAutoshiftFrames = 12;
+			nameEntry->autoshiftFrames = 12;
 		}
 
-		if ((buttonsNew & BUTTON_1) && nameEntry->numWaitFrames == 0) {
+		if ((buttonsNew & BUTTON_1) && nameEntry->waitFrames == 0) {
 			PlaySoundEffect(SOUNDEFFECT_SELECT);
 			if (nameEntry->charIndex == 40) {
 				if (nameEntry->numChars != 0) {
@@ -560,7 +560,7 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 		return true;
 	}
 
-	if (--nameEntry->numTimeoutFrames == 0) {
+	if (--nameEntry->timeoutFrames == 0) {
 		nameEntry->charIndex = 39;
 	}
 
@@ -576,12 +576,6 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 	}
 	return done;
 }
-
-typedef enum NewRankingState {
-	NEWRANKING_INIT,
-	NEWRANKING_NAMEENTRY,
-	NEWRANKING_END
-} NewRankingState;
 
 bool UpdatePlayRanking(Player* player) {
 	NewRankingData* newRanking = &NewRankings[player->num];
@@ -608,7 +602,7 @@ bool UpdatePlayRanking(Player* player) {
 			switch (newRanking->state) {
 				case NEWRANKING_INIT:
 					newRanking->state++;
-					newRanking->numLabelScaleFrames = 18u;
+					newRanking->labelScaleFrames = 18u;
 					player->nowFlags |= NOW_NAMEENTRY;
 					if (newRanking->player->modeFlags & MODE_DOUBLES) {
 						InitNameEntry(&newRanking->nameEntries[PLAYER1], &Players[PLAYER1]);
@@ -618,22 +612,22 @@ bool UpdatePlayRanking(Player* player) {
 						InitNameEntry(newRanking->nameEntries, newRanking->player);
 					}
 				case NEWRANKING_NAMEENTRY:
-					if (newRanking->numLabelScaleFrames != 0u) {
-						newRanking->numLabelScaleFrames--;
+					if (newRanking->labelScaleFrames != 0u) {
+						newRanking->labelScaleFrames--;
 					}
 
 					if (newRanking->player->modeFlags & MODE_DOUBLES) {
-						if (newRanking->numLabelScaleFrames == 0u && UpdateNameEntry(&newRanking->nameEntries[PLAYER1]) && UpdateNameEntry(&newRanking->nameEntries[PLAYER2])) {
+						if (newRanking->labelScaleFrames == 0u && UpdateNameEntry(&newRanking->nameEntries[PLAYER1]) && UpdateNameEntry(&newRanking->nameEntries[PLAYER2])) {
 							newRanking->state++;
-							newRanking->numFlashFrames = 192;
+							newRanking->flashFrames = 192;
 							AddNewRanking(newRanking);
 						}
 						ShowRankingDoubles(newRanking, ENTRYFLASH_FALSE);
 					}
 					else {
-						if (newRanking->numLabelScaleFrames == 0u && UpdateNameEntry(newRanking->nameEntries)) {
+						if (newRanking->labelScaleFrames == 0u && UpdateNameEntry(newRanking->nameEntries)) {
 							newRanking->state++;
-							newRanking->numFlashFrames = 192;
+							newRanking->flashFrames = 192;
 							AddNewRanking(newRanking);
 						}
 						ShowRanking(newRanking, ENTRYFLASH_FALSE);
@@ -648,7 +642,7 @@ bool UpdatePlayRanking(Player* player) {
 						ShowRanking(newRanking, ENTRYFLASH_TRUE);
 					}
 
-					if (--newRanking->numFlashFrames < 0) {
+					if (--newRanking->flashFrames < 0) {
 						player->nowFlags &= ~NOW_NAMEENTRY;
 						NextPlay(player, (PlayData){.flags = PLAYFLAG_NONE, .state = PLAYSTATE_GAMEOVER});
 						if (player->nowFlags & NOW_SHOWRANKINGCODE) {
@@ -690,7 +684,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 			DisplayObjectEx(_0xA788C, 128, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 		}
 		DisplayObjectEx(ObjectNameEntryLabel, 171, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-		if (newRanking->numLabelScaleFrames == 0u) {
+		if (newRanking->labelScaleFrames == 0u) {
 			int16_t rankingPlaceX = rankingX + 38;
 			DisplayObject(ObjectTableRankingPlaces[newRanking->place], 62, rankingPlaceX, 0u, 110u);
 			DisplayObject(ObjectTableRankingPlaces[newRanking->todaysBestPlace], 105, rankingPlaceX, 0u, 110u);
@@ -715,7 +709,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash) {
 	int16_t labelX = newRanking->player->num * 160;
 	DisplayObjectEx(ObjectNameEntryLabel, 105, labelX + 20, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	if (newRanking->numLabelScaleFrames != 0u) {
+	if (newRanking->labelScaleFrames != 0u) {
 		return;
 	}
 
@@ -737,7 +731,7 @@ static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash
 	DisplayObjectEx(ObjectDoubles1PRankingLabel, 107 + 65, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 	DisplayObjectEx(ObjectDoubles2PRankingLabel, 107 + 83, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 
-	if (newRanking->numLabelScaleFrames != 0u) {
+	if (newRanking->labelScaleFrames != 0u) {
 		return;
 	}
 
