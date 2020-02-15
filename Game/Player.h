@@ -270,11 +270,11 @@ struct Player {
 	uint8_t numRecoveries;
 	MedalColor nextRotateMedal;
 	uint8_t numComboClears;
-	uint16_t numFieldSquares;
+	uint16_t numFieldBlocks;
 	uint8_t normalItemIndex;
 	int8_t lockFrames;
 	int8_t lockDelay;
-	uint8_t numAutoshiftFrames;
+	uint8_t autoshiftFrames;
 	uint32_t gameTime; // Complete time duration of a game; includes ready-go time, for example. Also, Save->gameTime is a total of this field from all games.
 	uint32_t clearTime; // Time spent playing; doesn't include ready-go time, for example. It's also the time displayed by the clock.
 	uint32_t masteringTime; // Time until the last player grade change.

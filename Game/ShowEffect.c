@@ -10,24 +10,24 @@
 #include "HwSprite.h"
 #include "Math.h"
 
-typedef struct SquareExplosionData {
+typedef struct BlockExplosionData {
 	ObjectData* objectTable;
 	uint16_t palNum;
 	int16_t y;
 	int16_t x;
-} SquareExplosionData;
+} BlockExplosionData;
 
-static const ObjectData* ObjectTablesSquareExplosions[NUMSQUAREEXPLOSIONTYPES] = {
+static const ObjectData* ObjectTablesBlockExplosions[NUMBLOCKEXPLOSIONTYPES] = {
 	// TODO: Give these names based on their colors. They don't actually
 	// correspond to block colors, because they're randomly selected.
-	&OBJECTTABLES_SQUAREEXPLOSIONS[0 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[1 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[2 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[3 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[4 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[5 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[6 * NUMSQUAREEXPLOSIONS],
-	&OBJECTTABLES_SQUAREEXPLOSIONS[7 * NUMSQUAREEXPLOSIONS]
+	&OBJECTTABLES_BLOCKEXPLOSIONS[0 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[1 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[2 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[3 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[4 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[5 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[6 * NUMBLOCKEXPLOSIONS],
+	&OBJECTTABLES_BLOCKEXPLOSIONS[7 * NUMBLOCKEXPLOSIONS]
 };
 
 static void UpdateEntityFieldBlockExplosion(Entity* entity);
@@ -42,19 +42,19 @@ void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 
 		ENTITY_DATA(entity).player = player;
 
-		ENTITY_INST_DATA_PTR(SquareExplosionData, data, entity);
-		data->x = player->screenPos[0] + 8 * col - 8 * ((player->matrixWidth + (player->matrixWidth < 0)) / 2);
+		ENTITY_INST_DATA_PTR(BlockExplosionData, data, entity);
+		data->x = player->screenPos[0] + 8 * col - 8 * (player->matrixWidth / 2);
 		data->y = player->screenPos[1] - 8 * row - 6;
-		data->objectTable = ObjectTablesSquareExplosions[Rand(8u) % 8];
+		data->objectTable = ObjectTablesBlockExplosions[Rand(8u) % 8];
 		data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
 	}
 }
 
 static void UpdateEntityFieldBlockExplosion(Entity* entity) {
-	ENTITY_INST_DATA_PTR(SquareExplosionData, data, entity);
+	ENTITY_INST_DATA_PTR(BlockExplosionData, data, entity);
 	DisplayObject(&data->objectTable[entity->frames], data->y, data->x, data->palNum + 9u, 115u);
 
-	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames] < 32) {
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 32) {
 		FreeEntity(entity);
 	}
 }
@@ -69,7 +69,51 @@ void ShowAllClear(Player* player, int16_t row, int16_t col) {
 		// TODO
 }
 
-// _0x60173B4; unused.
+typedef struct {
+	const ObjectData* objectTables[2];
+	uint16_t palNum;
+	int16_t screenPositions[2][2];
+} struct_0x60174F8;
+
+#define frames values[0]
+
+void _0x60173B4(Player* player, int16_t row, int16_t col) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = _0x60174F8;
+		ENTITY_DATA(entity).player = player;
+		entity->frames = 0;
+
+		ENTITY_INST_DATA_PTR(struct_0x60174F8, data, entity);
+
+		data->screenPositions[1][0] = player->screenPos[0] + 8 * (col + 2) - 8 * (player->matrixWidth / 2);
+		data->screenPositions[0][0] = player->screenPos[1] - 8 * row + 10;
+
+		data->screenPositions[1][1] = data->screenPositions[1][0] + Rand(10u) - 5;
+		data->screenPositions[0][1] = data->screenPositions[0][0] + Rand(10u) - 5;
+
+		const ObjectData** objectTable = data->objectTables;
+		for (size_t i = 0; i < 2; i++) {
+			*objectTable = ObjectTablesBlockExplosions[Rand(8) % 8];
+			data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(player->activeBlock & BLOCK_TYPE)];
+		}
+	}
+}
+
+void _0x60174F8(Entity* entity) {
+	ENTITY_INST_DATA_PTR(struct_0x60174F8, data, entity);
+
+	const ObjectData** objectTable = data->objectTables;
+	for (size_t i = 0; i < 2; i++, objectTable++) {
+		DisplayObject(objectTable[entity->frames], data->screenPositions[0][i], data->screenPositions[1][i], data->palNum + 9, 115u);
+	}
+
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 32) {
+		FreeEntity(entity);
+	}
+}
+
+#undef frames
 
 void ShowClear(Player* player, int16_t row) {
 		// TODO

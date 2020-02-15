@@ -50,4 +50,4 @@ void CheckNextSection(Player* player);
 
 // Used to control awarding of recover medals. Hard-coded to be only for
 // single-sized fields.
-uint32_t NumFieldSquares(Player* player);
+uint32_t NumFieldBlocks(Player* player);

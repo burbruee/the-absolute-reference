@@ -49,7 +49,7 @@ void UpdateItemHardBlock(Item* item) {
 			break;
 
 		case STATE_DEACTIVATE:
-			itemPlayer->itemMiscFlags &= ~ITEMMISC_BIT10;
+			itemPlayer->itemMiscFlags &= ~ITEMMISC_BIT10; // TODO: BIT10 is HARDBLOCK?
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);

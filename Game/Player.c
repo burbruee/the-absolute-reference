@@ -141,7 +141,7 @@ void InitPlayer(PlayerNum playerNum) {
 	// Active block delays.
 	player->lockFrames = 30;
 	player->lockDelay = 30;
-	player->numAutoshiftFrames = 0;
+	player->autoshiftFrames = 0;
 
 	// Time.
 	if (GameFlags & GAME_VERSUS) {
@@ -215,7 +215,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->nextRotateMedal = MEDALCOLOR_NULL;
 	player->numRecoveries = 0u;
 	player->numSkillClears = 0u;
-	player->numFieldSquares = 0u;
+	player->numFieldBlocks = 0u;
 	player->miscFlags = MISC_NONE;
 	player->mGradeSectionTime = 0u;
 	player->score = 0u;
@@ -792,28 +792,28 @@ ButtonInput Select(Player* player) {
 
 	if (GameButtonsDown[player->num] & BUTTON_UP) {
 		if (GameButtonsNew[player->num] & BUTTON_UP) {
-			player->numAutoshiftFrames = 0u;
+			player->autoshiftFrames = 0u;
 			selectButton = BUTTON_UP;
 		}
-		else if (player->numAutoshiftFrames < 14u) {
-			player->numAutoshiftFrames++;
+		else if (player->autoshiftFrames < 14u) {
+			player->autoshiftFrames++;
 		}
 		else {
-			player->numAutoshiftFrames = 0u;
+			player->autoshiftFrames = 0u;
 			selectButton = BUTTON_UP;
 		}
 	}
 
 	if (GameButtonsDown[player->num] & BUTTON_DOWN) {
 		if (GameButtonsNew[player->num] & BUTTON_DOWN) {
-			player->numAutoshiftFrames = 0u;
+			player->autoshiftFrames = 0u;
 			selectButton = BUTTON_DOWN;
 		}
-		else if (player->numAutoshiftFrames < 14u) {
-			player->numAutoshiftFrames++;
+		else if (player->autoshiftFrames < 14u) {
+			player->autoshiftFrames++;
 		}
 		else {
-			player->numAutoshiftFrames = 0u;
+			player->autoshiftFrames = 0u;
 			selectButton = BUTTON_DOWN;
 		}
 	}
@@ -1280,10 +1280,10 @@ void NextPlayStaffTransition(Player* player) {
 
 void UpdateAutoshift(Player* player) {
 	if (GameButtonsDown[player->num] & (BUTTON_LEFT | BUTTON_RIGHT)) {
-		player->numAutoshiftFrames++;
+		player->autoshiftFrames++;
 	}
 	else {
-		player->numAutoshiftFrames = 0u;
+		player->autoshiftFrames = 0u;
 	}
 }
 
@@ -1478,16 +1478,16 @@ void CheckShiftActiveBlock(Player* player) {
 		if (GameButtonsNew[player->num] & BUTTON_LEFT) {
 			shiftDirection = BUTTON_LEFT;
 		}
-		else if (player->numAutoshiftFrames < shiftDelay) {
-			player->numAutoshiftFrames++;
+		else if (player->autoshiftFrames < shiftDelay) {
+			player->autoshiftFrames++;
 		}
 	}
 	if (GameButtonsDown[player->num] & BUTTON_RIGHT) {
 		if (GameButtonsNew[player->num] & BUTTON_RIGHT) {
 			shiftDirection = BUTTON_RIGHT;
 		}
-		else if (player->numAutoshiftFrames < shiftDelay) {
-			player->numAutoshiftFrames++;
+		else if (player->autoshiftFrames < shiftDelay) {
+			player->autoshiftFrames++;
 		}
 	}
 
@@ -2026,7 +2026,7 @@ void UpdatePlayLockBlock(Player* player) {
 			player->otherPlayer->nowFlags &= ~NOW_NOUPDATE;
 		}
 	}
-	player->numFieldSquares = NumFieldSquares(player);
+	player->numFieldBlocks = NumFieldBlocks(player);
 	if (player->clearItemType != ITEMTYPE_NULL) {
 		ShowItemEffect(player, player->itemEffectPos[1], player->itemEffectPos[0]);
 		if (
@@ -2042,7 +2042,7 @@ void UpdatePlayLockBlock(Player* player) {
 	}
 
 	if (!(player->nowFlags & NOW_STAFF)) {
-		if (player->numFieldSquares == 0u && (GameFlags & GAME_TWIN) && (player->modeFlags & (MODE_MASTER | MODE_TADEATH))) {
+		if (player->numFieldBlocks == 0u && (GameFlags & GAME_TWIN) && (player->modeFlags & (MODE_MASTER | MODE_TADEATH))) {
 			UpdateAllClearMedal(player);
 		}
 		if ((GameFlags & GAME_TWIN) && (player->modeFlags & (MODE_MASTER | MODE_TADEATH))) {
