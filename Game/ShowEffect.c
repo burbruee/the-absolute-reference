@@ -30,9 +30,9 @@ static const ObjectData* ObjectTablesBlockExplosions[NUMBLOCKEXPLOSIONTYPES] = {
 	&OBJECTTABLES_BLOCKEXPLOSIONS[7 * NUMBLOCKEXPLOSIONS]
 };
 
-static void UpdateEntityFieldBlockExplosion(Entity* entity);
-
 #define frames values[0]
+
+static void UpdateEntityFieldBlockExplosion(Entity* entity);
 
 void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
@@ -77,6 +77,8 @@ typedef struct {
 
 #define frames values[0]
 
+static void _0x60174F8(Entity* entity);
+
 void _0x60173B4(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
@@ -94,18 +96,18 @@ void _0x60173B4(Player* player, int16_t row, int16_t col) {
 
 		const ObjectData** objectTable = data->objectTables;
 		for (size_t i = 0; i < 2; i++) {
-			*objectTable = ObjectTablesBlockExplosions[Rand(8) % 8];
+			*objectTable = ObjectTablesBlockExplosions[Rand(8u) % 8];
 			data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(player->activeBlock & BLOCK_TYPE)];
 		}
 	}
 }
 
-void _0x60174F8(Entity* entity) {
+static void _0x60174F8(Entity* entity) {
 	ENTITY_INST_DATA_PTR(struct_0x60174F8, data, entity);
 
 	const ObjectData** objectTable = data->objectTables;
 	for (size_t i = 0; i < 2; i++, objectTable++) {
-		DisplayObject(objectTable[entity->frames], data->screenPositions[0][i], data->screenPositions[1][i], data->palNum + 9, 115u);
+		DisplayObject(objectTable[entity->frames], data->screenPositions[0][i], data->screenPositions[1][i], data->palNum + 9u, 115u);
 	}
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 32) {
@@ -115,13 +117,69 @@ void _0x60174F8(Entity* entity) {
 
 #undef frames
 
+static void UpdateEntitySingleClear(Entity* entity);
+
 void ShowClear(Player* player, int16_t row) {
 		// TODO
 }
 
-void ShowSingleRowClear(Player* player, int16_t row) {
-	// TODO
+typedef struct SingleClearData {
+	ObjectData* objectTables[FIELD_DOUBLESWIDTH];
+	uint16_t palNums[FIELD_DOUBLESWIDTH];
+	int16_t y;
+} SingleClearData;
+
+#define frames values[0]
+#define explosionsWidth values[1]
+#define clearRow values[3]
+
+void ShowSingleClear(Player* player, int16_t row) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntitySingleClear;
+		ENTITY_DATA(entity).player = player;
+		entity->frames = 0;
+		entity->explosionsWidth = player->matrixWidth;
+		entity->clearRow = row;
+
+		ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
+		data->y = player->screenPos[1] - entity->clearRow * 8 - 6;
+		uint32_t explosionSeed = Rand(1999u);
+		for (int16_t col = 1, odd = 0; col < entity->explosionsWidth - 1; col++, explosionSeed += 3u) {
+			if (MATRIX(player, row, col).block != NULLBLOCK) {
+				odd = (odd + 1) % 2;
+			}
+
+			if (!odd) {
+				data->objectTables[col - 1] = NULL;
+			}
+			else {
+				data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
+				data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+			}
+		}
+	}
 }
+
+static void UpdateEntitySingleClear(Entity* entity) {
+	ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
+	int16_t y = data->y;
+	int16_t x = ENTITY_DATA(entity).player->screenPos[0] - 40;
+	// BUG: Should be "i < ENTITY_DATA(entity).player->fieldWidth".
+	for (int16_t i = 0; i < FIELD_SINGLEWIDTH; i++, x += 8) {
+		if (data->objectTables[i] != NULL) {
+			DisplayObject(&data->objectTables[i][entity->frames], y, x, data->palNums[i] + 9u, 125u);
+		}
+	}
+
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 32) {
+		FreeEntity(entity);
+	}
+}
+
+#undef frames
+#undef explosionsWidth
+#undef clearRow
 
 typedef struct ThrownOutActiveBlockData {
 	int16_t y;
@@ -131,11 +189,11 @@ typedef struct ThrownOutActiveBlockData {
 	Rotation rotation;
 } ThrownOutActiveBlockData;
 
-static void UpdateEntityThrownOutActiveBlock(Entity* entity);
-static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, int16_t spread, Block block, Rotation rotation);
-
 #define frames values[0]
 #define blockVerticalV values[1]
+
+static void UpdateEntityThrownOutActiveBlock(Entity* entity);
+static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, int16_t spread, Block block, Rotation rotation);
 
 void ShowThrownOutActiveBlock(Player* player) {
 	Entity* entity;

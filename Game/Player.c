@@ -1481,6 +1481,9 @@ void CheckShiftActiveBlock(Player* player) {
 		else if (player->autoshiftFrames < shiftDelay) {
 			player->autoshiftFrames++;
 		}
+		else {
+			shiftDirection = BUTTON_LEFT;
+		}
 	}
 	if (GameButtonsDown[player->num] & BUTTON_RIGHT) {
 		if (GameButtonsNew[player->num] & BUTTON_RIGHT) {
@@ -1488,6 +1491,9 @@ void CheckShiftActiveBlock(Player* player) {
 		}
 		else if (player->autoshiftFrames < shiftDelay) {
 			player->autoshiftFrames++;
+		}
+		else {
+			shiftDirection = BUTTON_RIGHT;
 		}
 	}
 
@@ -3242,13 +3248,13 @@ Fixed32 CurrentGravity(Player* player) {
 void UpdatePlayStaffTransition(Player* player) {
 	player->miscFlags &= ~MISC_RECOVERING;
 	if (++player->values[0] % 6) {
-		ShowSingleRowClear(player, player->values[1]); // TODO
+		ShowSingleClear(player, player->values[1]);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, player->values[1], col).block = NULLBLOCK;
 		}
 		if (++player->values[1] == player->matrixHeight - 1) {
 			player->nowFlags |= NOW_STAFF;
-			ShowStaff(player); // TODO
+			ShowStaff(player);
 			player->modeFlags |= MODE_INVISIBLE;
 			NextPlayBlockEntry(player, true);
 		}

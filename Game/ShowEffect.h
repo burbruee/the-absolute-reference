@@ -13,6 +13,6 @@ void ShowAllClear(Player *player, int16_t row, int16_t col);
 
 void ShowClear(Player *player, int16_t row);
 
-void ShowSingleRowClear(Player* player, int16_t row);
+void ShowSingleClear(Player* player, int16_t row);
 
 void ShowThrownOutActiveBlock(Player *player);
