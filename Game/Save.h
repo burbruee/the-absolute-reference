@@ -39,3 +39,17 @@ extern uint32_t BestMasterSectionTimes[10];
 extern uint32_t BestTaDeathSectionTimes[10];
 
 extern uint32_t InitSeed;
+
+uint32_t PlayStatusChecksum();
+
+void InitPlayStatus();
+
+void AddGameTime(uint32_t gameTime);
+
+void SavePlayStatus();
+
+bool LoadPlayStatus();
+
+bool LoadProgramChecksum();
+
+void SaveProgramChecksum(uint32_t programChecksum);
