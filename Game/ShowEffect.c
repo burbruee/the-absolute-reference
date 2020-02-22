@@ -61,13 +61,82 @@ static void UpdateEntityFieldBlockExplosion(Entity* entity) {
 
 #undef frames
 
+const uint8_t PalNumTableFireworks[5] = { 203u, 204u, 205u, 206u, 207u };
+
+#define frames values[0]
+
+static void UpdateEntityFireworks(Entity* entity);
+
 void ShowFireworks(Player* player, int16_t row, int16_t col, uint32_t seed) {
-		// TODO
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntityFireworks;
+		ENTITY_DATA(entity).player = player;
+		entity->frames = 0;
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
+		data->x = player->screenPos[0] + (col + 2) * 8 - (player->matrixWidth / 2) * 8;
+		data->y = player->screenPos[1] - row * 8 + 10;
+		data->objectTable = OBJECTTABLE_FIREWORKS;
+		data->palNum = PalNumTableFireworks[Rand(5u)];
+	}
 }
 
-void ShowAllClear(Player* player, int16_t row, int16_t col) {
-		// TODO
+static void UpdateEntityFireworks(Entity* entity) {
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
+	data->palNum = PalNumTableFireworks[Rand(5u)];
+	int16_t scaleOffset = ((entity->frames + UNSCALED) * 32) / UNSCALED;
+	DisplayObjectEx(
+		&data->objectTable[entity->frames],
+		data->y - scaleOffset,
+		data->x - scaleOffset,
+		data->palNum,
+		115u,
+		entity->frames + UNSCALED,
+		entity->frames + UNSCALED,
+		false
+	);
+
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 32) {
+		FreeEntity(entity);
+	}
 }
+
+#undef frames
+
+#define frames values[0]
+
+static void UpdateEntityAllClear(Entity* entity);
+
+void ShowAllClear(Player* player, int16_t row, int16_t col) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntityAllClear;
+		ENTITY_DATA(entity).player = player;
+		entity->frames = 0;
+		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
+		data->x = player->screenPos[0] + (col + 2) * 8 - (player->matrixWidth / 2) * 8;
+		data->y = player->screenPos[1] - row * 8 + 10;
+		data->objectTable = OBJECTTABLE_FIREWORKS;
+		data->palNum = PalNumTableFireworks[Rand(5u)];
+	}
+}
+
+static void UpdateEntityAllClear(Entity* entity) {
+	Player* player = ENTITY_DATA(entity).player;
+	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
+	data->palNum = PalNumTableFireworks[Rand(5u)];
+	if (entity->frames < 32) {
+		DisplayObject(&data->objectTable[entity->frames], data->y - 32, data->x - 32, data->palNum, 115u);
+	}
+
+	uint8_t palNum = NumScreenFrames % 4 == 0u ? 2u : 8u;
+	DisplayObject(OBJECT_BRAVO, 100, player->screenPos[0] - 48, palNum, 115u);
+	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 60) {
+		FreeEntity(entity);
+	}
+}
+
+#undef frames
 
 typedef struct {
 	const ObjectData* objectTables[2];
@@ -117,12 +186,6 @@ static void _0x60174F8(Entity* entity) {
 
 #undef frames
 
-static void UpdateEntitySingleClear(Entity* entity);
-
-void ShowClear(Player* player, int16_t row) {
-		// TODO
-}
-
 typedef struct SingleClearData {
 	ObjectData* objectTables[FIELD_DOUBLESWIDTH];
 	uint16_t palNums[FIELD_DOUBLESWIDTH];
@@ -133,7 +196,44 @@ typedef struct SingleClearData {
 #define explosionsWidth values[1]
 #define clearRow values[3]
 
-void ShowSingleClear(Player* player, int16_t row) {
+static void UpdateEntitySingleClear(Entity* entity);
+
+void ShowLineClear(Player* player, int16_t row) {
+	Entity* entity;
+	if ((entity = AllocEntity()) != NULL) {
+		entity->update = UpdateEntitySingleClear;
+		ENTITY_DATA(entity).player = player;
+		entity->frames = 0;
+		entity->explosionsWidth = player->matrixWidth;
+		entity->clearRow = row;
+
+		ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
+		data->y = player->screenPos[1] - entity->clearRow * 8 - 6;
+		uint32_t explosionSeed = Rand(1999u);
+		for (int16_t col = 1; col < entity->explosionsWidth - 1; col++, explosionSeed += 3u) {
+			if (player->modeFlags & MODE_BIG) {
+				if (row % 3 == col % 3) {
+					data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
+					data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+				}
+				else {
+					data->objectTables[col - 1] = NULL;
+				}
+			}
+			else {
+				if (row % 2 == col % 2) {
+					data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
+					data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+				}
+				else {
+					data->objectTables[col - 1] = NULL;
+				}
+			}
+		}
+	}
+}
+
+void ShowStaffClear(Player* player, int16_t row) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntitySingleClear;
@@ -150,12 +250,12 @@ void ShowSingleClear(Player* player, int16_t row) {
 				odd = (odd + 1) % 2;
 			}
 
-			if (!odd) {
-				data->objectTables[col - 1] = NULL;
-			}
-			else {
+			if (odd) {
 				data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
 				data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+			}
+			else {
+				data->objectTables[col - 1] = NULL;
 			}
 		}
 	}
@@ -165,10 +265,12 @@ static void UpdateEntitySingleClear(Entity* entity) {
 	ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
 	int16_t y = data->y;
 	int16_t x = ENTITY_DATA(entity).player->screenPos[0] - 40;
-	// BUG: Should be "i < ENTITY_DATA(entity).player->fieldWidth".
-	for (int16_t i = 0; i < FIELD_SINGLEWIDTH; i++, x += 8) {
-		if (data->objectTables[i] != NULL) {
-			DisplayObject(&data->objectTables[i][entity->frames], y, x, data->palNums[i] + 9u, 125u);
+	// BUG: Should be "i < ENTITY_DATA(entity).player->fieldWidth". Results in
+	// line clear explosions spanning only the left 10 columns of a doubles
+	// field.
+	for (int16_t col = 0; col < FIELD_SINGLEWIDTH; col++, x += 8) {
+		if (data->objectTables[col] != NULL) {
+			DisplayObject(&data->objectTables[col][entity->frames], y, x, data->palNums[col] + 9u, 125u);
 		}
 	}
 

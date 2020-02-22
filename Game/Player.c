@@ -1844,7 +1844,7 @@ bool Line(Player* player, int16_t row) {
 LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		if ((1 << row) & lineFlags) {
-			ShowClear(player, row);
+			ShowLineClear(player, row);
 			MatrixBlock* square = &MATRIX(player, row, 1);
 			for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 				if (square->block & BLOCK_HARD) {
@@ -3248,7 +3248,7 @@ Fixed32 CurrentGravity(Player* player) {
 void UpdatePlayStaffTransition(Player* player) {
 	player->miscFlags &= ~MISC_RECOVERING;
 	if (++player->values[0] % 6) {
-		ShowSingleClear(player, player->values[1]);
+		ShowStaffClear(player, player->values[1]);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, player->values[1], col).block = NULLBLOCK;
 		}

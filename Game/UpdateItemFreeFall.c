@@ -170,7 +170,7 @@ void UpdateItemFreeFall(Item* item) {
 				int16_t garbageHoleCol = (Rand(1192u) + 1) % 10;
 				if (numLines != 0) {
 					for (int16_t row = numLines; row != 0; row--) {
-						ShowClear(activatingPlayer, row);
+						ShowLineClear(activatingPlayer, row);
 						for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 							if (itemPlayer->numGarbageRows + sentGarbageRows < GARBAGEHEIGHT) {
 								if (col == garbageHoleCol) {
@@ -198,7 +198,7 @@ void UpdateItemFreeFall(Item* item) {
 			else {
 				if (numLines != 0) {
 					for (int16_t row = numLines; row != 0; row--) {
-						ShowClear(activatingPlayer, row);
+						ShowLineClear(activatingPlayer, row);
 						for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 							MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
 							MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
