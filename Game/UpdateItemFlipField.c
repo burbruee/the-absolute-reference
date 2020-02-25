@@ -3,7 +3,7 @@
 #include "Sound.h"
 
 enum FlipFieldState {
-	STATE_sTART,
+	STATE_START,
 	STATE_DELAY,
 	STATE_INIT,
 	STATE_LOWER,
@@ -36,7 +36,7 @@ void UpdateItemFlipField(Item* item) {
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
-		case STATE_sTART:
+		case STATE_START:
 			RemoveItems(activatingPlayer);
 
 			if (!(itemPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL && !ItemGood(itemPlayer)) {
