@@ -1,3 +1,5 @@
+// TODO: Consider changing the Item struct to a forward declaration, and moving
+// the struct into Item.c.
 #pragma once
 
 #include "Macros.h"
@@ -89,15 +91,15 @@ struct Item {
 	Item* next;
 };
 
-struct Player;
-typedef struct Player Player;
-
 typedef enum ItemCategory {
 	ITEMCAT_NONE,
 	ITEMCAT_GOOD,
 	ITEMCAT_BAD,
 	ITEMCAT_NEUTRAL
 } ItemCategory;
+
+struct Player;
+typedef struct Player Player;
 
 void RemoveItems(Player* player);
 bool CheckDeactivateItem(Item* item);

@@ -11,6 +11,7 @@
 int32_t Div32s(int32_t denom, int32_t numer) {
 	if (denom == 0) return 0;
 	else return numer / denom;
+}
 
 uint32_t Div32u(uint32_t denom, uint32_t numer) {
 	if (denom == 0u) return 0u;
@@ -36,8 +37,9 @@ void MemCopy(size_t n, void* dest, void* src) {
 #ifdef USESTDC
 	memcpy(dest, src, n);
 #else
+	uint8_t* d = dest, * s = src;
 	while (n-- > 0) {
-		*dest++ = *src++;
+		*d++ = *s++;
 	}
 #endif
 }
