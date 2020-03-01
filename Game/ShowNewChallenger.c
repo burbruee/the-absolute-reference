@@ -99,7 +99,8 @@ static void UpdateEntityNewChallenger(Entity* entity) {
 			if (y < 0) {
 				y += 127;
 			}
-			DisplayObjectEx(OBJECT_NEWCHALLENGER, y / 128 + 120, data->x + 170, GAMEPALNUM_TEXTOVERLAYBG, 125u, F32I(data->scaleY), UNSCALED, false);
+			// TODO: See what index 1 of the object table is.
+			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, GAMEPALNUM_TEXTOVERLAYBG, 125u, F32I(data->scaleY), UNSCALED, false);
 		}
 		else {
 			GameFlags &= ~GAME_CHALLENGEDELAY;
