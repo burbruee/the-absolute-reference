@@ -29,16 +29,16 @@ typedef enum GradeLevel {
 // Index with a player grade less than GM to get the GRS grade level.
 extern const GradeLevel GradeLevels[NUMPLAYERGRADES - 1];
 
-typedef struct GradeData {
-	Fixed16 gradeLevel;
-	Fixed16 bestGradeLevel;
-	Fixed16 sectionGradeLevels[10]; // TODO: Consider renaming numSectionGradeLevelUps.
-	Fixed16 gradeLevelLastSection;
+typedef struct Grade {
+	Fixed16 currentGrade;
+	Fixed16 bestGrade;
+	Fixed16 sectionLevelUps[10];
+	Fixed16 gradeLastSection;
 	uint32_t sectionTimes[10];
 	uint32_t timeLastSection;
 	uint8_t decayFrames;
-} GradeData;
-extern GradeData Grades[NUMPLAYERS];
+} Grade;
+extern Grade Grades[NUMPLAYERS];
 
 // Core GRS support.
 void InitGrade(Player* player);

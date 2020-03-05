@@ -2,6 +2,7 @@
 
 #include "Player.h"
 #include "HwInput.h"
+#include "HwSprite.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -26,14 +27,14 @@ typedef enum RankingPlace {
 	RANKINGPLACE_FIRST,
 	RANKINGPLACE_SECOND,
 	RANKINGPLACE_THIRD,
-	RANKINGPLACE_NULL
+	RANKINGPLACE_NULL,
+	NUMRANKINGPLACES = RANKINGPLACE_NULL
 } RankingPlace;
-#define NUMRANKINGPLACES RANKINGPLACE_NULL
 
-typedef struct RankingData {
+typedef struct Ranking {
 	char name[4];
 	uint32_t data;
-} RankingData;
+} Ranking;
 
 #define RANKINGDATA_GETVALUE(rankingData) ((rankingData) & 0xFFFFF)
 #define RANKINGDATA_GETGRADE(rankingData) (((rankingData) >> 27) & 0x1F)

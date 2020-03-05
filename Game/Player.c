@@ -65,7 +65,7 @@ typedef struct BlockEntryData {
 
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
 
-static MatrixBlock MatrixSquares[NUMMATRIXBLOCKS_SHARED];
+static MatrixBlock MatrixBlocks[NUMMATRIXBLOCKS_SHARED];
 void InitPlayers() {
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Players[playerNum].num = playerNum;
@@ -257,14 +257,14 @@ void InitPlayer(PlayerNum playerNum) {
 
 	// Field and garbage.
 	if (GameFlags & GAME_DOUBLES) {
-		player->matrix = MatrixSquares;
+		player->matrix = MatrixBlocks;
 		player->fieldHeight = FIELD_HEIGHT;
 		player->fieldWidth = FIELD_DOUBLESWIDTH;
 		player->matrixHeight = MATRIX_HEIGHT;
 		player->matrixWidth = MATRIX_DOUBLESWIDTH;
 	}
 	else {
-		player->matrix = &MatrixSquares[playerNum * NUMMATRIXBLOCKS_SINGLE];
+		player->matrix = &MatrixBlocks[playerNum * NUMMATRIXBLOCKS_SINGLE];
 		player->fieldHeight = FIELD_HEIGHT;
 		player->fieldWidth = FIELD_SINGLEWIDTH;
 		player->matrixHeight = MATRIX_HEIGHT;
@@ -1620,7 +1620,7 @@ void UpdatePlayActiveBlock(Player* player) {
 			player->level = 899;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
-			F16I(Grades[player->num].gradeLevel) = GradeLevels[PLAYERGRADE_S8];
+			F16I(Grades[player->num].currentGrade) = GradeLevels[PLAYERGRADE_S8];
 			player->mGradeFlags |= MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT2 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS;
 		}
 
@@ -1630,7 +1630,7 @@ void UpdatePlayActiveBlock(Player* player) {
 			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
-			F16I(Grades[player->num].gradeLevel) = GradeLevels[PLAYERGRADE_S9];
+			F16I(Grades[player->num].currentGrade) = GradeLevels[PLAYERGRADE_S9];
 			player->mGradeFlags |= MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT2 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS | MGRADE_S9GRADE;
 		}
 

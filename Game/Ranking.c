@@ -8,13 +8,13 @@
 #include "HwSprite.h"
 #include "SoundEffect.h"
 
-static RankingData MasterTodaysBestRankings[NUMRANKINGPLACES];
+static Ranking MasterTodaysBestRankings[NUMRANKINGPLACES];
 static uint16_t MasterTodaysBestMedalRankings[NUMRANKINGPLACES];
 
-static RankingData NormalTodaysBestRankings[NUMRANKINGPLACES];
+static Ranking NormalTodaysBestRankings[NUMRANKINGPLACES];
 
-static RankingData DoublesTodaysBestTimeRankings[NUMRANKINGPLACES];
-static RankingData DoublesTodaysBestLevelRankings[NUMRANKINGPLACES];
+static Ranking DoublesTodaysBestTimeRankings[NUMRANKINGPLACES];
+static Ranking DoublesTodaysBestLevelRankings[NUMRANKINGPLACES];
 
 static RankingFlag RankingFlags;
 
@@ -54,13 +54,13 @@ static void ShowRankingTime(uint32_t time, int16_t y, int16_t x);
 
 static uint32_t RankingsChecksum();
 
-static RankingPlace MasterRankingPlace(Player* player, RankingData* rankings, int16_t numRankings);
-static RankingPlace NormalRankingPlace(Player* player, RankingData* rankings, int16_t numRankings);
-static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, RankingData* timeRankings, RankingData* levelRankings, int16_t numRankings);
+static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_t numRankings);
+static RankingPlace NormalRankingPlace(Player* player, Ranking* rankings, int16_t numRankings);
+static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, Ranking* timeRankings, Ranking* levelRankings, int16_t numRankings);
 
 static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking);
 
-static RankingFlag AddNewModeRanking(NewRankingData* newRanking, RankingData* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode);
+static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode);
 static void AddNewRanking(NewRankingData* newRanking);
 
 static void InitNameEntry(NameEntryData* nameEntry, Player* player);
@@ -176,8 +176,8 @@ bool LoadRankings() {
 	// TODO
 }
 
-static RankingPlace MasterRankingPlace(Player* player, RankingData* rankings, int16_t numRankings) {
-	RankingData* ranking = rankings;
+static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
+	Ranking* ranking = rankings;
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < numRankings; place++, ranking++) {
 		if (player->grade > RANKINGDATA_GETGRADE(ranking->data)) {
 			return place;
@@ -208,8 +208,8 @@ static RankingPlace MasterRankingPlace(Player* player, RankingData* rankings, in
 	}
 }
 
-static RankingPlace NormalRankingPlace(Player* player, RankingData* rankings, int16_t numRankings) {
-	RankingData* ranking = rankings;
+static RankingPlace NormalRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
+	Ranking* ranking = rankings;
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < numRankings; place++, ranking++) {
 		if (player->score > RANKINGDATA_GETVALUE(ranking->data)) {
 			return place;
@@ -218,8 +218,8 @@ static RankingPlace NormalRankingPlace(Player* player, RankingData* rankings, in
 	return -1;
 }
 
-static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, RankingData* timeRankings, RankingData* levelRankings, int16_t numRankings) {
-	RankingData* timeRanking = timeRankings;
+static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, Ranking* timeRankings, Ranking* levelRankings, int16_t numRankings) {
+	Ranking* timeRanking = timeRankings;
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < numRankings; place++, timeRanking++) {
 		if (
 				(levelSum > RANKINGDATA_GETLEVELSUM(levelRankings[place].data)) ||
@@ -271,7 +271,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 			newRanking->todaysBestPlace = place;
 		}
 
-		RankingData* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
+		Ranking* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
 		uint32_t* sectionTime = Grades[player->num].sectionTimes;
 		for (int16_t section = 0; section < 10; section++) {
 			if (*sectionTime != 0u && *sectionTime < RANKINGDATA_GETVALUE(ranking->data)) {
@@ -314,9 +314,9 @@ typedef enum RankingMode {
 	RANKINGMODE_DOUBLES
 } RankingMode;
 
-static RankingFlag AddNewModeRanking(NewRankingData* newRanking, RankingData* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode) {
+static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode) {
 	uint16_t* masterMedalRankings = (uint16_t*)rankingExtras;
-	RankingData* doublesLevelRankings = (RankingData*)rankingExtras;
+	Ranking* doublesLevelRankings = (Ranking*)rankingExtras;
 	RankingFlag rankingFlags = RANKINGFLAG_NONE;
 	RankingIndex rankingBit = rankingIndex + numRankings - 1;
 	Player* player1 = &Players[PLAYER1];
@@ -412,7 +412,7 @@ static void AddNewRanking(NewRankingData* newRanking) {
 		AddNewModeRanking(newRanking, DoublesTodaysBestTimeRankings, DoublesTodaysBestLevelRankings, RANKINGINDEX_DOUBLESTODAYSBEST, NUMRANKINGPLACES, RANKINGMODE_DOUBLES);
 	}
 
-	RankingData* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
+	Ranking* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
 	uint32_t* sectionTime = Grades[newRanking->player->num].sectionTimes;
 	for (uint16_t section = 0u; section < 10u; section++, sectionTime++) {
 		if (newRanking->flags & ((1 << section) << RANKINGINDEX_MASTERSECTIONTIMES)) {

@@ -27,8 +27,8 @@ typedef struct SaveData {
 	uint16_t versusCount;
 	uint16_t initSeed;
 	uint16_t playStatusChecksum;
-	RankingData rankings[NUMRANKINGS];
-	RankingData doublesLevelRankings[NUMRANKINGPLACES];
+	Ranking rankings[NUMRANKINGS];
+	Ranking doublesLevelRankings[NUMRANKINGPLACES];
 	uint16_t masterMedalRankings[NUMRANKINGPLACES];
 	uint16_t rankingsChecksum;
 	uint16_t programChecksum;
