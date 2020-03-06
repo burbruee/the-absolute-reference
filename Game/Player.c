@@ -945,7 +945,7 @@ static const int16_t* ModeCodes[NUMMODECODES] = {
 	ModeCodeInvisible
 };
 
-static const ModeFlag ModeCodeEnableFlags[NUMMODECODES] = {
+static const ModeFlag ModeCodeFlagsEnable[NUMMODECODES] = {
 	MODE_BIG, MODE_20G, MODE_TLS, MODE_ITEM, MODE_INVISIBLE
 };
 
@@ -988,7 +988,7 @@ bool UpdateModeCodes(Player* player) {
 		// code can be entered. But a code can't be disabled.
 		if (ModeCodes[checkIndex][NumModeCodeInputs[player->num][checkIndex]] == -1) {
 			enteredCode = true;
-			player->modeFlags |= ModeCodeEnableFlags[checkIndex];
+			player->modeFlags |= ModeCodeFlagsEnable[checkIndex];
 			for (int16_t resetIndex = 0; resetIndex < NUMENABLEDMODECODES; resetIndex++) {
 				if (checkIndex == resetIndex) {
 					NumModeCodeInputs[player->num][resetIndex] = 0u;

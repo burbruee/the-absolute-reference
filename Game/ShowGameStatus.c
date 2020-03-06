@@ -535,7 +535,7 @@ void ShowCredits() {
 	}
 }
 
-static const ModeFlag ModeCodeShowFlags[NUMMODECODES + 1] = {
+static const ModeFlag ModeCodeFlagsShow[NUMMODECODES + 1] = {
 	MODE_20G,
 	MODE_BIG,
 	MODE_TLS,
@@ -588,7 +588,7 @@ void ShowModeCodes(Player* player) {
 
 		const ObjectData** object = ObjectTableModeCodes;
 		const int16_t* offsetX = ModeCodeOffsetX;
-		const ModeFlag* flag = ModeCodeShowFlags;
+		const ModeFlag* flag = ModeCodeFlagsShow;
 		for (size_t i = 0u; i < NUMMODECODES; i++, object++, offsetX++, flag++) {
 			if (modeCodeFlags & *flag) {
 				ShowObject(*object, y, x - *offsetX, GAMEPALNUM_SMALLTEXT, layer);
@@ -622,7 +622,7 @@ void ShowChallengerMode(Player* player) {
 
 	const ObjectData** object = ObjectTableModeCodes;
 	const int16_t* offsetX = ModeCodeOffsetX;
-	const ModeFlag* flag = ModeCodeShowFlags;
+	const ModeFlag* flag = ModeCodeFlagsShow;
 	const uint16_t layer = 110u;
 	for (size_t i = 0u; i < NUMMODECODES; i++, object++, offsetX++, flag++) {
 		if (modeCodeFlags & *flag) {
