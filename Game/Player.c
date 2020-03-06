@@ -945,7 +945,7 @@ static const int16_t* ModeCodes[NUMMODECODES] = {
 	ModeCodeInvisible
 };
 
-static const ModeFlag ModeCodeFlags[NUMMODECODES] = {
+static const ModeFlag ModeCodeEnableFlags[NUMMODECODES] = {
 	MODE_BIG, MODE_20G, MODE_TLS, MODE_ITEM, MODE_INVISIBLE
 };
 
@@ -958,6 +958,8 @@ void InitModeCodes(Player* player) {
 }
 
 bool UpdateModeCodes(Player* player) {
+	bool enteredCode = false;
+
 	// Check whether the button pressed this frame matches any of the enabled
 	// mode codes' input sequences.
 	for (int16_t checkIndex = 0; checkIndex < NUMENABLEDMODECODES; checkIndex++) {
@@ -985,7 +987,8 @@ bool UpdateModeCodes(Player* player) {
 		// was completed. And reset the number of matched inputs, so another
 		// code can be entered. But a code can't be disabled.
 		if (ModeCodes[checkIndex][NumModeCodeInputs[player->num][checkIndex]] == -1) {
-			player->modeFlags |= ModeCodeFlags[checkIndex];
+			enteredCode = true;
+			player->modeFlags |= ModeCodeEnableFlags[checkIndex];
 			for (int16_t resetIndex = 0; resetIndex < NUMENABLEDMODECODES; resetIndex++) {
 				if (checkIndex == resetIndex) {
 					NumModeCodeInputs[player->num][resetIndex] = 0u;
@@ -993,6 +996,8 @@ bool UpdateModeCodes(Player* player) {
 			}
 		}
 	}
+
+	return enteredCode;
 }
 
 static const SoundEffect SirenSoundEffects[6] = {

@@ -21,7 +21,7 @@ bool TestModeDisabled;
 
 uint16_t _0x6060024;
 uint32_t _0x6060028;
-uint32_t NumVBlanks;
+uint32_t NumVblanks;
 bool VBlankFinished;
 
 bool UpdateFrame();
@@ -55,7 +55,7 @@ bool UpdateGameFrame() {
 		UpdateInputs();
 
 		RandScale = 0u;
-		NumVBlanks = 0u;
+		NumVblanks = 0u;
 
 		// TODO: Check when IRQCTRL[1] & 0x01 becomes false. I assume it's when
 		// a frame starts. Once known, define and use relevant constants.

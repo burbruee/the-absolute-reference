@@ -29,7 +29,7 @@ extern bool TestModeDisabled;
 
 extern uint16_t _0x6060024;
 extern uint32_t _0x6060028;
-extern uint32_t NumVBlanks;
+extern uint32_t NumVblanks;
 extern bool VBlankFinished;
 
 // TODO: Could be HBlank. Is an interrupt handler. Have to define it for each
