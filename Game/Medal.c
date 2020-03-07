@@ -1,6 +1,8 @@
 #include "Medal.h"
 #include "Player.h"
 #include "HwInput.h"
+#include "HwSprite.h"
+#include "PlatformTypes.h"
 
 typedef enum MedalState {
 	MEDALSTATE_NULL,
@@ -12,12 +14,19 @@ typedef enum MedalState {
 typedef struct Medal {
 	MedalState state;
 	MedalType type;
-	uint8_t scale;
+	SpriteScale scale;
 	MedalColor color;
-	uint16_t numScaleFrames;
+	uint16_t scaleFrames;
 	int16_t y;
 	int16_t x;
 } Medal;
+
+typedef struct MedalPalAnim {
+	Color* palStart, * palEnd;
+	uint8_t palNum, palNumEnd;
+} MedalPalAnim;
+
+static MedalPalAnim MedalPalAnims[4];
 
 static const int16_t MedalPosOffsets[NUMMEDALTYPES][2] = {
 	{ 0,  0},

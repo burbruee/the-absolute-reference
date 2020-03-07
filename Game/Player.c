@@ -60,7 +60,7 @@ typedef struct BlockEntryData {
 	Block squares[MATRIX_HEIGHT * FIELD_SINGLEWIDTH * NUMPLAYERS];
 	uint16_t numMatrixBlockings;
 	uint16_t numPlayerBlockings;
-	uint8_t itemSeed[NUMITEMTYPES];
+	uint8_t itemWeights[NUMITEMTYPES];
 } BlockEntryData;
 
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
@@ -3099,23 +3099,23 @@ void UpdatePlayGarbageCheck(Player* player) {
 	UpdateAutoshift(player);
 }
 
-static const uint8_t InitItemSeed[NUMITEMTYPES] = { 50u, 1u, 250u, 250u, 100u, 50u, 3u, 150u, 100u, 5u, 50u, 250u, 150u, 250u, 3u, 150u, 3u, 150u, 5u };
+static const uint8_t InitItemWeights[NUMITEMTYPES] = { 50u, 1u, 250u, 250u, 100u, 50u, 3u, 150u, 100u, 5u, 50u, 250u, 150u, 250u, 3u, 150u, 3u, 150u, 5u };
 
 void GenNextBlockItem(Player* player) {
 	BlockEntryData* blockEntry = Temp;
 	for (uint16_t itemNum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
-		blockEntry->itemSeed[itemNum] = InitItemSeed[itemNum];
+		blockEntry->itemWeights[itemNum] = InitItemWeights[itemNum];
 	}
 
 	for (uint16_t itemNum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
 		if (!(player->itemBagFlags & (1 << itemNum))) {
-			blockEntry->itemSeed[itemNum] = 0u;
+			blockEntry->itemWeights[itemNum] = 0u;
 		}
 	}
 
 	uint16_t seedSum = 0;
 	for (uint16_t itemNum = 0; itemNum < NUMITEMTYPES; itemNum++) {
-		seedSum += blockEntry->itemSeed[itemNum];
+		seedSum += blockEntry->itemWeights[itemNum];
 	}
 
 	if (seedSum > 0) {
@@ -3133,9 +3133,9 @@ void GenNextBlockItem(Player* player) {
 			}
 
 			uint16_t itemNum = 0u;
-			for (uint16_t seedSum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
-				seedSum += blockEntry->itemSeed[itemNum];
-				if (seedSum >= sumMax) {
+			for (uint16_t weightSum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
+				weightSum += blockEntry->itemWeights[itemNum];
+				if (weightSum >= sumMax) {
 					break;
 				}
 			}

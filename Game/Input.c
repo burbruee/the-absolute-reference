@@ -90,19 +90,19 @@ static inline void NormalCoinMode(uint16_t price, uint8_t* credits, uint8_t* coi
 }
 
 void UpdateInputs() {
-	_0x6064756 = (~INPUTPORTS[INPUT_UNUSED] >> 4) & 0xF;
-	_0x6064757 = ~INPUTPORTS[INPUT_UNUSED] & 0xF;
+	_0x6064756 = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
+	_0x6064757 = ~INPUTS[INPUT_UNUSED] & 0xF;
 
-	SystemButtonsDown[PLAYER1] = ~INPUTPORTS[INPUT_1PBUTTONS];
-	SystemButtonsDown[PLAYER2] = ~INPUTPORTS[INPUT_2PBUTTONS];
+	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
+	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
 
-	ServiceInput serviceInput = ~INPUTPORTS[INPUT_SERVICE];
+	ServiceInput serviceInput = ~INPUTS[INPUT_SERVICE];
 
 	if ((~serviceInput & SERVICE_ADDSERVICE) == AddServiceInputOld) {
 		AddService = false;
 	}
 	else {
-		AddServiceInputOld = ~INPUTPORTS[INPUT_SERVICE] & SERVICE_ADDSERVICE;
+		AddServiceInputOld = ~INPUTS[INPUT_SERVICE] & SERVICE_ADDSERVICE;
 		if (NumAddServiceFrames > 8u) {
 			AddService = true;
 			PlaySoundEffect(SOUNDEFFECT_COIN);
@@ -111,7 +111,7 @@ void UpdateInputs() {
 	}
 
 	bool updatePlayers = true;
-	if (~INPUTPORTS[INPUT_SERVICE] & SERVICE_ADDSERVICE) {
+	if (~INPUTS[INPUT_SERVICE] & SERVICE_ADDSERVICE) {
 		NumAddServiceFrames++;
 	}
 	else {
@@ -126,8 +126,8 @@ void UpdateInputs() {
 		GameButtonsOld[PLAYER1] = GameButtonsDown[PLAYER1];
 		GameButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
 
-		GameButtonsDown[PLAYER1] = ~INPUTPORTS[INPUT_1PBUTTONS];
-		GameButtonsDown[PLAYER2] = ~INPUTPORTS[INPUT_2PBUTTONS];
+		GameButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
+		GameButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
 
 		GameButtonsNew[PLAYER1] = GameButtonsDown[PLAYER1] & ~GameButtonsOld[PLAYER1];
 		GameButtonsNew[PLAYER2] = GameButtonsDown[PLAYER2] & ~GameButtonsOld[PLAYER2];
@@ -142,7 +142,7 @@ void UpdateInputs() {
 		}
 	}
 
-	serviceInput |= ~INPUTPORTS[INPUT_SERVICE];
+	serviceInput |= ~INPUTS[INPUT_SERVICE];
 	if (Settings[SETTING_COINMODE] != COINMODE_FREE) {
 		if (serviceInput & SERVICE_COIN1) {
 			*(uint8_t*)&AddCoin[PLAYER1] = true;
@@ -236,8 +236,8 @@ void UpdateInputs() {
 		}
 	}
 
-	ButtonsDown[PLAYER1] = ~INPUTPORTS[INPUT_1PBUTTONS];
-	ButtonsDown[PLAYER2] = ~INPUTPORTS[INPUT_2PBUTTONS];
+	ButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
+	ButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
 	ServiceInputOld = serviceInput;
 }
 

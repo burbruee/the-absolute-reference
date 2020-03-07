@@ -30,7 +30,7 @@ extern bool TestModeDisabled;
 extern uint16_t _0x6060024;
 extern uint32_t _0x6060028;
 extern uint32_t NumVblanks;
-extern bool VBlankFinished;
+extern bool VblankFinished;
 
 // TODO: Could be HBlank. Is an interrupt handler. Have to define it for each
 // platform.
@@ -38,7 +38,7 @@ void _0x602AD0E();
 
 // Must be implemented by frontends.
 //
-// See the PsikyoSH frontend's VBlank for the specific things the function must
+// See the PsikyoSH frontend's Vblank for the specific things the function must
 // do.
 //
 // Not called by the game code. Platforms must either set it up as a vertical
@@ -46,7 +46,7 @@ void _0x602AD0E();
 // drawing every frame, or set up a threaded implementation for the game code
 // updating at FRAMETIME_ORIGINAL or FRAMETIME_INTENDED in
 // Platform/Util/Video.h separate from the render thread.
-void VBlank();
+void Vblank();
 
 // TODO: Do all these functions, when returning true, indicate execution should
 // transition to the test mode screen?

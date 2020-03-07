@@ -119,14 +119,14 @@ typedef struct FixedColor {
 	Fixed16 r, g, b;
 } FixedColor;
 
-typedef struct PalCycleData {
+typedef struct PalCycle {
 	PalCycleType type;
 	int16_t palNum;
 
 	int16_t perPalDelay;
-	int16_t numPalFrames;
+	int16_t palFrames;
 
-	int16_t steppingLength;
+	int16_t stride;
 	int16_t step;
 	int16_t endStep;
 
@@ -135,15 +135,15 @@ typedef struct PalCycleData {
 
 	Color pal0[NUMPALCOLORS_4BPP];
 	Color pal1[NUMPALCOLORS_4BPP];
-} PalCycleData;
+} PalCycle;
 
-static PalCycleData PalCycleHeap[MAXPALCYCLES];
+static PalCycle PalCycleHeap[MAXPALCYCLES];
 
 static bool NoPalCycles;
 
 void InitPalCycles() {
 	// Set all palette cycles as free.
-	PalCycleData* cycle = PalCycleHeap;
+	PalCycle* cycle = PalCycleHeap;
 	for (int16_t i = 0; i < lengthof(PalCycleHeap); i++, cycle++) {
 		cycle->type = PALCYCLETYPE_FREE;
 		cycle->palNum = -1;
@@ -153,11 +153,11 @@ void InitPalCycles() {
 void UpdatePalCycles() {
 	if (!NoPalCycles && CurrentPauseMode < PAUSEMODE_BG) {
 		Color tempPal[NUMPALCOLORS_4BPP];
-		PalCycleData* cycle = PalCycleHeap;
+		PalCycle* cycle = PalCycleHeap;
 		for (uint16_t i = 0u; i < MAXPALCYCLES; i++, cycle++) {
-			if (cycle->palNum >= 0 && --cycle->numPalFrames <= 0) {
-				cycle->numPalFrames = cycle->perPalDelay;
-				if (cycle->steppingLength > 0) {
+			if (cycle->palNum >= 0 && --cycle->palFrames <= 0) {
+				cycle->palFrames = cycle->perPalDelay;
+				if (cycle->stride > 0) {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
 						Color color;
 
@@ -174,10 +174,10 @@ void UpdatePalCycles() {
 					}
 
 					for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						*&((RAMDATA Color*)PALRAM)[cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
+						Palettes[cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
 					}
 
-					cycle->step += cycle->steppingLength;
+					cycle->step += cycle->stride;
 					if (cycle->step > cycle->endStep || cycle->step < 0) {
 						switch (cycle->type) {
 						case PALCYCLETYPE_UPSTOP:
@@ -188,7 +188,7 @@ void UpdatePalCycles() {
 
 						case PALCYCLETYPE_UPRESTART:
 							cycle->step = 0;
-							cycle->numPalFrames = cycle->perPalDelay;
+							cycle->palFrames = cycle->perPalDelay;
 							for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
 								cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal0[j]) & 0xFC, 0x00);
 								cycle->palFixed[j].g = F16(COLOR_GETG(cycle->pal0[j]) & 0xFC, 0x00);
@@ -197,13 +197,13 @@ void UpdatePalCycles() {
 							break;
 
 						case PALCYCLETYPE_BOUNCE:
-							cycle->numPalFrames = cycle->perPalDelay;
-							cycle->steppingLength *= -1;
+							cycle->palFrames = cycle->perPalDelay;
+							cycle->stride *= -1;
 							cycle->step = cycle->step >= 0 ? cycle->endStep : 0;
 							break;
 
 						case PALCYCLETYPE_DOWNRESTART:
-							cycle->numPalFrames = cycle->perPalDelay;
+							cycle->palFrames = cycle->perPalDelay;
 							cycle->step = cycle->endStep;
 							for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
 								cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal1[j]) & 0xFC, 0x00);
@@ -226,7 +226,7 @@ void UpdatePalCycles() {
 	}
 }
 
-void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, PalCycleType type, uint8_t steppingLength, uint8_t endStep) {
+void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, PalCycleType type, uint8_t stride, uint8_t endStep) {
 	size_t heapIndex = MAXPALCYCLES;
 
 	// Check if there's already a cycle for palNum.
@@ -253,10 +253,10 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 		return;
 	}
 
-	PalCycleData* cycle = &PalCycleHeap[heapIndex];
+	PalCycle* cycle = &PalCycleHeap[heapIndex];
 
 	cycle->palNum = palNum;
-	cycle->numPalFrames = 0;
+	cycle->palFrames = 0;
 	cycle->type = type;
 	cycle->endStep = endStep;
 
@@ -266,14 +266,14 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 	case PALCYCLETYPE_BOUNCE:
 		cycle->perPalDelay = perPalDelay;
 		cycle->step = 0;
-		cycle->steppingLength = steppingLength;
+		cycle->stride = stride;
 		break;
 
 	case PALCYCLETYPE_DOWNRESTART:
 	case PALCYCLETYPE_DOWNSTOP:
 		cycle->perPalDelay = perPalDelay;
 		cycle->step = endStep;
-		cycle->steppingLength = -steppingLength;
+		cycle->stride = -stride;
 		break;
 
 	default:
@@ -289,13 +289,13 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 
 	for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
 		#define INITCOMPONENT(c, C) \
-		if (cycle->steppingLength > 0) { \
+		if (cycle->stride > 0) { \
 			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00); \
 		} \
 		else { \
 			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].##c = steppingLength * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
+		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);
@@ -304,7 +304,7 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 }
 
 void FreePalCycles(uint16_t palNum) {
-	if (palNum > MAXPALS - 1u) {
+	if (palNum > NUMPALS - 1u) {
 		for (uint16_t i = 0; i < MAXPALCYCLES; i++) {
 			PalCycleHeap[i].type = PALCYCLETYPE_FREE;
 			PalCycleHeap[i].palNum = -1;
@@ -333,7 +333,7 @@ static void SetVideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal
 	numPals = (uint8_t)numPals;
 	for (int16_t i = 0; i < numPals; i++) {
 		for (size_t j = 0u; j < 16u; j++) {
-			*(RAMDATA Color*)&PALRAM[palNum * 16 * 4 + j * 4] = pal[j];
+			Palettes[palNum * 16 * 4 + j * 4] = pal[j];
 		}
 	}
 }

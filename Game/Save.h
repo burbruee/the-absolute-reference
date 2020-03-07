@@ -50,6 +50,6 @@ void SavePlayStatus();
 
 bool LoadPlayStatus();
 
-bool LoadProgramChecksum();
+void SaveProgramChecksum(uint16_t programChecksum);
 
-void SaveProgramChecksum(uint32_t programChecksum);
+bool LoadProgramChecksum(uint16_t programChecksum);

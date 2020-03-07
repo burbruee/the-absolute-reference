@@ -51,7 +51,7 @@ void main() {
 	InitScanlinesBank(0u);
 
 	// Save data reset, if the tilt DIP switch is active, and player 1 button 1 is pressed.
-	if ((~INPUTPORTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTPORTS[INPUT_1PBUTTONS] & BUTTON_1)) {
+	if ((~INPUTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTS[INPUT_1PBUTTONS] & BUTTON_1)) {
 		_0x600ABD2();
 		InitPlayStatus();
 		InitBestScore();
@@ -74,7 +74,7 @@ void main() {
 		VideoRegisters.screen |= 0xC0; // Set horizontal/vertical screen flip.
 	}
 
-	if (!RestoreROMChecksum((uint16_t)MemCheckData[MEMCHECK_ROMCHECKSUM]) && (~INPUTPORTS[INPUT_SERVICE] & SERVICE_TILT)) {
+	if (!RestoreROMChecksum((uint16_t)MemCheckData[MEMCHECK_ROMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 		// Nothing here. There was probably code here that was
 		// commented out in the released version of TAP.
 		// TODO: Maybe TGM2 has the code?
@@ -121,7 +121,7 @@ void main() {
 	// TODO: The character ROM pairs are named char0000 to char0007. Sound
 	// ROM is just "sound".
 	if (charSoundMemCheck ? _0x60302C4() : numMemCheckFrames != 0) {
-		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTPORTS[INPUT_SERVICE] & SERVICE_TILT)) {
+		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 			charSoundMemCheck = true;
 		}
 
@@ -157,7 +157,7 @@ void main() {
 	int16_t var_128 = var_13C;
 	_0x6024C3C(var_13C, 60, 266, sequenceEntry->_0x0);
 
-	if (INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST) {
+	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
 		const char **messageUseOnly;
 		switch (CurrentRegionWarning) {
 			case REGIONWARNING_JAPAN: // 0
@@ -166,7 +166,7 @@ void main() {
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
 
-					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 						numWarningFrames = 600u;
 					}
 
@@ -188,7 +188,7 @@ void main() {
 					for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 						UpdateFrame();
 
-						if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+						if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 							numWarningFrames = 600u;
 						}
 
@@ -208,7 +208,7 @@ void main() {
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
 
-					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 						numWarningFrames = 600u;
 					}
 
@@ -227,7 +227,7 @@ void main() {
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
 
-					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 						numWarningFrames = 600u;
 					}
 
@@ -294,7 +294,7 @@ void main() {
 			ShowObject(_0xA7A0C, 104, 32, 80u, 125u);
 			ShowObject(_0xA79F4, 0, 0, 80u, 125u);
 
-			if ((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+			if ((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 				frames = 600u;
 			}
 		}

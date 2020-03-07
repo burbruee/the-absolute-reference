@@ -22,7 +22,7 @@ bool TestModeDisabled;
 uint16_t _0x6060024;
 uint32_t _0x6060028;
 uint32_t NumVblanks;
-bool VBlankFinished;
+bool VblankFinished;
 
 bool UpdateFrame();
 
@@ -68,9 +68,9 @@ bool UpdateGameFrame() {
 		// delay an arbitrary amount of time for OS platforms, so longer sleeps
 		// can be used to keep CPU usage down.
 		StepRandScaleWhile(IRQCTRL[1] & 0x01);
-		VBlankFinished = false;
-		StepRandScaleWhile(!VBlankFinished);
-		VBlankFinished = false;
+		VblankFinished = false;
+		StepRandScaleWhile(!VblankFinished);
+		VblankFinished = false;
 
 		if (SystemButtonsDown[PLAYER1] & BUTTON_START) {
 			UpdatePlayers();
@@ -84,7 +84,7 @@ bool UpdateGameFrame() {
 	while (IRQCTRL[1] & 0x01) {
 		StepRandScale();
 	}
-	while (!VBlankFinished) {
+	while (!VblankFinished) {
 		StepRandScale();
 	}
 
@@ -92,9 +92,9 @@ bool UpdateGameFrame() {
 	_0x602AA64();
 	UpdatePalCycles();
 
-	VBlankFinished |= true;
+	VblankFinished |= true;
 
-	if (CurrentMainLoopState != MAINLOOP_TEST && !TestModeDisabled && !(INPUTPORTS[INPUT_SERVICE] & SERVICE_TEST)) {
+	if (CurrentMainLoopState != MAINLOOP_TEST && !TestModeDisabled && !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		// Enter test mode only if it's not currently test mode, entering test mode is enabled, and the test button was pressed.
 		return true;
 	}

@@ -7,6 +7,7 @@
 #include "Game/HwData.h"
 #include "Game/Math.h"
 #include "Platform/Util/Macros.h"
+#include "Game/Macros.h"
 
 // TODO: In the SH-2 assembly, define the interrupt vector table. It
 // immediately precedes _start, and is in ROM address range 0x00000000 to 0x000003FF.
@@ -14,7 +15,6 @@
 uint32_t MemCheckData[NUMMEMCHECKS];
 
 volatile SpriteScale *Scales = (volatile SpriteScale*)SCALERAM;
-volatile Color* Pals = (volatile Color*)PALRAM;
 
 // TODO: Define _start at 0x00000400 in ROM.
 void _start() {
@@ -103,19 +103,19 @@ void _start() {
 	{
 		// Palette RAM.
 		memCheckStatus = MEMCHECKSTATUS_OK;
-		for (size_t i = 0u; i < lengthof(Pals); i++) {
-			Pals[i] = 0xA8A8A8A8;
+		for (size_t i = 0u; i < NUMPALS * NUMPALCOLORS_4BPP; i++) {
+			Palettes[i] = 0xA8A8A8A8;
 		}
 
-		for (size_t i = 0u; i < lengthof(Pals); i++) {
-			if ((Pals[i] & 0xFCFCFC00) != 0xA8A8A800) {
+		for (size_t i = 0u; i < NUMPALS * NUMPALCOLORS_4BPP; i++) {
+			if ((Palettes[i] & 0xFCFCFC00) != 0xA8A8A800) {
 				memCheckStatus = MEMCHECKSTATUS_NOGOOD;
 				break;
 			}
 		}
 
 		for (size_t i = 0u; i < sizeof(PALRAM); i++) {
-			*PALRAM = 0x00;
+			*(uint8_t*)PALRAM = 0x00;
 		}
 
 		*memCheckData++ = memCheckStatus;
