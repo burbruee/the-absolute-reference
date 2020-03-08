@@ -27,8 +27,8 @@
 
 // The matrix positions of newly entered tetrominoes.
 #define ENTRY_SINGLECOL 4
-#define ENTRY_1PDOUBLESCOL 3
-#define ENTRY_2PDOUBLESCOL 10
+#define ENTRY_DOUBLES1PCOL 3
+#define ENTRY_DOUBLES2PCOL 10
 #define ENTRY_ROW (MATRIX_HEIGHT - 1)
 // Top-most position within the entry row; using this causes entered
 // tetrominoes to initially float in sub-1G gravity.

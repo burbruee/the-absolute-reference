@@ -51,7 +51,7 @@ void main() {
 	InitScanlinesBank(0u);
 
 	// Save data reset, if the tilt DIP switch is active, and player 1 button 1 is pressed.
-	if ((~INPUTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTS[INPUT_1PBUTTONS] & BUTTON_1)) {
+	if ((~INPUTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTS[INPUT_BUTTONS1P] & BUTTON_1)) {
 		_0x600ABD2();
 		InitPlayStatus();
 		InitBestScore();

@@ -181,10 +181,10 @@ void InitPlayer(PlayerNum playerNum) {
 	player->activePos[1] = ENTRYPOS_Y;
 	if (GameFlags & GAME_DOUBLES) {
 		if (player->num == PLAYER1) {
-			player->activePos[0] = F32(ENTRY_1PDOUBLESCOL, 0x0000);
+			player->activePos[0] = F32(ENTRY_DOUBLES1PCOL, 0x0000);
 		}
 		else {
-			player->activePos[0] = F32(ENTRY_2PDOUBLESCOL, 0x0000);
+			player->activePos[0] = F32(ENTRY_DOUBLES2PCOL, 0x0000);
 		}
 	}
 	else {
@@ -555,7 +555,7 @@ typedef enum ChallengeSelection {
 
 void StartChallenger(Player* player) {
 	if (player->values[0] == CHALLENGE_YES) {
-		GameFlags |= (player->num == PLAYER1) ? GAME_1PCHALLENGER : GAME_2PCHALLENGER;
+		GameFlags |= (player->num == PLAYER1) ? GAME_CHALLENGER1P : GAME_CHALLENGER2P;
 		player->nowFlags = NOW_WAITING | NOW_STARTED;
 		StartPlayer(player);
 		PlaySoundEffect(SOUNDEFFECT_START);
@@ -1259,10 +1259,10 @@ void NextPlayVersusOver(Player* player) {
 
 	PlayerNum winnerFlag;
 	if (player->num == PLAYER1) {
-		winnerFlag = GAME_1PWINNER;
+		winnerFlag = GAME_WINNER1P;
 	}
 	else {
-		winnerFlag = GAME_2PWINNER;
+		winnerFlag = GAME_WINNER2P;
 	}
 
 	if (GameFlags & GAME_BIT10) {
@@ -2332,10 +2332,10 @@ void UpdatePlayNextBlock(Player* player) {
 	Fixed32 activeCol;
 	if (GameFlags & GAME_DOUBLES) {
 		if (player->num == PLAYER1) {
-			activeCol = F32(ENTRY_1PDOUBLESCOL, 0x0000);
+			activeCol = F32(ENTRY_DOUBLES1PCOL, 0x0000);
 		}
 		else {
-			activeCol = F32(ENTRY_2PDOUBLESCOL, 0x0000);
+			activeCol = F32(ENTRY_DOUBLES2PCOL, 0x0000);
 		}
 	}
 	else {
@@ -2403,10 +2403,10 @@ void UpdatePlayNextBlock(Player* player) {
 			player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
 
 			if (player->num != PLAYER2) {
-				GameFlags |= GAME_2PWINNER;
+				GameFlags |= GAME_WINNER2P;
 			}
 			else {
-				GameFlags |= GAME_1PWINNER;
+				GameFlags |= GAME_WINNER1P;
 			}
 		}
 		else {
@@ -2888,10 +2888,10 @@ static const ObjectData* _0x3A8C0[3] = {
 void UpdatePlayVersusOver(Player* player) {
 	GameFlag winnerFlag;
 	if (player->num == PLAYER1) {
-		winnerFlag = GAME_1PWINNER;
+		winnerFlag = GAME_WINNER1P;
 	}
 	else {
-		winnerFlag = GAME_2PWINNER;
+		winnerFlag = GAME_WINNER2P;
 	}
 
 	size_t objectIndex;

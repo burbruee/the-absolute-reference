@@ -31,10 +31,10 @@ void ShowOtherItemDescriptions(Item* item);
 
 typedef enum Started {
 	STARTED_NONE = 0,
-	STARTED_1P = 1 << PLAYER1,
-	STARTED_2P = 1 << PLAYER2
+	STARTED_PLAYER1 = 1 << PLAYER1,
+	STARTED_PLAYER2 = 1 << PLAYER2
 } Started;
-#define STARTED_ALL (STARTED_1P | STARTED_2P)
+#define STARTED_ALL (STARTED_PLAYER1 | STARTED_PLAYER2)
 void _0x600FC50();
 void ShowStartRequirement(Player* player);
 void ShowFree(Started started, int16_t y);

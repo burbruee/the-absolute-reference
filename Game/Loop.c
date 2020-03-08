@@ -127,14 +127,14 @@ int32_t _0x6008A00() {
 			r10 = _0x6008918();
 		}
 		else {
-			if (GameFlags & GAME_1PCHALLENGER) {
+			if (GameFlags & GAME_CHALLENGER1P) {
 				_0x6008134(player1);
 			}
 			else {
 				_0x6008134(player2);
 			}
 
-			GameFlags &= ~(GAME_1PCHALLENGER | GAME_2PCHALLENGER);
+			GameFlags &= ~(GAME_CHALLENGER1P | GAME_CHALLENGER2P);
 			if (GameFlags & GAME_NEWCHALLENGER) {
 				r10 = _0x600817E();
 			}

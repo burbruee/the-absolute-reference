@@ -436,10 +436,10 @@ void ShowFree(Started started, int16_t y) {
 		ShowObject(OBJECT_FREE, y, 147, GAMEPALNUM_SMALLTEXT, layer);
 	}
 	else {
-		if (!(started & STARTED_1P)) {
+		if (!(started & STARTED_PLAYER1)) {
 			ShowObject(OBJECT_FREE, y, 10, GAMEPALNUM_SMALLTEXT, layer);
 		}
-		if (!(started & STARTED_2P)) {
+		if (!(started & STARTED_PLAYER2)) {
 			ShowObject(OBJECT_FREE, y, 285, GAMEPALNUM_SMALLTEXT, layer);
 		}
 	}
@@ -482,10 +482,10 @@ void ShowCredits() {
 	Started started = STARTED_NONE;
 
 	if (Players[PLAYER1].nowFlags & NOW_STARTED) {
-		started |= STARTED_1P;
+		started |= STARTED_PLAYER1;
 	}
 	if (Players[PLAYER2].nowFlags & NOW_STARTED) {
-		started |= STARTED_2P;
+		started |= STARTED_PLAYER2;
 	}
 
 	if (Attract) {
@@ -501,31 +501,31 @@ void ShowCredits() {
 				ShowNumCredits(*Credits, 267, 228);
 			}
 			else if (PayCoins[PLAYER1] != 0 && PayCoins[PLAYER1] != 0) {
-				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_1PPRICE], 218, 228, false);
-				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_2PPRICE], 251, 228, true);
+				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 218, 228, false);
+				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
 			}
 			else if (PayCoins[PLAYER1] != 0) {
-				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_1PPRICE], 251, 228, true);
+				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 251, 228, true);
 			}
 			else if (PayCoins[PLAYER2] != 0) {
-				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_2PPRICE], 251, 228, true);
+				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
 			}
 		}
 		else {
-			if (!(started & STARTED_1P)) {
+			if (!(started & STARTED_PLAYER1)) {
 				if (Credits[PLAYER1] != 0) {
 					ShowNumCredits(Credits[PLAYER1], 10, 228);
 				}
 				else if (PayCoins[PLAYER1] != 0) {
-					ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_1PPRICE], 10, 228, true);
+					ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 10, 228, true);
 				}
 			}
-			if (!(started & STARTED_2P)) {
+			if (!(started & STARTED_PLAYER2)) {
 				if (Credits[PLAYER2] != 0) {
 					ShowNumCredits(Credits[PLAYER2], 267, 228);
 				}
 				else if (PayCoins[PLAYER2] != 0) {
-					ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_2PPRICE], 251, 228, true);
+					ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
 				}
 			}
 			if (Services != 0) {

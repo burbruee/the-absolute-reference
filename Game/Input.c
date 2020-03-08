@@ -93,8 +93,8 @@ void UpdateInputs() {
 	_0x6064756 = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
 	_0x6064757 = ~INPUTS[INPUT_UNUSED] & 0xF;
 
-	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
-	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
+	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
+	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];
 
 	ServiceInput serviceInput = ~INPUTS[INPUT_SERVICE];
 
@@ -126,8 +126,8 @@ void UpdateInputs() {
 		GameButtonsOld[PLAYER1] = GameButtonsDown[PLAYER1];
 		GameButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
 
-		GameButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
-		GameButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
+		GameButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
+		GameButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];
 
 		GameButtonsNew[PLAYER1] = GameButtonsDown[PLAYER1] & ~GameButtonsOld[PLAYER1];
 		GameButtonsNew[PLAYER2] = GameButtonsDown[PLAYER2] & ~GameButtonsOld[PLAYER2];
@@ -171,7 +171,7 @@ void UpdateInputs() {
 
 	if (PayCoins[PLAYER1] != 0u) {
 		if (Settings[SETTING_COINMODE] == COINMODE_NORMAL) {
-			NormalCoinMode(Settings[SETTING_1PPRICE], &Credits[PLAYER1], &PayCoins[PLAYER1]);
+			NormalCoinMode(Settings[SETTING_PRICE1P], &Credits[PLAYER1], &PayCoins[PLAYER1]);
 		}
 		else if (Settings[SETTING_COINMODE] == COINMODE_DOUBLE) {
 			while (PayCoins[PLAYER1] > 0u) {
@@ -196,7 +196,7 @@ void UpdateInputs() {
 				}
 			}
 			else {
-				NormalCoinMode(Settings[SETTING_2PPRICE], Credits, &PayCoins[PLAYER2]);
+				NormalCoinMode(Settings[SETTING_PRICE2P], Credits, &PayCoins[PLAYER2]);
 			}
 		}
 		else if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
@@ -209,7 +209,7 @@ void UpdateInputs() {
 			}
 		}
 		else {
-			NormalCoinMode(Settings[SETTING_1PPRICE], &Credits[PLAYER2], &PayCoins[PLAYER2]);
+			NormalCoinMode(Settings[SETTING_PRICE1P], &Credits[PLAYER2], &PayCoins[PLAYER2]);
 		}
 	}
 
@@ -236,8 +236,8 @@ void UpdateInputs() {
 		}
 	}
 
-	ButtonsDown[PLAYER1] = ~INPUTS[INPUT_1PBUTTONS];
-	ButtonsDown[PLAYER2] = ~INPUTS[INPUT_2PBUTTONS];
+	ButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
+	ButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];
 	ServiceInputOld = serviceInput;
 }
 
