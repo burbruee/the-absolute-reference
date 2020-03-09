@@ -84,15 +84,15 @@ void NewRankingCode(Player *player) {
 	code[15].digit = keyIndex & 0xF;
 	code[14].digit = (keyIndex >> 4) & 1;
 
-	code[14].digit |=  (player->medals[MEDALTYPE_CO] & 3) << 1;
-	code[14].digit |= ((player->medals[MEDALTYPE_RO] & 3) & 1) << 3;
-	code[11].digit  = ((player->medals[MEDALTYPE_RO] & 3) >> 1) & 1;
-	code[11].digit |=  (player->medals[MEDALTYPE_RE] & 3) << 1;
-	code[11].digit |= ((player->medals[MEDALTYPE_SK] & 3) & 1) << 3;
-	code[10].digit  = ((player->medals[MEDALTYPE_SK] & 3) >> 1) & 1;
-	code[10].digit |=  (player->medals[MEDALTYPE_ST] & 3) << 1;
-	code[10].digit |= ((player->medals[MEDALTYPE_AC] & 3) & 1) << 3;
-	code[ 9].digit |= ((player->medals[MEDALTYPE_AC] & 3) >> 1) & 1;
+	code[14].digit |=  (player->medalColors[MEDALTYPE_CO] & 3) << 1;
+	code[14].digit |= ((player->medalColors[MEDALTYPE_RO] & 3) & 1) << 3;
+	code[11].digit  = ((player->medalColors[MEDALTYPE_RO] & 3) >> 1) & 1;
+	code[11].digit |=  (player->medalColors[MEDALTYPE_RE] & 3) << 1;
+	code[11].digit |= ((player->medalColors[MEDALTYPE_SK] & 3) & 1) << 3;
+	code[10].digit  = ((player->medalColors[MEDALTYPE_SK] & 3) >> 1) & 1;
+	code[10].digit |=  (player->medalColors[MEDALTYPE_ST] & 3) << 1;
+	code[10].digit |= ((player->medalColors[MEDALTYPE_AC] & 3) & 1) << 3;
+	code[ 9].digit |= ((player->medalColors[MEDALTYPE_AC] & 3) >> 1) & 1;
 
 	uint32_t masteringValue;
 	if (player->modeFlags & MODE_NORMAL) {

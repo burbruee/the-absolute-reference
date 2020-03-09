@@ -212,7 +212,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->numRotateBlocks = 0u;
 	player->numRotations = 0u;
 	player->numActiveRotations = 0u;
-	player->nextRotateMedal = MEDALCOLOR_NULL;
+	player->nextRotateMedalColor = MEDALCOLOR_NULL;
 	player->numRecoveries = 0u;
 	player->numSkillClears = 0u;
 	player->numFieldBlocks = 0u;
@@ -224,7 +224,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->nextScaleA = 0x0000;
 	player->nextScaleV = 0x0000;
 	player->nextScale = 0x0000;
-	MedalColor* medal = player->medals;
+	MedalColor* medal = player->medalColors;
 	for (uint8_t i = 0u; i < NUMMEDALTYPES; i++, medal++) {
 		*medal = MEDALCOLOR_NULL;
 	}
@@ -1229,7 +1229,7 @@ void NextPlayGameOver(Player* player) {
 		player->level = 0u;
 		player->grade = PLAYERGRADE_9;
 		player->clearTime = 0u;
-		MedalColor* medal = player->medals;
+		MedalColor* medal = player->medalColors;
 		for (size_t i = 0; i < NUMMEDALTYPES; i++) {
 			*medal = MEDALCOLOR_NULL;
 		}

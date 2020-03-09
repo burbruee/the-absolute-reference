@@ -265,10 +265,10 @@ struct Player {
 	uint32_t mGradeSectionTime;
 	MGradeFlag mGradeFlags;
 	MiscFlag miscFlags;
-	MedalColor medals[NUMMEDALTYPES];
+	MedalColor medalColors[NUMMEDALTYPES];
 	uint8_t numSkillClears;
 	uint8_t numRecoveries;
-	MedalColor nextRotateMedal;
+	MedalColor nextRotateMedalColor;
 	uint8_t numComboClears;
 	uint16_t numFieldBlocks;
 	uint8_t normalItemIndex;

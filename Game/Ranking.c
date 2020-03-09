@@ -335,7 +335,7 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 						RANKINGDATA_SETORANGELINE(rankings[place].data, true);
 					}
 					int16_t medalRankingBit = 0;
-					MedalColor* medal = newRanking->player->medals;
+					MedalColor* medal = newRanking->player->medalColors;
 					for (size_t i = 0; i < NUMMEDALTYPES; i++, medalRankingBit += 2) {
 						masterMedalRankings[place] |= (*medal++ & 3) << medalRankingBit;
 					}
