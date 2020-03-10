@@ -147,7 +147,7 @@ void UpdateItemNegaField(Item* item) {
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			if (item->forceLockBlock) {
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
-				NextPlayLockBlock(itemPlayer);
+				NextPlayLock(itemPlayer);
 			}
 			item->states[0]++;
 			itemPlayer->activeItemType = ITEMTYPE_NULL;

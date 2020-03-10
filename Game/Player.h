@@ -189,11 +189,11 @@ typedef enum PlayFlag {
 
 typedef enum PlayState {
 	PLAYSTATE_NULL,
-	PLAYSTATE_NEXTBLOCK,
-	PLAYSTATE_ACTIVEBLOCK,
-	PLAYSTATE_LOCKBLOCK,
+	PLAYSTATE_NEXT,
+	PLAYSTATE_ACTIVE,
+	PLAYSTATE_LOCK,
 	PLAYSTATE_CLEAR,
-	PLAYSTATE_BLOCKENTRY,
+	PLAYSTATE_ENTRY,
 	PLAYSTATE_GARBAGEENTRY,
 	PLAYSTATE_GAMEOVER,
 	PLAYSTATE_BLOCKEDENTRY,
@@ -213,9 +213,9 @@ typedef enum Rotation {
 	ROTATION_DOWN,
 	ROTATION_RIGHT,
 	ROTATION_UP,
-	ROTATION_LEFT
+	ROTATION_LEFT,
+	ROTATION_ENTRY = ROTATION_DOWN
 } Rotation;
-#define ROTATION_ENTRY ROTATION_DOWN
 #define ROTATE_LEFT(r) (((r) + 1) % 4)
 #define ROTATE_RIGHT(r) (((r) + 3) % 4)
 #define ROTATED_ANY(buttons) ((buttons) & (BUTTON_1 | BUTTON_2 | BUTTON_3))
@@ -383,9 +383,11 @@ extern BlockDefSquare BlockDefs[9 * 4 * 4 * 4];
 #define BLOCKDEFSQUAREBIG(blockDefRow, col) ((blockDefRow)[(col) / 2])
 #define BLOCKDEFSQUARE_EMPTY 0u
 
-void NextPlayLockBlock(Player* player);
+void NextPlayLock(Player* player);
 
 void NextPlayGameOver(Player* player);
+
+Fixed32 StepGravity(Player* player, Fixed32 gravity);
 
 typedef enum LockType {
 	LOCKTYPE_NORMAL,
