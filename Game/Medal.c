@@ -52,12 +52,12 @@ static const MedalPalAnim MedalPalAnims[NUMMEDALCOLORS + 1] = {
 };
 
 static const int16_t MedalOffsets[NUMMEDALTYPES][2] = {
-	{ 0,  0},
-	{16,  0},
-	{ 0, 16},
-	{16, 16},
-	{ 0, 32},
-	{16, 32}
+	{  0,  0 },
+	{ 16,  0 },
+	{  0, 16 },
+	{ 16, 16 },
+	{  0, 32 },
+	{ 16, 32 }
 };
 
 static Medal Medals[NUMPLAYERS][NUMMEDALTYPES];
@@ -73,7 +73,7 @@ static const ObjectData* ObjectTableMedals[NUMMEDALTYPES] = {
 
 void InitMedals(Player* player, int16_t medalsY, int16_t medalsX) {
 	Medal* medal = Medals[player->num];
-	for (int16_t medalType = 0; medalType < NUMMEDALTYPES; medalType++) {
+	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++) {
 		medal->state = MEDALSTATE_NULL;
 		medal->type = medalType;
 		medal->animStep = 0;

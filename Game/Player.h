@@ -228,8 +228,6 @@ typedef enum Rotation {
 #define CLEARTIME_TIMEOUT TIME(15, 0, 0)
 #define CLEARTIME_MAX TIME(100, 39, 59)
 
-#define BUTTON_ALLDIRECTIONS (BUTTON_LEFT | BUTTON_RIGHT | BUTTON_DOWN | BUTTON_UP)
-
 // TODO: Reorder. The SH-2 compiler reordered the fields to pack more tightly.
 // Look at init functions for ordering and grouping.
 typedef struct Player Player;

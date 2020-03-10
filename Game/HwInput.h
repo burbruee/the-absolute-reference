@@ -34,7 +34,8 @@ typedef enum ButtonInput {
 	BUTTON_LEFT = 1 << 4,
 	BUTTON_RIGHT = 1 << 5,
 	BUTTON_DOWN = 1 << 6,
-	BUTTON_UP = 1 << 7
+	BUTTON_UP = 1 << 7,
+	BUTTON_ALLDIRECTIONS = BUTTON_LEFT | BUTTON_RIGHT | BUTTON_DOWN | BUTTON_UP
 } ButtonInput;
 
 // Extra inputs that aren't player buttons.

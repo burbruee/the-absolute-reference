@@ -2,11 +2,12 @@
 
 #include "Player.h"
 #include "Item.h"
+#include "PlatformTypes.h"
 #include <stdbool.h>
 
 extern const uint16_t PalNumTableNormalBlocks[NUMBLOCKTYPES];
 extern const uint16_t PalNumTableItemBlocks[NUMITEMTYPES];
-extern const uint16_t PalTableItemFieldBorder[NUMITEMTYPES];
+extern const Color* PalTableItemFieldBorder[NUMITEMTYPES];
 
 void SetFieldBorderColor(Player* player, ItemType itemType);
 

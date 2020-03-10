@@ -1010,22 +1010,22 @@ static const SoundEffect SirenSoundEffects[6] = {
 };
 
 void UpdateSiren(Player* player) {
-	int16_t numSquares = 0;
+	int16_t numBlocks = 0;
 
 	// Count the number of squares in the top five rows of the field, below the
 	// vanish row.
 	for (int16_t row = player->matrixHeight - 6; row < player->matrixHeight - 1; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			if (MATRIX(player, row, col).block == NULLBLOCK) {
-				numSquares++;
+				numBlocks++;
 			}
 		}
 	}
 
 	// Play the siren while there's more than ten squares in those top five
 	// rows.
-	if (numSquares > 10 && NumScreenFrames % 20u == 0u) {
-		int16_t sirenIndex = numSquares / 10;
+	if (numBlocks > 10 && NumScreenFrames % 20u == 0u) {
+		int16_t sirenIndex = numBlocks / 10;
 		if (sirenIndex > 4) {
 			sirenIndex = 4;
 		}
@@ -1313,11 +1313,11 @@ static inline void CountBlockings(const Player* player, const int16_t col, const
 	for (int16_t blockRow = 0; blockRow < size; blockRow++) {
 		int16_t matrixRow = row - blockRow;
 		if (matrixRow < player->matrixHeight) {
-			MatrixBlock* matrixSquare = &MATRIX(player, matrixRow, col);
+			MatrixBlock* matrixBlock = &MATRIX(player, matrixRow, col);
 			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, blockRow);
-			for (int16_t blockCol = 0; blockCol < size; blockCol++, matrixSquare++) { 
-				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != BLOCKDEFSQUARE_EMPTY && (matrixSquare->block & ~BLOCK_INVISIBLE)) {
-					if (matrixSquare->block & BLOCK_BLOCKING) {
+			for (int16_t blockCol = 0; blockCol < size; blockCol++, matrixBlock++) { 
+				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != BLOCKDEFSQUARE_EMPTY && (matrixBlock->block & ~BLOCK_INVISIBLE)) {
+					if (matrixBlock->block & BLOCK_BLOCKING) {
 						blockEntry->numPlayerBlockings++;
 					}
 					else {
@@ -1615,12 +1615,12 @@ void UpdatePlayActiveBlock(Player* player) {
 
 	if (Debug && (GameButtonsNew[player->num] & BUTTON_START)) {
 		// Advance a section's worth of levels.
-		if (GameButtonsDown[player->num] & BUTTON_RIGHT) {
+		if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_RIGHT) {
 			player->level += 100;
 		}
 
 		// Test staff roll; GM can't be awarded.
-		if (GameButtonsDown[player->num] & BUTTON_LEFT) {
+		if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_LEFT) {
 			player->section = 8u;
 			player->level = 899;
 			player->mGradeSectionTime = TIME(1, 0, 0);
@@ -1630,7 +1630,7 @@ void UpdatePlayActiveBlock(Player* player) {
 		}
 
 		// Test staff roll; GM can be awarded.
-		if (GameButtonsDown[player->num] & BUTTON_UP) {
+		if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_UP) {
 			player->section = 8u;
 			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
@@ -1639,7 +1639,7 @@ void UpdatePlayActiveBlock(Player* player) {
 			player->mGradeFlags |= MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT2 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS | MGRADE_S9GRADE;
 		}
 
-		if (GameButtonsDown[player->num] & BUTTON_DOWN) {
+		if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_DOWN) {
 			player->miscFlags |= MISC_FORCELOWG;
 		}
 
@@ -1648,7 +1648,7 @@ void UpdatePlayActiveBlock(Player* player) {
 		}
 		else {
 			player->nowFlags |= NOW_NOINVISIBLE;
-			FieldVisible(player); // TODO
+			SetFieldVisible(player);
 		}
 	}
 
@@ -3169,13 +3169,13 @@ void ThrowOutActiveBlock(Player* player) {
 uint8_t NumSecretGradeRows(Player* player) {
 	uint8_t numSecretGradeRows = 0u;
 	for (int16_t row = 0; row < player->matrixHeight - 1; row++) {
-		int16_t emptySquares = 0;
+		int16_t emptyBlocks = 0;
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			if (MATRIX(player, row, col).block == NULLBLOCK) {
-				emptySquares++;
+				emptyBlocks++;
 			}
 		}
-		if (emptySquares == 1) {
+		if (emptyBlocks == 1) {
 			if (row < FIELD_HEIGHT / 2) {
 				// Check lower half of pattern.
 				if (MATRIX(player, row, row).block == NULLBLOCK) {
