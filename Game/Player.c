@@ -1736,7 +1736,7 @@ static inline void WriteBlockToMatrix(Player* player, const LockType lockType, c
 			for (int16_t blockCol = 0; blockCol < lockBlockSize; blockCol++) {
 				if (BLOCKDEFSQUARE(blockDefRow, blockCol) != BLOCKDEFSQUARE_EMPTY) {
 					if (lockType != LOCKTYPE_GAMEOVER) {
-						MATRIX(player, matrixRow, lockCol + blockCol).block = player->activeBlock | BLOCK_FLASH | TOBLOCKNUMFLASHFRAMES(2u);
+						MATRIX(player, matrixRow, lockCol + blockCol).block = player->activeBlock | BLOCK_FLASH | TOBLOCKFLASHFRAMES(2u);
 					}
 					else {
 						MATRIX(player, matrixRow, lockCol + blockCol).block = player->activeBlock;

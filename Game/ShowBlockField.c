@@ -2,6 +2,7 @@
 #include "DisplayObject.h"
 #include "Object.h"
 #include "Video.h"
+#include "Layer.h"
 #include "Pal.h"
 #include "Math.h"
 
@@ -182,6 +183,142 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 	}
 }
 
-void ShowField(Player* player);
+typedef enum BlockBorder {
+	BLOCKBORDER_NONE = 0,
+	BLOCKBORDER_TOP = 1,
+	BLOCKBORDER_BOTTOM = 2,
+	BLOCKBORDER_LEFT = 4,
+	BLOCKBORDER_RIGHT = 8
+} BlockBorder;
+
+void ShowField(Player* player) {
+	const int16_t x = player->screenPos[0] + player->screenOffset[0];
+	const int16_t y = player->screenPos[1] + player->screenOffset[1];
+
+	ROMDATA ObjectData* fieldBorderObject;
+	uint8_t palNum;
+	if (GameFlags & GAME_DOUBLES) {
+		fieldBorderObject = OBJECT_DOUBLESFIELDBORDER;
+		palNum = 16u;
+	}
+	else {
+		if (player->modeFlags & (MODE_MASTER|MODE_VERSUS)) {
+			fieldBorderObject = OBJECT_METALFIELDBORDER;
+		}
+		else {
+			fieldBorderObject = OBJECT_ROCKFIELDBORDER;
+		}
+
+		if (player->num == PLAYER1) {
+			palNum = 16u;
+		}
+		else {
+			palNum = 32u;
+		}
+	}
+	DisplayObject(fieldBorderObject, y, x, palNum, LAYER_MATRIX);
+
+	for (int16_t row = 0, displayY = y - ((player->matrixHeight - 1) * 8 + 6); row < player->matrixHeight; row++, displayY += 8) {
+		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
+			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
+			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
+				BlockBorder blockBorders = BLOCKBORDER_NONE;
+				if (row != 0 && MATRIX(player, player->matrixHeight - row - 2, col).block == NULLBLOCK) {
+					blockBorders = BLOCKBORDER_BOTTOM;
+				}
+				// NOTE: The check against 0 here was not in TAP, and had to be
+				// added, to avoid out-of-bounds access of player 2's matrix.
+				// The normal behavior for player 1 is for the top row to not
+				// have any borders on the top, and the change enforces that
+				// behavior for both players.
+				if (row != 0 && row != player->matrixHeight - 1 && MATRIX(player, player->matrixHeight - row, col).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_TOP;
+				}
+				if (col != 1 && MATRIX(player, player->matrixHeight - row - 1, col - 1).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_LEFT;
+				}
+				if (col != player->matrixWidth - 2 && MATRIX(player, player->matrixHeight - row - 1, col + 1).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_RIGHT;
+				}
+				ROMDATA ObjectData* blockObject = &OBJECTTABLE_NORMALBLOCKS[0];
+				if (player->itemPlayer->activeItemType != ITEMTYPE_COLORBLOCK && player->activeItemType != ITEMTYPE_GAMEOVER) {
+					switch(blockBorders) {
+					default: blockObject = &OBJECTTABLE_NORMALBLOCKS[0]; break;
+					case BLOCKBORDER_LEFT: blockObject = &OBJECTTABLE_NORMALBLOCKS[1]; break;
+					case BLOCKBORDER_TOP: blockObject = &OBJECTTABLE_NORMALBLOCKS[2]; break;
+					case BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[3]; break;
+					case BLOCKBORDER_BOTTOM: blockObject = &OBJECTTABLE_NORMALBLOCKS[4]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_LEFT: blockObject = &OBJECTTABLE_NORMALBLOCKS[5]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[6]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[7]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT: blockObject = &OBJECTTABLE_NORMALBLOCKS[8]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[9]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[10]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[11]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT: blockObject = &OBJECTTABLE_NORMALBLOCKS[12]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM: blockObject = &OBJECTTABLE_NORMALBLOCKS[13]; break;
+					case BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[14]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: blockObject = &OBJECTTABLE_NORMALBLOCKS[15]; break;
+					}
+				}
+
+				if (block & BLOCK_ITEM) {
+					blockObject = &OBJECTTABLE_ITEMBLOCKS[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)];
+				}
+
+				if (!(block & BLOCK_FLASH)) {
+					uint8_t blockPalNum = PalNumTableNormalBlocks[TOBLOCKNUM(block & BLOCK_TYPE)] + 5u;
+					if (player->activeItemType == ITEMTYPE_GAMEOVER) {
+						int8_t brightness = MATRIX(player, player->matrixHeight - row - 1, col).brightness;
+						if (brightness > 5) {
+							brightness = 5;
+						}
+						palNum = blockPalNum - brightness;
+					}
+					else {
+						if (block & BLOCK_HARD) {
+							blockObject = OBJECT_HARDBLOCK;
+							blockPalNum = 137u;
+						}
+						if (block & BLOCK_ITEM) {
+							blockPalNum = PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)] + 5u;
+						}
+						palNum = blockPalNum;
+						if (player->itemPlayer->activeItemType == ITEMTYPE_COLORBLOCK) {
+							int8_t brightness = MATRIX(player, row, col).brightness;
+							palNum = 137u;
+							if (brightness > -1 && brightness < 9) {
+								palNum = blockPalNum + MATRIX(player, row, col).brightness - 1;
+							}
+						}
+					}
+				}
+				else {
+					const uint8_t flashFrames = GETBLOCKFLASHFRAMES(block) - 1;
+					if (flashFrames == 0) {
+						block &= ~BLOCK_FLASH;
+					}
+					else {
+						block = (block & ~BLOCK_FLASHFRAMES) | TOBLOCKFLASHFRAMES(flashFrames);
+					}
+					MATRIX(player, player->matrixHeight - row - 1, col).block = block;
+					palNum = 137u;
+				}
+				if (!(block & BLOCK_INVISIBLE)) {
+					DisplayObject(blockObject, displayY, displayX, palNum, LAYER_MATRIX);
+				}
+			}
+		}
+	}
+
+	ROMDATA ObjectData* fieldBgObject;
+	if (GameFlags & GAME_DOUBLES) {
+		fieldBgObject = OBJECT_DOUBLESFIELDBG;
+	}
+	else {
+		fieldBgObject = OBJECT_SINGLEFIELDBG;
+	}
+	DisplayObject(fieldBgObject, y, x, 148u, LAYER_FIELDBG);
+}
 
 void ShowFieldPlus(Player *player);

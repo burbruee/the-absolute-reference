@@ -5,4 +5,7 @@
 
 #define LAYER_GAMESTATUS 40u
 
+#define LAYER_FIELDBG 60u
+#define LAYER_MATRIX 80u
+
 // TODO: Layer 61 is used for the next block label.

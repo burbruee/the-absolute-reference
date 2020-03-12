@@ -12,7 +12,7 @@
 #define NULLBLOCK 0x0000
 typedef enum Block {
 	BLOCK_TYPE = 0xF << 0,
-	BLOCK_NUMFLASHFRAMES = 7 << 4,
+	BLOCK_FLASHFRAMES = 7 << 4,
 	BLOCK_FLASH = 1 << 7,
 	BLOCK_TRANSFORM = 1 << 8,
 	BLOCK_BIG = 1 << 9,
@@ -41,4 +41,5 @@ typedef enum BlockType {
 
 #define TOBLOCKNUM(blockType) ((blockType) - 2u)
 #define TOBLOCKTYPE(blockNum) ((blockNum) + 2u)
-#define TOBLOCKNUMFLASHFRAMES(frames) (((frames) & 7) << 4)
+#define TOBLOCKFLASHFRAMES(frames) (((frames) & 7) << 4)
+#define GETBLOCKFLASHFRAMES(block) (((block) & BLOCK_FLASHFRAMES) >> 4)
