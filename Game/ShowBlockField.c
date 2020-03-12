@@ -203,10 +203,10 @@ void ShowField(Player* player) {
 	}
 	else {
 		if (player->modeFlags & (MODE_MASTER|MODE_VERSUS)) {
-			fieldBorderObject = OBJECT_METALFIELDBORDER;
+			fieldBorderObject = OBJECT_MASTERFIELDBORDER;
 		}
 		else {
-			fieldBorderObject = OBJECT_ROCKFIELDBORDER;
+			fieldBorderObject = OBJECT_NORMALFIELDBORDER;
 		}
 
 		if (player->num == PLAYER1) {
@@ -321,4 +321,31 @@ void ShowField(Player* player) {
 	DisplayObject(fieldBgObject, y, x, 148u, LAYER_FIELDBG);
 }
 
-void ShowFieldPlus(Player* player);
+void ShowFieldPlus(Player* player) {
+	const int16_t x = player->screenPos[0] + player->screenOffset[0];
+	const int16_t y = player->screenPos[1] + player->screenOffset[1];
+
+	const ObjectData* fieldBorderObject;
+	uint8_t palNum;
+	if (GameFlags & GAME_DOUBLES) {
+		fieldBorderObject = OBJECT_DOUBLESFIELDBORDER;
+		palNum = 16u;
+	}
+	else {
+		fieldBorderObject = OBJECT_NORMALFIELDBORDER;
+		if (!(player->modeFlags & MODE_TADEATH) && (player->modeFlags & (MODE_MASTER | MODE_VERSUS | MODE_TGMPLUS))) {
+			fieldBorderObject = OBJECT_MASTERFIELDBORDER;
+		}
+		if ((player->nowFlags & NOW_SELECTING) && (player->modeFlags & MODE_DOUBLES)) {
+			fieldBorderObject = OBJECT_MASTERFIELDBORDER;
+		}
+		if (player->num == PLAYER1) {
+			palNum = 16u;
+		}
+		else {
+			palNum = 32u;
+		}
+	}
+	DisplayObject(fieldBorderObject, y, x, palNum, LAYER_MATRIX);
+	// TODO
+}
