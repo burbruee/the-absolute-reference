@@ -195,7 +195,7 @@ void ShowField(Player* player) {
 	const int16_t x = player->screenPos[0] + player->screenOffset[0];
 	const int16_t y = player->screenPos[1] + player->screenOffset[1];
 
-	ROMDATA ObjectData* fieldBorderObject;
+	const ObjectData* fieldBorderObject;
 	uint8_t palNum;
 	if (GameFlags & GAME_DOUBLES) {
 		fieldBorderObject = OBJECT_DOUBLESFIELDBORDER;
@@ -240,7 +240,7 @@ void ShowField(Player* player) {
 				if (col != player->matrixWidth - 2 && MATRIX(player, player->matrixHeight - row - 1, col + 1).block == NULLBLOCK) {
 					blockBorders |= BLOCKBORDER_RIGHT;
 				}
-				ROMDATA ObjectData* blockObject = &OBJECTTABLE_NORMALBLOCKS[0];
+				const ObjectData* blockObject = &OBJECTTABLE_NORMALBLOCKS[0];
 				if (player->itemPlayer->activeItemType != ITEMTYPE_COLORBLOCK && player->activeItemType != ITEMTYPE_GAMEOVER) {
 					switch(blockBorders) {
 					default: blockObject = &OBJECTTABLE_NORMALBLOCKS[0]; break;
@@ -311,7 +311,7 @@ void ShowField(Player* player) {
 		}
 	}
 
-	ROMDATA ObjectData* fieldBgObject;
+	const ObjectData* fieldBgObject;
 	if (GameFlags & GAME_DOUBLES) {
 		fieldBgObject = OBJECT_DOUBLESFIELDBG;
 	}
@@ -321,4 +321,4 @@ void ShowField(Player* player) {
 	DisplayObject(fieldBgObject, y, x, 148u, LAYER_FIELDBG);
 }
 
-void ShowFieldPlus(Player *player);
+void ShowFieldPlus(Player* player);

@@ -20,4 +20,4 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show);
 
 void ShowField(Player* player);
 
-void ShowFieldPlus(Player *player);
+void ShowFieldPlus(Player* player);
