@@ -1,4 +1,5 @@
 #include "ShowBlockField.h"
+#include "Temp.h"
 #include "DisplayObject.h"
 #include "Object.h"
 #include "Video.h"
@@ -347,5 +348,146 @@ void ShowFieldPlus(Player* player) {
 		}
 	}
 	DisplayObject(fieldBorderObject, y, x, palNum, LAYER_MATRIX);
-	// TODO
+
+	ObjectData* blockObject = Temp;
+	size_t numBlockObjects = 0u;
+	for (int16_t row = 0, displayY = y - ((player->matrixHeight - 1) * 8 - 6); row < player->matrixHeight; row++, displayY += 8) {
+		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
+			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
+			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
+				BlockBorder blockBorders = BLOCKBORDER_NONE;
+				if (row != 0 && MATRIX(player, player->matrixHeight - row - 2, col).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_BOTTOM;
+				}
+				if (row != player->matrixHeight - 1 && MATRIX(player, player->matrixHeight - row, col).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_TOP;
+				}
+				if (col != 1 && MATRIX(player, player->matrixHeight - row - 1, col - 1).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_LEFT;
+				}
+				if (col != player->matrixWidth - 2 && MATRIX(player, player->matrixHeight - row - 1, col + 1).block == NULLBLOCK) {
+					blockBorders |= BLOCKBORDER_RIGHT;
+				}
+				const ObjectData* srcBlockObject = OBJECTTABLE_NORMALBLOCKS;
+				if (player->itemPlayer->activeItemType != ITEMTYPE_COLORBLOCK && player->activeItemType != ITEMTYPE_GAMEOVER && !(block & BLOCK_FADING) && (player->nowFlags & NOW_PLAYING)) {
+					switch(blockBorders) {
+					default: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[0]; break;
+					case BLOCKBORDER_LEFT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[1]; break;
+					case BLOCKBORDER_TOP: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[2]; break;
+					case BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[3]; break;
+					case BLOCKBORDER_BOTTOM: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[4]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_LEFT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[5]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[6]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[7]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[8]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[9]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[10]; break;
+					case BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[11]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[12]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[13]; break;
+					case BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[14]; break;
+					case BLOCKBORDER_TOP | BLOCKBORDER_BOTTOM | BLOCKBORDER_LEFT | BLOCKBORDER_RIGHT: srcBlockObject = &OBJECTTABLE_NORMALBLOCKS[15]; break;
+					}
+				}
+				if (block & BLOCK_ITEM) {
+					srcBlockObject = &OBJECTTABLE_ITEMBLOCKS[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)];
+				}
+				if (block & BLOCK_FLASH) {
+					int16_t flashFrames = GETBLOCKFLASHFRAMES(block);
+					if (flashFrames - 1 == 0) {
+						block &= ~BLOCK_FLASH;
+					}
+					else {
+						block = (block & BLOCK_FLASHFRAMES) | TOBLOCKFLASHFRAMES(flashFrames - 1);
+					}
+					MATRIX(player, player->matrixHeight - row - 1, col).block = block;
+					palNum = 137u;
+				}
+				else {
+					const uint8_t blockNum = TOBLOCKNUM(block);
+					palNum = PalNumTableNormalBlocks[blockNum] + 5u;
+					if (player->activeItemType == ITEMTYPE_GAMEOVER) {
+						if (block & BLOCK_ITEM) {
+							palNum = PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)] + 5u;
+						}
+						int8_t brightness = MATRIX(player, player->matrixHeight - row - 1, col).brightness;
+						if (brightness > 5) {
+							brightness = 5;
+						}
+						palNum -= brightness;
+					}
+					else {
+						if (block & BLOCK_HARD) {
+							srcBlockObject = OBJECT_HARDBLOCK;
+							palNum = 137u;
+						}
+						if (block & BLOCK_ITEM) {
+							palNum = PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType) + 5u];
+						}
+						const ItemType itemType = player->itemPlayer->activeItemType;
+						if (itemType == ITEMTYPE_COLORBLOCK || itemType == NUMITEMTYPES) {
+							int8_t brightness = MATRIX(player, row, col).brightness;
+							palNum = 137u;
+							if (brightness > -1 && brightness < 9) {
+								if (block & BLOCK_HARD) {
+									palNum = 128u;
+								}
+								else if (block & BLOCK_ITEM) {
+									palNum = PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)];
+								}
+								else {
+									palNum = PalNumTableNormalBlocks[blockNum];
+								}
+								palNum += MATRIX(player, row, col).brightness;
+							}
+						}
+						else if (block & BLOCK_FADING) {
+							if (MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames == 0) {
+								MATRIX(player, player->matrixHeight - row - 1, col).block = MATRIX(player, player->matrixHeight - row - 1, col).block | BLOCK_INVISIBLE;
+								palNum = PalNumTableNormalBlocks[blockNum];
+							}
+							else if (--MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames < 10) {
+								palNum -= 5u - MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames / 2;
+							}
+						}
+					}
+				}
+				if ((!(block & BLOCK_FADING) || MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames != 0) && !(block & BLOCK_INVISIBLE)) {
+					for (size_t i = 0; i < sizeof(ObjectData) / sizeof(uint16_t); i++) {
+						(*blockObject)[i] = (*srcBlockObject)[i];
+					}
+					// NOTE: This sets the object's X position to the block's X
+					// position and the number of sprites to 1 for the object;
+					// the setting of the number of sprites is unnecessary, as
+					// the code modifies the sprite number field below to
+					// display in 32-sprite chunks, but the setting is kept
+					// here for documentation.
+					(*blockObject)[1] = (displayX & 0x3FF) | 0x400;
+					SPRITE_SETY(blockObject, displayY);
+					SPRITE_SETPAL(blockObject, palNum);
+					blockObject++;
+					numBlockObjects++;
+				}
+			}
+		}
+	}
+
+	ObjectData* blocksObject = Temp;
+	while (numBlockObjects != 0u) {
+		size_t stride = numBlockObjects < 32u ? numBlockObjects : 31u;
+		(*blocksObject)[1] &= 0x3FF;
+		OBJECT_SETNUMSPRITES(blocksObject, stride);
+		DisplayObject(blocksObject, 0, 0, 0u, LAYER_MATRIX);
+		blocksObject += stride;
+		numBlockObjects -= stride;
+	}
+
+	const ObjectData* fieldBgObject;
+	if (GameFlags & GAME_DOUBLES) {
+		fieldBgObject = OBJECT_DOUBLESFIELDBG;
+	}
+	else {
+		fieldBgObject = OBJECT_SINGLEFIELDBG;
+	}
+	DisplayObject(fieldBgObject, y, x, 148u, LAYER_FIELDBG);
 }
