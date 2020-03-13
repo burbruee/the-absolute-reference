@@ -359,7 +359,12 @@ void ShowFieldPlus(Player* player) {
 				if (row != 0 && MATRIX(player, player->matrixHeight - row - 2, col).block == NULLBLOCK) {
 					blockBorders |= BLOCKBORDER_BOTTOM;
 				}
-				if (row != player->matrixHeight - 1 && MATRIX(player, player->matrixHeight - row, col).block == NULLBLOCK) {
+				// NOTE: The check against 0 here was not in TAP, and had to be
+				// added, to avoid out-of-bounds access of player 2's matrix.
+				// The normal behavior for player 1 is for the top row to not
+				// have any borders on the top, and the change enforces that
+				// behavior for both players.
+				if (row != 0 && row != player->matrixHeight - 1 && MATRIX(player, player->matrixHeight - row, col).block == NULLBLOCK) {
 					blockBorders |= BLOCKBORDER_TOP;
 				}
 				if (col != 1 && MATRIX(player, player->matrixHeight - row - 1, col - 1).block == NULLBLOCK) {

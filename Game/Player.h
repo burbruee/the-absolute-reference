@@ -104,16 +104,9 @@ typedef enum ModeFlag {
 	MODE_TLS = 1 << 10,
 	MODE_NOITEM = 1 << 11,
 	MODE_TADEATH = 1 << 12,
-	MODE_TIMEOUT = 1 << 13
+	MODE_TIMEOUT = 1 << 13,
+	MODE_SELECTIONS = MODE_NORMAL | MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH | MODE_DOUBLES | MODE_VERSUS
 } ModeFlag;
-#define MODE_SELECTIONS ( \
-	MODE_NORMAL | \
-	MODE_MASTER | \
-	MODE_TGMPLUS | \
-	MODE_TADEATH | \
-	MODE_DOUBLES | \
-	MODE_VERSUS \
-)
 
 // Selectable modes. Versus isn't considered a mode on its own the way normal,
 // master, etc. are.
@@ -123,9 +116,9 @@ typedef enum ModeSelection {
 	MODESELECTION_TGMPLUS,
 	MODESELECTION_TADEATH,
 	MODESELECTION_DOUBLES,
-	NUMMODESELECTIONS
+	NUMMODESELECTIONS,
+	NUMSINGLEMODESELECTIONS = NUMMODESELECTIONS - 1
 } ModeSelection;
-#define NUMSINGLEMODESELECTIONS (NUMMODESELECTIONS - 1)
 
 typedef enum PlayerGrade {
 	PLAYERGRADE_9,
@@ -158,29 +151,23 @@ typedef enum MGradeFlag {
 	MGRADE_SECTION9TIME = 1 << 3,
 	MGRADE_SECTIONTIMES = 1 << 4,
 	MGRADE_SKILLCLEARS = 1 << 5,
-	MGRADE_S9GRADE = 1 << 6
+	MGRADE_S9GRADE = 1 << 6,
+	// The qualifications here are not in error; TAP doesn't require all
+	// checked conditions.
+	MGRADE_QUALIFIED = MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT3 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS | MGRADE_S9GRADE
 } MGradeFlag;
-// The qualifications here are not in error; TAP doesn't require all checked
-// conditions.
-#define MGRADE_QUALIFIED ( \
-	MGRADE_CHECKPOINT1 | \
-	MGRADE_CHECKPOINT3 | \
-	MGRADE_SECTIONTIMES | \
-	MGRADE_SKILLCLEARS | \
-	MGRADE_S9GRADE \
-)
 
 typedef enum MiscFlag{
 	MISC_NONE = 0,
 	MISC_SKILLCLEARS1 = 1 << 0,
 	MISC_SKILLCLEARS2 = 1 << 1,
+	MISC_SKILLCLEARS3  = MISC_SKILLCLEARS1 | MISC_SKILLCLEARS2,
+	MISC_NUMSKILLCLEARS = MISC_SKILLCLEARS3,
 	MISC_RECOVERING = 1 << 2,
 	MISC_FORCELOWG = 1 << 3,
 	MISC_ITEMHEADSUP = 1 << 4,
 	MISC_ORANGELINE = 1 << 5
 } MiscFlag;
-#define MISC_SKILLCLEARS3 (MISC_SKILLCLEARS1 | MISC_SKILLCLEARS2)
-#define MISC_NUMSKILLCLEARS MISC_SKILLCLEARS3
 
 typedef enum PlayFlag {
 	PLAYFLAG_NONE,
@@ -222,7 +209,6 @@ typedef enum Rotation {
 #define ROTATED_LEFT(buttons) ((buttons) & (BUTTON_1 | BUTTON_3))
 #define ROTATED_RIGHT(buttons) ((buttons) & BUTTON_2)
 
-// TODO: Use this throughout the code.
 #define MATRIX(player, row, col) ((player)->matrix[(row) * (player)->matrixWidth + (col)])
 
 #define CLEARTIME_TIMEOUT TIME(15, 0, 0)

@@ -66,6 +66,7 @@ typedef struct EntryData {
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
 
 static MatrixBlock MatrixBlocks[NUMMATRIXBLOCKS_SHARED];
+
 void InitPlayers() {
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Players[playerNum].num = playerNum;
@@ -295,7 +296,7 @@ void InitPlayer(PlayerNum playerNum) {
 		}
 	}
 	SetFieldPos(player, true);
-	FieldBorderColor(player, ITEMTYPE_NULL);
+	SetFieldBorderColor(player, ITEMTYPE_NULL);
 
 	// Mode codes.
 	InitModeCodes(player);
@@ -340,7 +341,12 @@ void UpdatePlayerPlaying(Player* player) {
 		ManualLockUnprotected[player->num] = true;
 	}
 
-	if (player->play.state != PLAYSTATE_GAMEOVER && player->play.state != PLAYSTATE_RANKING && !(player->nowFlags & NOW_STAFF) && !(player->modeFlags & MODE_VERSUS) && (GameButtonsNew[player->num] & BUTTON_START)) {
+	if (
+		player->play.state != PLAYSTATE_GAMEOVER &&
+		player->play.state != PLAYSTATE_RANKING &&
+		!(player->nowFlags & NOW_STAFF) &&
+		!(player->modeFlags & MODE_VERSUS) &&
+		(GameButtonsNew[player->num] & BUTTON_START)) {
 		player->refusingChallenges = !player->refusingChallenges;
 	}
 
@@ -761,7 +767,7 @@ void UpdatePlayerSelecting(Player* player) {
 				GameFlags &= ~GAME_BIT12;
 				player->subStates[SUBSTATE_SELECT] = SELECT_MODE;
 				player->values[0] = MODESELECTION_NORMAL;
-				player->values[1] = TIME(0, 10, 59);
+				player->values[1] = TIME(0, 10, TIME(0, 1, 0) - 1);
 			}
 			else if (GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 				StartChallenger(player);
@@ -881,17 +887,9 @@ void ShowPlayers() {
 	for (PlayerNum playerNum = PLAYER1; playerNum <= PLAYER2; playerNum++) {
 		Player* player = &Players[playerNum];
 
-		bool noTls = false;
-		if (player->level >= 100u) {
-			noTls = true;
-		}
-		if ((player->modeFlags & MODE_TLS) | (player->modeFlags & MODE_VERSUS)) {
-			noTls = true;
-		}
-
 		ShowBlock(player, SHOWBLOCKTYPE_ACTIVE, player->nowFlags & NOW_SHOWACTIVEBLOCK);
 		ShowBlock(player, SHOWBLOCKTYPE_NEXT, player->nowFlags & NOW_SHOWNEXTBLOCK);
-		if (!noTls) {
+		if ((player->modeFlags & (MODE_TLS | MODE_VERSUS)) || player->level < 100u) {
 			ShowBlock(player, SHOWBLOCKTYPE_TLS, player->nowFlags & NOW_SHOWTLSBLOCK);
 		}
 
@@ -1000,13 +998,12 @@ bool UpdateModeCodes(Player* player) {
 	return enteredCode;
 }
 
-static const SoundEffect SirenSoundEffects[6] = {
+static const SoundEffect SirenSoundEffects[] = {
 	SOUNDEFFECT_SIREN1,
 	SOUNDEFFECT_SIREN2,
 	SOUNDEFFECT_SIREN3,
 	SOUNDEFFECT_SIREN4,
-	SOUNDEFFECT_SIREN5,
-	SOUNDEFFECT_QUIETSIREN // TODO: Could be -1 instead, since this index is never used.
+	SOUNDEFFECT_SIREN5
 };
 
 void UpdateSiren(Player* player) {
@@ -1026,7 +1023,7 @@ void UpdateSiren(Player* player) {
 	// rows.
 	if (numBlocks > 10 && NumScreenFrames % 20u == 0u) {
 		int16_t sirenIndex = numBlocks / 10;
-		if (sirenIndex > 4) {
+		if (sirenIndex > lengthof(SirenSoundEffects) - 1) {
 			sirenIndex = 4;
 		}
 		PlaySoundEffect(SirenSoundEffects[sirenIndex]);
@@ -1051,7 +1048,6 @@ uint16_t GenNextInt(uint32_t* seed, bool update) {
 	return ((NEXTBLOCKINT_SCALE * oldSeed + NEXTBLOCKINT_STEP) >> 10) & 0x7FFF;
 }
 
-// TODO: Review code below this comment.
 void NextPlay(Player* player, PlayData play) {
 	player->play.flags |= play.flags;
 	player->play.state = play.state;
