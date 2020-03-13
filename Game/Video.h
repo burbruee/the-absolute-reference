@@ -16,6 +16,18 @@ extern uint32_t _0x60618F0[16];
 
 extern SpriteData TempSprite;
 
+void AllocSpriteLayerNames(int16_t layer, uint16_t num);
+void FreeSpriteLayer(uint16_t layer);
+void InitSpriteAlpha();
+struct struct_0x606006C;
+typedef struct struct_0x606006C struct_0x606006C;
+void _0x602419C();
+void _0x6024244();
+void _0x60243E8(struct_0x606006C* arg0);
+void _0x602471C(struct_0x606006C* arg0);
+void WriteSpriteLayers();
+void InitSpriteLayers();
+
 // Runs all the video setters.
 void SetVideo();
 

@@ -74,11 +74,11 @@ void _0x6024244() {
 	// TODO
 }
 
-void _0x60243E8(struct_0x606006C *arg0) {
+void _0x60243E8(struct_0x606006C* arg0) {
 	// TODO
 }
 
-void _0x601471C(struct_0x606006C *arg0) {
+void _0x602471C(struct_0x606006C* arg0) {
 	// TODO: Analyze this one first.
 }
 

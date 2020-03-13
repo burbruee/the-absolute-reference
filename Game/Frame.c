@@ -1,4 +1,6 @@
 #include "Frame.h"
+#include "Player.h"
+#include "Graphics.h"
 #include "Warning.h"
 #include "Button.h"
 #include "Input.h"
@@ -40,7 +42,7 @@ bool UpdateGameFrame() {
 	_0x60237DE();
 	_0x6024244();
 	_0x6010666();
-	UpdateBG();
+	UpdateBg();
 	_0x602C5C2();
 	WriteSpriteLayers();
 	_0x6025078();

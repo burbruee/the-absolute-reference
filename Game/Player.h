@@ -356,6 +356,9 @@ extern const int16_t NextSectionLevels[10];
 extern ItemType ItemDescriptions[NUMPLAYERS];
 void InitPlayer(PlayerNum playerNum);
 
+void UpdatePlayers();
+void ShowPlayers();
+
 // Nine block types, four rotations, each block is 4x4.
 //
 // The first two block definitions, for empty and wall squares, are unused, and
