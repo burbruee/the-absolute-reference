@@ -52,5 +52,5 @@ void Vblank();
 // transition to the test mode screen?
 bool UpdateFrame();
 bool _0x602AECA();
-bool UpdateGameFrame();
-bool UpdateAttractFrame(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);
+bool UpdateGame();
+bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);

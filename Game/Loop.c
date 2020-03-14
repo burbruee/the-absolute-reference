@@ -105,7 +105,7 @@ int32_t _0x6008A00() {
 
 	int16_t r10 = 0;
 	while (r10 == 0) {
-		if (UpdateGameFrame()) {
+		if (UpdateGame()) {
 			_0x602406E();
 			return 7;
 		}

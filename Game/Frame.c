@@ -30,7 +30,7 @@ bool UpdateFrame();
 
 bool _0x602AECA();
 
-bool UpdateGameFrame() {
+bool UpdateGame() {
 	UpdateInputs();
 
 	NumScreenFramesOdd = NumScreenFrames & 1;
@@ -105,4 +105,4 @@ bool UpdateGameFrame() {
 	}
 }
 
-bool UpdateAttractFrame(ButtonInput* p1ButtonsDown, ButtonInput* p2ButtonsDown);
+bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);
