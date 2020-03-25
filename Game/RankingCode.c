@@ -1,6 +1,7 @@
 #include "RankingCode.h"
 #include "Player.h"
 #include "Ranking.h"
+#include "ShowText.h"
 #include "Temp.h"
 #include "Macros.h"
 
@@ -203,4 +204,15 @@ void NewRankingCode(Player *player) {
 	}
 }
 
-// TODO: ShowRankingCode
+void ShowRankingCode(Player* player) {
+	char charOut[2];
+	for (size_t row = 0u; row < 2u; row++) {
+		int16_t offsetX = 0;
+		char* codeChar = &player->rankingCode[(NUMRANKINGCODEDIGITS / 2) * row];
+		for (size_t col = 0u; col < NUMRANKINGCODEDIGITS / 2; col++, offsetX += 10) {
+			charOut[0] = *codeChar++;
+			charOut[1] = '\0';
+			ShowPalCycleText(player->screenPos[0] + offsetX - 40, 150 + row * 12, charOut, true);
+		}
+	}
+}

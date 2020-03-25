@@ -75,12 +75,20 @@ static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entr
 static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash);
 
 void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x) {
-	// TODO
+	uint32_t clearTime = 0u;
+	for (size_t section = 0u; section < 10u; section++, y += 12) {
+		ShowClearTime(sectionTimes[section], y, x);
+		clearTime += sectionTimes[section];
+	}
+	ShowClearTime(clearTime, y + 32, x);
 }
 
-uint32_t SectionTimes[12];
+void _0x6011840() {
+}
+
+uint32_t SectionTimes[10];
 void ShowSectionTimes() {
-	// TODO
+	ShowSectionTimesEx(SectionTimes, 40, 170);
 }
 
 void _0x6011854() {
@@ -91,8 +99,52 @@ void _0x6011858() {
 	// TODO: Check TGM2 to see if this contains any code. Does nothing in TAP.
 }
 
+// TODO: Use macros here instead of hard-coded hex numbers.
+#define _TA { 'T', '.', 'A', '\0' }
+static const Ranking DefaultRankings[NUMRANKINGS] = {
+	{ _TA, 0x00001518u },
+	{ _TA, 0x08001518u },
+	{ _TA, 0x10001518u },
+	{ _TA, 0x18001518u },
+	{ _TA, 0x20001518u },
+	{ _TA, 0x28001518u },
+	{ _TA, 0x30001518u },
+	{ _TA, 0x38001518u },
+	{ _TA, 0x40001518u },
+	{ _TA, 0x48001518u },
+	{ _TA, 0x48011940u },
+	{ _TA, 0x3000FD20u },
+	{ _TA, 0x1800E100u },
+	{ _TA, 0x10001388u },
+	{ _TA, 0x08000FA0u },
+	{ _TA, 0x00000BB8u },
+	{ _TA, 0x18011940u },
+	{ _TA, 0x1000D2F0u },
+	{ _TA, 0x08008CA0u },
+};
+
+static const Ranking DefaultDoublesLevelRankings[NUMRANKINGPLACES] = {
+	{ _TA, 0x0096008Cu },
+	{ _TA, 0x0064005Au },
+	{ _TA, 0x00320028u }
+};
+#undef TA
+
 void InitRankings() {
-	// TODO
+	RankingFlags = RANKINGFLAG_NONE;
+	for (size_t i = 0u; i < NUMRANKINGS; i++) {
+		*(uint32_t*)Save->rankings[i].name = *(uint32_t*)DefaultRankings[i].name;
+		Save->rankings[i].data = DefaultRankings[i].data;
+	}
+
+	for (size_t i = 0u; i < NUMRANKINGPLACES; i++) {
+		*(uint32_t*)Save->doublesLevelRankings[i].name = *(uint32_t*)DefaultDoublesLevelRankings[i].name;
+		Save->doublesLevelRankings[i].data = DefaultDoublesLevelRankings[i].data;
+	}
+
+	for (size_t i = 0u; i < NUMRANKINGPLACES; i++) {
+		Save->masterMedalRankings[i] = 0u;
+	}
 }
 
 void InitTodaysBestRankings() {

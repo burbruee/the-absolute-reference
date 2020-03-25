@@ -92,13 +92,9 @@ extern NewRankingData NewRankings[NUMPLAYERS];
 // intended to display section times to the player at the new ranking screen.
 
 void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x);
-
+void _0x6011840();
 // Set this to the section times you want displayed by ShowSectionTimes().
-//
-// This was probably 10 elements originally, but there's 8 bytes of unused
-// memory after it in TAP, so making it 12 allows the same out-of-bounds
-// behavior.
-extern uint32_t SectionTimes[12];
+extern uint32_t SectionTimes[10];
 void ShowSectionTimes();
 void _0x6011854(); // TODO: Check TGM2 to see if this contains any code. Just calls ShowSectionTimes() in TAP.
 void _0x6011858(); // TODO: Check TGM2 to see if this contains any code. Does nothing in TAP.
