@@ -101,6 +101,9 @@ void _0x6011858() {
 
 // TODO: Use macros here instead of hard-coded hex numbers.
 #define _TA { 'T', '.', 'A', '\0' }
+
+// All-time default rankings.
+
 static const Ranking DefaultRankings[NUMRANKINGS] = {
 	{ _TA, 0x00001518u },
 	{ _TA, 0x08001518u },
@@ -128,27 +131,63 @@ static const Ranking DefaultDoublesLevelRankings[NUMRANKINGPLACES] = {
 	{ _TA, 0x0064005Au },
 	{ _TA, 0x00320028u }
 };
+
+// Today's best default rankings.
+
+static const Ranking DefaultMasterTodaysBestRankings[NUMRANKINGPLACES] = {
+	{ _TA, 0x18011940 },
+	{ _TA, 0x1000FD20 },
+	{ _TA, 0x0800E100 }
+};
+
+static const Ranking DefaultNormalTodaysBestRankings[NUMRANKINGPLACES] = {
+	{ _TA, 0x00000BB8 },
+	{ _TA, 0x000007D0 },
+	{ _TA, 0x000003E8 }
+};
+
+static const Ranking DefaultDoublesTodaysBestTimeRankings[NUMRANKINGPLACES] = {
+	{ _TA, 0x10011940 },
+	{ _TA, 0x0800FD20 },
+	{ _TA, 0x0000E100 }
+};
+
+static const Ranking DefaultDoublesTodaysBestLevelRankings[NUMRANKINGPLACES] = {
+	{ _TA, 0x0032001E },
+	{ _TA, 0x001E000A },
+	{ _TA, 0x000A0000 }
+};
 #undef TA
 
 void InitRankings() {
 	RankingFlags = RANKINGFLAG_NONE;
 	for (size_t i = 0u; i < NUMRANKINGS; i++) {
-		*(uint32_t*)Save->rankings[i].name = *(uint32_t*)DefaultRankings[i].name;
-		Save->rankings[i].data = DefaultRankings[i].data;
+		Save->rankings[i] = DefaultRankings[i];
 	}
 
-	for (size_t i = 0u; i < NUMRANKINGPLACES; i++) {
-		*(uint32_t*)Save->doublesLevelRankings[i].name = *(uint32_t*)DefaultDoublesLevelRankings[i].name;
-		Save->doublesLevelRankings[i].data = DefaultDoublesLevelRankings[i].data;
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		Save->doublesLevelRankings[place] = DefaultDoublesLevelRankings[place];
 	}
 
-	for (size_t i = 0u; i < NUMRANKINGPLACES; i++) {
-		Save->masterMedalRankings[i] = 0u;
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		Save->masterMedalRankings[place] = 0u;
 	}
 }
 
 void InitTodaysBestRankings() {
-	// TODO
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		MasterTodaysBestRankings[place] = DefaultMasterTodaysBestRankings[place];
+		MasterTodaysBestMedalRankings[place] = 0u;
+	}
+
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		NormalTodaysBestRankings[place] = DefaultNormalTodaysBestRankings[place];
+	}
+
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		DoublesTodaysBestTimeRankings[place] = DefaultDoublesTodaysBestTimeRankings[place];
+		DoublesTodaysBestLevelRankings[place] = DefaultDoublesTodaysBestLevelRankings[place];
+	}
 }
 
 static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palNum, uint16_t layer) {
