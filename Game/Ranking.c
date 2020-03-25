@@ -157,6 +157,7 @@ static const Ranking DefaultDoublesTodaysBestLevelRankings[NUMRANKINGPLACES] = {
 	{ _TA, 0x001E000A },
 	{ _TA, 0x000A0000 }
 };
+
 #undef TA
 
 void InitRankings() {
@@ -201,7 +202,7 @@ static void _0x6011AD2(uint32_t arg0, int16_t y, int16_t x) {
 }
 
 static void ShowRankingScore(uint32_t score, int16_t y, int16_t x) {
-	if (score > 9999999u) {
+	if (score > 999999u) {
 		score = 999999u;
 	}
 
