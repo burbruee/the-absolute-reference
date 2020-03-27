@@ -9,7 +9,9 @@ recording in a hacked TAP in MAME, with the recording written into TAP's ROM,
 and the end-game-state written as well, with comparison code added to TAP, that
 displays a "Replay Check: OK/FAIL" message. And vice versa.
 
-Make everything const-correct.
+Make all the non-reverse-engineered code const-correct. TAP's code was clearly
+not const-correct, and preservation/documentation is a goal, so that code won't
+be made const-correct.
 
 Change some struct names to *Data, that describe other objects, and no "Data"
 on structs that aren't extra data describing objects.

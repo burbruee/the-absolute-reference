@@ -1,5 +1,6 @@
 // TODO: Rewrite this as SH-2 assembler, without referring to the disassembled
-// TAP code.
+// TAP code. Or just try to get this C code, with some inline SH-2 assembly, to
+// work.
 
 #include "Start.h"
 #include "Game/HwSprite.h"

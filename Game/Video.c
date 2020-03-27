@@ -61,8 +61,8 @@ void FreeSpriteLayer(uint16_t layer) {
 }
 
 void InitSpriteAlpha() {
-	for (size_t i = 0; i < lengthof(VideoControl.alpha); i++) {
-		VideoControl.alpha[i] = 0x00;
+	for (size_t i = 0; i < NUMALPHAVALUES; i++) {
+		AlphaValues[i] = 0x00;
 	}
 }
 

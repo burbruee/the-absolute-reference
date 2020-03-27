@@ -89,6 +89,8 @@ typedef struct NewRankingData {
 
 extern NewRankingData NewRankings[NUMPLAYERS];
 
+extern const ObjectData* ObjectTableRankingDigits[10];
+
 // TODO: Test the ShowSectionTimes* functions to see if they might have been
 // intended to display section times to the player at the new ranking screen.
 

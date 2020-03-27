@@ -1,3 +1,4 @@
+// TODO: Move the VIDEOREGS defines to more specific headers, like HwSprite.h.
 #pragma once
 
 #include "PlatformTypes.h"
@@ -35,6 +36,7 @@ extern RAMDATA uint8_t IRQCTRL[4];
 
 extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define AlphaValues ((uint8_t*)&VIDEOREGS[0x0])
+#define NUMALPHAVALUES 8
 #define SpritePriority ((uint8_t*)&VIDEOREGS[0x8])
 #define VideoSettings ((uint8_t*)&VIDEOREGS[0xE])
 #define TilemapBanks ((uint8_t*)&VIDEOREGS[0x18])

@@ -788,7 +788,7 @@ void UpdatePlayerSelecting(Player* player) {
 			}
 			StartPlayer(player);
 			NextPlayStart(player);
-			_0x6066188._0x10 |= (player->num == PLAYER1) ? 0x02 : 0x04; // TODO: Background setting of some sort.
+			//_0x6066188._0x10 |= (player->num == PLAYER1) ? 0x02 : 0x04; // TODO: Background setting of some sort.
 		}
 	}
 }

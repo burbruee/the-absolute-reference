@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Debug.h"
 #include "ShowGameStatus.h"
+#include "ShowClearTime.h"
 #include "ShowObject.h"
 #include "Grade.h"
 #include "Button.h"
@@ -62,8 +63,15 @@ static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
 	"end"
 };
 
+static const ObjectData* ObjectTableRankingPlaces[NUMRANKINGPLACES + 1] = {
+	&OBJECTTABLE_RANKINGPLACES[1],
+	&OBJECTTABLE_RANKINGPLACES[2],
+	&OBJECTTABLE_RANKINGPLACES[3],
+	&OBJECTTABLE_RANKINGPLACES[0]
+};
+
 static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palNum, uint16_t layer);
-static void _0x6011AD2(uint32_t arg0, int16_t y, int16_t x);
+static void _0x6011AD2(uint32_t score, int16_t y, int16_t x);
 static void ShowRankingScore(uint32_t score, int16_t y, int16_t x);
 static void ShowRankingTime(uint32_t time, int16_t y, int16_t x);
 static void _0x6011D28(int16_t y, int16_t x);
@@ -107,6 +115,7 @@ void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x) {
 }
 
 void _0x6011840() {
+	// TODO: Empty. Check TGM2 to see if there's code there.
 }
 
 uint32_t SectionTimes[10];
@@ -237,7 +246,7 @@ static void _0x6011AD2(uint32_t score, int16_t y, int16_t x) {
 	}
 }
 
-static const ObjectData* ObjectTableRankingDigits[10] = {
+const ObjectData* ObjectTableRankingDigits[10] = {
 	&OBJECTTABLE_RANKINGDIGITS[0],
 	&OBJECTTABLE_RANKINGDIGITS[1],
 	&OBJECTTABLE_RANKINGDIGITS[2],
@@ -900,30 +909,31 @@ bool UpdatePlayRanking(Player* player) {
 }
 
 static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
-	if ((newRanking->player->modeFlags & (MODE_NORMAL | MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH)) && !newRanking->flags) {
+	Player* player = newRanking->player;
+	if ((player->modeFlags & (MODE_NORMAL | MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH)) && !newRanking->flags) {
 		ShowRankingCodeNameEntry(newRanking, entryFlash);
 	}
 	else {
-		int16_t rankingX = newRanking->player->num * 160;
+		int16_t rankingX = player->num * 160;
 		int16_t labelX = rankingX + 20;
-		DisplayObjectEx(_0xA782C, 42, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-		DisplayObjectEx(_0xA7838, 85, labelX, 0u, 100u, UNSCALED, newRanking->labelScaleX, false);
-		if (newRanking->player->modeFlags & MODE_MASTER) {
-			DisplayObjectEx(_0xA7844, 128, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+		DisplayObjectEx(OBJECTPTR(0x243), 42, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+		DisplayObjectEx(OBJECTPTR(0x244), 85, labelX, 0u, 100u, UNSCALED, newRanking->labelScaleX, false);
+		if (player->modeFlags & MODE_MASTER) {
+			DisplayObjectEx(OBJECTPTR(0x245), 128, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 		}
-		else if (newRanking->player->modeFlags & MODE_NORMAL) {
-			DisplayObjectEx(_0xA788C, 128, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+		else if (player->modeFlags & MODE_NORMAL) {
+			DisplayObjectEx(OBJECTPTR(0x24B), 128, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 		}
-		DisplayObjectEx(ObjectNameEntryLabel, 171, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+		DisplayObjectEx(OBJECT_NAMEENTRYLABEL, 171, labelX, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 		if (newRanking->labelScaleFrames == 0u) {
 			int16_t rankingPlaceX = rankingX + 38;
 			DisplayObject(ObjectTableRankingPlaces[newRanking->place], 62, rankingPlaceX, 0u, 110u);
 			DisplayObject(ObjectTableRankingPlaces[newRanking->todaysBestPlace], 105, rankingPlaceX, 0u, 110u);
-			if (newRanking->player->modeFlags & MODE_MASTER) {
-				ShowTime(newRanking->player->masteringTime, 148, labelX);
+			if (player->modeFlags & MODE_MASTER) {
+				ShowTime(player->masteringTime, 148, labelX);
 			}
-			else if (newRanking->player->modeFlags & MODE_NORMAL) {
-				ShowRankingScore(newRanking->player->score, 148, rankingX + 24);
+			else if (player->modeFlags & MODE_NORMAL) {
+				ShowRankingScore(player->score, 148, rankingX + 24);
 			}
 			uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
 			if (entryFlash == ENTRYFLASH_TRUE) {
@@ -939,28 +949,28 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 
 static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash) {
 	int16_t labelX = newRanking->player->num * 160;
-	DisplayObjectEx(ObjectNameEntryLabel, 105, labelX + 20, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_NAMEENTRYLABEL, 105, labelX + 20, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 	if (newRanking->labelScaleFrames != 0u) {
 		return;
 	}
 
-	uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
+	uint8_t flashPalNum = NumScreenFrames % 4 ? 8u : 0u;
 	if (entryFlash == ENTRYFLASH_TRUE) {
-		ShowRankingName(newRanking->nameEntries->name, 117, labelX + 36, flashPal, 110u);
+		ShowRankingName(newRanking->nameEntries->name, 117, labelX + 36, flashPalNum, 110u);
 	}
 	else {
 		ShowRankingName(newRanking->nameEntries->name, 117, labelX + 36, 0u, 110u);
 	}
-	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 117, labelX + 36 + newRanking->nameEntries->numChars * 16, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 117, labelX + 36 + newRanking->nameEntries->numChars * 16, flashPalNum, 110u);
 }
 
 static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash) {
-	DisplayObjectEx(ObjectDoublesRankingLabel, 43, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	DisplayObjectEx(ObjectDoublesTodaysBestRankingLabel, 80, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	DisplayObjectEx(ObjectDoublesClearTimeLabel, 117, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	DisplayObjectEx(ObjectDoublesNameLevelRankingLabel, 107 + 47, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	DisplayObjectEx(ObjectDoubles1PRankingLabel, 107 + 65, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
-	DisplayObjectEx(ObjectDoubles2PRankingLabel, 107 + 83, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLESRANKINGLABEL, 43, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLESTODAYSBESTRANKINGLABEL, 80, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLESCLEARTIMELABEL, 117, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLESNAMELEVELRANKINGLABEL, 107 + 47, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLES1PRANKINGLABEL, 107 + 65, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
+	DisplayObjectEx(OBJECT_DOUBLES2PRANKINGLABEL, 107 + 83, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 
 	if (newRanking->labelScaleFrames != 0u) {
 		return;
@@ -969,7 +979,7 @@ static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash
 	DisplayObject(ObjectTableRankingPlaces[newRanking->place], 56, 138, 0u, 110u);
 	DisplayObject(ObjectTableRankingPlaces[newRanking->todaysBestPlace], 93, 138, 0u, 110u);
 
-	_0x6017F88(newRanking->player->clearTime, 130, 121);
+	ShowClearTime(newRanking->player->clearTime, 130, 121);
 
 	uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
 

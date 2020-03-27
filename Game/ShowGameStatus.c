@@ -117,17 +117,17 @@ void ShowLevel(Player* player, int16_t nextSectionLevel, int16_t y, int16_t x, u
 	DisplayObject(ObjectTableGravityBars[gravityBarWidth], y + 11, x, palNum, LAYER_GAMESTATUS);
 }
 
-static const ObjectData* ObjectTableTimeDigits[10] = {
-	&OBJECTTABLE_TIMEDIGITS[0],
-	&OBJECTTABLE_TIMEDIGITS[1],
-	&OBJECTTABLE_TIMEDIGITS[2],
-	&OBJECTTABLE_TIMEDIGITS[3],
-	&OBJECTTABLE_TIMEDIGITS[4],
-	&OBJECTTABLE_TIMEDIGITS[5],
-	&OBJECTTABLE_TIMEDIGITS[6],
-	&OBJECTTABLE_TIMEDIGITS[7],
-	&OBJECTTABLE_TIMEDIGITS[8],
-	&OBJECTTABLE_TIMEDIGITS[9]
+static const ObjectData* ObjectTableGameStatusTimeDigits[10] = {
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[0],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[1],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[2],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[3],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[4],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[5],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[6],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[7],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[8],
+	&OBJECTTABLE_GAMESTATUSTIMEDIGITS[9]
 };
 
 void ShowGameTime(uint32_t time, int16_t x, uint8_t palNum) {
@@ -137,18 +137,18 @@ void ShowGameTime(uint32_t time, int16_t x, uint8_t palNum) {
 	time -= seconds * TIME(0, 1, 0);
 	uint8_t centiseconds = (time * 100u) / TIME(0, 1, 0);
 
-	DisplayObject(ObjectTableTimeDigits[minutes / 10u], 215, x, palNum, LAYER_GAMESTATUS);
-	DisplayObject(ObjectTableTimeDigits[minutes % 10u], 215, x + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[minutes / 10u], 215, x, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[minutes % 10u], 215, x + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
 
 	DisplayObject(OBJECT_TIMECOLON, 215, x + TIMENUM_WIDTH, palNum, LAYER_GAMESTATUS);
 
-	DisplayObject(ObjectTableTimeDigits[seconds / 10u], 215, x + TIMENUM_WIDTH + TIMECOLON_WIDTH, palNum, LAYER_GAMESTATUS);
-	DisplayObject(ObjectTableTimeDigits[seconds % 10u], 215, x + TIMENUM_WIDTH + TIMECOLON_WIDTH + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[seconds / 10u], 215, x + TIMENUM_WIDTH + TIMECOLON_WIDTH, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[seconds % 10u], 215, x + TIMENUM_WIDTH + TIMECOLON_WIDTH + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
 
 	DisplayObject(OBJECT_TIMECOLON, 215, x + TIMENUM_WIDTH + TIMECOLON_WIDTH + TIMENUM_WIDTH, palNum, LAYER_GAMESTATUS);
 
-	DisplayObject(ObjectTableTimeDigits[centiseconds / 10u], 215, x + (TIMENUM_WIDTH + TIMECOLON_WIDTH) * 2, palNum, LAYER_GAMESTATUS);
-	DisplayObject(ObjectTableTimeDigits[centiseconds % 10u], 215, x + (TIMENUM_WIDTH + TIMECOLON_WIDTH) * 2 + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[centiseconds / 10u], 215, x + (TIMENUM_WIDTH + TIMECOLON_WIDTH) * 2, palNum, LAYER_GAMESTATUS);
+	DisplayObject(ObjectTableGameStatusTimeDigits[centiseconds % 10u], 215, x + (TIMENUM_WIDTH + TIMECOLON_WIDTH) * 2 + TIMEDIGIT_WIDTH, palNum, LAYER_GAMESTATUS);
 }
 
 void ShowGrade(Player* player, uint8_t palNum) {
@@ -852,7 +852,7 @@ void ShowTimeNumEx(uint32_t num, int16_t y, int16_t x, uint8_t palNum, uint16_t 
 	}
 
 	int32_t digits = num;
-	const ObjectData** zeroDigitObject = &ObjectTableTimeDigits[0];
+	const ObjectData** zeroDigitObject = &ObjectTableGameStatusTimeDigits[0];
 	for (int16_t i = numDigits; i != 0; i--, base10Place /= 10) {
 		int32_t digit = digits / base10Place;
 		digits -= digit * base10Place;
@@ -871,7 +871,7 @@ void ShowTimeNumEx(uint32_t num, int16_t y, int16_t x, uint8_t palNum, uint16_t 
 			}
 		}
 		else {
-			digitObject = ObjectTableTimeDigits[digit];
+			digitObject = ObjectTableGameStatusTimeDigits[digit];
 		}
 
 		if (digitObject != NULL) {

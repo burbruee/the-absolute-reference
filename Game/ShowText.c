@@ -1,7 +1,9 @@
 #include "ShowText.h"
 #include "Object.h"
 #include "HwSprite.h"
+#include "Video.h"
 #include "VideoDefs.h"
+#include "Pal.h"
 #include "ShowObject.h"
 
 // TODO: Replace this with a pointer that can be changed to an array of the
@@ -53,8 +55,8 @@ int16_t TextWidth(const char* text) {
 }
 
 void InitSystemTextPal() {
-	SetPal(81u, 1u, _0x67910);
-	SetPal(82u, 1u, _0x67910);
+	SetPal(81u, 1u, PALPTR(0x1E2));
+	SetPal(82u, 1u, PALPTR(0x1E2));
 }
 
 void ShowCenteredSystemText(int16_t y, const char* text, bool alpha) {
