@@ -15,7 +15,7 @@ typedef enum PlayerNum {
 	NUMPLAYERS
 } PlayerNum;
 
-// Input categories. Adding categories will break PS5V2 compatibility.
+// Input ports. Adding ports will break PS5V2 compatibility.
 typedef enum Input {
 	INPUT_BUTTONS1P,
 	INPUT_BUTTONS2P,

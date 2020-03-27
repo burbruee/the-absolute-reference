@@ -1,6 +1,5 @@
 #include "Save.h"
 #include "Frame.h"
-#include "Eeprom.h"
 #include "Macros.h"
 
 uint32_t CoinCount;
@@ -49,39 +48,33 @@ void AddGameTime(uint32_t gameTime) {
 	}
 }
 
-#define SAVE(offset, name) WriteEeprom(offset, &Save->name, sizeof(Save->name))
 void SavePlayStatus() {
 	Save->coinCount = CoinCount;
 
-	SAVE(0x2Cu, coinCount);
-	SAVE(0x30u, demoWaitTime);
-	SAVE(0x34u, gameTime);
-	SAVE(0x38u, playCount);
-	SAVE(0x3Au, twinCount);
-	SAVE(0x3Cu, versusCount);
+	WriteSave(coinCount);
+	WriteSave(demoWaitTime);
+	WriteSave(gameTime);
+	WriteSave(playCount);
+	WriteSave(twinCount);
+	WriteSave(versusCount);
 	Save->initSeed = InitSeed;
-	SAVE(0x3Eu, initSeed);
+	WriteSave(initSeed);
 	Save->playStatusChecksum = PlayStatusChecksum();
-	SAVE(0x40, playStatusChecksum);
+	WriteSave(playStatusChecksum);
 }
 
-// NOTE: The original SH-2 code used offsetof(SaveData, fieldName) instead of
-// hard-coded offset constants, but we want to maintain binary compatibility
-// with TAP's save data, so we have to use hard-coded constants here.
-
-#define LOAD(offset, name) ReadEeprom(offset, &Save->name, sizeof(Save->name));
 bool LoadPlayStatus() {
-	LOAD(0x2Cu, coinCount);
-	LOAD(0x30u, demoWaitTime);
-	LOAD(0x34u, gameTime);
-	LOAD(0x38u, playCount);
-	LOAD(0x3Au, twinCount);
-	LOAD(0x3Cu, versusCount);
+	ReadSave(coinCount);
+	ReadSave(demoWaitTime);
+	ReadSave(gameTime);
+	ReadSave(playCount);
+	ReadSave(twinCount);
+	ReadSave(versusCount);
 
-	LOAD(0x3Eu, initSeed);
+	ReadSave(initSeed);
 	InitSeed = Save->initSeed;
 
-	LOAD(0x40, playStatusChecksum);
+	ReadSave(playStatusChecksum);
 	uint16_t playStatusChecksum = PlayStatusChecksum();
 	bool checksumMatch = Save->playStatusChecksum == playStatusChecksum;
 	if (!checksumMatch) {
@@ -97,6 +90,6 @@ void SaveProgramChecksum(uint16_t programChecksum) {
 }
 
 bool LoadProgramChecksum(uint16_t programChecksum) {
-	LOAD(0xFCu, programChecksum);
+	ReadSave(programChecksum);
 	return programChecksum == Save->programChecksum;
 }

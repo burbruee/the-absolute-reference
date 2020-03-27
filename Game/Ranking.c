@@ -1,12 +1,17 @@
 #include "Ranking.h"
 #include "Player.h"
+#include "Debug.h"
 #include "ShowGameStatus.h"
+#include "ShowObject.h"
 #include "Grade.h"
 #include "Button.h"
 #include "Frame.h"
 #include "Save.h"
+#include "Graphics.h"
+#include "Object.h"
 #include "HwSprite.h"
 #include "SoundEffect.h"
+#include "Eeprom.h"
 
 static Ranking MasterTodaysBestRankings[NUMRANKINGPLACES];
 static uint16_t MasterTodaysBestMedalRankings[NUMRANKINGPLACES];
@@ -19,6 +24,24 @@ static Ranking DoublesTodaysBestLevelRankings[NUMRANKINGPLACES];
 static RankingFlag RankingFlags;
 
 NewRankingData NewRankings[NUMPLAYERS];
+
+#define _CHAR(i) &OBJECTTABLE_RANKINGCHARS[i]
+static const ObjectData* ObjectTableRankingChars[61] = {
+	_CHAR(0), _CHAR(1), _CHAR(2), _CHAR(3), _CHAR(4),
+	_CHAR(5), _CHAR(6), _CHAR(7), _CHAR(8), _CHAR(9),
+	_CHAR(10), _CHAR(11), _CHAR(12), _CHAR(13), _CHAR(14),
+	_CHAR(15), _CHAR(16), _CHAR(17), _CHAR(18), _CHAR(19),
+	_CHAR(20), _CHAR(21), _CHAR(22), _CHAR(23), _CHAR(24),
+	_CHAR(25), _CHAR(26), _CHAR(27), _CHAR(28), _CHAR(29),
+	_CHAR(30), _CHAR(31), _CHAR(32), _CHAR(33), _CHAR(34),
+	_CHAR(35), _CHAR(36), _CHAR(37), _CHAR(38), _CHAR(39),
+	_CHAR(40), _CHAR(41), _CHAR(42), _CHAR(43), _CHAR(44),
+	_CHAR(45), _CHAR(46), _CHAR(47), _CHAR(48), _CHAR(49),
+	_CHAR(50), _CHAR(51), _CHAR(52), _CHAR(53), _CHAR(54),
+	_CHAR(55), _CHAR(56), _CHAR(57), _CHAR(58), _CHAR(59),
+	_CHAR(60)
+};
+#undef _CHAR
 
 static const char* NameEntryChars[42] = {
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -40,14 +63,14 @@ static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
 };
 
 static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palNum, uint16_t layer);
-void _0x6011AD2(uint32_t arg0, int16_t y, int16_t x);
+static void _0x6011AD2(uint32_t arg0, int16_t y, int16_t x);
 static void ShowRankingScore(uint32_t score, int16_t y, int16_t x);
 static void ShowRankingTime(uint32_t time, int16_t y, int16_t x);
-// _0x6011D28
-// _0x6011DB0
-// _0x6011DF0
-// _0x6011E48
-// _0x6011E88
+static void _0x6011D28(int16_t y, int16_t x);
+static void _0x6011DB0(int16_t y, int16_t x);
+static void _0x6011DF0(int16_t y, int16_t x);
+static void _0x6011E48(int16_t y, int16_t x);
+static void _0x6011E88(Entity* entity);
 // _0x60122D8
 // _0x6012354
 // _0x6012828
@@ -193,13 +216,39 @@ void InitTodaysBestRankings() {
 
 static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palNum, uint16_t layer) {
 	for (const char* c = name; *c != '\0'; c++, x += 16) {
-		DisplayObject(ObjectTableNameEntryChars[*c - ' '], y, x, palNum, layer);
+		DisplayObject(ObjectTableRankingChars[*c - ' '], y, x, palNum, layer);
 	}
 }
 
-static void _0x6011AD2(uint32_t arg0, int16_t y, int16_t x) {
-	// TODO
+static void _0x6011AD2(uint32_t score, int16_t y, int16_t x) {
+	if (score > 999999u) {
+		score = 999999u;
+	}
+
+	x += 80;
+	for (int16_t i = 0; i < 6; i++) {
+		uint8_t digit = score % 10u;
+		DisplayObject(ObjectTableRankingChars[0x10 + digit], y, x, 0u, 110u);
+		score /= 10u;
+		x -= 16;
+		if (score == 0u) {
+			return;
+		}
+	}
 }
+
+static const ObjectData* ObjectTableRankingDigits[10] = {
+	&OBJECTTABLE_RANKINGDIGITS[0],
+	&OBJECTTABLE_RANKINGDIGITS[1],
+	&OBJECTTABLE_RANKINGDIGITS[2],
+	&OBJECTTABLE_RANKINGDIGITS[3],
+	&OBJECTTABLE_RANKINGDIGITS[4],
+	&OBJECTTABLE_RANKINGDIGITS[5],
+	&OBJECTTABLE_RANKINGDIGITS[6],
+	&OBJECTTABLE_RANKINGDIGITS[7],
+	&OBJECTTABLE_RANKINGDIGITS[8],
+	&OBJECTTABLE_RANKINGDIGITS[9],
+};
 
 static void ShowRankingScore(uint32_t score, int16_t y, int16_t x) {
 	if (score > 999999u) {
@@ -225,27 +274,46 @@ static void ShowRankingTime(uint32_t time, int16_t y, int16_t x) {
 	DisplayObject(ObjectTableRankingDigits[minutes / 10], y, x, 0u, 110u);
 	DisplayObject(ObjectTableRankingDigits[minutes % 10], y, x + 11, 0u, 110u);
 
-	DisplayObject(ObjectRankingTimeColon, y, x + 22, 0u, 110u);
+	DisplayObject(OBJECT_RANKINGTIMECOLON, y, x + 22, 0u, 110u);
 
 	DisplayObject(ObjectTableRankingDigits[seconds / 10], y, x + 27, 0u, 110u);
 	DisplayObject(ObjectTableRankingDigits[seconds % 10], y, x + 38, 0u, 110u);
 
-	DisplayObject(ObjectRankingTimeColon, y, x + 49, 0u, 110u);
+	DisplayObject(OBJECT_RANKINGTIMECOLON, y, x + 49, 0u, 110u);
 
 	DisplayObject(ObjectTableRankingDigits[centiseconds / 10], y, x + 54, 0u, 110u);
 	DisplayObject(ObjectTableRankingDigits[centiseconds % 10], y, x + 65, 0u, 110u);
 }
 
-// _0x6011D28
+static void _0x6011D28(int16_t y, int16_t x) {
+	ShowObject(OBJECTPTR(0x221), y, x + 31, 0u, 110u);
+	ShowObject(OBJECTPTR(0x222), y, x + 85, 0u, 110u);
+	ShowObject(OBJECTPTR(0x223), y, x + 126, 0u, 110u);
 
-// _0x6011DB0
+	ShowObject(OBJECTPTR(0x226), y, x + 215, 0u, 110u);
+}
 
-// _0x6011DF0
+static void _0x6011DB0(int16_t y, int16_t x) {
+	ShowObject(OBJECTPTR(0x221), y, x + 42, 0u, 110u);
+	ShowObject(OBJECTPTR(0x227), y, x + 214, 0u, 110u);
+}
 
-// _0x6011E48
+static void _0x6011DF0(int16_t y, int16_t x) {
+	ShowObject(OBJECTPTR(0x225), y, x + 10, 0, 110u);
+	ShowObject(OBJECTPTR(0x221), y, x + 97, 0u, 110u);
+	ShowObject(OBJECTPTR(0x222), y, x + 166, 0u, 110u);
+	ShowObject(OBJECTPTR(0x223), y, x + 229, 0u, 110u);
+}
 
+static void _0x6011E48(int16_t y, int16_t x) {
+	ShowObject(OBJECTPTR(0x224), y, x + 35, 0u, 110u);
+	ShowObject(OBJECTPTR(0x223), y, x + 230, 0u, 110u);
+}
+
+// TODO: Entity updater.
 // _0x6011E88
 
+// TODO: Instantiates an entity updated by _0x6011E88
 // _0x60122D8
 
 // _0x6012354
@@ -253,19 +321,90 @@ static void ShowRankingTime(uint32_t time, int16_t y, int16_t x) {
 // _0x6012828
 
 static uint32_t RankingsChecksum() {
-	// TODO
+	uint32_t checksum = 0u;
+
+	for (size_t i = 0u; i < NUMRANKINGS; i++) {
+		Ranking* ranking = &Save->rankings[i];
+		checksum += (uint32_t)ranking->name[0] << 8 | ranking->name[1];
+		checksum += (uint32_t)ranking->name[2] << 8 | ranking->name[3];
+		checksum += ranking->data >> 16;
+		checksum += ranking->data & 0xFFFFu;
+	}
+
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		Ranking* ranking = &Save->doublesLevelRankings[place];
+		checksum += (uint32_t)ranking->name[0] << 8 | ranking->name[1];
+		checksum += (uint32_t)ranking->name[2] << 8 | ranking->name[3];
+		checksum += ranking->data >> 16;
+		checksum += ranking->data & 0xFFFFu;
+	}
+
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		checksum += Save->masterMedalRankings[place];
+	}
+
+	return ++checksum;
 }
 
 void SaveRankings() {
-	// TODO
+	if (!Debug && RankingFlags) {
+		uint16_t checksum = RankingsChecksum();
+		Save->rankingsChecksum = checksum;
+		WriteSave(rankingsChecksum);
+
+		UpdateFrame();
+
+		for (size_t i = 0u; i < NUMRANKINGS; i++) {
+			RankingFlag rankingFlag = 1 << i;
+			if (RankingFlags & rankingFlag) {
+				RankingFlags &= ~rankingFlag;
+
+				WriteSave(rankings[i]);
+
+				if (i >= RANKINGINDEX_DOUBLES) {
+					WriteSave(doublesLevelRankings[i - RANKINGINDEX_DOUBLES]);
+				}
+
+				if (i >= RANKINGINDEX_MASTER && i < RANKINGINDEX_NORMAL) {
+					WriteSave(masterMedalRankings[i - RANKINGINDEX_MASTER]);
+				}
+
+				UpdateFrame();
+			}
+		}
+	}
 }
 
-void _0x6012BF8() {
-	// TODO
+void ForceSaveRankings() {
+	RankingFlags = RANKINGFLAG_ALL;
+	SaveRankings();
 }
 
 bool LoadRankings() {
-	// TODO
+	uint16_t checksum;
+
+	ReadEeprom(offsetofSaveData(rankingsChecksum), &checksum, sizeof(uint16_t));
+	Save->rankingsChecksum = checksum;
+
+	for (size_t i = 0u; i < NUMRANKINGS; i++) {
+		ReadSave(rankings[i]);
+	}
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		ReadSave(doublesLevelRankings[place]);
+	}
+	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
+		ReadSave(masterMedalRankings[place]);
+	}
+
+	if (checksum != (uint16_t)RankingsChecksum()) {
+		InitRankings();
+		RankingFlags = RANKINGFLAG_ALL;
+		SaveRankings();
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
@@ -683,7 +822,7 @@ bool UpdatePlayRanking(Player* player) {
 	if (player->values[2] == 1) {
 		if (!(player->nowFlags & NOW_SHOWRANKINGCODE) && !newRanking->flags) {
 			player->nowFlags &= ~NOW_NAMEENTRY;
-			NextPlay(player, (PlayData){.flags = PLAYFLAG_NONE, .state = PLAYSTATE_GAMEOVER});
+			NextPlay(player, (PlayData) { .flags = PLAYFLAG_NONE, .state = PLAYSTATE_GAMEOVER });
 			return true;
 		}
 		else {
@@ -793,7 +932,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 			else {
 				ShowRankingName(newRanking->nameEntries->name, 183, rankingX + 36, 0u, 110u);
 			}
-			DisplayObject(ObjectTableNameEntryChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 183, rankingX + 36 + newRanking->nameEntries->numChars * 16, flashPal, 110u);
+			DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 183, rankingX + 36 + newRanking->nameEntries->numChars * 16, flashPal, 110u);
 		}
 	}
 }
@@ -812,7 +951,7 @@ static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entr
 	else {
 		ShowRankingName(newRanking->nameEntries->name, 117, labelX + 36, 0u, 110u);
 	}
-	DisplayObject(ObjectTableNameEntryChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 117, labelX + 36 + newRanking->nameEntries->numChars * 16, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 117, labelX + 36 + newRanking->nameEntries->numChars * 16, flashPal, 110u);
 }
 
 static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash) {
@@ -835,10 +974,10 @@ static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash
 	uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
 
 	ShowRankingName(newRanking->nameEntries[PLAYER1].name, 167, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER1].numChars > 3 ? flashPal : 0u, 110u);
-	DisplayObject(ObjectTableNameEntryChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124, flashPal, 110u);
 	ShowStatusNumberEx(newRanking->nameEntries[PLAYER1].player->level, 169, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 
 	ShowRankingName(newRanking->nameEntries[PLAYER2].name, 185, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER2].numChars > 3 ? flashPal : 0u, 110u);
-	DisplayObject(ObjectTableNameEntryChars[*NameEntryChars[newRanking->nameEntries[PLAYER2].charIndex] - ' '], 185, 124 + newRanking->nameEntries[PLAYER2].charIndex * 16, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER2].charIndex] - ' '], 185, 124 + newRanking->nameEntries[PLAYER2].charIndex * 16, flashPal, 110u);
 	ShowStatusNumberEx(newRanking->nameEntries[PLAYER2].player->level, 187, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ranking.h"
+#include "Eeprom.h"
 #include <stdint.h>
 
 extern uint32_t CoinCount;
@@ -34,6 +35,12 @@ typedef struct SaveData {
 	uint16_t programChecksum;
 } SaveData;
 extern SaveData* const Save;
+
+#define offsetofSaveData(m) (offsetof(SaveData, m) + 0x100 - sizeof(void*) * ((sizeof(SaveData) / sizeof(void*)) + (sizeof(SaveData) % sizeof(void*) != 0)))
+
+// When accessing EEPROM to save/load save data, use these.
+#define WriteSave(m) WriteEeprom(offsetofSaveData(m), &Save->m, sizeof(Save->m));
+#define ReadSave(m) ReadEeprom(offsetofSaveData(m), &Save->m, sizeof(Save->m));
 
 extern uint32_t BestMasterSectionTimes[10];
 extern uint32_t BestTaDeathSectionTimes[10];

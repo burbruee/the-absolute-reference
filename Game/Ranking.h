@@ -11,6 +11,7 @@
 typedef uint32_t RankingFlag;
 #define RANKINGFLAG_NONE 0u
 #define RANKINGFLAG_PLACEMASK 3u
+#define RANKINGFLAG_ALL 0x7FFFFu
 
 typedef enum RankingIndex {
 	RANKINGINDEX_MASTERSECTIONTIMES = 0,
@@ -106,7 +107,7 @@ void InitTodaysBestRankings();
 // rankings shown in the demo screen.
 uint32_t RankingsChecksum();
 void SaveRankings();
-void _0x6012BF8();
+void ForceSaveRankings();
 bool LoadRankings();
 
 void NextPlayRanking(Player *player);

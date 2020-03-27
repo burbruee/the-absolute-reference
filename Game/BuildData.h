@@ -42,7 +42,7 @@ extern const BgMap ***BgMapTablePtr;
 extern const BgMap **BgMapDataTablePtr;
 extern const SequenceEntry ***SequenceTablePtr; // Correct.
 extern const ObjectData **ObjectDataTablePtr;
-extern const MIDIData **MIDIDataPtr;
+extern const MidiData **MidiDataPtr;
 extern const RectData **RectDataTablePtr;
 extern const PalTable ***PalTablePtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 extern const uint8_t **ChecksumDataTablePtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0. Create a ChecksumData struct for this?

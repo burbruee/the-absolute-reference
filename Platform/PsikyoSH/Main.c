@@ -57,7 +57,7 @@ void main() {
 		InitBestScore();
 		_0x600ABEE();
 		BackupPlayStatus();
-		_0x6012BF8();
+		ForceSaveRankings();
 		BackupROMChecksum((uint16_t)MemCheckData[MEMCHECK_ROMCHECKSUM]);
 	}
 
