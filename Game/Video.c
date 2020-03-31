@@ -104,6 +104,33 @@ void InitSpriteLayers() {
 	}
 }
 
+void _0x60294C0(uint8_t arg0) {
+	// TODO: Make a define for register 0x0B.
+	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | (arg0 & 0x07u);
+}
+
+void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2) {
+	RAMDATA Color* backdropLineColor = BACKDROPRAM;
+	for (size_t i = 0; i < NUMBACKDROPLINES; i += 16u, backdropLineColor += 16u) {
+		backdropLineColor[0] = (Color)color;
+		backdropLineColor[1] = (Color)color;
+		backdropLineColor[2] = (Color)color;
+		backdropLineColor[3] = (Color)color;
+		backdropLineColor[4] = (Color)color;
+		backdropLineColor[5] = (Color)color;
+		backdropLineColor[6] = (Color)color;
+		backdropLineColor[7] = (Color)color;
+		backdropLineColor[8] = (Color)color;
+		backdropLineColor[9] = (Color)color;
+		backdropLineColor[10] = (Color)color;
+		backdropLineColor[11] = (Color)color;
+		backdropLineColor[12] = (Color)color;
+		backdropLineColor[13] = (Color)color;
+		backdropLineColor[14] = (Color)color;
+		backdropLineColor[15] = (Color)color;
+	}
+}
+
 void SetVideo() {
 	NumVideoSetters = NumVideoSetters < MAXVIDEOSETTERS ? NumVideoSetters : MAXVIDEOSETTERS;
 
@@ -113,6 +140,10 @@ void SetVideo() {
 	}
 
 	NumVideoSetters = 0u;
+}
+
+void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t arg2, uint8_t arg3) {
+	// TODO
 }
 
 typedef struct FixedColor {
@@ -328,7 +359,14 @@ void EnablePalCycles() {
 	NoPalCycles = false;
 }
 
-static void SetVideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
+static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal);
+void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal) {
+	VideoSetters[NumVideoSetters].set = VideoSetPal;
+	VideoSetters[NumVideoSetters].args[0] = (uintptr_t)palNum;
+	VideoSetters[NumVideoSetters].args[1] = (uintptr_t)numPals;
+	VideoSetters[NumVideoSetters++].args[2] = pal;
+}
+static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
 	palNum = (uint8_t)palNum;
 	numPals = (uint8_t)numPals;
 	for (int16_t i = 0; i < numPals; i++) {
@@ -338,9 +376,7 @@ static void SetVideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal
 	}
 }
 
-void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal) {
-	VideoSetters[NumVideoSetters].set = SetVideoSetPal;
-	VideoSetters[NumVideoSetters].args[0] = (uintptr_t)palNum;
-	VideoSetters[NumVideoSetters].args[1] = (uintptr_t)numPals;
-	VideoSetters[NumVideoSetters++].args[2] = pal;
+void _0x602AA4C() {
+	_0x60294C0(0x07u);
+	VideoSetBackdropColor(0x000000FFu, NULL, NULL);
 }

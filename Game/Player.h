@@ -328,6 +328,20 @@ typedef enum GameFlag {
 } GameFlag;
 extern GameFlag GameFlags;
 
+typedef enum GameMusic {
+	GAMEMUSIC_0,
+	GAMEMUSIC_1,
+	GAMEMUSIC_2,
+	GAMEMUSIC_3,
+	GAMEMUSIC_4,
+	GAMEMUSIC_5,
+	GAMEMUSIC_6,
+	GAMEMUSIC_7,
+	GAMEMUSIC_8,
+	GAMEMUSIC_9,
+	GAMEMUSIC_10
+} GameMusic;
+
 typedef struct GameData {
 	uint8_t state; // TODO: Change to enum?
 	int16_t _0x2; // TODO: Used in versus, in the function at 0x60071D6.
@@ -337,7 +351,7 @@ typedef struct GameData {
 	PlayerNum versusWinner;
 	uint8_t _0x9; // TODO: Padding?
 	ModeFlag modeFlags[NUMPLAYERS];
-	int16_t _0xE;
+	int16_t music; // Set to GameMusic enum values. Has to be a signed int type, so check-if-negative is guaranteed to work.
 	uint16_t _0x10; // TODO: Padding? Unused?
 	uint16_t _0x12; // TODO: Padding? Unused?
 } GameData;

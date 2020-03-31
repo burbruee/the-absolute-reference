@@ -117,6 +117,8 @@ void _0x601886C();
 // UpdateItems(), and the rest of the code depends on how UpdateItems() works.
 // Only included for the sake of completeness and preservation.
 //void UpdateVersusItems(Player* player);
+
+// Init the items.
 void InitItems();
 Item* AllocItem();
 void DeactivateItem(Item* item);

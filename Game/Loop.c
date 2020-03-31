@@ -1,15 +1,104 @@
 #include "Loop.h"
 #include "Player.h"
-#include "Player.h"
+#include "Item.h"
 #include "Frame.h"
 #include "Math.h"
 #include "Save.h"
 #include "Video.h"
+#include "Pal.h"
 #include "Setting.h"
 #include "Config.h"
+#include "PlatformTypes.h"
+
+static uint32_t _0x6064878;
+
+// TODO: Some/all of these uint8_t's are probably actually GameMusic type.
+static uint8_t _0x6079296;
+static uint8_t _0x6079297;
+static GameMusic CurrentGameMusic;
+static uint8_t _0x6079299;
+static uint8_t _0x607929A;
+
+static const Color _0x6032884[NUMPALCOLORS_4BPP] = {
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u,
+	0x01010100u
+};
+
+static void UpdateGameMusic();
 
 void InitGame() {
-	// TODO
+	_0x602AA4C();
+	_0x6029814(0u, 0u, 0u, 0xFFu);
+	
+	if (_0x6064750 != NULL) {
+		_0x6024030(_0x6064750);
+	}
+
+	_0x602419C();
+	_0x602AB9E();
+	FreePalCycles(500u);
+
+	Game.numVersusRounds = 0u;
+	Game.numVersusRoundWins[PLAYER2] = 0u;
+	Game.numVersusRoundWins[PLAYER1] = 0u;
+
+	_0x602E5BE();
+
+	// NOTE: These all control game music. Check UpdateGameMusic to figure out their names.
+	_0x6079296 = 0u;
+	_0x6079297 = 0u;
+	_0x607929A = 0u;
+	CurrentGameMusic = GAMEMUSIC_0;
+	_0x6079299 = 0u;
+
+	_0x6064878 = 5u;
+
+	InitPlayers();
+	InitItems();
+
+	// Probably all sets of block palettes here.
+	SetPal(148u, 1u, PALPTR(0x15A));
+	SetPal(176u, 1u, PALPTR(0x15B));
+	_0x601886C();
+	SetPal(48u, 10u, PALTABLE_PALNUM48BLOCK);
+	SetPal(58u, 10u, PALTABLE_IBLOCK);
+	SetPal(68u, 10u, PALTABLE_ZBLOCK);
+	SetPal(78u, 10u, PALTABLE_SBLOCK);
+	SetPal(88u, 10u, PALTABLE_JBLOCK);
+	SetPal(98u, 10u, PALTABLE_LBLOCK);
+	SetPal(108u, 10u, PALTABLE_OBLOCK);
+	SetPal(118u, 10u, PALTABLE_TBLOCK);
+	SetPal(128u, 10u, PALTABLE_GARBAGEBLOCK);
+	SetPal(138u, 10u, PALTABLE_PALNUM138BLOCK);
+
+	SetPal(220u, 1u, _0x6032884);
+	SetPal(221u, 1u, _0x6032884);
+	SetPal(222u, 1u, _0x6032884);
+	SetPal(223u, 1u, _0x6032884);
+
+	SetPal(203u, 5u, PALPTR(0x224));
+
+	AlphaValues[0] = 0x00u;
+	AlphaValues[4] = 0x05u;
+	AlphaValues[1] = 0x80u;
+	AlphaValues[2] = 0x00u;
+	SpritePriority[0] = 0x13u;
+	SpritePriority[1] = 0x66u;
+	UpdateFrame();
 }
 
 MainLoopState RunGameLoop() {
@@ -262,6 +351,10 @@ int16_t _0x6008EEC(int16_t level) {
 	else if (level >= 500) {
 		return 7;
 	}
+}
+
+static void UpdateGameMusic() {
+	// TODO
 }
 
 MainLoopState CurrentMainLoopState;

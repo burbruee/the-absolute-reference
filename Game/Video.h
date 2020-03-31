@@ -28,8 +28,14 @@ void _0x602471C(struct_0x606006C* arg0);
 void WriteSpriteLayers();
 void InitSpriteLayers();
 
+void _0x60294C0(uint8_t arg0);
+
+void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2);
+
 // Runs all the video setters.
 void SetVideo();
+
+void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t arg2, uint8_t arg3);
 
 // The current palette is stepped every frame between the pal* arrays: N -> M
 // (starting with palN, stepping towards palM). Palette cycles that stop free
@@ -53,5 +59,6 @@ void DisablePalCycles();
 void EnablePalCycles();
 
 void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal);
+void _0x602AA4C();
 
 // NOTE: This should probably only contain functions from 0x6024128 to 0x602ACE0.
