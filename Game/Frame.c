@@ -26,8 +26,6 @@ uint32_t _0x6060028;
 uint32_t NumVblanks;
 bool VblankFinished;
 
-bool UpdateFrame();
-
 bool _0x602AECA();
 
 bool UpdateGame() {

@@ -6,7 +6,9 @@
 #include "Save.h"
 #include "Video.h"
 #include "Pal.h"
+#include "Sound.h"
 #include "Setting.h"
+#include "Unknown.h"
 #include "Config.h"
 #include "PlatformTypes.h"
 
@@ -56,9 +58,9 @@ void InitGame() {
 	Game.numVersusRoundWins[PLAYER2] = 0u;
 	Game.numVersusRoundWins[PLAYER1] = 0u;
 
-	_0x602E5BE();
+	StopMusic();
 
-	// NOTE: These all control game music. Check UpdateGameMusic to figure out their names.
+	// TODO: These all control game music. Check UpdateGameMusic to figure out their names.
 	_0x6079296 = 0u;
 	_0x6079297 = 0u;
 	_0x607929A = 0u;
@@ -98,7 +100,7 @@ void InitGame() {
 	AlphaValues[2] = 0x00u;
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x66u;
-	UpdateFrame();
+	UpdateFrame(); // TODO
 }
 
 MainLoopState RunGameLoop() {

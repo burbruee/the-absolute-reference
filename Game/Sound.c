@@ -7,3 +7,7 @@ void PlayMusic(Music music) {
 void PlaySoundEffect(SoundEffect soundEffect) {
 	// TODO
 }
+
+void StopMusic() {
+	// TODO
+}

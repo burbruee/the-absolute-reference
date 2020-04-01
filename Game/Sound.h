@@ -7,3 +7,4 @@
 
 void PlayMusic(Music music);
 void PlaySoundEffect(SoundEffect soundEffect);
+void StopMusic();

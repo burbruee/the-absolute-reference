@@ -380,3 +380,17 @@ void _0x602AA4C() {
 	_0x60294C0(0x07u);
 	VideoSetBackdropColor(0x000000FFu, NULL, NULL);
 }
+
+struct {
+	Color offset_0;
+	RAMDATA Color* offset_4;
+	int16_t offset_8;
+	int16_t offset_A;
+	int16_t offset_C;
+} _0x6064550[32];
+
+void _0x602AB9E() {
+	for (size_t i = 0; i < lengthof(_0x6064550); i++) {
+		_0x6064550[i].offset_0 = 0x00000000u;
+	}
+}

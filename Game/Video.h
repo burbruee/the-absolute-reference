@@ -60,5 +60,6 @@ void EnablePalCycles();
 
 void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal);
 void _0x602AA4C();
+void _0x602AB9E();
 
-// NOTE: This should probably only contain functions from 0x6024128 to 0x602ACE0.
+// NOTE: This should probably only contain functions from AllocSpriteLayerNames to _0x602AC98.
