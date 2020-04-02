@@ -1,5 +1,5 @@
 #include "ShowNewChallenger.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Sound.h"
 #include "Video.h"
 #include "GamePalNum.h"

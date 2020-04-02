@@ -2,7 +2,7 @@
 #include "ShowEffect.h"
 #include "ShowText.h"
 #include "Frame.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Object.h"
 #include "Video.h"
 #include "Pal.h"

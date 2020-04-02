@@ -1,5 +1,5 @@
 #include "ShowItemWarningShotgun.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Object.h"
 #include "ShowObject.h"
 #include "Frame.h"

@@ -1,5 +1,5 @@
 #include "ShowItemWarningDeathBlock.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "DisplayObject.h"
 #include "Object.h"
 #include "Frame.h"

@@ -1,5 +1,5 @@
 #include "ShowEffect.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Loop.h"
 #include "DisplayObject.h"
 #include "Pause.h"

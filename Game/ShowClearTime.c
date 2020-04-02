@@ -2,7 +2,7 @@
 #include "Ranking.h"
 #include "DisplayObject.h"
 #include "Object.h"
-#include "Graphics.h"
+#include "Entity.h"
 
 static void UpdateEntityClearTime(Entity* entity);
 

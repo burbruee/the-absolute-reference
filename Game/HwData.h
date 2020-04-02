@@ -34,7 +34,7 @@ extern RAMDATA uint16_t SCALERAM[0x100];
 
 extern RAMDATA uint8_t VIDEOCTRL;
 
-extern RAMDATA uint8_t IRQCTRL[4];
+extern volatile uint8_t IRQCTRL[4];
 
 extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define AlphaValues ((RAMDATA uint8_t*)&VIDEOREGS[0x0])

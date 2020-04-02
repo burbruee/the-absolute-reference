@@ -29,10 +29,10 @@ extern bool TestModeDisabled;
 
 extern uint16_t _0x6060024;
 extern uint32_t _0x6060028;
-extern uint32_t NumVblanks;
-extern bool VblankFinished;
+extern volatile uint32_t NumVblanks;
+extern volatile bool VblankFinished;
 
-// TODO: Could be HBlank. Is an interrupt handler. Have to define it for each
+// TODO: Could be Hblank. Is an interrupt handler. Have to define it for each
 // platform.
 void _0x602AD0E();
 

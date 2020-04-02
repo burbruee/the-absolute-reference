@@ -1,7 +1,7 @@
 #include "ShowLaser.h"
 #include "DisplayObject.h"
 #include "Object.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Frame.h"
 
 #define laserFrames values[0]

@@ -28,6 +28,9 @@ void _0x602471C(struct_0x606006C* arg0);
 void WriteSpriteLayers();
 void InitSpriteLayers();
 
+void _0x6025078();
+void _0x602523C();
+
 void _0x60294C0(uint8_t arg0);
 
 void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2);
@@ -60,6 +63,7 @@ void EnablePalCycles();
 
 void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal);
 void _0x602AA4C();
+void _0x602AA64();
 void _0x602AB9E();
 
 // NOTE: This should probably only contain functions from AllocSpriteLayerNames to _0x602AC98.

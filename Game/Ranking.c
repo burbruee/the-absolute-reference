@@ -8,7 +8,7 @@
 #include "Button.h"
 #include "Frame.h"
 #include "Save.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Object.h"
 #include "HwSprite.h"
 #include "SoundEffect.h"

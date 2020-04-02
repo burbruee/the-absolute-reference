@@ -1,5 +1,5 @@
 #include "ShowRowDel.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Object.h"
 #include "Frame.h"
 

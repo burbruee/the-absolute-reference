@@ -1,5 +1,5 @@
 #include "ShowGameOverFade.h"
-#include "Graphics.h"
+#include "Entity.h"
 #include "Matrix.h"
 #include "Button.h"
 #include "Frame.h"

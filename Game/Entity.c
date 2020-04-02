@@ -1,7 +1,5 @@
-#include "Graphics.h"
+#include "Entity.h"
 #include "Macros.h"
-
-// TODO: BG data at 0x6066188
 
 static Entity EntityHeap[0x100];
 

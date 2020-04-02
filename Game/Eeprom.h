@@ -12,5 +12,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+void _0x602F658(uint8_t);
+void _0x602F704();
+void _0x602F7DC();
+void _0x602F8BC();
+void _0x602FA7E();
+void _0x602FBEE();
+void ReadEepromByte(uint8_t offset);
 uint8_t ReadEeprom(uint8_t offset, void* destination, size_t size);
+void WriteEepromByte(uint8_t offset, uint8_t data);
 void WriteEeprom(uint8_t offset, void* source, size_t size);

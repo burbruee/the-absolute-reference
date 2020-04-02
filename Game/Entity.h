@@ -1,16 +1,11 @@
 #pragma once
 
-// Higher level graphics functions, intended for direct use by the game code.
-
 #include "Player.h"
-#include "Graphics.h"
 #include "DisplayObject.h"
 #include "Fixed.h"
 #include "Macros.h"
 #include <stdint.h>
 #include <stdbool.h>
-
-// TODO: BG code: 0x60169DC ... 0x6016CC6
 
 // Entities can do anything over one or more frames, but are generally only
 // used to handle visuals and occasionally sounds associated with visuals.

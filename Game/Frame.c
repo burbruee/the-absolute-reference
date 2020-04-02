@@ -1,11 +1,16 @@
 #include "Frame.h"
 #include "Player.h"
-#include "Graphics.h"
+#include "ShowGameStatus.h"
+#include "Entity.h"
+#include "Bg.h"
 #include "Warning.h"
 #include "Button.h"
 #include "Input.h"
 #include "Video.h"
 #include "Loop.h"
+#include "Sound.h"
+#include "Unknown.h"
+#include "UnknownSprite.h"
 
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
@@ -23,23 +28,92 @@ bool TestModeDisabled;
 
 uint16_t _0x6060024;
 uint32_t _0x6060028;
-uint32_t NumVblanks;
-bool VblankFinished;
+volatile uint32_t NumVblanks;
+volatile bool VblankFinished;
+
+uint32_t _0x6065644;
+uint32_t _0x6065648;
+
+bool UpdateFrame() {
+	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	UpdateInputs();
+	_0x60237DE();
+	_0x6024244();
+	UpdateEntities();
+	_0x6025078();
+	_0x602523C();
+	UpdateBg();
+	_0x602C5C2();
+	WriteSpriteLayers();
+	_0x602DAD4();
+	NumSprites = SPRITE_FIRST;
+
+	// TODO: Refactor into a PAUSE() macro, and use in UpdateFrame, _0x602AECA,
+	// UpdateGame, and UpdateAttract?
+	while (PauseAllowed) {
+		UpdateInputs();
+
+		RandScale = 0u;
+		NumVblanks = 0u;
+		while (IRQCTRL[1] & 1) {
+			RandScale++;
+		}
+		VblankFinished = false;
+		while (!VblankFinished) {
+			RandScale++;
+		}
+		VblankFinished = false;
+
+		if (SystemButtonsDown[PLAYER1] & BUTTON_START) {
+			UpdatePlayers();
+			break;
+		}
+	}
+
+	_0x602BA70();
+	RandScale = 0u;
+	while (IRQCTRL[1] & 1) {
+		RandScale++;
+	}
+	VblankFinished = false;
+	while (!VblankFinished) {
+		RandScale++;
+	}
+
+	SetVideo();
+	_0x602AA64();
+	UpdatePalCycles();
+
+	VblankFinished = false;
+	IRQCTRL[1] |= 1;
+
+	bool startTestMode;
+	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+		startTestMode = false;
+	}
+	else {
+		startTestMode = true;
+	}
+
+	NumScreenFrames++;
+	_0x6065644++;
+	_0x6065648++;
+
+	return startTestMode;
+}
 
 bool _0x602AECA();
 
 bool UpdateGame() {
 	UpdateInputs();
-
 	NumScreenFramesOdd = NumScreenFrames & 1;
-
 	InitSpriteLayers();
 	UpdateEntities();
 	UpdatePlayers();
 	ShowPlayers();
 	_0x60237DE();
 	_0x6024244();
-	_0x6010666();
+	ShowPlayersStatus();
 	UpdateBg();
 	_0x602C5C2();
 	WriteSpriteLayers();
@@ -56,20 +130,13 @@ bool UpdateGame() {
 
 		RandScale = 0u;
 		NumVblanks = 0u;
-
-		// TODO: Check when IRQCTRL[1] & 0x01 becomes false. I assume it's when
-		// a frame starts. Once known, define and use relevant constants.
-		// TODO: Add documentation for StepRandScaleWhile, and implement as a
-		// simple increment macro for PsikyoSH.  For OS platforms, a small time
-		// delay between increments of RandScale would reproduce the PsikyoSH
-		// algorthm's properties, while keeping CPU usage down.  Analyze the
-		// amount RandScale increases by per frame in TAP, then try and
-		// reproduce that for OS platforms. And allow StepRandScaleWhile to
-		// delay an arbitrary amount of time for OS platforms, so longer sleeps
-		// can be used to keep CPU usage down.
-		StepRandScaleWhile(IRQCTRL[1] & 0x01);
+		while (IRQCTRL[1] & 1) {
+			RandScale++;
+		}
 		VblankFinished = false;
-		StepRandScaleWhile(!VblankFinished);
+		while (!VblankFinished) {
+			RandScale++;
+		}
 		VblankFinished = false;
 
 		if (SystemButtonsDown[PLAYER1] & BUTTON_START) {
@@ -80,26 +147,25 @@ bool UpdateGame() {
 
 	_0x602BA70();
 	RandScale = 0u;
-
 	while (IRQCTRL[1] & 0x01) {
-		StepRandScale();
+		RandScale++;
 	}
 	while (!VblankFinished) {
-		StepRandScale();
+		RandScale++;
 	}
 
-	UpdateVisuals();
+	SetVideo();
 	_0x602AA64();
 	UpdatePalCycles();
 
-	VblankFinished |= true;
+	VblankFinished = false;
+	IRQCTRL[1] |= 1;
 
-	if (CurrentMainLoopState != MAINLOOP_TEST && !TestModeDisabled && !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
-		// Enter test mode only if it's not currently test mode, entering test mode is enabled, and the test button was pressed.
-		return true;
+	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+		return false;
 	}
 	else {
-		return false;
+		return true;
 	}
 }
 
