@@ -11,6 +11,7 @@
 #include "Sound.h"
 #include "Unknown.h"
 #include "UnknownSprite.h"
+#include "Vblank.h"
 
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
@@ -48,44 +49,7 @@ bool UpdateFrame() {
 	_0x602DAD4();
 	NumSprites = SPRITE_FIRST;
 
-	// TODO: Refactor into a PAUSE() macro, and use in UpdateFrame, _0x602AECA,
-	// UpdateGame, and UpdateAttract?
-	while (PauseAllowed) {
-		UpdateInputs();
-
-		RandScale = 0u;
-		NumVblanks = 0u;
-		while (IRQCTRL[1] & 1) {
-			RandScale++;
-		}
-		VblankFinished = false;
-		while (!VblankFinished) {
-			RandScale++;
-		}
-		VblankFinished = false;
-
-		if (SystemButtonsDown[PLAYER1] & BUTTON_START) {
-			UpdatePlayers();
-			break;
-		}
-	}
-
-	_0x602BA70();
-	RandScale = 0u;
-	while (IRQCTRL[1] & 1) {
-		RandScale++;
-	}
-	VblankFinished = false;
-	while (!VblankFinished) {
-		RandScale++;
-	}
-
-	SetVideo();
-	_0x602AA64();
-	UpdatePalCycles();
-
-	VblankFinished = false;
-	IRQCTRL[1] |= 1;
+	UPDATE();
 
 	bool startTestMode;
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -102,7 +66,34 @@ bool UpdateFrame() {
 	return startTestMode;
 }
 
-bool _0x602AECA();
+bool _0x602AECA() {
+	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	UpdateInputs();
+	InitSpriteLayers();
+	UpdatePlayers();
+	_0x6025078();
+	_0x602523C();
+	_0x602C5C2();
+	WriteSpriteLayers();
+	_0x602DAD4();
+	NumSprites = SPRITE_FIRST;
+
+	UPDATE();
+
+	bool startTestMode;
+	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+		startTestMode = false;
+	}
+	else {
+		startTestMode = true;
+	}
+
+	NumScreenFrames++;
+	_0x6065644++;
+	_0x6065648++;
+
+	return startTestMode;
+}
 
 bool UpdateGame() {
 	UpdateInputs();
@@ -125,41 +116,7 @@ bool UpdateGame() {
 	_0x602523C();
 	_0x602DAD4();
 
-	while (PauseAllowed) {
-		UpdateInputs();
-
-		RandScale = 0u;
-		NumVblanks = 0u;
-		while (IRQCTRL[1] & 1) {
-			RandScale++;
-		}
-		VblankFinished = false;
-		while (!VblankFinished) {
-			RandScale++;
-		}
-		VblankFinished = false;
-
-		if (SystemButtonsDown[PLAYER1] & BUTTON_START) {
-			UpdatePlayers();
-			break;
-		}
-	}
-
-	_0x602BA70();
-	RandScale = 0u;
-	while (IRQCTRL[1] & 0x01) {
-		RandScale++;
-	}
-	while (!VblankFinished) {
-		RandScale++;
-	}
-
-	SetVideo();
-	_0x602AA64();
-	UpdatePalCycles();
-
-	VblankFinished = false;
-	IRQCTRL[1] |= 1;
+	UPDATE();
 
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
@@ -169,4 +126,47 @@ bool UpdateGame() {
 	}
 }
 
-bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);
+static ButtonInput AttractButtonsOld[NUMPLAYERS] = { BUTTON_NONE, BUTTON_NONE };
+
+bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
+	UpdateInputs();
+	ButtonInput systemButtons2p = SystemButtonsDown[PLAYER2];
+	ButtonInput systemButtons1p = SystemButtonsDown[PLAYER1];
+	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	SystemButtonsDown[PLAYER1] = *buttonsDown1p;
+	SystemButtonsDown[PLAYER2] = *buttonsDown2p;
+	GameButtonsDown[PLAYER1] = *buttonsDown1p;
+	GameButtonsDown[PLAYER2] = *buttonsDown2p;
+	GameButtonsNew[PLAYER1] = ~AttractButtonsOld[PLAYER1] & GameButtonsDown[PLAYER1];
+	GameButtonsNew[PLAYER2] = ~AttractButtonsOld[PLAYER2] & GameButtonsDown[PLAYER2];
+	AttractButtonsOld[PLAYER1] = GameButtonsDown[PLAYER1];
+	AttractButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
+
+	InitSpriteLayers();
+	_0x60237DE();
+	UpdatePlayers();
+	GameButtonsDown[PLAYER1] = systemButtons1p;
+	GameButtonsDown[PLAYER2] = systemButtons2p;
+	SystemButtonsDown[PLAYER1] = systemButtons1p;
+	SystemButtonsDown[PLAYER2] = systemButtons2p;
+	UpdateEntities();
+	ShowPlayers();
+	_0x6024244();
+	ShowPlayersStatus();
+	_0x6025078();
+	NumSprites = SPRITE_FIRST;
+	NumScreenFrames++;
+	_0x6065644++;
+	_0x6065648++;
+	_0x602523C();
+	_0x602DAD4();
+
+	UPDATE();
+
+	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}

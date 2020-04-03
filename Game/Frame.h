@@ -29,6 +29,10 @@ extern bool TestModeDisabled;
 
 extern uint16_t _0x6060024;
 extern uint32_t _0x6060028;
+
+// TODO: Figure out a way to make these atomic for SDL2 and volatile for
+// PsikyoSH. Or even make them PsikyoSH-specific, and control frame updating
+// some other way for SDL2 etc.
 extern volatile uint32_t NumVblanks;
 extern volatile bool VblankFinished;
 
