@@ -170,7 +170,7 @@ void main() {
 						numWarningFrames = 600u;
 					}
 
-					ShowCenteredSystemText(30, "- Warning! -", 0u);
+					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
 					const char **messageLine = MessageJapanUseOnly;
 					for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, messageLine++) {
@@ -192,7 +192,7 @@ void main() {
 							numWarningFrames = 600u;
 						}
 
-						ShowCenteredSystemText(30, "- Warning! -", 0u);
+						ShowSystemTextCentered(30, "- Warning! -", 0u);
 						int16_t y = 60;
 						const char **messageLine = MessageJapanUseOnly;
 						for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, messageLine++) {
@@ -212,7 +212,7 @@ void main() {
 						numWarningFrames = 600u;
 					}
 
-					ShowCenteredSystemText(30, "- Warning! -", 0u);
+					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
 					const char **messageLine = MessageKoreaUseOnly;
 					for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 20, messageLine++) {

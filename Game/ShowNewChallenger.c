@@ -2,7 +2,7 @@
 #include "Entity.h"
 #include "Sound.h"
 #include "Video.h"
-#include "GamePalNum.h"
+#include "PalNum.h"
 #include "Pal.h"
 #include "Frame.h"
 #include "Object.h"
@@ -38,7 +38,7 @@ void ShowNewChallenger(Player* player) {
 		entity->states[0] = STATE_SCALESLOWSTART;
 		entity->displayFrames = 180;
 		PlaySoundEffect(SOUNDEFFECT_NEWCHALLENGER);
-		SetPal(GAMEPALNUM_TEXTOVERLAYBG, 1u, PAL_TEXTOVERLAYBG);
+		SetPal(PALNUM_TEXTOVERLAYBG, 1u, PAL_TEXTOVERLAYBG);
 	}
 }
 
@@ -100,7 +100,7 @@ static void UpdateEntityNewChallenger(Entity* entity) {
 				y += 127;
 			}
 			// TODO: See what index 1 of the object table is.
-			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, GAMEPALNUM_TEXTOVERLAYBG, 125u, F32I(data->scaleY), UNSCALED, false);
+			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, PALNUM_TEXTOVERLAYBG, 125u, F32I(data->scaleY), UNSCALED, false);
 		}
 		else {
 			GameFlags &= ~GAME_CHALLENGEDELAY;

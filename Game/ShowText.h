@@ -10,7 +10,7 @@
 int16_t TextWidth(const char* text);
 
 void InitSystemTextPal();
-void ShowCenteredSystemText(int16_t y, const char* text, bool alpha);
+void ShowSystemTextCentered(int16_t y, const char* text, bool alpha);
 void ShowSystemText(int16_t x, int16_t y, const char* text, bool alpha);
 
 void ShowText(int16_t x, int16_t y, const char* text, uint8_t palNum, bool alpha);
@@ -28,6 +28,6 @@ typedef enum NumAlign {
 	NUMALIGN_RIGHT
 } NumAlign;
 
-void ShowTextNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign, bool alpha);
+void ShowSystemNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign, bool alpha);
 
 void ShowPalCycleText(int16_t x, int16_t y, const char* text, bool normalSize);

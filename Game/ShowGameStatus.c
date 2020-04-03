@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "Setting.h"
 #include "Layer.h"
-#include "GamePalNum.h"
+#include "PalNum.h"
 #include "Credit.h"
 #include "ShowObject.h"
 #include "HwSprite.h"
@@ -37,10 +37,10 @@ void ShowNextLabel(Player* player, int16_t x) {
 		int16_t offsetX = -(F16I(player->nextScale) * 18) / (UNSCALED + 1);
 		int16_t offsetY = -(F16I(player->nextScale) * 6) / (UNSCALED + 1);
 		SpriteScale nextScale = SPRITESCALE(F16I(player->nextScale));
-		DisplayObjectEx(OBJECT_NEXTBLOCKLABEL, 26 + offsetY, x + offsetX, GAMEPALNUM_SMALLTEXT, 61u, nextScale, nextScale, false);
+		DisplayObjectEx(OBJECT_NEXTBLOCKLABEL, 26 + offsetY, x + offsetX, PALNUM_SMALLTEXT, 61u, nextScale, nextScale, false);
 	}
 	else {
-		DisplayObject(OBJECT_NEXTBLOCKLABEL, 26, x, GAMEPALNUM_SMALLTEXT, 61u);
+		DisplayObject(OBJECT_NEXTBLOCKLABEL, 26, x, PALNUM_SMALLTEXT, 61u);
 	}
 }
 
@@ -53,7 +53,7 @@ void ShowScoreLabel(Player* player) {
 		x = 268;
 	}
 
-	DisplayObject(OBJECT_SCORELABEL, 130, x, GAMEPALNUM_SMALLTEXT, LAYER_GAMESTATUS);
+	DisplayObject(OBJECT_SCORELABEL, 130, x, PALNUM_SMALLTEXT, LAYER_GAMESTATUS);
 }
 
 void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
@@ -75,10 +75,10 @@ void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 		int16_t offsetX = -(F16I(player->levelScale) << 5) / ((UNSCALED + 1) * 2);
 		int16_t offsetY = -(F16I(player->levelScale) << 3) / ((UNSCALED + 1) * 2);
 		SpriteScale levelScale = SPRITESCALE(F16I(player->levelScale));
-		DisplayObjectEx(OBJECT_LEVELLABEL, y + offsetY, x + offsetX, GAMEPALNUM_SMALLTEXT, 110, levelScale, levelScale, false);
+		DisplayObjectEx(OBJECT_LEVELLABEL, y + offsetY, x + offsetX, PALNUM_SMALLTEXT, 110, levelScale, levelScale, false);
 	}
 	else {
-		DisplayObject(OBJECT_LEVELLABEL, y, x, GAMEPALNUM_SMALLTEXT, LAYER_GAMESTATUS);
+		DisplayObject(OBJECT_LEVELLABEL, y, x, PALNUM_SMALLTEXT, LAYER_GAMESTATUS);
 	}
 }
 
@@ -237,16 +237,16 @@ void ShowVersusWins(bool versus) {
 			int16_t digit = digits / base10Place;
 			digits -= base10Place * digit;
 			if (base10Place != 10 || digit != 0) {
-				DisplayObject(&OBJECT_VERSUSWINDIGITS[digit], y, x, GAMEPALNUM_SMALLTEXT, LAYER_GAMESTATUS);
+				DisplayObject(&OBJECT_VERSUSWINDIGITS[digit], y, x, PALNUM_SMALLTEXT, LAYER_GAMESTATUS);
 			}
 		}
-		DisplayObject(OBJECT_VERSUSWINLABEL, y, x, GAMEPALNUM_SMALLTEXT, LAYER_GAMESTATUS);
+		DisplayObject(OBJECT_VERSUSWINLABEL, y, x, PALNUM_SMALLTEXT, LAYER_GAMESTATUS);
 	}
 }
 
 void ShowItemDescription(Player* player) {
 	if (ItemDescriptions[player->num] != ITEMTYPE_NULL) {
-		DisplayObject(&OBJECTTABLE_ITEMDESCRIPTIONS[ItemDescriptions[player->num]], player->screenPos[1] - 190, player->screenPos[0] + 20, GAMEPALNUM_ITEMDESCRIPTION, 61u);
+		DisplayObject(&OBJECTTABLE_ITEMDESCRIPTIONS[ItemDescriptions[player->num]], player->screenPos[1] - 190, player->screenPos[0] + 20, PALNUM_ITEMDESCRIPTION, 61u);
 	}
 
 	if (player->nextBlockItemType != ITEMTYPE_NULL) {
@@ -333,7 +333,7 @@ void ShowOtherItemDescriptions(Item* item) {
 				}
 
 				if (curItem->type != ITEMTYPE_NULL) {
-					DisplayObject(&OBJECTTABLE_ITEMDESCRIPTIONS[TOITEMNUM(curItem->type)], y, x, GAMEPALNUM_ITEMDESCRIPTION, LAYER_GAMESTATUS);
+					DisplayObject(&OBJECTTABLE_ITEMDESCRIPTIONS[TOITEMNUM(curItem->type)], y, x, PALNUM_ITEMDESCRIPTION, LAYER_GAMESTATUS);
 				}
 			}
 		}
@@ -359,40 +359,40 @@ void _0x600FC50() {
 			if (Settings[SETTING_COINSLOT] == COINSLOT_SAME) {
 				if (!CanStart(PLAYER1, false)) {
 					if (PayCoins[PLAYER1] != 0 || PayCoins[PLAYER2] != 0) {
-						ShowObject(object0, y, x, GAMEPALNUM_SMALLTEXT, layer);
+						ShowObject(object0, y, x, PALNUM_SMALLTEXT, layer);
 					}
 					else {
-						ShowObject(OBJECTPTR(0x15B), y, x, GAMEPALNUM_SMALLTEXT, layer);
+						ShowObject(OBJECTPTR(0x15B), y, x, PALNUM_SMALLTEXT, layer);
 					}
 				}
 				else {
-					ShowObject(object1, y, x, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(object1, y, x, PALNUM_SMALLTEXT, layer);
 				}
 			}
 			else {
 				if (CanStart(PLAYER1, false)) {
-					ShowObject(object1, y, 80, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(object1, y, 80, PALNUM_SMALLTEXT, layer);
 				}
 				else if (PayCoins[PLAYER1] != 0) {
-					ShowObject(object0, y, 80, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(object0, y, 80, PALNUM_SMALLTEXT, layer);
 				}
 				else {
-					ShowObject(OBJECTPTR(0x15B), y, 80, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(OBJECTPTR(0x15B), y, 80, PALNUM_SMALLTEXT, layer);
 				}
 
 				if (CanStart(PLAYER2, false)) {
-					ShowObject(object1, y, x, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(object1, y, x, PALNUM_SMALLTEXT, layer);
 				}
 				else if (PayCoins[PLAYER2] != 0) {
-					ShowObject(object0, y, x, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(object0, y, x, PALNUM_SMALLTEXT, layer);
 				}
 				else {
-					ShowObject(OBJECTPTR(0x15B), y, x, GAMEPALNUM_SMALLTEXT, layer);
+					ShowObject(OBJECTPTR(0x15B), y, x, PALNUM_SMALLTEXT, layer);
 				}
 			}
 		}
 		else {
-			ShowObject(object1, y, x, GAMEPALNUM_SMALLTEXT, layer);
+			ShowObject(object1, y, x, PALNUM_SMALLTEXT, layer);
 		}
 	}
 }
@@ -402,10 +402,10 @@ void ShowStartRequirement(Player* player) {
 		const uint16_t layer = 125u;
 		if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
 			if (player->num == PLAYER1) {
-				DisplayObject(OBJECT_PUSH1PSTARTBUTTON, 100, player->screenPos[0], GAMEPALNUM_SMALLTEXT, layer);
+				DisplayObject(OBJECT_PUSH1PSTARTBUTTON, 100, player->screenPos[0], PALNUM_SMALLTEXT, layer);
 			}
 			else {
-				DisplayObject(OBJECT_PUSH2PSTARTBUTTON, 100, player->screenPos[0], GAMEPALNUM_SMALLTEXT, layer);
+				DisplayObject(OBJECT_PUSH2PSTARTBUTTON, 100, player->screenPos[0], PALNUM_SMALLTEXT, layer);
 			}
 		}
 		else {
@@ -421,10 +421,10 @@ void ShowStartRequirement(Player* player) {
 			}
 
 			if (coins != 0u) {
-				DisplayObject(OBJECT_ADDCOIN, 100, player->screenPos[0], GAMEPALNUM_SMALLTEXT, layer);
+				DisplayObject(OBJECT_ADDCOIN, 100, player->screenPos[0], PALNUM_SMALLTEXT, layer);
 			}
 			else {
-				DisplayObject(OBJECT_INSERTCOIN, 100, player->screenPos[0], GAMEPALNUM_SMALLTEXT, layer);
+				DisplayObject(OBJECT_INSERTCOIN, 100, player->screenPos[0], PALNUM_SMALLTEXT, layer);
 			}
 		}
 	}
@@ -433,28 +433,28 @@ void ShowStartRequirement(Player* player) {
 void ShowFree(Started started, int16_t y) {
 	const uint16_t layer = 110u;
 	if (Settings[SETTING_COINSLOT] == COINSLOT_SAME) {
-		ShowObject(OBJECT_FREE, y, 147, GAMEPALNUM_SMALLTEXT, layer);
+		ShowObject(OBJECT_FREE, y, 147, PALNUM_SMALLTEXT, layer);
 	}
 	else {
 		if (!(started & STARTED_PLAYER1)) {
-			ShowObject(OBJECT_FREE, y, 10, GAMEPALNUM_SMALLTEXT, layer);
+			ShowObject(OBJECT_FREE, y, 10, PALNUM_SMALLTEXT, layer);
 		}
 		if (!(started & STARTED_PLAYER2)) {
-			ShowObject(OBJECT_FREE, y, 285, GAMEPALNUM_SMALLTEXT, layer);
+			ShowObject(OBJECT_FREE, y, 285, PALNUM_SMALLTEXT, layer);
 		}
 	}
 }
 
 void ShowNumServices(uint8_t numServices, int16_t x, int16_t y) {
 	const uint16_t layer = 110u;
-	ShowObject(ObjectTableStatusDigits[numServices], y, x, GAMEPALNUM_SMALLTEXT, layer);
-	ShowObject(OBJECT_SERVICE, y, x, GAMEPALNUM_SMALLTEXT, layer);
+	ShowObject(ObjectTableStatusDigits[numServices], y, x, PALNUM_SMALLTEXT, layer);
+	ShowObject(OBJECT_SERVICE, y, x, PALNUM_SMALLTEXT, layer);
 }
 
 void ShowNumCredits(uint8_t numCredits, int16_t x, int16_t y) {
 	const uint16_t layer = 110u;
-	ShowObject(ObjectTableStatusDigits[numCredits], y, x, GAMEPALNUM_SMALLTEXT, layer);
-	ShowObject(OBJECT_CREDIT, y, x + 10, GAMEPALNUM_SMALLTEXT, layer);
+	ShowObject(ObjectTableStatusDigits[numCredits], y, x, PALNUM_SMALLTEXT, layer);
+	ShowObject(OBJECT_CREDIT, y, x + 10, PALNUM_SMALLTEXT, layer);
 }
 
 static const ObjectData* ObjectTablePrices[5] = {
@@ -468,13 +468,13 @@ static const ObjectData* ObjectTablePrices[5] = {
 
 void ShowNumCoins(uint8_t numCoins, uint8_t price, int16_t x, int16_t y, bool last) {
 	const uint16_t layer = 110u;
-	ShowObject(ObjectTableStatusDigits[numCoins], y, x, GAMEPALNUM_SMALLTEXT, layer);
-	ShowObject(ObjectTablePrices[price], y, x, GAMEPALNUM_SMALLTEXT, layer);
+	ShowObject(ObjectTableStatusDigits[numCoins], y, x, PALNUM_SMALLTEXT, layer);
+	ShowObject(ObjectTablePrices[price], y, x, PALNUM_SMALLTEXT, layer);
 	if (last) {
-		ShowObject(OBJECT_COINCOLON, y, x + 26, GAMEPALNUM_SMALLTEXT, layer);
+		ShowObject(OBJECT_COINCOLON, y, x + 26, PALNUM_SMALLTEXT, layer);
 	}
 	else {
-		ShowObject(OBJECT_COINCOLON, y, x + 27, GAMEPALNUM_SMALLTEXT, layer);
+		ShowObject(OBJECT_COINCOLON, y, x + 27, PALNUM_SMALLTEXT, layer);
 	}
 }
 
@@ -591,7 +591,7 @@ void ShowModeCodes(Player* player) {
 		const ModeFlag* flag = ModeCodeFlagsShow;
 		for (size_t i = 0u; i < NUMMODECODES; i++, object++, offsetX++, flag++) {
 			if (modeCodeFlags & *flag) {
-				ShowObject(*object, y, x - *offsetX, GAMEPALNUM_SMALLTEXT, layer);
+				ShowObject(*object, y, x - *offsetX, PALNUM_SMALLTEXT, layer);
 				y += MODECODE_HEIGHT;
 			}
 		}
@@ -626,7 +626,7 @@ void ShowChallengerMode(Player* player) {
 	const uint16_t layer = 110u;
 	for (size_t i = 0u; i < NUMMODECODES; i++, object++, offsetX++, flag++) {
 		if (modeCodeFlags & *flag) {
-			ShowObject(*object, 170, x - *offsetX, GAMEPALNUM_SMALLTEXT, layer);
+			ShowObject(*object, 170, x - *offsetX, PALNUM_SMALLTEXT, layer);
 		}
 	}
 }
@@ -648,9 +648,9 @@ void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums) {
 		statusPalNums[STATUS_PROGRESS] = 9u;
 	}
 	else {
-		statusPalNums[STATUS_GRADE] = GAMEPALNUM_SMALLTEXT;
-		statusPalNums[STATUS_TIME] = GAMEPALNUM_SMALLTEXT;
-		statusPalNums[STATUS_PROGRESS] = GAMEPALNUM_SMALLTEXT;
+		statusPalNums[STATUS_GRADE] = PALNUM_SMALLTEXT;
+		statusPalNums[STATUS_TIME] = PALNUM_SMALLTEXT;
+		statusPalNums[STATUS_PROGRESS] = PALNUM_SMALLTEXT;
 	}
 }
 
@@ -658,11 +658,11 @@ void ShowPlayersStatus() {
 	Player* player;
 
 	if (GameFlags & (GAME_TWIN | GAME_VERSUS)) {
-		DisplayObjectEx(OBJECT_SINGLENEXTBLOCKBG, 12, Players[PLAYER1].screenPos[0] - 44, GAMEPALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
-		DisplayObjectEx(OBJECT_SINGLENEXTBLOCKBG, 12, Players[PLAYER2].screenPos[0] - 44, GAMEPALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
+		DisplayObjectEx(OBJECT_SINGLENEXTBLOCKBG, 12, Players[PLAYER1].screenPos[0] - 44, PALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
+		DisplayObjectEx(OBJECT_SINGLENEXTBLOCKBG, 12, Players[PLAYER2].screenPos[0] - 44, PALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
 	}
 	else if (GameFlags & GAME_DOUBLES) {
-		DisplayObjectEx(OBJECT_DOUBLESNEXTBLOCKBG, 12, 98, GAMEPALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
+		DisplayObjectEx(OBJECT_DOUBLESNEXTBLOCKBG, 12, 98, PALNUM_NEXTBLOCKBG, 60u, UNSCALED, UNSCALED, true);
 	}
 
 	uint8_t statusPalNums[NUMSTATUSES];
@@ -673,7 +673,7 @@ void ShowPlayersStatus() {
 		levelY += 13;
 
 		ShowNextLabel(Players, 92);
-		ShowGameTime(Players->clearTime, 104, GAMEPALNUM_SMALLTEXT);
+		ShowGameTime(Players->clearTime, 104, PALNUM_SMALLTEXT);
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++, player++) {
 			SelectPlayerStatusColor(player, statusPalNums);
 
@@ -834,7 +834,7 @@ void ShowStatusNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool z
 		}
 
 		if (digitObject != NULL) {
-			ShowObject(digitObject, y, digitX, GAMEPALNUM_SMALLTEXT, LAYER_GAMESTATUS);
+			ShowObject(digitObject, y, digitX, PALNUM_SMALLTEXT, LAYER_GAMESTATUS);
 			digitX += STATUSDIGIT_WIDTH;
 		}
 		else if (numAlign == NUMALIGN_RIGHT) {

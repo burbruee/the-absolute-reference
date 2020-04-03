@@ -4,6 +4,7 @@
 #include "Video.h"
 #include "VideoDefs.h"
 #include "Pal.h"
+#include "PalNum.h"
 #include "ShowObject.h"
 
 // TODO: Replace this with a pointer that can be changed to an array of the
@@ -13,7 +14,8 @@ static const int16_t CharWidths[128] = {
 	16,  7, 11, 13, 16, 16, 16, 16,
 	12, 12, 12, 12, 12, 12, 12, 12,
 	16, 16, 16, 16, 16, 16, 16, 11,
-	 5,  8,  8,  8,  8,  8,  8,  6,
+	TEXT_SPACEWIDTH,
+	     8,  8,  8,  8,  8,  8,  6,
 	 8,  8,  8,  8,  7,  7,  7,  7,
 	 8,  8,  8,  8,  8,  8,  8,  8,
 	 8,  8,  6,  6,  7,  7,  7,  8,
@@ -55,11 +57,11 @@ int16_t TextWidth(const char* text) {
 }
 
 void InitSystemTextPal() {
-	SetPal(81u, 1u, PALPTR(0x1E2));
+	SetPal(PALNUM_SYSTEMTEXT, 1u, PALPTR(0x1E2));
 	SetPal(82u, 1u, PALPTR(0x1E2));
 }
 
-void ShowCenteredSystemText(int16_t y, const char* text, bool alpha) {
+void ShowSystemTextCentered(int16_t y, const char* text, bool alpha) {
 	ShowSystemText((VIDEO_WIDTH - TextWidth(text)) / 2, y, text, alpha);
 }
 
@@ -74,7 +76,7 @@ void ShowSystemText(int16_t x, int16_t y, const char* text, bool alpha) {
 			charX += TEXT_SPACEWIDTH;
 		}
 		else {
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, 81u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_SYSTEMTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			charX += CharWidths[*c];
 		}
 	}
@@ -100,7 +102,7 @@ void ShowText(int16_t x, int16_t y, const char* text, uint8_t palNum, bool alpha
 // TODO: Change the OBJECTTABLE_CHARS references here to use char constants
 // defined for each PsikyoSH font character, once all the non-ASCII characters
 // have been documented. Knowing what each character is should help a lot in
-// naming this function, too.
+// naming this function, too. It's definitely a ShowSystem* function, though.
 void _0x600DDA0(int16_t x, int16_t y, const char* text, bool alpha) {
 	for (const char* c = text; *c != '\0'; c++) {
 		switch (*c) {
@@ -152,7 +154,7 @@ static const ObjectData* ObjectTableCharDigits[10] = {
 	OBJECTTABLE_CHARS['9']
 };
 
-void ShowTextNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign, bool alpha) {
+void ShowSystemNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign, bool alpha) {
 	int32_t base10Place = 1;
 	for (int16_t i = numDigits - 1; i != 0; i--) {
 		base10Place *= 10;
@@ -184,7 +186,7 @@ void ShowTextNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zero
 		}
 
 		if (digitObject != NULL) {
-			ShowObjectEx(digitObject, y, digitX, 81u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(digitObject, y, digitX, PALNUM_SYSTEMTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			digitX += TEXT_DIGITWIDTH;
 		}
 		else if (numAlign == NUMALIGN_RIGHT) {
@@ -204,12 +206,12 @@ void ShowPalCycleText(int16_t x, int16_t y, const char* text, bool normalSize) {
 			charX += TEXT_SPACEWIDTH;
 		}
 		else if (normalSize) {
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, 159u, 124u, UNSCALED, UNSCALED, false);
+			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_PALCYCLETEXT, 124u, UNSCALED, UNSCALED, false);
 			charX += CharWidths[*c];
 		}
 		else {
 			// TODO: Change 0x5F to something like "150", as 0x5F is a 150% scale.
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, 159u, 125u, 0x5F, 0x5F, false);
+			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_PALCYCLETEXT, 125u, 0x5F, 0x5F, false);
 			charX += (CharWidths[*c] * 3) / 2;
 		}
 	}

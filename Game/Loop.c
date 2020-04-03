@@ -1,18 +1,28 @@
 #include "Loop.h"
 #include "Player.h"
 #include "Item.h"
+#include "ShowText.h"
 #include "Frame.h"
 #include "Math.h"
 #include "Save.h"
 #include "Video.h"
+#include "Bg.h"
 #include "Pal.h"
+#include "PalNum.h"
 #include "Sound.h"
 #include "Setting.h"
 #include "Unknown.h"
 #include "Config.h"
 #include "PlatformTypes.h"
 
-static uint32_t _0x6064878;
+typedef enum GameLoopState {
+	GAMELOOP_LOOP = 0,
+	GAMELOOP_STOP = 2,
+	GAMELOOP_START = 5,
+	GAMELOOP_TEST = 7,
+	GAMELOOP_GAME = 8
+} GameLoopState;
+static uint32_t CurrentGameLoopState;
 
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
 static uint8_t _0x6079296;
@@ -67,7 +77,7 @@ void InitGame() {
 	CurrentGameMusic = GAMEMUSIC_0;
 	_0x6079299 = 0u;
 
-	_0x6064878 = 5u;
+	CurrentGameLoopState = GAMELOOP_START;
 
 	InitPlayers();
 	InitItems();
@@ -104,30 +114,30 @@ void InitGame() {
 }
 
 MainLoopState RunGameLoop() {
-	bool loopGame = true;
-	_0x6064878 = 5;
+	bool loop = true;
+	CurrentGameLoopState = 5;
 	NumScreenFrames = 0u;
 
-	while (loopGame) {
-		switch (_0x6064878) {
-			case 2:
-				loopGame = false;
-				break;
+	while (loop) {
+		switch (CurrentGameLoopState) {
+		case GAMELOOP_STOP:
+			loop = false;
+			break;
 
-			case 5:
-				_0x6064878 = _0x600809A();
-				break;
+		case GAMELOOP_START:
+			CurrentGameLoopState = StartGameLoop();
+			break;
 
-			case 7:
-				return MAINLOOP_TEST;
+		case GAMELOOP_TEST:
+			return MAINLOOP_TEST;
 
-			case 8:
-				_0x6064878 = _0x6008A00();
-				break;
+		case GAMELOOP_GAME:
+			CurrentGameLoopState = GameLoop();
+			break;
 
-			default:
-				_0x6064878 = 8;
-				break;
+		default:
+			CurrentGameLoopState = GAMELOOP_GAME;
+			break;
 		}
 	}
 
@@ -146,15 +156,15 @@ uint8_t NumVersusRoundsSetting() {
 // TODO: ...
 
 uint16_t GameStartPlayer;
-int32_t _0x6008A00() {
+GameLoopState GameLoop() {
 	_0x602AA4C();
 
-	if (UpdateFrame()) return 7;
+	if (UpdateFrame()) return GAMELOOP_TEST;
 
 	_0x6029546(4, 0, 0, 0);
 
 	while (_0x6064750) {
-		if (UpdateFrame()) return 7;
+		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
 	_0x60297F0();
@@ -168,7 +178,7 @@ int32_t _0x6008A00() {
 
 	InitEntities();
 
-	Game._0xE = -1;
+	Game.music = -1;
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Player *player = &Players[playerNum];
 		player->modeFlags |= Game.modeFlags[playerNum] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE);
@@ -178,7 +188,7 @@ int32_t _0x6008A00() {
 		}
 	}
 
-	Game.versusWinner = Players[PLAYER1].nowFlags & NOW_STARTED ? PLAYER1 : PLAYER2;
+	Game.versusWinner = (Players[PLAYER1].nowFlags & NOW_STARTED) ? PLAYER1 : PLAYER2;
 
 	while (_0x6064750 != NULL) {
 		if (UpdateFrame()) return 7;
@@ -194,28 +204,28 @@ int32_t _0x6008A00() {
 	Player *player1 = &Players[PLAYER1];
 	Player *player2 = &Players[PLAYER2];
 
-	int16_t r10 = 0;
-	while (r10 == 0) {
+	GameLoopState state = GAMELOOP_LOOP;
+	while (state == 0) {
 		if (UpdateGame()) {
 			_0x602406E();
-			return 7;
+			return GAMELOOP_TEST;
 		}
 
 		_0x6008F2C();
 		ShowPalCycleText(218 + 67, 218, VERSION_NAME, true);
 		if ((++numPalCycleFrames % 64u) == 0u) {
 			if (downNextPalCycle = !downNextPalCycle) {
-				NewPalCycle(159u, _0x6033748, _0x67910, 1, PALCYCLETYPE_DOWNSTOP, 1, 63);
+				NewPalCycle(PALNUM_PALCYCLETEXT, _0x6033748, _0x67910, 1, PALCYCLETYPE_DOWNSTOP, 1u, 63u);
 			}
 			else {
-				NewPalCycle(159u, _0x6033748, _0x67910, 1, PALCYCLETYPE_UPSTOP, 1, 63);
+				NewPalCycle(PALNUM_PALCYCLETEXT, _0x6033748, _0x67910, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
 			}
 		}
 
 		InitSeed = Rand(894u);
 
 		if (GameFlags & GAME_DOUBLESSTART) {
-			r10 = _0x6008918();
+			state = _0x6008918();
 		}
 		else {
 			if (GameFlags & GAME_CHALLENGER1P) {
@@ -227,7 +237,7 @@ int32_t _0x6008A00() {
 
 			GameFlags &= ~(GAME_CHALLENGER1P | GAME_CHALLENGER2P);
 			if (GameFlags & GAME_NEWCHALLENGER) {
-				r10 = _0x600817E();
+				state = _0x600817E();
 			}
 
 			if (GameFlags & GAME_NEWVERSUSROUND) {
@@ -235,7 +245,7 @@ int32_t _0x6008A00() {
 			}
 
 			if ((GameFlags & GAME_VERSUS) && !(GameFlags & GAME_BIT11)) {
-				r10 = _0x6008516();
+				state = _0x6008516();
 			}
 
 			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_INIT)) {
@@ -257,7 +267,7 @@ int32_t _0x6008A00() {
 			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
 				_0x6079299 = 2;
 				if (++_0x6079294 < 180u) {
-					r10 = 2;
+					state = 2;
 				}
 
 				if (_0x6014234()) {
@@ -272,14 +282,14 @@ int32_t _0x6008A00() {
 
 	InitSeed = Rand(1192u) + 1u;
 
-	if (r10 == 2) {
+	if (state == 2) {
 		_0x6029546(2, 30, 72, 6);
 	}
 
 	while (_0x6064750) {
 		if (UpdateFrame()) {
 			_0x602406E();
-			return 7;
+			return GAMELOOP_TEST;
 		}
 	}
 
@@ -289,13 +299,13 @@ int32_t _0x6008A00() {
 
 	// BUG: This is very odd, but correct, code.
 	//
-	// The SH-2 code checks if r10 is not equal to 2, but in both cases the
-	// function returns 2.
-	if (r10 != 2) {
-		return 2;
+	// The SH-2 code checks if state is not equal to GAMELOOP_STOP, but in both
+	// cases the function returns GAMELOOP_STOP.
+	if (state != GAMELOOP_STOP) {
+		return GAMELOOP_STOP;
 	}
 	else {
-		return 2;
+		return GAMELOOP_STOP;
 	}
 }
 
@@ -377,7 +387,7 @@ void RunMainLoop() {
 
 			case MAINLOOP_TEST:
 				CurrentMainLoopState = RunTestLoop();
-				break; // BUG: TAP doesn't continue here. Might have been intentional, though.
+				break;
 
 			default:
 				break;
