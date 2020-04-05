@@ -167,7 +167,7 @@ GameLoopState GameLoop() {
 		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
-	_0x60297F0();
+	ResetVideoSetters();
 	_0x602406E();
 	_0x602EB4C();
 	_0x602EC5C();
@@ -176,9 +176,8 @@ GameLoopState GameLoop() {
 	_0x602E5BE();
 	_0x602E72A(5);
 
-	InitEntities();
-
 	Game.music = -1;
+	InitEntities();
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Player *player = &Players[playerNum];
 		player->modeFlags |= Game.modeFlags[playerNum] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE);

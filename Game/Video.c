@@ -142,6 +142,10 @@ void SetVideo() {
 	NumVideoSetters = 0u;
 }
 
+void ResetVideoSetters() {
+	NumVideoSetters = 0u;
+}
+
 void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t arg2, uint8_t arg3) {
 	// TODO
 }

@@ -36,7 +36,7 @@ void* _0x6023DAE(void*);
 
 void _0x6023E5A(void*);
 
-void* _0x6023EFE(void (**)(), void*);
+void* _0x6023EFE(void*, void*);
 
 void* _0x6023FA4(void (**)(), void*);
 
