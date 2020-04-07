@@ -104,6 +104,10 @@ void InitSpriteLayers() {
 	}
 }
 
+void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
+	// TODO
+}
+
 void _0x60294C0(uint8_t arg0) {
 	// TODO: Make a define for register 0x0B.
 	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | (arg0 & 0x07u);

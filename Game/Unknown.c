@@ -1,5 +1,7 @@
 #include "Unknown.h"
 
+unknown_type* _0x6064750 = NULL;
+
 void _0x6023788() {
 }
 
