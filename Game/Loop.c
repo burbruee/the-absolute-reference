@@ -3,6 +3,7 @@
 #include "Item.h"
 #include "ShowText.h"
 #include "Frame.h"
+#include "Entity.h"
 #include "Math.h"
 #include "Save.h"
 #include "Video.h"
@@ -169,15 +170,19 @@ GameLoopState GameLoop() {
 
 	ResetVideoSetters();
 	_0x602406E();
+
+	// Sound.
 	_0x602EB4C();
 	_0x602EC5C();
 	_0x602E6B8();
 	_0x602E586();
-	_0x602E5BE();
+	StopMusic();
 	_0x602E72A(5);
-
 	Game.music = -1;
+
 	InitEntities();
+
+	// Init players.
 	for (PlayerNum playerNum = PLAYER1; playerNum <= NUMPLAYERS - 1; playerNum++) {
 		Player *player = &Players[playerNum];
 		player->modeFlags |= Game.modeFlags[playerNum] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE);
