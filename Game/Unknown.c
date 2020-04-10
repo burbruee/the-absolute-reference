@@ -31,7 +31,7 @@ void _0x60237DE() {
 			_0x606005C = _0x60AD218;
 			if (CurrentPauseMode < PAUSEMODE_GAME) {
 				int16_t var0 = _0x60AD218->_0x18;
-				void** var1 = &_0x60AD218->_0x300[(1 - var0 + 14) * 4];
+				void** var1 = &_0x60AD218->_0x300[(1 - var0 + 14) * 4 + 3];
 				while (var0 > 0) {
 					_0x6060064 = var1 - 3;
 					_0x6060060 = var1;
@@ -45,7 +45,7 @@ void _0x60237DE() {
 			}
 			else if (_0x60AD218->_0x3F8 != _0x6023788) {
 				int16_t var0 = _0x60AD218->_0x18;
-				void** var1 = &_0x60AD218->_0x300[(1 - var0 + 14) * 4];
+				void** var1 = &_0x60AD218->_0x300[(1 - var0 + 14) * 4 + 3];
 				while (var0 > 1) {
 					_0x6060064 = var1 - 3;
 					_0x6060060 = var1;
