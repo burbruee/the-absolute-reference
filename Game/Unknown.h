@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-//typedef uint8_t unknown_type[1024];
-
 typedef struct unknown_type {
 	unknown_type* _0x0;
 	void (*_0x4)();
@@ -15,11 +13,11 @@ typedef struct unknown_type {
 	uint16_t _0x1A;
 	uint8_t _0x1C[4];
 	unknown_type* _0x20;
-	void* _0x300[15][4];
+	void* _0x300[60];
 	void (*_0x3F8)();
 } unknown_type;
 
-extern unknown_type* _0x6064750;
+extern unknown_type* _0x606005C = NULL;
 
 void _0x6023788();
 

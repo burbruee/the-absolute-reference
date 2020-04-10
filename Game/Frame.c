@@ -29,6 +29,7 @@ bool TestModeDisabled;
 
 uint16_t _0x6060024;
 uint32_t _0x6060028;
+// TODO: Replace all vblank data with macros, so atomic types can be used.
 volatile uint32_t NumVblanks;
 volatile bool VblankFinished;
 

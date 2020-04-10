@@ -9,17 +9,6 @@
 #include "PlatformTypes.h"
 #include "Macros.h"
 
-// NOTE: Video set functions must have three arguments, each of which is either
-// a pointer or intptr_t/uintptr_t.
-typedef struct VideoSetter {
-	void (*set)(void*, void*, void*);
-	void* args[3];
-} VideoSetter;
-
-#define MAXVIDEOSETTERS 32
-static uint16_t NumVideoSetters;
-static VideoSetter VideoSetters[MAXVIDEOSETTERS];
-
 #define SPRITELAYER_FREE 0x0000
 
 // Each index into this table is a sprite layer number. An element value of
@@ -37,6 +26,23 @@ static int16_t SpriteLayers[128];
 static int16_t SpriteLayerNames[MAXSPRITES];
 
 int16_t NumSprites;
+
+// NOTE: Video set functions must have three arguments, each of which is either
+// a pointer or intptr_t/uintptr_t.
+typedef struct VideoSetter {
+	void (*set)(void*, void*, void*);
+	void* args[3];
+} VideoSetter;
+
+#define MAXVIDEOSETTERS 32
+static uint16_t NumVideoSetters;
+static VideoSetter VideoSetters[MAXVIDEOSETTERS];
+
+// NOTE: Looks like this points to data that controls screen brightness during
+// transitions; might also be used for darkening the attract mode ranking
+// backgrounds. Also, _0x602970C is used with this, which might be where the
+// darkening is handled.
+unknown_type* _0x6064750 = NULL;
 
 void AllocSpriteLayerNames(int16_t layer, uint16_t num) {
 	// Write sprite names beyond the first name to the data table.

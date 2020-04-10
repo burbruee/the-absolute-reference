@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VideoDefs.h"
+#include "Unknown.h"
 #include "HwData.h"
 #include "HwSprite.h"
 #include "PlatformTypes.h"
@@ -15,6 +16,8 @@ extern int16_t NumSprites;
 extern uint32_t _0x60618F0[16];
 
 extern SpriteData TempSprite;
+
+extern unknown_type* _0x6064750;
 
 void AllocSpriteLayerNames(int16_t layer, uint16_t num);
 void FreeSpriteLayer(uint16_t layer);
