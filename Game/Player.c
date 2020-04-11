@@ -2240,7 +2240,7 @@ void NextItem(Player* player) {
 		(player->modeFlags & MODE_NORMAL) &&
 		!(player->modeFlags & MODE_VERSUS) &&
 		!(player->nowFlags & NOW_STAFF) &&
-		player->level >= ((player->normalItemIndex + 1) / 100)) {
+		player->level >= ((player->normalItemIndex + 1) * 100)) {
 		const uint8_t itemNum = NormalItemNums[player->normalItemIndex];
 		const uint32_t itemBagFlag = 1 << itemNum;
 		if (player->normalItemBagFlags & itemBagFlag) {
