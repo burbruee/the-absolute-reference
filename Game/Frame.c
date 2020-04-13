@@ -9,7 +9,6 @@
 #include "Video.h"
 #include "Loop.h"
 #include "Sound.h"
-#include "Unknown.h"
 #include "UnknownSprite.h"
 #include "Vblank.h"
 

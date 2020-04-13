@@ -12,12 +12,11 @@
 #include "PalNum.h"
 #include "Sound.h"
 #include "Setting.h"
-#include "Unknown.h"
 #include "Config.h"
 #include "PlatformTypes.h"
 
 typedef enum GameLoopState {
-	GAMELOOP_LOOP = 0,
+	GAMELOOP_CONTINUE = 0,
 	GAMELOOP_STOP = 2,
 	GAMELOOP_START = 5,
 	GAMELOOP_TEST = 7,
@@ -208,7 +207,7 @@ GameLoopState GameLoop() {
 	Player *player1 = &Players[PLAYER1];
 	Player *player2 = &Players[PLAYER2];
 
-	GameLoopState state = GAMELOOP_LOOP;
+	GameLoopState state = GAMELOOP_CONTINUE;
 	while (state == 0) {
 		if (UpdateGame()) {
 			_0x602406E();
@@ -252,7 +251,7 @@ GameLoopState GameLoop() {
 				state = _0x6008516();
 			}
 
-			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_INIT)) {
+			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_BIT13)) {
 				_0x60088FC();
 			}
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "HwInput.h"
-#include "Pause.h"
+#include "Video.h"
 #include <stdbool.h>
 
 // Read this to check the current pause mode, not NextPauseMode.

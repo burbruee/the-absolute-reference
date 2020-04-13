@@ -2,7 +2,7 @@
 #include "Entity.h"
 #include "Loop.h"
 #include "DisplayObject.h"
-#include "Pause.h"
+#include "Video.h"
 #include "Block.h"
 #include "Object.h"
 #include "ShowBlockField.h"

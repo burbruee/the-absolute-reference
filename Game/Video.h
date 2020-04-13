@@ -1,7 +1,6 @@
 #pragma once
 
 #include "VideoDefs.h"
-#include "Unknown.h"
 #include "HwData.h"
 #include "HwSprite.h"
 #include "PlatformTypes.h"
@@ -17,7 +16,76 @@ extern uint32_t _0x60618F0[16];
 
 extern SpriteData TempSprite;
 
+typedef struct unknown_type {
+	unknown_type* _0x0;
+	void (*_0x4)();
+	void (*_0x8)();
+	unknown_type* _0xC;
+	unknown_type* _0x10;
+	unknown_type* _0x14;
+	uint16_t _0x18;
+	uint16_t _0x1A;
+	uint8_t _0x1C[4];
+	unknown_type* _0x20;
+	void* _0x300[60];
+	void (*_0x3F8)();
+} unknown_type;
+
 extern unknown_type* _0x6064750;
+
+extern unknown_type* _0x606005C = NULL;
+
+void _0x6023788();
+
+void _0x602378C();
+
+void _0x6023790();
+
+void _0x60237DE();
+
+void _0x602392E(int32_t, void (*)());
+
+void _0x60239B8(int32_t, int32_t);
+
+void _0x6023A0E(unknown_type* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
+
+void* _0x6023A98(unknown_type*, void*, void*, void*);
+
+void _0x6023B76(unknown_type*);
+
+void _0x6023BC4(unknown_type*, void (*)());
+
+void _0x6023C3E(unknown_type*, void*);
+
+void* _0x6023C8A(unknown_type*, void*);
+
+int32_t _0x6023CBC(void (*)(), uint32_t, int16_t, int16_t, int16_t, int16_t, int16_t, int16_t);
+
+void* _0x6023DAE(unknown_type*);
+
+void _0x6023E5A(unknown_type*);
+
+void* _0x6023EFE(unknown_type*, unknown_type*);
+
+void* _0x6023FA4(void (**)(), unknown_type*);
+
+void _0x6024030(unknown_type*);
+
+void _0x602406E();
+
+void _0x60240A8(void*);
+
+// All lesser pause modes are active for a given pause mode. So PAUSEMODE_GAME
+// enables pausing of the background, too.
+typedef enum PauseMode {
+	PAUSEMODE_NOPAUSE = 0,
+	PAUSEMODE_BG = 30,
+	PAUSEMODE_GAME = 40
+} PauseMode;
+
+void SetNextPauseMode(PauseMode nextPauseMode);
+void DisablePause();
+void GetNextPauseMode();
 
 void AllocSpriteLayerNames(int16_t layer, uint16_t num);
 void FreeSpriteLayer(uint16_t layer);
@@ -56,6 +124,9 @@ void _0x6025B9A(int16_t, int32_t*, int32_t, int32_t);
 void _0x6025BDC(int16_t);
 void _0x6025C1E(int16_t, int16_t, int16_t);
 void _0x6025DFC();
+void _0x6026530(int16_t, void*, int16_t, int16_t, int16_t);
+void _0x6026698(int16_t bgNum, void**, void*, int16_t, int16_t, int16_t, int16_t, int16_t);
+void _0x60267E4(int16_t);
 // TODO
 void _0x6026FCA(uint16_t, uint16_t);
 // TODO
