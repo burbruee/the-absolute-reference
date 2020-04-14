@@ -469,7 +469,7 @@ void ShowFieldPlus(Player* player) {
 					// here for documentation.
 					(*blockObject)[1] = (displayX & 0x3FF) | 0x400;
 					SPRITE_SETY(blockObject, displayY);
-					SPRITE_SETPAL(blockObject, palNum);
+					SPRITE_SETPALNUM(blockObject, palNum);
 					blockObject++;
 					numBlockObjects++;
 				}

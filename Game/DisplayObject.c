@@ -19,7 +19,7 @@ static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, ui
 	SPRITE_SETSCALEY(&TempSprite, scaleY);
 	SPRITE_SETSCALEX(&TempSprite, scaleX);
 
-	SPRITE_SETPAL(&TempSprite, palNum);
+	SPRITE_SETPALNUM(&TempSprite, palNum);
 
 	// bpp, alpha, top three bits of tile.
 	TempSprite[4] = (TempSprite[4] & 0xFF00) | etc;
@@ -55,14 +55,14 @@ void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNu
 	}
 	else {
 		while (numSprites-- != 0) {
-			WriteObjectSprite(curData++, y, x, SPRITE_GETPAL(object), layer, 0x3F, 0x3F, etc);
+			WriteObjectSprite(curData++, y, x, SPRITE_GETPALNUM(object), layer, 0x3F, 0x3F, etc);
 		}
 	}
 }
 
 void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, bool alpha) {
 	if (palNum == 0) {
-		palNum = SPRITE_GETPAL(object);
+		palNum = SPRITE_GETPALNUM(object);
 	}
 
 	uint8_t etc;

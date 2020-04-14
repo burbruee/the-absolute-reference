@@ -56,12 +56,14 @@ static unknown_type _0x607D218[192];
 static unknown_type* _0x60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t _0x60AD21E = 0u;
-static uint16_t _0x60AD224;
+static int16_t _0x60AD224;
 
 void _0x6023788() {
+	// Empty.
 }
 
 void _0x602378C() {
+	// Empty.
 }
 
 void _0x6023790() {
