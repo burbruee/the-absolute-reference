@@ -11,7 +11,14 @@ uint32_t Div32u(uint32_t denom, uint32_t numer);
 int16_t Div16s(int16_t denom, int32_t numer);
 int32_t Mod32s(int32_t denom, int32_t numer);
 uint32_t Mod32u(uint32_t denom, uint32_t numer);
-void MemCopy(size_t n, void* dest, void* src); // Where used, it was originally used; where string.h's memcpy is used, this wasn't originally used in the SH-2 code.
+
+// Where used, it was originally used; where string.h's memcpy is used, this wasn't originally used in the SH-2 code.
+#ifdef USESTDC
+#define MemCopy(n, dst, src) (void)memcpy(dst, src, n);
+#else
+void MemCopy(size_t n, void* dst, void* src);
+#endif
+
 int32_t LeftShift(int32_t value, int32_t shifts);
 int32_t RightShift(int32_t value, int32_t shifts);
 int8_t StringNCompare(const char* s1, const char* s2, size_t n);

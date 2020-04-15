@@ -16,7 +16,7 @@ typedef uint8_t SpriteScale;
 //
 // Each character is a bit in a big endian uint16_t.
 //
-// ?: Unused.
+// ?: Unused or unknown.
 // Y: Y pixel position.
 // X: X pixel position.
 // -: Flip sprite vertically.
@@ -50,10 +50,12 @@ typedef uint16_t SpriteData[8];
 // The MAME documentation says the PS6406B supports 1024 sprites, but the
 // original game only supports 896. Though the first two sprites are taken up
 // for what could be sprite/video settings (those sprites' tile numbers are 0,
-// so they don't display).
+// so they don't display in MAME, due to the tile data for that tile number
+// being all zeros).
 #define MAXSPRITES 0x380
 #define SPRITE_FIRST 2
 
+// TODO: Change these to OBJECT_ and move them into DisplayObject.h.
 #define SPRITE_GETY(sprite) ((int16_t)(((*(sprite))[0] & 0x3FF) << 6) >> 6)
 #define SPRITE_GETX(sprite) ((int16_t)(((*(sprite))[1] & 0x3FF) << 6) >> 6)
 #define SPRITE_GETFLIPY(sprite) ((bool)(((*(sprite))[2] >> 15) & 1))
@@ -84,6 +86,5 @@ typedef uint16_t SpriteData[8];
 #define SPRITE_SETALPHA(sprite, alpha) ((*(sprite))[4] = ((*(sprite))[4] & ~0x0070) | (((uint16_t)(alpha) & 7) << 4))
 #define SPRITE_SETTILE(sprite, tile) (((*(sprite))[4] = ((*(sprite))[4] & ~0x0007) | ((uint16_t)(((uint32_t)(tile)) >> 16) & 7)), ((*(sprite))[5] = ((uint16_t)(tile) & 0xFFFF)))
 
-// Platforms define these.
-extern SpriteData Sprites[MAXSPRITES]; // Table of sprites.
-extern int16_t SpriteNames[MAXSPRITES]; // Table of sprite names.
+#define Sprites ((RAMDATA SpriteData*)&SPRITERAM[0x0000u])
+#define SpriteNames ((RAMDATA uint16_t*)&SPRITERAM[0x1C00u])

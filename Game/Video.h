@@ -25,20 +25,23 @@ typedef struct unknown_type {
 	void (*_0x3F8)();
 } unknown_type;
 
+// Looks like this could be an "object animation" (ObjectAnim).
 // SH-2: sizeof(struct_0x606006C) == 0x40
 typedef struct struct_0x606006C {
-	ObjectData* _0x0;
+	const ObjectData* objectTable;
 	int16_t _0x2;
-	int16_t _0x8;
+	int16_t y;
+	int16_t x;
 	int16_t _0xC;
-	uint8_t _0x14;
-	int16_t _0x16;
-	int16_t _0x18;
-	int16_t _0x1A;
-	uint8_t _0x1C;
+	uint8_t h;
+	uint8_t w;
+	int16_t animFrame;
+	int16_t bgPri;
+	int16_t palNum;
+	uint8_t alpha;
 	uint16_t _0x22;
 	int16_t _0x28;
-	uint8_t _0x2A;
+	uint8_t layer;
 	uint8_t _0x2B;
 	uint16_t _0x2C;
 	uint8_t _0x2F;
@@ -60,7 +63,18 @@ extern int16_t _0x606106C[64];
 
 extern uint32_t _0x60618F0[16];
 
-extern SpriteData TempSprite;
+typedef struct struct_0x6061932 {
+	SpriteData tempSprite;
+	uint16_t _0x10;
+	uint16_t _0x12;
+	uint16_t _0x14;
+	uint16_t _0x16;
+	uint16_t _0x18;
+} struct_0x6061932;
+
+extern struct_0x6061932 _0x6061932;
+
+const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 
 extern unknown_type* _0x6064750;
 

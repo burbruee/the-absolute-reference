@@ -13,11 +13,10 @@
 // This must be used, to ensure pointer alignment for the struct data, which is
 // required on most (all?) real platforms, such as x86/x64 and ARM.
 #define DATA(name, size) void* name[(size_t)(size) / sizeof(void*) + ((size_t)(size) % sizeof(void*) != 0)]
-//#define DATAFIELD(data, type, offset) (*((type*)&(((void*)(data))[offset])))
 #define DATAFIELD(data, type, offset) ( \
 	*( \
 		(type*)( \
-			((void*)(data))[offset] \
+			&((void*)(data))[offset] \
 		) \
 	) \
 )

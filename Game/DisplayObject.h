@@ -33,7 +33,7 @@
 typedef uint16_t ObjectData[6];
 
 // The sprite count in the first object data of an object is the only one used.
-// Objects can have up to 63 sprites.
+// Objects can be composed of up to 63 sprites.
 #define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))
 #define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0xFC00) | (((uint16_t)(numSprites) & 0x3F) << 10))
 

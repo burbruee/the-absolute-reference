@@ -7,28 +7,27 @@
 #include <stdbool.h>
 
 static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, uint8_t etc) {
-	SPRITE_SETY(&TempSprite, y + SPRITE_GETY(object));
-	SPRITE_SETX(&TempSprite, x + SPRITE_GETX(object));
+	SPRITE_SETY(&_0x6061932.tempSprite, y + SPRITE_GETY(object));
+	SPRITE_SETX(&_0x6061932.tempSprite, x + SPRITE_GETX(object));
 
-	// flipY, spritePri, h.
-	TempSprite[2] = (TempSprite[2] & 0x00FF) | ((*object)[2] & 0xFF00);
+	// flipY, sprPri, h.
+	_0x6061932.tempSprite[2] = (_0x6061932.tempSprite[2] & 0x00FF) | ((*object)[2] & 0xFF00);
 
 	// flipX, bgPri = 3u, w.
-	TempSprite[3] = (TempSprite[3] & 0x00FF) | (((*object)[3] & 0xCF00) | 0x3000);
+	_0x6061932.tempSprite[3] = (_0x6061932.tempSprite[3] & 0x00FF) | (((*object)[3] & 0xCF00) | 0x3000);
 
-	SPRITE_SETSCALEY(&TempSprite, scaleY);
-	SPRITE_SETSCALEX(&TempSprite, scaleX);
+	SPRITE_SETSCALEY(&_0x6061932.tempSprite, scaleY);
+	SPRITE_SETSCALEX(&_0x6061932.tempSprite, scaleX);
 
-	SPRITE_SETPALNUM(&TempSprite, palNum);
+	SPRITE_SETPALNUM(&_0x6061932.tempSprite, palNum);
 
 	// bpp, alpha, top three bits of tile.
-	TempSprite[4] = (TempSprite[4] & 0xFF00) | etc;
+	_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00) | etc;
 	// Bottom 16 bits of tile.
-	TempSprite[5] = (*object)[5];
+	_0x6061932.tempSprite[5] = (*object)[5];
 
-	for (size_t i = 0; i < lengthof(TempSprite); i++) {
-		*(uint16_t*)&(SPRITERAM[NumSprites * sizeof(SpriteData) + i * sizeof(uint16_t)]) = TempSprite[i];
-		//Sprites[NumSprites][i] = TempSprite[i];
+	for (size_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
+		Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
 	}
 	NumSprites++;
 }

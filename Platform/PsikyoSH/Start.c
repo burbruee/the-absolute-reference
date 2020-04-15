@@ -44,7 +44,7 @@ void _start() {
 		register uint32_t randSeedInit; // Intentionally uninitialized. Whatever the data is after restart will be used.
 		uint8_t ramInit = 0x00;
 		for (size_t i = 0u; i < sizeof(WORKRAM); i++) {
-			randSeedInit += WORKRAM[i];
+			randSeedInit += ((uint8_t*)WORKRAM)[i];
 			WORKRAM[i] = ramInit;
 			if (++ramInit >= 0xFF) {
 				ramInit = 0x00;

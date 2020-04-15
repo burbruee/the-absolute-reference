@@ -33,16 +33,14 @@ uint32_t Mod32u(uint32_t denom, uint32_t numer) {
 	else return numer % denom;
 }
 
-void MemCopy(size_t n, void* dest, void* src) {
-#ifdef USESTDC
-	memcpy(dest, src, n);
-#else
-	uint8_t* d = dest, * s = src;
+#ifndef USESTDC
+void MemCopy(size_t n, void* dst, void* src) {
+	uint8_t* d = dst, * s = src;
 	while (n-- > 0) {
 		*d++ = *s++;
 	}
-#endif
 }
+#endif
 
 int32_t LeftShift(int32_t value, int32_t shifts) {
 	if (shifts <= 0) return value;

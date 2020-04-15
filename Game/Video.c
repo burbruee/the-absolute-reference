@@ -11,12 +11,14 @@
 
 #define SPRITELAYER_FREE 0x0000
 
+static const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 unknown_type* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
 static uint16_t _0x6060068 = 0u;
 struct_0x606006C _0x606006C[64];
 int16_t _0x606106C[64];
+struct_0x6061932 _0x6061932;
 
 // Each index into this table is a sprite layer number. An element value of
 // zero indicates the layer is free.
@@ -243,17 +245,17 @@ void _0x6024244() {
 				int16_t var3;
 				var2->_0x34 = var2->_0x36;
 				if (!(var2->_0x2C & 0x800)) {
-					if (var2->_0x16 < var2->_0x28 - 1) {
-						var3 = var2->_0x16 + 1;
+					if (var2->animFrame < var2->_0x28 - 1) {
+						var3 = var2->animFrame + 1;
 					}
 					else {
 						if (!(var2->_0x2C & 0x200)) {
 							if (!(var2->_0x2C & 0x400)) {
-								var2->_0x16 = var2->_0x28 - 1;
+								var2->animFrame = var2->_0x28 - 1;
 								var2->_0x2B = 2u;
 							}
 							else {
-								var2->_0x16--;
+								var2->animFrame--;
 								var2->_0x2C |= 0x800;
 							}
 							break;
@@ -262,17 +264,17 @@ void _0x6024244() {
 					}
 				}
 				else {
-					if (var2->_0x38 < var2->_0x16) {
-						var3 = var2->_0x16;
+					if (var2->_0x38 < var2->animFrame) {
+						var3 = var2->animFrame;
 					}
 					else {
 						if (!(var2->_0x2C & 0x200)) {
 							if (!(var2->_0x2C & 0x400)) {
-								var2->_0x16 = var2->_0x38;
+								var2->animFrame = var2->_0x38;
 								var2->_0x2B = 2u;
 							}
 							else {
-								var2->_0x16++;
+								var2->animFrame++;
 								var2->_0x2C &= ~0x0800;
 							}
 							break;
@@ -281,7 +283,7 @@ void _0x6024244() {
 					}
 					var3--;
 				}
-				var2->_0x16 = var3;
+				var2->animFrame = var3;
 				break;
 			}
 
@@ -313,7 +315,128 @@ void _0x6024244() {
 }
 
 void _0x60243E8(struct_0x606006C* arg0) {
-	// TODO
+	int16_t numSprites;
+	ObjectData* object;
+
+	object = arg0->objectTable;
+	for (int16_t i = 0; i < arg0->animFrame; i++) {
+		object += OBJECT_GETNUMSPRITES(object);
+	}
+	numSprites = OBJECT_GETNUMSPRITES(object);
+	AllocSpriteLayerNames(arg0->layer, numSprites);
+
+	if (arg0->_0x30 != 0) {
+		arg0->_0x30--;
+	}
+
+	if (arg0->_0x32 < 1) {
+		if (arg0->_0x32 < 0) {
+			arg0->_0x32++;
+		}
+	}
+	else {
+		arg0->_0x32--;
+	}
+
+	bool var0 = false;
+	bool var1 = false;
+	if (!(arg0->_0x2C & 0x2000u)) {
+		if (arg0->_0x2C & 0x1000u) {
+			var0 = arg0->_0x32 == 0;
+			if (var0) {
+				arg0->_0x32 = 8;
+			}
+			arg0->_0x2C &= ~0x1000u;
+		}
+		else if (arg0->_0x32 < 0) {
+			if (arg0->_0x32 % 2 != 0) {
+				var0 = true;
+			}
+		}
+		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->_0x2C & 3u) != 0 && arg0->_0x30 == 0) {
+			var1 = true;
+			arg0->_0x30 = _0x60356C8[arg0->_0x2C & 3];
+		}
+	}
+	object += numSprites - 1;
+	for (int16_t i = 0; i < numSprites; i++, object--) {
+		if (((*object)[0] & 0x8000u) == 0 || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0 ) {
+			int16_t offsetY = SPRITE_GETY(object);
+			int16_t offsetX = SPRITE_GETX(object);
+
+			// _0x22 at least has flags indicating if the object should be
+			// flipped horizontally (0x0080) and/or vertically (0x8000); there
+			// could be more flags in it.
+			if (arg0->_0x22 & 0x8000) {
+				offsetY = ((SPRITE_GETSCALEY(object) + 1) & 0xFu) * -16 - offsetY;
+			}
+			if (arg0->_0x22 & 0x0080) {
+				offsetX = ((SPRITE_GETSCALEX(object) + 1) & 0xFu) * -16 - offsetX;
+			}
+			SPRITE_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
+			SPRITE_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+
+			uint8_t sprPriVertical = (*object)[2] >> 8;
+			uint8_t horizontal = (*object)[3] >> 8;
+			uint8_t bgPri = (arg0->bgPri << 4) & 0x30u;
+			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
+
+			if (arg0->_0x22 & 0x8000) {
+				if (sprPriVertical & 0x80) {
+					sprPriVertical &= 0x7f;
+				}
+				else {
+					sprPriVertical |= 0x80;
+				}
+			}
+			_0x6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->h;
+			if (arg0->_0x22 & 0x80) {
+				if (horizontal & 0x80) {
+					bgPriHorizontal &= 0x4Fu;
+				}
+				else {
+					bgPriHorizontal |= 0x80u;
+				}
+			}
+			_0x6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->w;
+			if (var0) {
+				if (SPRITE_GETSPRPRI(object) & 2) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 16u);
+				}
+				else if (arg0->palNum == 0) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+				}
+				else {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				}
+			}
+			else if (var1) {
+				if (SPRITE_GETSPRPRI(object) & 2) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 32u);
+				}
+				else {
+					if (arg0->palNum == 0) {
+						SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+					}
+					else {
+						SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					}
+				}
+			}
+			else if (arg0->palNum == 0) {
+				SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+			}
+			else {
+				SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+			}
+			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->alpha & 0x70u);
+			_0x6061932.tempSprite[5] = (*object)[5];
+			for (size_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
+				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
+			}
+			NumSprites++;
+		}
+	}
 }
 
 void _0x602471C(struct_0x606006C* arg0) {
