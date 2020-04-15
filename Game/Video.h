@@ -3,18 +3,12 @@
 #include "VideoDefs.h"
 #include "HwData.h"
 #include "HwSprite.h"
+#include "DisplayObject.h"
 #include "PlatformTypes.h"
 #include <stdint.h>
 #include <stdbool.h>
 
 // TODO: Background data, and a lot more.
-
-// The number of sprites written to the sprite table.
-extern int16_t NumSprites;
-
-extern uint32_t _0x60618F0[16];
-
-extern SpriteData TempSprite;
 
 typedef struct unknown_type {
 	unknown_type* _0x0;
@@ -31,9 +25,44 @@ typedef struct unknown_type {
 	void (*_0x3F8)();
 } unknown_type;
 
-extern unknown_type* _0x6064750;
+// SH-2: sizeof(struct_0x606006C) == 0x40
+typedef struct struct_0x606006C {
+	ObjectData* _0x0;
+	int16_t _0x2;
+	int16_t _0x8;
+	int16_t _0xC;
+	uint8_t _0x14;
+	int16_t _0x16;
+	int16_t _0x18;
+	int16_t _0x1A;
+	uint8_t _0x1C;
+	uint16_t _0x22;
+	int16_t _0x28;
+	uint8_t _0x2A;
+	uint8_t _0x2B;
+	uint16_t _0x2C;
+	uint8_t _0x2F;
+	int16_t _0x30;
+	int16_t _0x32;
+	int16_t _0x34;
+	int16_t _0x36;
+	int16_t _0x38;
+} struct_0x606006C;
+
+// The number of sprites written to the sprite table.
+extern int16_t NumSprites;
 
 extern unknown_type* _0x606005C = NULL;
+
+extern struct_0x606006C _0x606006C[4];
+
+extern int16_t _0x606106C[4];
+
+extern uint32_t _0x60618F0[16];
+
+extern SpriteData TempSprite;
+
+extern unknown_type* _0x6064750;
 
 void _0x6023788();
 
@@ -90,8 +119,6 @@ void GetNextPauseMode();
 void AllocSpriteLayerNames(int16_t layer, uint16_t num);
 void FreeSpriteLayer(uint16_t layer);
 void InitSpriteAlpha();
-struct struct_0x606006C;
-typedef struct struct_0x606006C struct_0x606006C;
 void _0x602419C();
 void _0x6024244();
 void _0x60243E8(struct_0x606006C* arg0);

@@ -36,6 +36,9 @@ extern uint32_t _0x6060028;
 extern volatile uint32_t NumVblanks;
 extern volatile bool VblankFinished;
 
+void _0x602ACB0();
+void _0x602ACE0(uint16_t);
+
 // TODO: Could be Hblank. Is an interrupt handler. Have to define it for each
 // platform.
 void _0x602AD0E();

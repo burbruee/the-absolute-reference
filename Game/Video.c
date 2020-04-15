@@ -15,6 +15,7 @@ unknown_type* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
 static uint16_t _0x6060068 = 0u;
+struct_0x606006C _0x606006C[4];
 
 // Each index into this table is a sprite layer number. An element value of
 // zero indicates the layer is free.
@@ -42,6 +43,8 @@ typedef struct VideoSetter {
 #define MAXVIDEOSETTERS 32
 static uint16_t NumVideoSetters;
 static VideoSetter VideoSetters[MAXVIDEOSETTERS];
+
+int16_t _0x606106C[4];
 
 // NOTE: Looks like this points to data that controls screen brightness during
 // transitions; might also be used for darkening the attract mode ranking
@@ -231,7 +234,83 @@ void _0x602419C() {
 }
 
 void _0x6024244() {
-	// TODO
+	int16_t* var0 = _0x606106C;
+	for (int16_t i = 0u; i < _0x60AD224; i++, var0++) {
+		int32_t var1 = *var0;
+		struct_0x606006C* var2 = &_0x606006C[var1];
+		switch (var2->_0x2B) {
+		case 0u:
+			while (CurrentPauseMode < PAUSEMODE_BG && --var2->_0x34 < 1) {
+				int16_t var3;
+				var2->_0x34 = var2->_0x36;
+				if (!(var2->_0x2C & 0x800)) {
+					if (var2->_0x16 < var2->_0x28 - 1) {
+						var3 = var2->_0x16 + 1;
+					}
+					else {
+						if (!(var2->_0x2C & 0x200)) {
+							if (!(var2->_0x2C & 0x400)) {
+								var2->_0x16 = var2->_0x28 - 1;
+								var2->_0x2B = 2u;
+							}
+							else {
+								var2->_0x16--;
+								var2->_0x2C |= 0x800;
+							}
+							break;
+						}
+						var3 = var2->_0x38;
+					}
+				}
+				else {
+					if (var2->_0x38 < var2->_0x16) {
+						var3 = var2->_0x16;
+					}
+					else {
+						if (!(var2->_0x2C & 0x200)) {
+							if (!(var2->_0x2C & 0x400)) {
+								var2->_0x16 = var2->_0x38;
+								var2->_0x2B = 2u;
+							}
+							else {
+								var2->_0x16++;
+								var2->_0x2C &= ~0x0800;
+							}
+							break;
+						}
+						var3 = var2->_0x28;
+					}
+					var3--;
+				}
+				var2->_0x16 = var3;
+				break;
+			}
+
+		case 2u:
+			if (!(var2->_0x2C & 0x8000)) {
+				if (NumScreenFramesOdd) {
+					if ((var2->_0x2C & 0x20) || CurrentPauseMode >= PAUSEMODE_GAME) {
+						_0x60243E8(var2);
+					}
+				}
+				else {
+					if ((var2->_0x2C & 0x10) || CurrentPauseMode >= PAUSEMODE_GAME) {
+						_0x60243E8(var2);
+					}
+				}
+			}
+			break;
+
+		case 9u:
+			if (!(var2->_0x2C & 0x8000)) {
+				_0x602471C(var2);
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 void _0x60243E8(struct_0x606006C* arg0) {
