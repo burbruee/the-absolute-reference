@@ -15,7 +15,8 @@ unknown_type* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
 static uint16_t _0x6060068 = 0u;
-struct_0x606006C _0x606006C[4];
+struct_0x606006C _0x606006C[64];
+int16_t _0x606106C[64];
 
 // Each index into this table is a sprite layer number. An element value of
 // zero indicates the layer is free.
@@ -43,8 +44,6 @@ typedef struct VideoSetter {
 #define MAXVIDEOSETTERS 32
 static uint16_t NumVideoSetters;
 static VideoSetter VideoSetters[MAXVIDEOSETTERS];
-
-int16_t _0x606106C[4];
 
 // NOTE: Looks like this points to data that controls screen brightness during
 // transitions; might also be used for darkening the attract mode ranking

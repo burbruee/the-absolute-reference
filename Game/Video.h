@@ -54,9 +54,9 @@ extern int16_t NumSprites;
 
 extern unknown_type* _0x606005C = NULL;
 
-extern struct_0x606006C _0x606006C[4];
+extern struct_0x606006C _0x606006C[64];
 
-extern int16_t _0x606106C[4];
+extern int16_t _0x606106C[64];
 
 extern uint32_t _0x60618F0[16];
 
