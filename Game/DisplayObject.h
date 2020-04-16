@@ -35,10 +35,10 @@ typedef uint16_t ObjectData[6];
 // The sprite count in the first object data of an object is the only one used.
 // Objects can be composed of up to 63 sprites.
 #define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))
-#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0xFC00) | (((uint16_t)(numSprites) & 0x3F) << 10))
+#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0x03FFu) | (((uint16_t)(numSprites) & 0x3Fu) << 10u))
 
 // Unscaled. Some objects have hard-coded alpha values.
 void DisplayObject(const ObjectData *object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer);
 
 // Full sprite feature support. No hard-coded alpha selection.
-void DisplayObjectEx(const ObjectData *object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, bool alpha);
+void DisplayObjectEx(const ObjectData *object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, SpriteScale scaleY, SpriteScale scaleX, bool alpha);

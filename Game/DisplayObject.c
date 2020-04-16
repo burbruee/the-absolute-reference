@@ -59,7 +59,7 @@ void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNu
 	}
 }
 
-void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, bool alpha) {
+void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, SpriteScale scaleY, SpriteScale scaleX, bool alpha) {
 	if (palNum == 0) {
 		palNum = SPRITE_GETPALNUM(object);
 	}
@@ -79,7 +79,7 @@ void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t pal
 		etc = 0x10 | ((*object)[4] & 0x8F);
 	}
 
-	AddSpriteNames(layer, OBJECT_GETNUMSPRITES(object)); // TODO
+	AllocSpriteLayerNames(layer, OBJECT_GETNUMSPRITES(object));
 
 	const ObjectData* curData = object;
 	for (int16_t numSprites = OBJECT_GETNUMSPRITES(object); numSprites != 0; numSprites--, curData++) {
