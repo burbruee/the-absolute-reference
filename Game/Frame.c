@@ -36,7 +36,7 @@ uint32_t _0x6065644;
 uint32_t _0x6065648;
 
 bool UpdateFrame() {
-	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	NumScreenFramesOdd = NumScreenFrames % 2u;
 	UpdateInputs();
 	_0x60237DE();
 	_0x6024244();
@@ -49,7 +49,7 @@ bool UpdateFrame() {
 	_0x602DAD4();
 	NumSprites = SPRITE_FIRST;
 
-	UPDATE();
+	ADVANCE_FRAME();
 
 	bool startTestMode;
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -67,7 +67,7 @@ bool UpdateFrame() {
 }
 
 bool _0x602AECA() {
-	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	NumScreenFramesOdd = NumScreenFrames % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
 	UpdatePlayers();
@@ -78,7 +78,7 @@ bool _0x602AECA() {
 	_0x602DAD4();
 	NumSprites = SPRITE_FIRST;
 
-	UPDATE();
+	ADVANCE_FRAME();
 
 	bool startTestMode;
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -97,7 +97,7 @@ bool _0x602AECA() {
 
 bool UpdateGame() {
 	UpdateInputs();
-	NumScreenFramesOdd = NumScreenFrames & 1;
+	NumScreenFramesOdd = NumScreenFrames % 2u;
 	InitSpriteLayers();
 	UpdateEntities();
 	UpdatePlayers();
@@ -116,7 +116,7 @@ bool UpdateGame() {
 	_0x602523C();
 	_0x602DAD4();
 
-	UPDATE();
+	ADVANCE_FRAME();
 
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
@@ -132,7 +132,7 @@ bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	UpdateInputs();
 	ButtonInput systemButtons2p = SystemButtonsDown[PLAYER2];
 	ButtonInput systemButtons1p = SystemButtonsDown[PLAYER1];
-	NumScreenFramesOdd = !!(NumScreenFrames % 2);
+	NumScreenFramesOdd = NumScreenFrames % 2u;
 	SystemButtonsDown[PLAYER1] = *buttonsDown1p;
 	SystemButtonsDown[PLAYER2] = *buttonsDown2p;
 	GameButtonsDown[PLAYER1] = *buttonsDown1p;
@@ -161,7 +161,7 @@ bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	_0x602523C();
 	_0x602DAD4();
 
-	UPDATE();
+	ADVANCE_FRAME();
 
 	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;

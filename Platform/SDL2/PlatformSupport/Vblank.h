@@ -1,4 +1,4 @@
 #pragma once
 
 // TODO
-#define UPDATE()
+#define ADVANCE_FRAME()

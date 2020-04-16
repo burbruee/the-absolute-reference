@@ -9,7 +9,7 @@
 #include "Game/HwData.h"
 #include <stdbool.h>
 
-#define UPDATE() \
+#define ADVANCE_FRAME() \
 	while (PauseAllowed) { \
 		UpdateInputs(); \
 		RandScale = 0u; \

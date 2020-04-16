@@ -201,7 +201,7 @@ void GetNextPauseMode() {
 	return NextPauseMode;
 }
 
-void AllocSpriteLayerNames(int16_t layer, uint16_t num) {
+void AllocSpriteLayerNames(int16_t layer, int16_t num) {
 	// Write sprite names beyond the first name to the data table.
 	// The new names will be appended onto the end of the table.
 	int16_t numNames = num - 1;
@@ -319,7 +319,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 	ObjectData* object;
 
 	object = arg0->objectTable;
-	for (int16_t i = 0; i < arg0->animFrame; i++) {
+	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
 	numSprites = OBJECT_GETNUMSPRITES(object);
@@ -368,10 +368,16 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			// flipped horizontally (0x0080) and/or vertically (0x8000); there
 			// could be more flags in it.
 			if (arg0->_0x22 & 0x8000) {
-				offsetY = ((SPRITE_GETSCALEY(object) + 1) & 0xFu) * -16 - offsetY;
+				// BUG: The original did a "& 0xFu" on the height-plus-one
+				// value, but that's not strictly correct; for a 16-tile sized
+				// sprite, that'd result in a 0-tile flipping offset applied.
+				offsetY = (SPRITE_GETH(object) + 1) * -16 - offsetY;
 			}
 			if (arg0->_0x22 & 0x0080) {
-				offsetX = ((SPRITE_GETSCALEX(object) + 1) & 0xFu) * -16 - offsetX;
+				// BUG: The original did a "& 0xFu" on the height-plus-one
+				// value, but that's not strictly correct; for a 16-tile sized
+				// sprite, that'd result in a 0-tile flipping offset applied.
+				offsetX = (SPRITE_GETW(object) + 1) * -16 - offsetX;
 			}
 			SPRITE_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
 			SPRITE_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
@@ -431,7 +437,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			}
 			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->alpha & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
-			for (size_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
+			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
 				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
 			}
 			NumSprites++;
@@ -440,7 +446,125 @@ void _0x60243E8(struct_0x606006C* arg0) {
 }
 
 void _0x602471C(struct_0x606006C* arg0) {
-	// TODO: Analyze this one first.
+	const ObjectData* object = arg0->objectTable;
+	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
+		object += OBJECT_GETNUMSPRITES(object);
+	}
+	int16_t numSprites = OBJECT_GETNUMSPRITES(object);
+	AllocSpriteLayerNames(arg0->layer, numSprites);
+
+	if (arg0->_0x30 != 0) {
+		arg0->_0x30--;
+	}
+	if (arg0->_0x32 < 1) {
+		if (arg0->_0x32 < 0) {
+			arg0->_0x32++;
+		}
+	}
+	else {
+		arg0->_0x32--;
+	}
+
+	bool var0 = false;
+	bool var1 = false;
+	if (!(arg0->_0x2C & 0x2000u)) {
+		if (arg0->_0x2C & 0x1000u) {
+			var0 = arg0->_0x32 == 0;
+			if (var0) {
+				arg0->_0x32 = 8;
+			}
+			arg0->_0x2C &= ~0x1000u;
+		}
+		else if (arg0->_0x32 < 0) {
+			if (arg0->_0x32 % 2) {
+				var0 = true;
+			}
+		}
+		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->_0x2C & 3) && arg0->_0x30 == 0) {
+			var1 = true;
+			arg0->_0x30 = _0x60356C8[arg0->_0x2C & 3];
+		}
+	}
+
+	object += numSprites - 1;
+	for (int16_t i = 0; i < numSprites; i++, object--) {
+		if (((*object)[0] & 0x8000u) == 0u || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0u) {
+			int16_t offsetY = SPRITE_GETY(object);
+			int16_t offsetX = SPRITE_GETX(object);
+			if (arg0->_0x22 & 0x8000u) {
+				// BUG: The original did a "& 0xFu" on the height-plus-one
+				// value, but that's not strictly correct; for a 16-tile sized
+				// sprite, that'd result in a 0-tile flipping offset applied.
+				offsetY = (SPRITE_GETH(object) + 1) * -16 - offsetY;
+			}
+			if (arg0->_0x22 & 0x0080u) {
+				// BUG: The original did a "& 0xFu" on the height-plus-one
+				// value, but that's not strictly correct; for a 16-tile sized
+				// sprite, that'd result in a 0-tile flipping offset applied.
+				offsetX = (SPRITE_GETW(object) + 1) * -16 - offsetX;
+			}
+			SPRITE_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
+			SPRITE_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+			uint8_t sprPriVertical = (*object)[2] >> 8;
+			uint8_t horizontal = (*object)[3] >> 8;
+			uint8_t bgPri = (arg0->bgPri << 4) & 0x30u;
+			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
+			if (arg0->_0x22 & 0x8000u) {
+				if (sprPriVertical & 0x80u) {
+					sprPriVertical &= ~0x80u;
+				}
+				else {
+					sprPriVertical |= 0x80u;
+				}
+			}
+			_0x6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->h;
+			if (arg0->_0x22 & 0x0080u) {
+				if (horizontal & 0x80u) {
+					bgPriHorizontal &= 0x4Fu;
+				}
+				else {
+					bgPriHorizontal |= 0x80u;
+				}
+			}
+			_0x6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->w;
+			if (var0) {
+				if (SPRITE_GETSPRPRI(object) & 0x2u) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 16u);
+				}
+				else if (arg0->palNum == 0) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+				}
+				else {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				}
+			}
+			else if (var1) {
+				if (SPRITE_GETSPRPRI(object) & 2u) {
+					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 32u);
+				}
+				else {
+					if (arg0->palNum == 0u) {
+						SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+					}
+					else {
+						SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					}
+				}
+			}
+			else if (arg0->palNum == 0) {
+				SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+			}
+			else {
+				SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+			}
+			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->alpha & 0x70u);
+			_0x6061932.tempSprite[5] = (*object)[5];
+			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
+				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
+			}
+			NumSprites++;
+		}
+	}
 }
 
 void WriteSpriteLayers() {

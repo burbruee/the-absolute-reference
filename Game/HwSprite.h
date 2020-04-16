@@ -55,6 +55,10 @@ typedef uint16_t SpriteData[8];
 #define MAXSPRITES 0x380
 #define SPRITE_FIRST 2
 
+// NOTE: Bit 15 of word 0 appears to be used as a flag that, when true,
+// indicates if an object should be skipped when displaying with functions
+// _0x60243E8 or _0x602471C, at least.
+
 // TODO: Change these to OBJECT_ and move them into DisplayObject.h.
 #define SPRITE_GETY(sprite) ((int16_t)(((*(sprite))[0] & 0x3FF) << 6) >> 6)
 #define SPRITE_GETX(sprite) ((int16_t)(((*(sprite))[1] & 0x3FF) << 6) >> 6)
