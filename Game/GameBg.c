@@ -1,4 +1,6 @@
-#include "Bg.h"
+#include "GameBg.h"
+
+GameBg CurrentGameBg;
 
 void _0x60169DC() {
 	//TODO
@@ -20,6 +22,6 @@ void _0x6016C14() {
 	//TODO
 }
 
-void UpdateBg() {
+void UpdateGameBg() {
 	//TODO
 }

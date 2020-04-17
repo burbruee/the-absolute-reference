@@ -43,7 +43,7 @@ bool UpdateFrame() {
 	UpdateEntities();
 	_0x6025078();
 	_0x602523C();
-	UpdateBg();
+	UpdateGameBg();
 	_0x602C5C2();
 	WriteSpriteLayers();
 	_0x602DAD4();
@@ -105,7 +105,7 @@ bool UpdateGame() {
 	_0x60237DE();
 	_0x6024244();
 	ShowPlayersStatus();
-	UpdateBg();
+	UpdateGameBg();
 	_0x602C5C2();
 	WriteSpriteLayers();
 	_0x6025078();

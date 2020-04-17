@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameBg.h"
 #include "VideoDefs.h"
 #include "HwData.h"
 #include "HwSprite.h"
@@ -168,6 +169,9 @@ void _0x6025DFC();
 void _0x6026530(int16_t, void*, int16_t, int16_t, int16_t);
 void _0x6026698(int16_t bgNum, void**, void*, int16_t, int16_t, int16_t, int16_t, int16_t);
 void _0x60267E4(int16_t);
+void _0x602682A(int16_t, int16_t, int16_t, bool);
+void _0x6026870(int16_t, int16_t, int16_t);
+GameBg* _0x6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
 void _0x6026FCA(uint16_t, uint16_t);
 // TODO
