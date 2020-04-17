@@ -231,7 +231,20 @@ void InitSpriteAlpha() {
 }
 
 void _0x602419C() {
-	// TODO
+	_0x602DA0C(1, NULL);
+	InitSpriteAlpha();
+	SpritePriority[0] = 0x13u;
+	SpritePriority[1] = 0x67u;
+	for (int16_t i = 0; i < lengthof(_0x606006C); i++) {
+		_0x606006C[i]._0x2B = 0u;
+		_0x606006C[i]._0x2C = 0x8000u;
+		_0x606106C[i] = i;
+	}
+
+	_0x6061932.tempSprite[6] = 0x003Fu;
+	_0x6061932._0x12 = 0x7Du;
+	_0x6061932._0x14 = 0x7Fu;
+	_0x60AD224 = 0;
 }
 
 void _0x6024244() {
