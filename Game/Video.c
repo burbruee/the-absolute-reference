@@ -642,59 +642,65 @@ void _0x602523C() {
 }
 
 void _0x602526A(void* unused0, void* unused1, void* unused2) {
-	uint8_t tilemapBank0, tilemapBank1, tilemapBank2, tilemapBank3;
-	uint8_t tilemapSettings01, tilemapSettings23;
-	uint16_t tilemapBankIndex;
+	uint8_t bgMapBank0, bgMapBank1, bgMapBank2, bgMapBank3;
+	uint8_t bgMapSettings01, bgMapSettings23;
 
-	uint32_t* var3;
-	if (Bgs[0]._0x0 == 1 && Bgs[0]._0x18[Bgs[0]._0x6] >= 0) {
-		const int16_t var0 = Bgs[0]._0x18[Bgs[0]._0x6];
-		const int16_t var1 = _0x60AD228[var0]._0x54;
-		const int16_t var2 = Bgs[0]._0x8;
-		if (_0x60AD228[var0]._0x56 == 0) {
-			tilemapBankIndex = (_0x60AD228[var0]._0x54 + 1) % 2;
-		}
-		else {
-			_0x60AD228[var0]._0x54 = (_0x60AD228[var0]._0x54 + 1) % 2;
-			_0x60AD228[var0]._0x56 = 0;
-			tilemapBankIndex = _0x60AD228[var0]._0x54;
-		}
-		tilemapBank0 = _0x60AD228[var2]._0xC[tilemapBankIndex];
+#define _BGSET(bgIndex, tilemapBank, tilemapSettings) \
+	do { \
+		if (Bgs[bgIndex]._0x0 == 1 && Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] >= 0) { \
+			const int16_t var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6]; \
+			const int16_t var1 = _0x60AD228[var0]._0x54; \
+			const int16_t var2 = Bgs[bgIndex]._0x8; \
+			uint16_t tilemapBankIndex; \
+			if (_0x60AD228[var0]._0x56 == 0) { \
+				tilemapBankIndex = (var1 + 1) % 2; \
+			} \
+			else { \
+				_0x60AD228[var0]._0x54 = (var1 + 1) % 2; \
+				_0x60AD228[var0]._0x56 = 0; \
+				tilemapBankIndex = var1; \
+			} \
+			tilemapBank = (_0x60AD228[var2]._0xC[tilemapBankIndex] >> 8) & 0xFFu; \
+			if (Bgs[bgIndex]._0x10 == 0) { \
+				_0x60AD228[var2]._0x4[tilemapBankIndex][0xFCu + bgIndex] = \
+					(_0x60AD228[var0]._0x18[var1] << 16) | \
+					(_0x60AD228[var0]._0x20[var1] & 0x1FFu); \
+				_0x60AD228[var2]._0x4[tilemapBankIndex][0x1FCu + bgIndex] = \
+					((uint32_t)Bgs[bgIndex]._0xA << 24) | \
+					_0x60AD228[var0]._0xC[tilemapBankIndex] | \
+					(Bgs[bgIndex].darkness << 8) | \
+					(Bgs[bgIndex]._0xC << 15); \
+			} \
+			else { \
+				tilemapBank |= 0x80u; \
+				uint32_t* var3 = _0x60AD228[var2]._0x4[tilemapBankIndex]; \
+				_0x60251B8(1, var3, var3 + 0x100u); \
+			} \
+			if (!(_0x60AD228[var0]._0x10->_0x0->header.format & 0x00200000u)) { \
+				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
+			} \
+			if (Bgs[bgIndex]._0x2 != 0) { \
+				tilemapSettings |= 0x80u >> ((bgIndex % 2u) * 4u); \
+			} \
+		} \
+		else { \
+			tilemapBank = 10u; \
+		} \
+	} while (false)
 
-		if (Bgs[0]._0x10 == 0) {
-			_0x60AD228[var2]._0x4[tilemapBankIndex][0x0FCu] =
-				(_0x60AD228[var0]._0x18[var1] << 16) |
-				(_0x60AD228[var0]._0x20[var1] & 0x1FFu);
-			_0x60AD228[var2]._0x4[tilemapBankIndex][0x1FCu] =
-				(Bgs[0]._0xA << 24) |
-				_0x60AD228[var0]._0xC[tilemapBankIndex] |
-				(Bgs[0].darkness << 8) |
-				(Bgs[0]._0xC << 15);
-		}
-		else {
-			tilemapBank0 |= 0x80u;
-			var3 = _0x60AD228[var2]._0x4[tilemapBankIndex];
-			_0x60251B8(0, var3, var3 + 0x100u);
-		}
-		// TODO: Replace &'d literal here with a defined constant.
-		if (!(_0x60AD228[var0]._0x10->_0x0->header.format & 0x00200000u)) {
-			tilemapSettings01 = 0x40u;
-		}
-		if (Bgs[0]._0x2 != 0) {
-			tilemapSettings01 |= 0x80u;
-		}
-	}
-	else {
-		tilemapBank0 = 10u;
-	}
-	// TODO
+	_BGSET(0u, bgMapBank0, bgMapSettings01);
+	_BGSET(1u, bgMapBank1, bgMapSettings01);
+	_BGSET(2u, bgMapBank2, bgMapSettings23);
+	_BGSET(3u, bgMapBank3, bgMapSettings23);
 
-	TilemapBanks[0] = tilemapBank0;
-	TilemapBanks[1] = tilemapBank1;
-	TilemapBanks[2] = tilemapBank2;
-	TilemapBanks[3] = tilemapBank3;
-	TilemapSettings[0] = tilemapSettings01;
-	TilemapSettings[1] = tilemapSettings23;
+#undef _BGSET
+
+	BgMapBanks[0] = bgMapBank0;
+	BgMapBanks[1] = bgMapBank1;
+	BgMapBanks[2] = bgMapBank2;
+	BgMapBanks[3] = bgMapBank3;
+	BgMapSettings[0] = bgMapSettings01;
+	BgMapSettings[1] = bgMapSettings23;
 }
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {

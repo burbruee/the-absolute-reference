@@ -44,6 +44,6 @@ extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define NUMALPHAVALUES 8u
 #define SpritePriority ((RAMDATA uint8_t*)&VIDEOREGS[0x08])
 #define VideoSettings ((RAMDATA uint8_t*)&VIDEOREGS[0x0E])
-#define TilemapBanks ((RAMDATA uint8_t*)&VIDEOREGS[0x18])
+#define BgMapBanks ((RAMDATA uint8_t*)&VIDEOREGS[0x18])
 #define ScanlinesBank ((RAMDATA uint8_t*)&VIDEOREGS[0x1C])
-#define TilemapSettings ((RAMDATA uint8_t*)&VIDEOREGS[0x1E])
+#define BgMapSettings ((RAMDATA uint8_t*)&VIDEOREGS[0x1E])
