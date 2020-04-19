@@ -1,11 +1,12 @@
 #pragma once
 
+#include "BuildData.h"
 #include <stdint.h>
 
 // SH-2: sizeof(GameBg) == 0x20
 typedef struct GameBg GameBg;
 struct GameBg {
-	GameBg* _0x0;
+	BgMap* _0x0;
 	int32_t _0x4;
 	uint8_t _0x10;
 	uint8_t index;

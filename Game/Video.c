@@ -6,6 +6,7 @@
 #include "LibC.h"
 #include "Frame.h"
 #include "VideoDefs.h"
+#include "BuildData.h"
 #include "PlatformTypes.h"
 #include "Macros.h"
 
@@ -61,6 +62,17 @@ static unknown_type* _0x60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t _0x60AD21E = 0u;
 static int16_t _0x60AD224;
+
+Bg Bgs[4];
+
+typedef struct struct_0x60B0FE0_0x0 {
+	void (*update)(void*, void*, void*, void*, void*);
+	void* args[5];
+} struct_0x60B0FE0;
+
+static struct_0x60B0FE0 _0x60B0FE0[2][20];
+static int16_t _0x60B13A0[2];
+static bool _0x60B13A4;
 
 void _0x6023788() {
 	// Empty.
@@ -600,6 +612,89 @@ void InitSpriteLayers() {
 	for (int16_t layer = 0; layer < lengthof(SpriteLayers); layer++) {
 		SpriteLayers[layer] = SPRITELAYER_FREE;
 	}
+}
+
+void _0x6025078() {
+	if (CurrentPauseMode != PAUSEMODE_NOPAUSE) {
+		return;
+	}
+
+	struct_0x60B0FE0* var0 = _0x60B0FE0[!_0x60B13A4];
+	for (size_t i = 0u; i < lengthof(*_0x60B0FE0); i++) {
+		if (var0[i].update != NULL) {
+			var0[i].update(
+				var0[i].args[0],
+				var0[i].args[1],
+				var0[i].args[2],
+				var0[i].args[3],
+				var0[i].args[4]);
+			var0[i].update = NULL;
+		}
+	}
+	_0x60B13A0[!_0x60B13A4] = 0;
+}
+
+void _0x602523C() {
+	if (CurrentPauseMode == PAUSEMODE_NOPAUSE) {
+		_0x60B13A4 = !_0x60B13A4;
+		VideoSetters[NumVideoSetters++].set = _0x602526A;
+	}
+}
+
+void _0x602526A(void* unused0, void* unused1, void* unused2) {
+	uint8_t tilemapBank0, tilemapBank1, tilemapBank2, tilemapBank3;
+	uint8_t tilemapSettings01, tilemapSettings23;
+	uint16_t tilemapBankIndex;
+
+	uint32_t* var3;
+	if (Bgs[0]._0x0 == 1 && Bgs[0]._0x18[Bgs[0]._0x6] >= 0) {
+		const int16_t var0 = Bgs[0]._0x18[Bgs[0]._0x6];
+		const int16_t var1 = _0x60AD228[var0]._0x54;
+		const int16_t var2 = Bgs[0]._0x8;
+		if (_0x60AD228[var0]._0x56 == 0) {
+			tilemapBankIndex = (_0x60AD228[var0]._0x54 + 1) % 2;
+		}
+		else {
+			_0x60AD228[var0]._0x54 = (_0x60AD228[var0]._0x54 + 1) % 2;
+			_0x60AD228[var0]._0x56 = 0;
+			tilemapBankIndex = _0x60AD228[var0]._0x54;
+		}
+		tilemapBank0 = _0x60AD228[var2]._0xC[tilemapBankIndex];
+
+		if (Bgs[0]._0x10 == 0) {
+			_0x60AD228[var2]._0x4[tilemapBankIndex][0x0FCu] =
+				(_0x60AD228[var0]._0x18[var1] << 16) |
+				(_0x60AD228[var0]._0x20[var1] & 0x1FFu);
+			_0x60AD228[var2]._0x4[tilemapBankIndex][0x1FCu] =
+				(Bgs[0]._0xA << 24) |
+				_0x60AD228[var0]._0xC[tilemapBankIndex] |
+				(Bgs[0].darkness << 8) |
+				(Bgs[0]._0xC << 15);
+		}
+		else {
+			tilemapBank0 |= 0x80u;
+			var3 = _0x60AD228[var2]._0x4[tilemapBankIndex];
+			_0x60251B8(0, var3, var3 + 0x100u);
+		}
+		// TODO: Replace &'d literal here with a defined constant.
+		if (!(_0x60AD228[var0]._0x10->_0x0->header.format & 0x00200000u)) {
+			tilemapSettings01 = 0x40u;
+		}
+		if (Bgs[0]._0x2 != 0) {
+			tilemapSettings01 |= 0x80u;
+		}
+	}
+	else {
+		tilemapBank0 = 10u;
+	}
+	// TODO
+
+	TilemapBanks[0] = tilemapBank0;
+	TilemapBanks[1] = tilemapBank1;
+	TilemapBanks[2] = tilemapBank2;
+	TilemapBanks[3] = tilemapBank3;
+	TilemapSettings[0] = tilemapSettings01;
+	TilemapSettings[1] = tilemapSettings23;
 }
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {

@@ -79,6 +79,64 @@ const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 
 extern unknown_type* _0x6064750;
 
+// SH-2: sizeof(struct_0x60AD228) == 0x68
+typedef struct struct_0x60AD228 {
+	uint16_t _0x0;
+	uint32_t* _0x4[2];
+	uint16_t _0xC[2];
+	GameBg* _0x10;
+	int32_t _0x14;
+	uint32_t _0x18[2];
+	uint32_t _0x20[2];
+	int32_t _0x28[2];
+	int16_t _0x30[2];
+	int16_t _0x34[2];
+	int16_t _0x38[2];
+	int16_t _0x3C[2];
+	int16_t _0x40[2];
+	int16_t _0x46[2];
+	int32_t _0x4C;
+	int32_t _0x50;
+	int16_t _0x54;
+	int16_t _0x56;
+	int16_t _0x58;
+	GameBg* _0x60;
+	int32_t _0x64;
+} struct_0x60AD228;
+
+extern struct_0x60AD228 _0x60AD228[11];
+
+typedef struct Bg {
+	int16_t _0x0;
+	int16_t _0x2;
+	int16_t _0x4;
+	int16_t _0x6;
+	int16_t _0x8;
+	int16_t _0xA;
+	int16_t _0xC;
+	int16_t darkness;
+	int16_t _0x10;
+	int8_t _0x12[2];
+	int32_t _0x14;
+	int16_t _0x18[11];
+	int8_t _0x2E[2];
+	int32_t _0x30;
+	int32_t _0x34;
+	int16_t _0x38[4];
+	int32_t _0x40;
+	int32_t _0x44;
+	int8_t _0x48[4];
+	int32_t _0x4C;
+
+	// TODO: Maybe these should be merged into uint32_t _0x50[2][448].
+	// These might be used for temporarily storing the background map tile
+	// data, before being written to background RAM.
+	uint32_t _0x50[448];
+	uint32_t _0x750[448];
+} Bg;
+
+extern Bg Bgs[4];
+
 void _0x6023788();
 
 void _0x602378C();
