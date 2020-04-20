@@ -209,7 +209,7 @@ void DisablePause() {
 	NextPauseMode = PAUSEMODE_NOPAUSE;
 }
 
-void GetNextPauseMode() {
+PauseMode GetNextPauseMode() {
 	return NextPauseMode;
 }
 
@@ -632,6 +632,17 @@ void _0x6025078() {
 		}
 	}
 	_0x60B13A0[!_0x60B13A4] = 0;
+}
+
+void _0x60251B8(int16_t bgIndex, uint32_t* arg1, uint32_t* arg2) {
+	for (size_t i = 0; i < 0xE0u; i += 8u) {
+		for (size_t j = 0; j < 8u; j++) {
+			arg1[i + j] = Bgs[bgIndex]._0x50[i + j + 0x00u];
+		}
+		for (size_t j = 0; j < 8u; j++) {
+			arg2[i + j] = Bgs[bgIndex]._0x50[i + j + 0xE0u];
+		}
+	}
 }
 
 void _0x602523C() {

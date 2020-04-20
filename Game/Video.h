@@ -187,7 +187,7 @@ typedef enum PauseMode {
 
 void SetNextPauseMode(PauseMode nextPauseMode);
 void DisablePause();
-void GetNextPauseMode();
+PauseMode GetNextPauseMode();
 
 void AllocSpriteLayerNames(int16_t layer, int16_t num);
 void FreeSpriteLayer(uint16_t layer);
@@ -212,7 +212,7 @@ void _0x6024ED8();
 void _0x6025078();
 void _0x60251B8(int16_t, uint32_t*, uint32_t*);
 void _0x602523C();
-void _0x602526A();
+void _0x602526A(void*, void*, void*);
 int32_t _0x60257EE();
 void _0x602585E(int16_t);
 int32_t _0x6025918();
