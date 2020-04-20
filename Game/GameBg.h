@@ -14,7 +14,7 @@ struct GameBg {
 	uint8_t index;
 	uint8_t _0x12;
 	uint8_t _0x13;
-	int8_t frame;
+	uint8_t frame;
 	int16_t _0x16[4];
 	int16_t _0x1E;
 };

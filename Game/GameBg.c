@@ -40,7 +40,16 @@ static ROMDATA BgMap* const BgMapPtrs[] = {
 
 
 void _0x60169DC() {
-	//TODO
+	CurrentGameBg._0x10 = 1;
+	CurrentGameBg.index = 6;
+	CurrentGameBg._0x13 = 1;
+	for (size_t i = 0; i < 4; i++) {
+		CurrentGameBg._0x16[i] = 0;
+	}
+
+	_0x6024ED8();
+	CurrentGameBg._0x1E = _0x60257EE();
+	_0x6026FDC(CurrentGameBg._0x1E, 1);
 }
 
 void _0x6016A30(uint8_t arg0) {
@@ -80,15 +89,63 @@ void _0x6016A30(uint8_t arg0) {
 }
 
 void _0x6016B40() {
-	//TODO
+	SetBgDarkness(CurrentGameBg._0x1E, CurrentGameBg._0x16[1]);
+	if (CurrentGameBg._0x16[1] + 6 > 63) {
+		CurrentGameBg._0x16[1] = 63;
+		SetBgDarkness(CurrentGameBg._0x1E, 63);
+		CurrentGameBg._0x13 = 3;
+		CurrentGameBg._0x16[0] = 2;
+		if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
+			CurrentGameBg.index = AttractSection;
+		}
+		else {
+			CurrentGameBg.index = CurrentGameBg._0x12;
+		}
+		SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
+		CurrentGameBg._0x0 = BgMapPtrs[CurrentGameBg.index];
+		CurrentGameBg._0x4 = 1;
+		CurrentGameBg._0x8 = NULL;
+		CurrentGameBg._0xC = 1;
+		_0x60267E4(CurrentGameBg._0x1E);
+	}
+	else {
+		CurrentGameBg._0x16[1] += 6;
+	}
 }
 
 void _0x6016BDE() {
-	//TODO
+	SetBgDarkness(CurrentGameBg._0x1E, CurrentGameBg._0x16[1]);
+	if ((CurrentGameBg._0x16[1] -= 6) <= 0) {
+		CurrentGameBg._0x16[1] = 0;
+		SetBgDarkness(CurrentGameBg._0x1E, 0);
+		CurrentGameBg._0x13 = 1;
+	}
+
+	if (--CurrentGameBg._0x16[0] == 0) {
+		CurrentGameBg.frame = (CurrentGameBg.frame + 1) % 32;
+		CurrentGameBg._0x16[0] = 2;
+		int8_t var0 = CurrentGameBg.frame;
+		int8_t var1 = var0 % 4;
+		if (var1 < 0) {
+			var1 += 3;
+		}
+		_0x6025B9A(CurrentGameBg._0x1E, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
+		_0x60267E4(CurrentGameBg._0x1E);
+	}
 }
 
 void _0x6016C14() {
-	//TODO
+	if (--CurrentGameBg._0x16[0] == 0) {
+		CurrentGameBg.frame = (CurrentGameBg.frame + 1) % 32;
+		CurrentGameBg._0x16[0] = 2;
+		int8_t var0 = CurrentGameBg.frame;
+		int8_t var1 = var0 % 4;
+		if (var0 < 0) {
+			var0 += 3;
+		}
+		_0x6025B9A(CurrentGameBg._0x1E, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
+		_0x60267E4(CurrentGameBg._0x1E);
+	}
 }
 
 void UpdateGameBg() {

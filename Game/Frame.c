@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "ShowGameStatus.h"
 #include "Entity.h"
-#include "Bg.h"
+#include "GameBg.h"
 #include "Warning.h"
 #include "Button.h"
 #include "Input.h"
