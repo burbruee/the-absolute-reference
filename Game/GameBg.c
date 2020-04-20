@@ -3,14 +3,14 @@
 #include "Video.h"
 #include "Pal.h"
 #include "Loop.h"
+#include "Math.h"
 #include "Player.h"
 
 GameBg CurrentGameBg;
 
-// TODO: Looks like this is used to control the attract mode background.
-static uint8_t _0x6079540 = 0u;
+static uint8_t AttractSection = 0u;
 
-static ROMDATA Color* BgPalPtrs[] = {
+static ROMDATA Color* const BgPalPtrs[] = {
 	PAL_BGMAPSECTION0,
 	PAL_BGMAPSECTION1,
 	PAL_BGMAPSECTION2,
@@ -44,7 +44,39 @@ void _0x60169DC() {
 }
 
 void _0x6016A30(uint8_t arg0) {
-	//TODO
+	for (size_t i = 0; i < 4; i++) {
+		CurrentGameBg._0x16[i] = 0;
+	}
+
+	if (arg0 != 0) {
+		CurrentGameBg._0x13 = 2;
+		return;
+	}
+
+	CurrentGameBg._0x13 = 2;
+	CurrentGameBg._0x16[0] = 2;
+	if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
+		if (CurrentScreen == SCREEN_VERSUSDEMO) {
+			CurrentGameBg.index = 10;
+		}
+		else if (CurrentScreen == SCREEN_TWINDEMO) {
+			CurrentGameBg.index = Rand(9u);
+		}
+		else {
+			CurrentGameBg.index = AttractSection;
+		}
+	}
+	else {
+		CurrentGameBg.index = CurrentGameBg._0x12;
+	}
+
+	SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
+	CurrentGameBg._0x0 = BgMapPtrs[CurrentGameBg.index];
+	CurrentGameBg._0x4 = 1;
+	CurrentGameBg._0x8 = NULL;
+	CurrentGameBg._0xC = 1;
+	SetBgDarkness(CurrentGameBg._0x1E, 0);
+	_0x60267E4(CurrentGameBg._0x1E);
 }
 
 void _0x6016B40() {
@@ -61,7 +93,7 @@ void _0x6016C14() {
 
 void UpdateGameBg() {
 	if (!(CurrentGameBg._0x10 & 0x80u) && GetNextPauseMode() < PAUSEMODE_GAME) {
-		if (CurrentGameBg._0x10 % 2) {
+		if (CurrentGameBg._0x10 & 0x01u) {
 			_0x6016A30(0);
 		}
 		else if (!Attract && CurrentGameBg._0x13 == 1 && CurrentMainLoopState != MAINLOOP_TEST && !(GameFlags & GAME_VERSUS)) {
@@ -92,13 +124,13 @@ void UpdateGameBg() {
 					CurrentGameBg._0x12 = section;
 					_0x6016A30(1);
 				}
-				if (_0x6079540 < section) {
-					_0x6079540 = section;
+				if (AttractSection < section) {
+					AttractSection = section;
 				}
 			}
 		}
 
-		CurrentGameBg._0x10 &= 0xF8u;
+		CurrentGameBg._0x10 &= ~0x07u;
 		switch (CurrentGameBg._0x13) {
 		case 2:
 			SetBgDarkness(CurrentGameBg._0x1E, CurrentGameBg._0x16[1]);
@@ -108,7 +140,7 @@ void UpdateGameBg() {
 				CurrentGameBg._0x13 = 3u;
 				CurrentGameBg._0x16[0] = 2;
 				if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
-					CurrentGameBg.index = _0x6079540;
+					CurrentGameBg.index = AttractSection;
 				}
 				else {
 					CurrentGameBg.index = CurrentGameBg._0x12;

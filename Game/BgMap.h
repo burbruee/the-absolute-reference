@@ -1,8 +1,35 @@
 #pragma once
 
-#include "BuildData.h"
 #include "PlatformTypes.h"
 
+typedef struct BgMapHeader {
+	uint32_t format;
+	// TODO: I believe _0x4 and _0x6 are map dimensions in terms of VRAM rows/columns; verify this, after analyzing how the code writes VRAM for background maps.
+	uint16_t _0x4;
+	uint16_t _0x6;
+} BgMapHeader;
+
+typedef struct BgMap16{
+	BgMapHeader header;
+	union {
+		uint32_t align;
+		uint16_t names[9600];
+	};
+} BgMap16;
+
+typedef struct BgMap32 {
+	BgMapHeader header;
+	uint32_t names[9600];
+} BgMap32;
+
+typedef struct BgMap {
+	BgMapHeader header;
+	uint32_t names[1];
+} BgMap;
+
+// TODO: Change how these are provided to the code, to the same form as used in
+// the original code. For testing with SDL2, loading these at startup will
+// work.
 extern ROMDATA BgMap16 BgMapSection0;
 extern ROMDATA BgMap16 BgMapSection1;
 extern ROMDATA BgMap32 BgMapSection2;
