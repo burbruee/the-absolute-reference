@@ -1,9 +1,43 @@
 #include "GameBg.h"
+#include "BgMap.h"
 #include "Video.h"
+#include "Pal.h"
 #include "Loop.h"
 #include "Player.h"
 
 GameBg CurrentGameBg;
+
+// TODO: Looks like this is used to control the attract mode background.
+static uint8_t _0x6079540 = 0u;
+
+static ROMDATA Color* BgPalPtrs[] = {
+	PAL_BGMAPSECTION0,
+	PAL_BGMAPSECTION1,
+	PAL_BGMAPSECTION2,
+	PAL_BGMAPSECTION3,
+	PAL_BGMAPSECTION4,
+	PAL_BGMAPSECTION5,
+	PAL_BGMAPSECTION6,
+	PAL_BGMAPSECTION7,
+	PAL_BGMAPSECTION8,
+	PAL_BGMAPSECTION9,
+	PAL_BGMAPVERSUS
+};
+
+static ROMDATA BgMap* const BgMapPtrs[] = {
+	(ROMDATA BgMap*)&BgMapSection0,
+	(ROMDATA BgMap*)&BgMapSection1,
+	(ROMDATA BgMap*)&BgMapSection2,
+	(ROMDATA BgMap*)&BgMapSection3,
+	(ROMDATA BgMap*)&BgMapSection4,
+	(ROMDATA BgMap*)&BgMapSection5,
+	(ROMDATA BgMap*)&BgMapSection6,
+	(ROMDATA BgMap*)&BgMapSection7,
+	(ROMDATA BgMap*)&BgMapSection8,
+	(ROMDATA BgMap*)&BgMapSection9,
+	(ROMDATA BgMap*)&BgMapVersus
+};
+
 
 void _0x60169DC() {
 	//TODO
