@@ -741,7 +741,7 @@ void _0x60267E4(int16_t bgIndex) {
 				&var4,
 				&var5);
 			if (var6->_0x0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
-				BgMap* const bgMap = var6->_0x0;
+				ROMDATA BgMap* const bgMap = var6->_0x0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
@@ -753,7 +753,7 @@ void _0x60267E4(int16_t bgIndex) {
 				}
 			}
 			else {
-				BgMap* const bgMap = var6->_0x0;
+				ROMDATA BgMap* const bgMap = var6->_0x0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
@@ -769,6 +769,47 @@ void _0x60267E4(int16_t bgIndex) {
 		_0x60AD228[var2]._0x38[var1] %= 16;
 		_0x60AD228[var2]._0x3C[var1] %= 16;
 	}
+}
+
+GameBg* _0x6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) {
+	const int16_t var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6];
+	GameBg* gameBg;
+	if (var0 < 0) {
+		gameBg = NULL;
+	}
+	else {
+		gameBg = _0x60AD228[var0]._0x10;
+		if (gameBg->_0x0 != NULL) {
+			*arg2 = arg1;
+			const int16_t var3 = *arg2;
+			GameBg* var1 = gameBg;
+			while (*arg2 < 0) {
+				if (_0x60AD228[var3]._0x60 == NULL) {
+					*arg2 += _0x60AD228[var3]._0x14;
+				}
+				else {
+					*arg2 += _0x60AD228[var3]._0x64;
+					gameBg = _0x60AD228[var3]._0x60;
+					var1 = gameBg;
+				}
+			}
+			while (*arg2 >= (int16_t)gameBg->_0x0->header._0x6 * gameBg->_0x4) {
+				ROMDATA BgMap* var2 = gameBg->_0x8;
+				*arg2 -= gameBg->_0x0->header._0x6 * gameBg->_0x4;
+				if (var2->header.tileInfo == 0) {
+					if (_0x60AD228[var3]._0x60 != NULL) {
+						gameBg = _0x60AD228[var3]._0x60;
+					}
+					else {
+						gameBg = var1;
+					}
+				}
+			}
+			*arg3 = gameBg->_0x0->header._0x6 - *arg2 - 1;
+			*arg2 %= gameBg->_0x0->header._0x6;
+		}
+	}
+	return gameBg;
 }
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
