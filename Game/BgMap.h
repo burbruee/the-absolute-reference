@@ -2,8 +2,15 @@
 
 #include "PlatformTypes.h"
 
+typedef enum BgMapTileInfo {
+	BGMAPTILEINFO_TILENUM = 0x7FFFF,
+	BGMAPTILEINFO_PERTILEPAL = 0x100000,
+	BGMAPTILEINFO_BIT21 = 0x200000,
+	BGMAPTILEINFO_PALNUM = 0xFF000000
+} BgMapTileInfo;
+
 typedef struct BgMapHeader {
-	uint32_t format;
+	uint32_t tileInfo;
 	// TODO: I believe _0x4 and _0x6 are map dimensions in terms of VRAM rows/columns; verify this, after analyzing how the code writes VRAM for background maps.
 	uint16_t _0x4;
 	uint16_t _0x6;

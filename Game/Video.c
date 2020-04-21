@@ -687,7 +687,7 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 				uint32_t* var3 = _0x60AD228[var2]._0x4[tilemapBankIndex]; \
 				_0x60251B8(1, var3, var3 + 0x100u); \
 			} \
-			if (!(_0x60AD228[var0]._0x10->_0x0->header.format & 0x00200000u)) { \
+			if (!(_0x60AD228[var0]._0x10->_0x0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
 				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
 			} \
 			if (Bgs[bgIndex]._0x2 != 0) { \
@@ -712,6 +712,63 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 	BgMapBanks[3] = bgMapBank3;
 	BgMapSettings[0] = bgMapSettings01;
 	BgMapSettings[1] = bgMapSettings23;
+}
+
+void _0x60267E4(int16_t bgIndex) {
+	const int16_t var0 = Bgs[bgIndex]._0x6;
+
+	if (Bgs[bgIndex]._0x18[var0] < 0) {
+		return;
+	}
+
+	const int16_t var2 = _0x60AD228[var2]._0x54;
+
+	int16_t var4;
+	int16_t var5;
+	var4 = 0;
+	if (Bgs[bgIndex]._0x18[var0] != -1) {
+		const int16_t var1 = _0x60AD228[Bgs[bgIndex]._0x18[bgIndex]]._0x0;
+		const int16_t var3 = Bgs[bgIndex]._0x0;
+		const int32_t var13 = -(16 + _0x60AD228[var1]._0x18[var2] / 16);
+		const int16_t var7 = -(16 + _0x60AD228[var1]._0x18[var0] / 16 + _0x60AD228[var1]._0x4C / 16);
+		int16_t var16 = -(16 + _0x60AD228[var1]._0x28[var3] / 16 + _0x60AD228[var1]._0x50 / 16);
+		var4 = 0;
+		for (size_t i = 0u; i < 32u; i++, var16++) {
+			uint32_t* const var10 = _0x60AD228[var1]._0x4[var2];
+			GameBg* const var6 = _0x6026AAC(
+				bgIndex,
+				var16,
+				&var4,
+				&var5);
+			if (var6->_0x0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+				BgMap* const bgMap = var6->_0x0;
+				int16_t var8 = var7;
+				int32_t var14 = var13;
+				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
+					int32_t var9 = var8 % var6->_0x0->header._0x4;
+					if (var9 < 0) {
+						var9 += var6->_0x0->header._0x4;
+					}
+					var10[(var14 % 16) * 32] = bgMap->names[var4 * bgMap->header._0x4 + var9];
+				}
+			}
+			else {
+				BgMap* const bgMap = var6->_0x0;
+				int16_t var8 = var7;
+				int32_t var14 = var13;
+				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
+					int32_t var9 = var8 % var6->_0x0->header._0x4;
+					if (var9 < 0) {
+						var9 += var6->_0x0->header._0x4;
+					}
+					var10[(var14 % 16) * 32] = (bgMap->names[var4 * bgMap->header._0x4 * 2 + var9] & 0xFFFFu) | var6->_0x0->header.tileInfo;
+				}
+			}
+		}
+
+		_0x60AD228[var2]._0x38[var1] %= 16;
+		_0x60AD228[var2]._0x3C[var1] %= 16;
+	}
 }
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
