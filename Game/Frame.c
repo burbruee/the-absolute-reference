@@ -38,6 +38,7 @@ uint32_t _0x6065648;
 bool UpdateFrame() {
 	NumScreenFramesOdd = NumScreenFrames % 2u;
 	UpdateInputs();
+	InitSpriteLayers();
 	_0x60237DE();
 	_0x6024244();
 	UpdateEntities();
@@ -153,6 +154,9 @@ bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	ShowPlayers();
 	_0x6024244();
 	ShowPlayersStatus();
+	UpdateGameBg();
+	_0x602C5C2();
+	WriteSpriteLayers();
 	_0x6025078();
 	NumSprites = SPRITE_FIRST;
 	NumScreenFrames++;
