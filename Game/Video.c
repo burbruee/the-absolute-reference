@@ -714,6 +714,72 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 	BgMapSettings[1] = bgMapSettings23;
 }
 
+int32_t _0x6025918() {
+	int bgIndex;
+
+	for (bgIndex = 1; bgIndex < 11; bgIndex++) {
+		if (_0x60AD228[bgIndex]._0x0 == 0u) {
+			break;
+		}
+	}
+
+	if (bgIndex < 11) {
+		_0x60AD228[bgIndex]._0x0 = 1;
+		_0x60AD228[bgIndex]._0x10 = NULL;
+		_0x60AD228[bgIndex]._0x60 = NULL;
+		_0x60AD228[bgIndex]._0x54 = NULL;
+		_0x60AD228[bgIndex]._0x56 = NULL;
+		_0x60AD228[bgIndex]._0x4C = NULL;
+		_0x60AD228[bgIndex]._0x50 = NULL;
+		_0x60AD228[bgIndex]._0x58 = NULL;
+
+		for (int16_t i = 0; i < 2; i++) {
+			_0x60AD228[bgIndex]._0x18[i] = 0;
+			_0x60AD228[bgIndex]._0x20[i] = 0;
+			_0x60AD228[bgIndex]._0x28[i] = 0;
+			_0x60AD228[bgIndex]._0x30[i] = 0;
+			_0x60AD228[bgIndex]._0x34[i] = 0;
+			_0x60AD228[bgIndex]._0x38[i] = 0;
+			_0x60AD228[bgIndex]._0x3C[i] = 0;
+			_0x60AD228[bgIndex]._0x40[i] = 0;
+			_0x60AD228[bgIndex]._0x46[i] = 0;
+		}
+	}
+	else {
+		bgIndex = -1;
+	}
+
+	return bgIndex;
+}
+
+int32_t _0x6025AE4(int16_t bgIndex, GameBg* gameBg) {
+	int16_t var0;
+	if (Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] < 0) {
+		var0 = _0x6026918();
+		Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] = var0;
+	}
+	else {
+		var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6];
+	}
+	_0x60AD228[var0]._0x10 = gameBg;
+	_0x60AD228[bgIndex]._0x14 = 0;
+	
+	for (BgMap* bgMap = gameBg->_0x0; bgMap != NULL; bgMap = gameBg->_0x0) {
+		_0x60AD228[var0]._0x14 += gameBg->_0x0->header._0x6 * gameBg->_0x4;
+	}
+
+	_0x60AD228[var0]._0x4C = 0;
+	_0x60AD228[var0]._0x50 = 0;
+
+	return var0;
+}
+
+void _0x6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
+	int32_t var0 = _0x6025AE4(bgIndex, gameBg);
+	_0x60AD228[var0]._0x4C += arg2;
+	_0x60AD228[var0]._0x50 += arg3;
+}
+
 void _0x60267E4(int16_t bgIndex) {
 	const int16_t var0 = Bgs[bgIndex]._0x6;
 
@@ -814,6 +880,10 @@ GameBg* _0x6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) 
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
 	// TODO
+}
+
+void SetBgDarkness(int16_t bgIndex, int16_t darkness) {
+	Bgs[bgIndex].darkness = darkness;
 }
 
 void _0x60294C0(uint8_t arg0) {

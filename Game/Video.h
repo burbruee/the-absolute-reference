@@ -219,7 +219,7 @@ int32_t _0x6025918();
 void _0x60259D6(int16_t);
 int16_t _0x60259EA(int16_t, int32_t*);
 void _0x6025AAC();
-int32_t _0x6025AE4(int16_t, int32_t*);
+int32_t _0x6025AE4(int16_t, GameBg*);
 void _0x6025B9A(int16_t, GameBg*, int32_t, int32_t);
 void _0x6025BDC(int16_t);
 void _0x6025C1E(int16_t, int16_t, int16_t);
@@ -232,6 +232,8 @@ void _0x6026870(int16_t, int16_t, int16_t);
 GameBg* _0x6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
 void _0x6026FCA(uint16_t, uint16_t);
+// TODO
+void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO
 void _0x60294C0(uint8_t arg0);
 // TODO

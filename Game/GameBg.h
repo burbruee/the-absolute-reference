@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 // SH-2: sizeof(GameBg) == 0x20
-typedef struct GameBg GameBg;
-struct GameBg {
+typedef struct GameBg {
 	ROMDATA BgMap* _0x0;
 	int32_t _0x4;
 	ROMDATA BgMap* _0x8;
@@ -17,7 +16,7 @@ struct GameBg {
 	uint8_t frame;
 	int16_t _0x16[4];
 	int16_t _0x1E;
-};
+} GameBg;
 
 extern GameBg CurrentGameBg;
 
