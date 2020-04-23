@@ -1,5 +1,6 @@
 #include "Game/Player.h"
-#include "Game/Text.h"
+#include "Game/Input.h"
+#include "Game/ShowText.h"
 #include "Game/Debug.h"
 #include "Game/BuildData.h"
 #include "Game/RegionWarning.h"

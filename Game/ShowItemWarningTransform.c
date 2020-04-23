@@ -1,6 +1,5 @@
 #include "ShowItemWarningTransform.h"
 #include "Entity.h"
-#include "Object.h"
 #include "DisplayObject.h"
 #include "Frame.h"
 

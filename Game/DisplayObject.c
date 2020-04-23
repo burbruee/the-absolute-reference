@@ -1,14 +1,13 @@
 #include "DisplayObject.h"
 #include "Video.h"
-#include "Object.h"
 #include "HwSprite.h"
 #include "HwData.h"
 #include "Macros.h"
 #include <stdbool.h>
 
 static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, uint8_t etc) {
-	SPRITE_SETY(&_0x6061932.tempSprite, y + SPRITE_GETY(object));
-	SPRITE_SETX(&_0x6061932.tempSprite, x + SPRITE_GETX(object));
+	OBJECT_SETY(&_0x6061932.tempSprite, y + OBJECT_GETY(object));
+	OBJECT_SETX(&_0x6061932.tempSprite, x + OBJECT_GETX(object));
 
 	// flipY, sprPri, h.
 	_0x6061932.tempSprite[2] = (_0x6061932.tempSprite[2] & 0x00FF) | ((*object)[2] & 0xFF00);
@@ -16,10 +15,10 @@ static void WriteObjectSprite(const ObjectData* object, int16_t y, int16_t x, ui
 	// flipX, bgPri = 3u, w.
 	_0x6061932.tempSprite[3] = (_0x6061932.tempSprite[3] & 0x00FF) | (((*object)[3] & 0xCF00) | 0x3000);
 
-	SPRITE_SETSCALEY(&_0x6061932.tempSprite, scaleY);
-	SPRITE_SETSCALEX(&_0x6061932.tempSprite, scaleX);
+	OBJECT_SETSCALEY(&_0x6061932.tempSprite, scaleY);
+	OBJECT_SETSCALEX(&_0x6061932.tempSprite, scaleX);
 
-	SPRITE_SETPALNUM(&_0x6061932.tempSprite, palNum);
+	OBJECT_SETPALNUM(&_0x6061932.tempSprite, palNum);
 
 	// bpp, alpha, top three bits of tile.
 	_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00) | etc;
@@ -54,14 +53,14 @@ void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNu
 	}
 	else {
 		while (numSprites-- != 0) {
-			WriteObjectSprite(curData++, y, x, SPRITE_GETPALNUM(object), layer, 0x3F, 0x3F, etc);
+			WriteObjectSprite(curData++, y, x, OBJECT_GETPALNUM(object), layer, 0x3F, 0x3F, etc);
 		}
 	}
 }
 
 void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, SpriteScale scaleY, SpriteScale scaleX, bool alpha) {
 	if (palNum == 0) {
-		palNum = SPRITE_GETPALNUM(object);
+		palNum = OBJECT_GETPALNUM(object);
 	}
 
 	uint8_t etc;

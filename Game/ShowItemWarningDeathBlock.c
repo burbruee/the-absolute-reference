@@ -1,7 +1,6 @@
 #include "ShowItemWarningDeathBlock.h"
 #include "Entity.h"
 #include "DisplayObject.h"
-#include "Object.h"
 #include "Frame.h"
 
 #define warningFrames values[0]

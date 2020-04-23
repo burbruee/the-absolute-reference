@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Object.h"
 #include "HwInput.h"
 #include <stdbool.h>
 
-// The layout of the original game's object data matches the layout of PS6406B
-// sprites where they share data in common.
+// The DisplayObject* functions accept ObjectData arrays, not SpriteData
+// arrays, and each ObjectData contains only the following SpriteData fields,
+// in the same layout as SpriteData:
 //
-// Object data only contains the following sprite fields:
 // - Pixel Y
 // - Pixel X
 // - Vertical flip
@@ -24,18 +25,14 @@
 // for all sprites when passing zero as the palette number argument to
 // DisplayObjectEx.
 //
-// Use SPRITE_GET* macros to access sprite data in objects. Never use
-// SPRITE_SET* macros on objects, nor define objects outside the object data
-// table, because the frontends can optimize under the assumption that only
-// objects declared in Object.h are used.
-// TODO: I think layer number can be defined in an object. Maybe other fields,
-// too.
+// When dynamically generating objects, only ever use the object tile numbers
+// that are in Objects::data; the game follows this convention all throughout
+// the code, and this allows renderers to optimize around that assumption.
+//
+// TODO: There appears to be more object data beyond what DisplayObject*
+// functions support, and some of that data appears to be at indices 6 and 7 of
+// SpriteData.
 typedef uint16_t ObjectData[6];
-
-// The sprite count in the first object data of an object is the only one used.
-// Objects can be composed of up to 63 sprites.
-#define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))
-#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0x03FFu) | (((uint16_t)(numSprites) & 0x3Fu) << 10u))
 
 // Unscaled. Some objects have hard-coded alpha values.
 void DisplayObject(const ObjectData *object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer);

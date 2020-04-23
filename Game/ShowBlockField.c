@@ -468,8 +468,8 @@ void ShowFieldPlus(Player* player) {
 					// display in 32-sprite chunks, but the setting is kept
 					// here for documentation.
 					(*blockObject)[1] = (displayX & 0x3FF) | 0x400;
-					SPRITE_SETY(blockObject, displayY);
-					SPRITE_SETPALNUM(blockObject, palNum);
+					OBJECT_SETY(blockObject, displayY);
+					OBJECT_SETPALNUM(blockObject, palNum);
 					blockObject++;
 					numBlockObjects++;
 				}

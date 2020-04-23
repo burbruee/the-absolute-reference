@@ -9,24 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// TODO: Background data, and a lot more.
-
-typedef struct unknown_type {
-	unknown_type* _0x0;
-	void (*_0x4)();
-	void (*_0x8)();
-	unknown_type* _0xC;
-	unknown_type* _0x10;
-	unknown_type* _0x14;
-	uint16_t _0x18;
-	uint16_t _0x1A;
-	uint8_t _0x1C[4];
-	unknown_type* _0x20;
-	void* _0x300[60];
-	void (*_0x3F8)();
-} unknown_type;
-
-// Looks like this could be an "object animation" (ObjectAnim).
+// TODO: Looks like this could be an "object animation" (ObjectAnim).
 // SH-2: sizeof(struct_0x606006C) == 0x40
 typedef struct struct_0x606006C {
 	const ObjectData* objectTable;
@@ -34,6 +17,8 @@ typedef struct struct_0x606006C {
 	int16_t y;
 	int16_t x;
 	int16_t _0xC;
+	int16_t _0x10;
+	int16_t _0x12;
 	uint8_t h;
 	uint8_t w;
 	int16_t animFrame;
@@ -56,7 +41,7 @@ typedef struct struct_0x606006C {
 // The number of sprites written to the sprite table.
 extern int16_t NumSprites;
 
-extern unknown_type* _0x606005C = NULL;
+extern struct_0x607D218* _0x606005C = NULL;
 
 extern struct_0x606006C _0x606006C[64];
 
@@ -77,7 +62,22 @@ extern struct_0x6061932 _0x6061932;
 
 const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 
-extern unknown_type* _0x6064750;
+typedef struct struct_0x607D218 {
+	struct_0x607D218* _0x0;
+	void (*_0x4)();
+	void (*_0x8)();
+	struct_0x607D218* _0xC;
+	struct_0x607D218* _0x10;
+	struct_0x607D218* _0x14;
+	uint16_t _0x18;
+	uint16_t _0x1A;
+	uint8_t _0x1C[4];
+	struct_0x607D218* _0x20;
+	void* _0x300[60];
+	void (*_0x3F8)();
+} struct_0x607D218;
+
+extern struct_0x607D218* _0x6064750;
 
 // SH-2: sizeof(struct_0x60AD228) == 0x68
 typedef struct struct_0x60AD228 {
@@ -149,29 +149,29 @@ void _0x602392E(int32_t, void (*)());
 
 void _0x60239B8(int32_t, int32_t);
 
-void _0x6023A0E(unknown_type* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
+void _0x6023A0E(struct_0x607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
 
-void* _0x6023A98(unknown_type*, void*, void*, void*);
+void* _0x6023A98(struct_0x607D218*, void*, void*, void*);
 
-void _0x6023B76(unknown_type*);
+void _0x6023B76(struct_0x607D218*);
 
-void _0x6023BC4(unknown_type*, void (*)());
+void _0x6023BC4(struct_0x607D218*, void (*)());
 
-void _0x6023C3E(unknown_type*, void*);
+void _0x6023C3E(struct_0x607D218*, void*);
 
-void* _0x6023C8A(unknown_type*, void*);
+void* _0x6023C8A(struct_0x607D218*, void*);
 
 int32_t _0x6023CBC(void (*)(), uint32_t, int16_t, int16_t, int16_t, int16_t, int16_t, int16_t);
 
-void* _0x6023DAE(unknown_type*);
+void* _0x6023DAE(struct_0x607D218*);
 
-void _0x6023E5A(unknown_type*);
+void _0x6023E5A(struct_0x607D218*);
 
-void* _0x6023EFE(unknown_type*, unknown_type*);
+void* _0x6023EFE(struct_0x607D218*, struct_0x607D218*);
 
-void* _0x6023FA4(void (**)(), unknown_type*);
+void* _0x6023FA4(void (**)(), struct_0x607D218*);
 
-void _0x6024030(unknown_type*);
+void _0x6024030(struct_0x607D218*);
 
 void _0x602406E();
 

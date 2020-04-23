@@ -1,7 +1,45 @@
 #pragma once
 
-#include "DisplayObject.h"
 #include "PlatformTypes.h"
+#include <stdint.h>
+#include <stdbool.h>
+
+// A single object is composed of an array of one or more objects. The number
+// of sprites field in the first object data of an object is the only one used.
+// Objects can be composed of up to 63 sprites.
+
+#define OBJECT_GETY(sprite) ((int16_t)(((*(sprite))[0] & 0x3FF) << 6) >> 6)
+#define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))
+#define OBJECT_GETX(sprite) ((int16_t)(((*(sprite))[1] & 0x3FF) << 6) >> 6)
+#define OBJECT_GETFLIPY(sprite) ((bool)(((*(sprite))[2] >> 15) & 1))
+#define OBJECT_GETSPRPRI(sprite) ((uint8_t)(((*(sprite))[2] >> 12) & 3))
+#define OBJECT_GETH(sprite) ((uint8_t)(((*(sprite))[2] >> 8) & 0xF))
+#define OBJECT_GETSCALEY(sprite) ((uint8_t)((*(sprite))[2] & 0xFF))
+#define OBJECT_GETFLIPX(sprite) ((bool)(((*(sprite))[3] >> 15) & 1))
+#define OBJECT_GETBGPRI(sprite) ((uint8_t)(((*(sprite))[3] >> 12) & 3))
+#define OBJECT_GETW(sprite) ((uint8_t)(((*(sprite))[3] >> 8) & 0xF))
+#define OBJECT_GETSCALEX(sprite) ((uint8_t)((*(sprite))[3] & 0xFF))
+#define OBJECT_GETPALNUM(sprite) ((uint8_t)(((*(sprite))[4] >> 8) & 0xFF))
+#define OBJECT_GETBPP(sprite) ((Bpp)(((*(sprite))[4] >> 7) & 1))
+#define OBJECT_GETALPHA(sprite) ((uint8_t)(((*(sprite))[4] >> 4) & 7))
+#define OBJECT_GETTILE(sprite) (((((uint32_t)(*(sprite))[4]) << 16) | (uint32_t)(*(sprite))[5]) & 0x7FFFF)
+
+#define OBJECT_SETY(sprite, y) ((*(sprite))[0] = ((*(sprite))[0] & ~0x03FF) | ((uint16_t)(y) & 0x3FF))
+#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0x03FFu) | (((uint16_t)(numSprites) & 0x3Fu) << 10u))
+#define OBJECT_SETX(sprite, x) ((*(sprite))[1] = ((*(sprite))[1] & ~0x03FF) | ((uint16_t)(x) & 0x3FF))
+#define OBJECT_SETFLIPY(sprite, flipY) ((*(sprite))[2] = ((*(sprite))[2] & ~0x8000) | (((uint16_t)(flipY) & 1) << 15)
+#define OBJECT_SETSPRITEPRI(sprite, spritePri) ((*(sprite))[2] = ((*(sprite))[2] & ~0x7000) | (((uint16_t)(spritePri) & 3) << 12))
+#define OBJECT_SETH(sprite, h) ((*(sprite))[2] = ((*(sprite))[2] & ~0x0F00) | (((uint16_t)(h) & 0xF) << 8))
+#define OBJECT_SETSCALEY(sprite, scaleX) ((*(sprite))[2] = ((*(sprite))[2] & ~0x00FF) | ((uint16_t)(scaleX) & 0xFF))
+#define OBJECT_SETFLIPX(sprite, flipX) ((*(sprite))[3] = ((*(sprite))[3] & ~0x8000) | (((uint16_t)(flipX) & 1) << 15))
+#define OBJECT_SETBGPRI(sprite, bgPri) ((*(sprite))[3] = ((*(sprite))[3] & ~0xF000) | (((uint16_t)(bgPri) & 3) << 12))
+#define OBJECT_SETW(sprite, w) ((*(sprite))[3] = ((*(sprite))[3] & ~0x0F00) | (((uint16_t)(w) & 0xF) << 8))
+#define OBJECT_SETSCALEX(sprite, scaleY) ((*(sprite))[3] = ((*(sprite))[3] & ~0x00FF) | ((uint16_t)(scaleY) & 0xFF))
+#define OBJECT_SETPALNUM(sprite, palNum) ((*(sprite))[4] = ((*(sprite))[4] & ~0xFF00) | (((uint16_t)(palNum) & 0xFF) << 8))
+#define OBJECT_SETBPP(sprite, bpp) ((*(sprite))[4] = ((*(sprite))[4] & ~0x0080) | (((uint16_t)(bpp) & 1) << 7))
+#define OBJECT_SETALPHA(sprite, alpha) ((*(sprite))[4] = ((*(sprite))[4] & ~0x0070) | (((uint16_t)(alpha) & 7) << 4))
+#define OBJECT_SETTILE(sprite, tile) (((*(sprite))[4] = ((*(sprite))[4] & ~0x0007) | ((uint16_t)(((uint32_t)(tile)) >> 16) & 7)), ((*(sprite))[5] = ((uint16_t)(tile) & 0xFFFF)))
+
 
 typedef struct ObjectDataTable {
 	char header[8];

@@ -13,7 +13,7 @@
 #define SPRITELAYER_FREE 0x0000
 
 static const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
-unknown_type* _0x606005C = NULL;
+struct_0x607D218* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
 static uint16_t _0x6060068 = 0u;
@@ -52,13 +52,13 @@ static VideoSetter VideoSetters[MAXVIDEOSETTERS];
 // transitions; might also be used for darkening the attract mode ranking
 // backgrounds. Also, _0x602970C is used with this, which might be where the
 // darkening is handled.
-unknown_type* _0x6064750 = NULL;
+struct_0x607D218* _0x6064750 = NULL;
 
-static unknown_type* _0x607D210 = NULL;
-static unknown_type* _0x607D214 = NULL;
-static unknown_type _0x607D218[192];
+static struct_0x607D218* _0x607D210 = NULL;
+static struct_0x607D218* _0x607D214 = NULL;
+static struct_0x607D218 _0x607D218[192];
 
-static unknown_type* _0x60AD218 = NULL;
+static struct_0x607D218* _0x60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t _0x60AD21E = 0u;
 static int16_t _0x60AD224;
@@ -138,28 +138,28 @@ void _0x60239B8(int32_t arg0, int32_t arg1) {
 	// TODO
 }
 
-void _0x6023A0E(unknown_type* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
+void _0x6023A0E(struct_0x607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
 	// TODO
 }
 
-void* _0x6023A98(unknown_type* arg0, void* arg1, void* arg2, void* arg3) {
+void* _0x6023A98(struct_0x607D218* arg0, void* arg1, void* arg2, void* arg3) {
 	// TODO
 	return NULL;
 }
 
-void _0x6023B76(unknown_type* arg0) {
+void _0x6023B76(struct_0x607D218* arg0) {
 	// TODO
 }
 
-void _0x6023BC4(unknown_type* arg0, void (*arg1)()) {
+void _0x6023BC4(struct_0x607D218* arg0, void (*arg1)()) {
 	// TODO
 }
 
-void _0x6023C3E(unknown_type* arg0, void* arg1) {
+void _0x6023C3E(struct_0x607D218* arg0, void* arg1) {
 	// TODO
 }
 
-void* _0x6023C8A(unknown_type* arg0, void* arg1) {
+void* _0x6023C8A(struct_0x607D218* arg0, void* arg1) {
 	// TODO
 	return NULL;
 }
@@ -169,27 +169,27 @@ int32_t _0x6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, in
 	return 0u;
 }
 
-void* _0x6023DAE(unknown_type* arg0) {
+void* _0x6023DAE(struct_0x607D218* arg0) {
 	// TODO
 	return NULL;
 }
 
-void _0x6023E5A(unknown_type* arg0) {
+void _0x6023E5A(struct_0x607D218* arg0) {
 	// TODO
 	return NULL;
 }
 
-void* _0x6023EFE(unknown_type* arg0, unknown_type* arg1) {
+void* _0x6023EFE(struct_0x607D218* arg0, struct_0x607D218* arg1) {
 	// TODO
 	return NULL;
 }
 
-void* _0x6023FA4(void (**arg0)(), unknown_type* arg1) {
+void* _0x6023FA4(void (**arg0)(), struct_0x607D218* arg1) {
 	// TODO
 	return NULL;
 }
 
-void _0x6024030(unknown_type* arg0) {
+void _0x6024030(struct_0x607D218* arg0) {
 	// TODO
 }
 
@@ -386,8 +386,8 @@ void _0x60243E8(struct_0x606006C* arg0) {
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
 		if (((*object)[0] & 0x8000u) == 0 || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0 ) {
-			int16_t offsetY = SPRITE_GETY(object);
-			int16_t offsetX = SPRITE_GETX(object);
+			int16_t offsetY = OBJECT_GETY(object);
+			int16_t offsetX = OBJECT_GETX(object);
 
 			// _0x22 at least has flags indicating if the object should be
 			// flipped horizontally (0x0080) and/or vertically (0x8000); there
@@ -396,16 +396,16 @@ void _0x60243E8(struct_0x606006C* arg0) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
-				offsetY = (SPRITE_GETH(object) + 1) * -16 - offsetY;
+				offsetY = (OBJECT_GETH(object) + 1) * -16 - offsetY;
 			}
 			if (arg0->_0x22 & 0x0080) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
-				offsetX = (SPRITE_GETW(object) + 1) * -16 - offsetX;
+				offsetX = (OBJECT_GETW(object) + 1) * -16 - offsetX;
 			}
-			SPRITE_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
-			SPRITE_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+			OBJECT_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
+			OBJECT_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
 
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
@@ -431,34 +431,34 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			}
 			_0x6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->w;
 			if (var0) {
-				if (SPRITE_GETSPRPRI(object) & 2) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 16u);
+				if (OBJECT_GETSPRPRI(object) & 2) {
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
 				}
 				else if (arg0->palNum == 0) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 				}
 				else {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 				}
 			}
 			else if (var1) {
-				if (SPRITE_GETSPRPRI(object) & 2) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 32u);
+				if (OBJECT_GETSPRPRI(object) & 2) {
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 32u);
 				}
 				else {
 					if (arg0->palNum == 0) {
-						SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+						OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 					}
 					else {
-						SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+						OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 					}
 				}
 			}
 			else if (arg0->palNum == 0) {
-				SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+				OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 			}
 			else {
-				SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
 			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->alpha & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
@@ -514,22 +514,22 @@ void _0x602471C(struct_0x606006C* arg0) {
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
 		if (((*object)[0] & 0x8000u) == 0u || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0u) {
-			int16_t offsetY = SPRITE_GETY(object);
-			int16_t offsetX = SPRITE_GETX(object);
+			int16_t offsetY = OBJECT_GETY(object);
+			int16_t offsetX = OBJECT_GETX(object);
 			if (arg0->_0x22 & 0x8000u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
-				offsetY = (SPRITE_GETH(object) + 1) * -16 - offsetY;
+				offsetY = (OBJECT_GETH(object) + 1) * -16 - offsetY;
 			}
 			if (arg0->_0x22 & 0x0080u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
-				offsetX = (SPRITE_GETW(object) + 1) * -16 - offsetX;
+				offsetX = (OBJECT_GETW(object) + 1) * -16 - offsetX;
 			}
-			SPRITE_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
-			SPRITE_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+			OBJECT_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
+			OBJECT_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
 			uint8_t bgPri = (arg0->bgPri << 4) & 0x30u;
@@ -553,34 +553,34 @@ void _0x602471C(struct_0x606006C* arg0) {
 			}
 			_0x6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->w;
 			if (var0) {
-				if (SPRITE_GETSPRPRI(object) & 0x2u) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 16u);
+				if (OBJECT_GETSPRPRI(object) & 0x2u) {
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
 				}
 				else if (arg0->palNum == 0) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 				}
 				else {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 				}
 			}
 			else if (var1) {
-				if (SPRITE_GETSPRPRI(object) & 2u) {
-					SPRITE_SETPALNUM(&_0x6061932.tempSprite, 32u);
+				if (OBJECT_GETSPRPRI(object) & 2u) {
+					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 32u);
 				}
 				else {
 					if (arg0->palNum == 0u) {
-						SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+						OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 					}
 					else {
-						SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+						OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 					}
 				}
 			}
 			else if (arg0->palNum == 0) {
-				SPRITE_SETPALNUM(&_0x6061932.tempSprite, SPRITE_GETPALNUM(object));
+				OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
 			}
 			else {
-				SPRITE_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
 			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->alpha & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];

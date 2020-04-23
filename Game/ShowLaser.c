@@ -1,6 +1,5 @@
 #include "ShowLaser.h"
 #include "DisplayObject.h"
-#include "Object.h"
 #include "Entity.h"
 #include "Frame.h"
 
