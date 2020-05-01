@@ -1562,8 +1562,11 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 		}
 	}
 
-	if (player->lockFrames <= 0 && (GameFlags & GAME_DOUBLES)) {
-		player->otherPlayer->nowFlags |= NOW_NOUPDATE;
+	if (player->lockFrames <= 0) {
+		NextPlayLock(player);
+		if (GameFlags & GAME_DOUBLES) {
+			player->otherPlayer->nowFlags |= NOW_NOUPDATE;
+		}
 	}
 }
 

@@ -356,7 +356,7 @@ void UpdateItems() {
 		for (Item* item = ItemHeapHead; item != NULL; item = item->next) {
 			switch (item->status) {
 			case ITEMSTATUS_ACTIVE:
-				if (item->type >= 1 && item->type <= NUMITEMTYPES) {
+				if (item->type > ITEMTYPE_NULL && item->type <= NUMITEMTYPES) {
 					ItemUpdaters[TOITEMNUM(item->type)](item);
 				}
 				else {
