@@ -61,3 +61,4 @@ typedef uint16_t SpriteData[8];
 
 #define Sprites ((RAMDATA SpriteData*)&SPRITERAM[0x0000u])
 #define SpriteNames ((RAMDATA uint16_t*)&SPRITERAM[0x1C00u])
+#define SPRITENAME_TERMINATEMASK 0x4000u

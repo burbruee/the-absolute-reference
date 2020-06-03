@@ -12,7 +12,7 @@
 
 #define SPRITELAYER_FREE 0x0000
 
-static const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
+const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 struct_0x607D218* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
@@ -44,9 +44,8 @@ typedef struct VideoSetter {
 	void* args[3];
 } VideoSetter;
 
-#define MAXVIDEOSETTERS 32
-static uint16_t NumVideoSetters;
-static VideoSetter VideoSetters[MAXVIDEOSETTERS];
+uint16_t NumVideoSetters;
+VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 // NOTE: Looks like this points to data that controls screen brightness during
 // transitions; might also be used for darkening the attract mode ranking
@@ -54,6 +53,7 @@ static VideoSetter VideoSetters[MAXVIDEOSETTERS];
 // darkening is handled.
 struct_0x607D218* _0x6064750 = NULL;
 
+static struct_0x607D218* _0x607CF10[192];
 static struct_0x607D218* _0x607D210 = NULL;
 static struct_0x607D218* _0x607D214 = NULL;
 static struct_0x607D218 _0x607D218[192];
@@ -83,7 +83,20 @@ void _0x602378C() {
 }
 
 void _0x6023790() {
-	// TODO
+	NextPauseMode = PAUSEMODE_NOPAUSE;
+
+	MemSet(_0x607D218, 0, sizeof(_0x607D218));
+
+	struct_0x607D218** var0 = _0x607CF10;
+	struct_0x607D218* var1 = _0x607D218;
+	for (size_t i = 0u; i < lengthof(_0x607CF10); i++) {
+		*var0++ = var1++;
+	}
+
+	_0x6060068 = 0u;
+
+	_0x607D210 = NULL;
+	_0x607D214 = NULL;
 }
 
 void _0x60237DE() {
@@ -611,6 +624,21 @@ void InitSpriteLayers() {
 	// Set all layers as free.
 	for (int16_t layer = 0; layer < lengthof(SpriteLayers); layer++) {
 		SpriteLayers[layer] = SPRITELAYER_FREE;
+	}
+}
+
+void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
+	if (i >= 0 && i < 64) {
+		_0x606006C[i].objectTable = objectTable;
+		_0x606006C[i].y = y;
+		_0x606006C[i].x = x;
+		if (_0x606006C[i]._0x2B == 2u) {
+			_0x606006C[i]._0x2B = 2u;
+		}
+		else {
+			_0x606006C[i]._0x2B = 9u;
+		}
+		_0x606006C[i].animFrame = 0;
 	}
 }
 

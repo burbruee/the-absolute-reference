@@ -20,10 +20,13 @@ extern const int16_t _0x4001E; // TODO: Could be the number of palettes (with 25
 extern const uint32_t** PalDataTablePtr;
 extern const BgMap*** BgMapTablePtr;
 extern const BgMap** BgMapsPtr;
-extern const SequenceData*** SequenceDataTablePtr;
+// TODO
+//extern const SequenceData*** SequenceDataTablePtr;
 extern const ObjectData** ObjectDataTablePtr;
-extern const MidiData** MidiDataPtr;
-extern const RectData** RectDataTablePtr;
+// TODO
+//extern const MidiData** MidiDataPtr;
+// TODO
+//extern const RectData** RectDataTablePtr;
 extern const Color*** PalTablePtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 extern const uint8_t** ChecksumDataTablePtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0. Create a ChecksumData struct for this?
 extern const uint32_t _0x40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.

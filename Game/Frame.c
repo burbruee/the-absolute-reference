@@ -35,6 +35,18 @@ volatile bool VblankFinished;
 uint32_t _0x6065644;
 uint32_t _0x6065648;
 
+void _0x602ACB0() {
+	_0x6060024 = 0xFFFFu;
+	_0x6060028 = 0u;
+	_0xFFFFFE10 = 1u;
+	_0xFFFFFE11 = 1u;
+	_0xFFFFFE12 = 0u;
+	_0xFFFFFE13 = 0u;
+	_0xFFFFFE14 = 0xFFu;
+	_0xFFFFFE15 = 0xFFu;
+	_0xFFFFFE16 = 2u;
+}
+
 bool UpdateFrame() {
 	NumScreenFramesOdd = NumScreenFrames % 2u;
 	UpdateInputs();

@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+extern const int16_t _0x60356C8[4];
+
 // TODO: Looks like this could be an "object animation" (ObjectAnim).
 // SH-2: sizeof(struct_0x606006C) == 0x40
 typedef struct struct_0x606006C {
@@ -60,7 +62,9 @@ typedef struct struct_0x6061932 {
 
 extern struct_0x6061932 _0x6061932;
 
-const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
+#define MAXVIDEOSETTERS 32
+uint16_t NumVideoSetters;
+VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 typedef struct struct_0x607D218 {
 	struct_0x607D218* _0x0;
@@ -201,7 +205,7 @@ void InitSpriteLayers();
 int16_t _0x6024B0C();
 void _0x6024B78(int16_t);
 void _0x6024C00(int16_t);
-void _0x6024C3C(int16_t, int16_t, int16_t, void*);
+void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable);
 void _0x6024C82(int16_t, void*);
 void _0x6024CBC(int16_t, int16_t, int16_t, void*, int16_t);
 void _0x6024CF4(int16_t, int16_t, int16_t, void*, int16_t, int16_t, uint16_t);

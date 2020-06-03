@@ -23,14 +23,14 @@ void _start() {
 
 	// TODO: Analyze other PsikyoSH games, and test on hardware, to
 	// understand what this is for. MAME source code might have info, too.
-	*HWADDR(uint32_t, -0x20) = 0xA55A02E2;
-	*HWADDR(uint32_t, -0x20) = 0xA55A00E4;
-	*HWADDR(uint32_t, -0x20) = 0xA55A157F;
-	*HWADDR(uint32_t, -0x20) = 0xA55A8458;
-	*HWADDR(uint32_t, -0x20) = 0xA55A0008;
-	*HWADDR(uint32_t, -0x20) = 0xA55A0071;
-	*HWADDR(uint8_t, -0x16E) = 0x10;
-	*HWADDR(uint8_t, -0x16E) = 0x01;
+	_0xFFFFFFE0 = 0xA55A02E2;
+	_0xFFFFFFE4 = 0xA55A00E4;
+	_0xFFFFFFE8 = 0xA55A157F;
+	_0xFFFFFFEC = 0xA55A8458;
+	_0xFFFFFFF0 = 0xA55A0008;
+	_0xFFFFFFF8 = 0xA55A0071;
+	_0xFFFFFE92 = 0x10;
+	_0xFFFFFE92 = 0x01;
 
 	// For checks of memory other than the ROM, write a test pattern to
 	// memory, then check that the pattern was written successfully, to
@@ -40,7 +40,7 @@ void _start() {
 
 	{
 		// Work RAM.
-		memCheckStatus = MEMCHECKSTATUS_OK;
+		memCheckStatus = MEMCHECKSTATUS_OKAY;
 		register uint32_t randSeedInit; // Intentionally uninitialized. Whatever the data is after restart will be used.
 		uint8_t ramInit = 0x00;
 		for (size_t i = 0u; i < sizeof(WORKRAM); i++) {
@@ -73,7 +73,7 @@ void _start() {
 
 	{
 		// Sprite and background RAM.
-		memCheckStatus = MEMCHECKSTATUS_OK;
+		memCheckStatus = MEMCHECKSTATUS_OKAY;
 		uint8_t vramInit = 0x00;
 		for (size_t i = 0u; i < sizeof(SPRITERAM) + sizeof(BGRAM); i++) {
 			GRAPHICSRAM[i] = vramInit;
@@ -103,20 +103,20 @@ void _start() {
 
 	{
 		// Palette RAM.
-		memCheckStatus = MEMCHECKSTATUS_OK;
+		memCheckStatus = MEMCHECKSTATUS_OKAY;
 		for (size_t i = 0u; i < NUMPALS * NUMPALCOLORS_4BPP; i++) {
-			Palettes[i] = 0xA8A8A8A8;
+			PALRAM[i] = 0xA8A8A8A8;
 		}
 
 		for (size_t i = 0u; i < NUMPALS * NUMPALCOLORS_4BPP; i++) {
-			if ((Palettes[i] & 0xFCFCFC00) != 0xA8A8A800) {
+			if ((PALRAM[i] & 0xFCFCFC00) != 0xA8A8A800) {
 				memCheckStatus = MEMCHECKSTATUS_NOGOOD;
 				break;
 			}
 		}
 
 		for (size_t i = 0u; i < sizeof(PALRAM); i++) {
-			*(uint8_t*)PALRAM = 0x00;
+			((uint8_t*)PALRAM)[i] = 0x00;
 		}
 
 		*memCheckData++ = memCheckStatus;
@@ -124,7 +124,7 @@ void _start() {
 
 	{
 		// Scale RAM.
-		memCheckStatus = MEMCHECKSTATUS_OK;
+		memCheckStatus = MEMCHECKSTATUS_OKAY;
 		for (size_t i = 0u; i < sizeof(SCALERAM) / 2; i++) {
 			Scales[i] = 0x0000;
 		}
