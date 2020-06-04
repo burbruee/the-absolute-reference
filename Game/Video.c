@@ -7,6 +7,7 @@
 #include "Frame.h"
 #include "VideoDefs.h"
 #include "BuildData.h"
+#include "HwData.h"
 #include "PlatformTypes.h"
 #include "Macros.h"
 
@@ -422,7 +423,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
-			uint8_t bgPri = (arg0->bgPri << 4) & 0x30u;
+			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
 			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
 
 			if (arg0->_0x22 & 0x8000) {
@@ -433,7 +434,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 					sprPriVertical |= 0x80;
 				}
 			}
-			_0x6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->h;
+			_0x6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->scaleY;
 			if (arg0->_0x22 & 0x80) {
 				if (horizontal & 0x80) {
 					bgPriHorizontal &= 0x4Fu;
@@ -442,7 +443,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 					bgPriHorizontal |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->w;
+			_0x6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->scaleX;
 			if (var0) {
 				if (OBJECT_GETSPRPRI(object) & 2) {
 					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
@@ -545,7 +546,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 			OBJECT_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
-			uint8_t bgPri = (arg0->bgPri << 4) & 0x30u;
+			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
 			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
 			if (arg0->_0x22 & 0x8000u) {
 				if (sprPriVertical & 0x80u) {
@@ -555,7 +556,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 					sprPriVertical |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->h;
+			_0x6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->scaleY;
 			if (arg0->_0x22 & 0x0080u) {
 				if (horizontal & 0x80u) {
 					bgPriHorizontal &= 0x4Fu;
@@ -564,7 +565,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 					bgPriHorizontal |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->w;
+			_0x6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->scaleX;
 			if (var0) {
 				if (OBJECT_GETSPRPRI(object) & 0x2u) {
 					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
@@ -1019,7 +1020,7 @@ void UpdatePalCycles() {
 					}
 
 					for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						Palettes[cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
+						PALRAM[cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
 					}
 
 					cycle->step += cycle->stride;
@@ -1184,8 +1185,8 @@ static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
 	palNum = (uint8_t)palNum;
 	numPals = (uint8_t)numPals;
 	for (int16_t i = 0; i < numPals; i++) {
-		for (size_t j = 0u; j < 16u; j++) {
-			Palettes[palNum * 16 * 4 + j * 4] = pal[j];
+		for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+			PALRAM[palNum * NUMPALCOLORS_4BPP + j] = pal[j];
 		}
 	}
 }

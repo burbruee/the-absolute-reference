@@ -11,7 +11,7 @@ typedef uint8_t SpriteScale;
 
 // PS6406B sprite format:
 //
-// 0:??????YYYYYYYYYY 1:??????XXXXXXXXXX 2:-?SSHHHHhhhhhhhh 3:|?BBWWWWwwwwwwww
+// 0:??????YYYYYYYYYY 1:??????XXXXXXXXXX 2:-USSHHHHhhhhhhhh 3:|uBBWWWWwwwwwwww
 // 4:PPPPPPPPbAAA?TTT 5:TTTTTTTTTTTTTTTT 6:???????????????? 7:????????????????
 //
 // Each character is a bit in a big endian uint16_t.
@@ -20,10 +20,12 @@ typedef uint8_t SpriteScale;
 // Y: Y pixel position.
 // X: X pixel position.
 // -: Flip sprite vertically.
+// U: There are hints this could be something, but unknown for now.
 // S: Sprite priority. TODO: Check how this works on a PS5V2. Unused by non-PS5V2 frontends for now.
 // H: Sprite height minus one.
 // h: Sprite height scale.
 // |: Flip sprite horizontally.
+// u: There are hints this could be something, but unknown for now.
 // B: Background priority.
 // W: Sprite width.
 // w: Sprite width scale.
@@ -35,7 +37,7 @@ typedef uint8_t SpriteScale;
 // Unscaled sprite pixel dimensions are "16 * (W + 1)" by "16 * (H + 1)".
 //
 // Some of the unused space is used in objects, though objects are an array of
-// 6 uint16_t, rather than 8.
+// the first 6 uint16_t of SpriteData, rather than all 8.
 //
 // The tile number defined in the sprite follows this formula:
 // realTileNumber / (bitsPerPixel + 1).
@@ -45,7 +47,8 @@ typedef uint8_t SpriteScale;
 // TODO: Investigate on a real PS5V2 whether the last two uint16_ts in a sprite
 // are used by the PS6406B for anything (rotation? MAME documentation says
 // backgrouds can rotate, so why not sprites?).
-typedef uint16_t SpriteData[8];
+#define SPRITE_LENGTH 8
+typedef uint16_t SpriteData[SPRITE_LENGTH];
 
 // The MAME documentation says the PS6406B supports 1024 sprites, but the
 // original game only supports 896. Though the first two sprites are taken up

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "BgMap.h"
 #include "BuildData.h"
+#include "PlatformTypes.h"
 #include <stdint.h>
 
 // SH-2: sizeof(GameBg) == 0x20

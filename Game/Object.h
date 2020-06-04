@@ -4,6 +4,37 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// The DisplayObject* functions accept ObjectData arrays, not SpriteData
+// arrays, and each ObjectData contains only the following SpriteData fields,
+// in the same layout as SpriteData:
+//
+// - Pixel Y
+// - Pixel X
+// - Vertical flip
+// - Sprite priority
+// - Height
+// - Horizontal flip
+// - Background priority
+// - Width
+// - Palette number*
+// - Bits per pixel.
+// - Tile number
+//
+// * The palette number field is only used by DisplayObjectEx. The value of the
+// palette number field in the first element of the object data array is used
+// for all sprites when passing zero as the palette number argument to
+// DisplayObjectEx.
+//
+// When dynamically generating objects, only ever use the object tile numbers
+// that are in Objects.data; the game follows this convention all throughout
+// the code, and this allows renderers to optimize around that assumption.
+//
+// TODO: There appears to be more object data beyond what DisplayObject*
+// functions support, and some of that data appears to be at indices 6 and 7 of
+// SpriteData.
+
+typedef uint16_t ObjectData[6];
+
 // A single object is composed of an array of one or more objects. The number
 // of sprites field in the first object data of an object is the only one used.
 // Objects can be composed of up to 63 sprites.

@@ -9,6 +9,7 @@
 #include "Game/Sound.h"
 #include "Game/Frame.h"
 #include "Game/Button.h"
+#include "Game/SpriteInit.h"
 #include "Game/HwData.h"
 #include "Platform/Util/Macros.h"
 #include <stdint.h>
@@ -369,7 +370,7 @@ static void InitVideo() {
 		}
 	}
 
-	_0x602DA0C(0, NULL); // TODO: Implementation in SpriteInit.h/c.
+	_0x602DA0C(0u, NULL);
 	SpriteNames[0] = 0u;
 	SpriteNames[1] = SPRITENAME_TERMINATEMASK;
 }

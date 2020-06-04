@@ -15,17 +15,17 @@ extern const int16_t _0x60356C8[4];
 // SH-2: sizeof(struct_0x606006C) == 0x40
 typedef struct struct_0x606006C {
 	const ObjectData* objectTable;
-	int16_t _0x2;
 	int16_t y;
 	int16_t x;
-	int16_t _0xC;
-	int16_t _0x10;
+	int16_t y1;
+	int16_t x1;
+	uint16_t flipYSprPri;
 	int16_t _0x12;
-	uint8_t h;
-	uint8_t w;
+	uint8_t scaleY;
+	uint8_t scaleX;
 	int16_t animFrame;
-	int16_t bgPri;
-	int16_t palNum;
+	uint16_t flipXBgPri;
+	uint16_t palNum;
 	uint8_t alpha;
 	uint16_t _0x22;
 	int16_t _0x28;
@@ -42,6 +42,21 @@ typedef struct struct_0x606006C {
 
 // The number of sprites written to the sprite table.
 extern int16_t NumSprites;
+
+typedef struct struct_0x607D218 {
+	struct_0x607D218* _0x0;
+	void (*_0x4)();
+	void (*_0x8)();
+	struct_0x607D218* _0xC;
+	struct_0x607D218* _0x10;
+	struct_0x607D218* _0x14;
+	uint16_t _0x18;
+	uint16_t _0x1A;
+	uint8_t _0x1C[4];
+	struct_0x607D218* _0x20;
+	void* _0x300[60];
+	void (*_0x3F8)();
+} struct_0x607D218;
 
 extern struct_0x607D218* _0x606005C = NULL;
 
@@ -64,22 +79,12 @@ extern struct_0x6061932 _0x6061932;
 
 #define MAXVIDEOSETTERS 32
 uint16_t NumVideoSetters;
-VideoSetter VideoSetters[MAXVIDEOSETTERS];
+typedef struct VideoSetter {
+	void (* set)(void*, void*, void*);
+	void* args[3];
+} VideoSetter;
 
-typedef struct struct_0x607D218 {
-	struct_0x607D218* _0x0;
-	void (*_0x4)();
-	void (*_0x8)();
-	struct_0x607D218* _0xC;
-	struct_0x607D218* _0x10;
-	struct_0x607D218* _0x14;
-	uint16_t _0x18;
-	uint16_t _0x1A;
-	uint8_t _0x1C[4];
-	struct_0x607D218* _0x20;
-	void* _0x300[60];
-	void (*_0x3F8)();
-} struct_0x607D218;
+VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 extern struct_0x607D218* _0x6064750;
 
