@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PlatformTypes.h"
+#include "VideoDefs.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -32,12 +33,18 @@
 // TODO: There appears to be more object data beyond what DisplayObject*
 // functions support, and some of that data appears to be at indices 6 and 7 of
 // SpriteData.
+// NOTE: Bit 15 of word 0 appears to be used as a flag that, when true,
+// indicates if an object should be skipped when displaying with functions
+// _0x60243E8 or _0x602471C, at least.
+
 
 typedef uint16_t ObjectData[6];
 
-// A single object is composed of an array of one or more objects. The number
-// of sprites field in the first object data of an object is the only one used.
-// Objects can be composed of up to 63 sprites.
+// A single object is composed of an array of one or more object datas. The
+// number of sprites field in the first object data of an object is the only
+// one used, though it appears the original object data table has the same
+// number of sprites set in all the object datas of an object. Objects can be
+// composed of up to 63 sprites.
 
 #define OBJECT_GETY(sprite) ((int16_t)(((*(sprite))[0] & 0x3FF) << 6) >> 6)
 #define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))

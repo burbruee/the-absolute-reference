@@ -403,16 +403,16 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 
-			// _0x22 at least has flags indicating if the object should be
+			// verticalHorizontal at least has flags indicating if the object should be
 			// flipped horizontally (0x0080) and/or vertically (0x8000); there
 			// could be more flags in it.
-			if (arg0->_0x22 & 0x8000) {
+			if (arg0->verticalHorizontal & 0x8000) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
 				offsetY = (OBJECT_GETH(object) + 1) * -16 - offsetY;
 			}
-			if (arg0->_0x22 & 0x0080) {
+			if (arg0->verticalHorizontal & 0x0080) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
@@ -426,7 +426,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
 			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
 
-			if (arg0->_0x22 & 0x8000) {
+			if (arg0->verticalHorizontal & 0x8000) {
 				if (sprPriVertical & 0x80) {
 					sprPriVertical &= 0x7f;
 				}
@@ -435,7 +435,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 				}
 			}
 			_0x6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->scaleY;
-			if (arg0->_0x22 & 0x80) {
+			if (arg0->verticalHorizontal & 0x80) {
 				if (horizontal & 0x80) {
 					bgPriHorizontal &= 0x4Fu;
 				}
@@ -474,7 +474,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			else {
 				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->alpha & 0x70u);
+			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaUpper3TileBits & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
 			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
 				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
@@ -530,13 +530,13 @@ void _0x602471C(struct_0x606006C* arg0) {
 		if (((*object)[0] & 0x8000u) == 0u || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0u) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
-			if (arg0->_0x22 & 0x8000u) {
+			if (arg0->verticalHorizontal & 0x8000u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
 				offsetY = (OBJECT_GETH(object) + 1) * -16 - offsetY;
 			}
-			if (arg0->_0x22 & 0x0080u) {
+			if (arg0->verticalHorizontal & 0x0080u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
@@ -548,7 +548,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 			uint8_t horizontal = (*object)[3] >> 8;
 			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
 			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
-			if (arg0->_0x22 & 0x8000u) {
+			if (arg0->verticalHorizontal & 0x8000u) {
 				if (sprPriVertical & 0x80u) {
 					sprPriVertical &= ~0x80u;
 				}
@@ -557,7 +557,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 				}
 			}
 			_0x6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->scaleY;
-			if (arg0->_0x22 & 0x0080u) {
+			if (arg0->verticalHorizontal & 0x0080u) {
 				if (horizontal & 0x80u) {
 					bgPriHorizontal &= 0x4Fu;
 				}
@@ -596,7 +596,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 			else {
 				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->alpha & 0x70u);
+			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaUpper3TileBits & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
 			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
 				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
