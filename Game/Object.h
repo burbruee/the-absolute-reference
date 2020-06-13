@@ -46,38 +46,93 @@ typedef uint16_t ObjectData[6];
 // number of sprites set in all the object datas of an object. Objects can be
 // composed of up to 63 sprites.
 
-#define OBJECT_GETY(sprite) ((int16_t)(((*(sprite))[0] & 0x3FF) << 6) >> 6)
-#define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] >> 10) & 0x3F))
-#define OBJECT_GETX(sprite) ((int16_t)(((*(sprite))[1] & 0x3FF) << 6) >> 6)
-#define OBJECT_GETFLIPY(sprite) ((bool)(((*(sprite))[2] >> 15) & 1))
-#define OBJECT_GETSPRPRI(sprite) ((uint8_t)(((*(sprite))[2] >> 12) & 3))
-#define OBJECT_GETH(sprite) ((uint8_t)(((*(sprite))[2] >> 8) & 0xF))
-#define OBJECT_GETSCALEY(sprite) ((uint8_t)((*(sprite))[2] & 0xFF))
-#define OBJECT_GETFLIPX(sprite) ((bool)(((*(sprite))[3] >> 15) & 1))
-#define OBJECT_GETBGPRI(sprite) ((uint8_t)(((*(sprite))[3] >> 12) & 3))
-#define OBJECT_GETW(sprite) ((uint8_t)(((*(sprite))[3] >> 8) & 0xF))
-#define OBJECT_GETSCALEX(sprite) ((uint8_t)((*(sprite))[3] & 0xFF))
-#define OBJECT_GETPALNUM(sprite) ((uint8_t)(((*(sprite))[4] >> 8) & 0xFF))
-#define OBJECT_GETBPP(sprite) ((Bpp)(((*(sprite))[4] >> 7) & 1))
-#define OBJECT_GETALPHA(sprite) ((uint8_t)(((*(sprite))[4] >> 4) & 7))
-#define OBJECT_GETTILE(sprite) (((((uint32_t)(*(sprite))[4]) << 16) | (uint32_t)(*(sprite))[5]) & 0x7FFFF)
+enum ObjectBits {
+	// object[0]
+	OBJECT_NUMSPRITES = 0xFC00u,
+	OBJECT_Y = 0x03FFu,
 
-#define OBJECT_SETY(sprite, y) ((*(sprite))[0] = ((*(sprite))[0] & ~0x03FF) | ((uint16_t)(y) & 0x3FF))
-#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & 0x03FFu) | (((uint16_t)(numSprites) & 0x3Fu) << 10u))
-#define OBJECT_SETX(sprite, x) ((*(sprite))[1] = ((*(sprite))[1] & ~0x03FF) | ((uint16_t)(x) & 0x3FF))
-#define OBJECT_SETFLIPY(sprite, flipY) ((*(sprite))[2] = ((*(sprite))[2] & ~0x8000) | (((uint16_t)(flipY) & 1) << 15)
-#define OBJECT_SETSPRITEPRI(sprite, spritePri) ((*(sprite))[2] = ((*(sprite))[2] & ~0x7000) | (((uint16_t)(spritePri) & 3) << 12))
-#define OBJECT_SETH(sprite, h) ((*(sprite))[2] = ((*(sprite))[2] & ~0x0F00) | (((uint16_t)(h) & 0xF) << 8))
-#define OBJECT_SETSCALEY(sprite, scaleX) ((*(sprite))[2] = ((*(sprite))[2] & ~0x00FF) | ((uint16_t)(scaleX) & 0xFF))
-#define OBJECT_SETFLIPX(sprite, flipX) ((*(sprite))[3] = ((*(sprite))[3] & ~0x8000) | (((uint16_t)(flipX) & 1) << 15))
-#define OBJECT_SETBGPRI(sprite, bgPri) ((*(sprite))[3] = ((*(sprite))[3] & ~0xF000) | (((uint16_t)(bgPri) & 3) << 12))
-#define OBJECT_SETW(sprite, w) ((*(sprite))[3] = ((*(sprite))[3] & ~0x0F00) | (((uint16_t)(w) & 0xF) << 8))
-#define OBJECT_SETSCALEX(sprite, scaleY) ((*(sprite))[3] = ((*(sprite))[3] & ~0x00FF) | ((uint16_t)(scaleY) & 0xFF))
-#define OBJECT_SETPALNUM(sprite, palNum) ((*(sprite))[4] = ((*(sprite))[4] & ~0xFF00) | (((uint16_t)(palNum) & 0xFF) << 8))
-#define OBJECT_SETBPP(sprite, bpp) ((*(sprite))[4] = ((*(sprite))[4] & ~0x0080) | (((uint16_t)(bpp) & 1) << 7))
-#define OBJECT_SETALPHA(sprite, alpha) ((*(sprite))[4] = ((*(sprite))[4] & ~0x0070) | (((uint16_t)(alpha) & 7) << 4))
-#define OBJECT_SETTILE(sprite, tile) (((*(sprite))[4] = ((*(sprite))[4] & ~0x0007) | ((uint16_t)(((uint32_t)(tile)) >> 16) & 7)), ((*(sprite))[5] = ((uint16_t)(tile) & 0xFFFF)))
+	// object[1]
+	OBJECT_X = 0x03FFu,
 
+	// object[2]
+	OBJECT_FLIPY = 0x8000u,
+	OBJECT_UNKNOWN0 = 0x4000u,
+	OBJECT_SPRPRI = 0x3000u,
+	OBJECT_H = 0x0F00u,
+	OBJECT_SCALEY = 0x00FFu,
+
+	// object[3]
+	OBJECT_FLIPX = 0x8000u,
+	OBJECT_UNKNOWN1 = 0x4000u,
+	OBJECT_BGPRI = 0x3000u,
+	OBJECT_W = 0x0F00u,
+	OBJECT_SCALEX = 0x00FFu,
+
+	// object[4]
+	OBJECT_PALNUM = 0xFF00u,
+	OBJECT_BPP = 0x0080u,
+	OBJECT_ALPHA = 0x0070u,
+	OBJECT_TILETOP = 0x0007u,
+
+	// object[5]
+	OBJECT_TILEBOTTOM = 0xFFFFu
+};
+
+#define OBJECT_GETY(object) ((int16_t)(((*(object))[0] & OBJECT_Y) << 6) >> 6)
+#define OBJECT_GETNUMSPRITES(object) ((uint8_t)(((*(object))[1] & OBJECT_NUMSPRITES) >> 10))
+#define OBJECT_GETX(object) ((int16_t)(((*(object))[1] & OBJECT_X) << 6) >> 6)
+#define OBJECT_GETFLIPY(object) ((bool)(((*(object))[2] & OBJECT_FLIPY) >> 15))
+#define OBJECT_GETUNKNOWN0(object) ((bool)(((*(object))[2] & OBJECT_UNKNOWN0) >> 14))
+#define OBJECT_GETSPRPRI(object) ((uint8_t)(((*(object))[2] & OBJECT_SPRPRI) >> 12))
+#define OBJECT_GETH(object) ((uint8_t)(((*(object))[2] & OBJECT_H) >> 8))
+#define OBJECT_GETSCALEY(object) ((uint8_t)((*(object))[2] & OBJECT_SCALEY))
+#define OBJECT_GETFLIPX(object) ((bool)(((*(object))[3] & OBJECT_FLIPX) >> 15))
+#define OBJECT_GETUNKNOWN1(object) ((bool)(((*(object))[2] & OBJECT_UNKNOWN1) >> 14))
+#define OBJECT_GETBGPRI(object) ((uint8_t)(((*(object))[3] & OBJECT_BGPRI) >> 12))
+#define OBJECT_GETW(object) ((uint8_t)(((*(object))[3] & OBJECT_W) >> 8))
+#define OBJECT_GETSCALEX(object) ((uint8_t)((*(object))[3] & 0xFF))
+#define OBJECT_GETPALNUM(object) ((uint8_t)(((*(object))[4] & OBJECT_PALNUM) >> 8))
+#define OBJECT_GETBPP(object) ((Bpp)(((*(object))[4] & OBJECT_BPP) >> 7))
+#define OBJECT_GETALPHA(object) ((uint8_t)(((*(object))[4] & OBJECT_ALPHA) >> 4))
+#define OBJECT_GETTILE(object) ((((uint32_t)(*(object))[4] & OBJECT_TILETOP) << 16) | ((uint32_t)(*(object))[5] & OBJECT_TILEBOTTOM)))
+
+#define OBJECT_TOY(y) ((uint16_t)((int16_t)(y) & OBJECT_Y))
+#define OBJECT_TONUMSPRITES(numSprites) (((uint16_t)(numSprites) << 10) & OBJECT_NUMSPRITES)
+#define OBJECT_TOX(x) ((uint16_t)((int16_t)(x) & OBJECT_X))
+#define OBJECT_TOFLIPY(flipY) (((uint16_t)(flipY != 0u) << 15) & OBJECT_FLIPY)
+#define OBJECT_TOUNKNOWN0(unknown0) (((uint16_t)(unknown0 != 0u) << 14) & OBJECT_UNKNOWN0)
+#define OBJECT_TOSPRPRI(sprPri) (((uint16_t)(sprPri) << 12) & OBJECT_SPRPRI)
+#define OBJECT_TOH(h) (((uint16_t)(h) << 8) & OBJECT_H)
+#define OBJECT_TOSCALEY(scaleY) ((uint16_t)((scaleY) & OBJECT_SCALEY))
+#define OBJECT_TOFLIPX(flipX) (((uint16_t)(flipX != 0u) << 15) & OBJECT_FLIPX)
+#define OBJECT_TOUNKNOWN1(unknown1) (((uint16_t)(unknown1 != 0u) << 14) & OBJECT_UNKNOWN1)
+#define OBJECT_TOBGPRI(bgPri) (((uint16_t)(bgPri) << 12) & OBJECT_BGPRI)
+#define OBJECT_TOW(w) (((uint16_t)(w) << 8) & OBJECT_W)
+#define OBJECT_TOSCALEX(scaleX) ((uint16_t)(scaleX) & OBJECT_SCALEX)
+#define OBJECT_TOPALNUM(palNum) (((uint16_t)(palNum) << 8) & OBJECT_PALNUM)
+#define OBJECT_TOBPP(bpp) (((uint16_t)(Bpp)(bpp) << 7u) & OBJECT_BPP)
+#define OBJECT_TOALPHA(alpha) (((uint16_t)(alpha) << 4) & OBJECT_ALPHA)
+#define OBJECT_TOTILETOP(tile) (((uint16_t)(tile) >> 16u) & OBJECT_TILETOP)
+#define OBJECT_TOTILEBOTTOM(tile) ((uint16_t)(tile) & OBJECT_TILEBOTTOM)
+
+#define OBJECT_SETY(object, y)                   ((*(object))[0] = ((*(object))[0] & ~OBJECT_Y)          | OBJECT_TOY(y))
+#define OBJECT_SETNUMSPRITES(object, numSprites) ((*(object))[1] = ((*(object))[1] & ~OBJECT_NUMSPRITES) | OBJECT_TONUMSPRITES(numSprites))
+#define OBJECT_SETX(object, x)                   ((*(object))[1] = ((*(object))[1] & ~OBJECT_X)          | OBJECT_TOX(x))
+#define OBJECT_SETFLIPY(object, flipY)           ((*(object))[2] = ((*(object))[2] & ~OBJECT_FLIPY)      | OBJECT_TOFLIPY(flipY))
+#define OBJECT_SETUNKNOWN0(object, unknown0)     ((*(object))[2] = ((*(object))[2] & ~OBJECT_UNKNOWN0)   | OBJECT_TOUNKNOWN0(unknown0))
+#define OBJECT_SETSPRPRI(object, sprPri)         ((*(object))[2] = ((*(object))[2] & ~OBJECT_SPRPRI)     | OBJECT_TOSPRPRI(sprPri))
+#define OBJECT_SETH(object, h)                   ((*(object))[2] = ((*(object))[2] & ~OBJECT_H)          | OBJECT_TOH(h))
+#define OBJECT_SETSCALEY(object, scaleX)         ((*(object))[2] = ((*(object))[2] & ~OBJECT_SCALEY)     | OBJECT_TOY(y))
+#define OBJECT_SETFLIPX(object, flipX)           ((*(object))[3] = ((*(object))[3] & ~OBJECT_FLIPX)      | OBJECT_TOFLIPX(flipX))
+#define OBJECT_SETUNKNOWN1(object, unknown1)     ((*(object))[3] = ((*(object))[3] & ~OBJECT_UNKNOWN1)   | OBJECT_TOUNKNOWN1(unknown1))
+#define OBJECT_SETBGPRI(object, bgPri)           ((*(object))[3] = ((*(object))[3] & ~OBJECT_BGPRI)      | OBJECT_TOBGPRI(bgPri))
+#define OBJECT_SETW(object, w)                   ((*(object))[3] = ((*(object))[3] & ~OBJECT_W)          | OBJECT_TOW(w))
+#define OBJECT_SETSCALEX(object, scaleY)         ((*(object))[3] = ((*(object))[3] & ~OBJECT_SCALEX)     | OBJECT_TOSCALEX(scaleX))
+#define OBJECT_SETPALNUM(object, palNum)         ((*(object))[4] = ((*(object))[4] & ~OBJECT_PALNUM)     | OBJECT_TOPALNUM(palNum))
+#define OBJECT_SETBPP(object, bpp)               ((*(object))[4] = ((*(object))[4] & ~OBJECT_BPP)        | OBJECT_TOBPP(bpp))
+#define OBJECT_SETALPHA(object, alpha)           ((*(object))[4] = ((*(object))[4] & ~OBJECT_ALPHA)      | OBJECT_TOALPHA(alpha))
+#define OBJECT_SETTILE(object, tile)            (((*(object))[4] = ((*(object))[4] & ~OBJECT_TILETOP)    | OBJECT_TOTILETOP(tile)), \
+                                                 ((*(object))[5] = ((*(object))[5] & ~OBJECT_TILEBOTTOM) | OBJECT_TOTILEBOTTOM(tile)))
 
 typedef struct ObjectDataTable {
 	char header[8];
