@@ -9,8 +9,8 @@
 // Case 5 appears similar to case 4, with some differences in its inputs.
 // TODO: Looks like a good name could be "SetSprite(SpriteSetType type, SpriteSetData* data)".
 // This appears to be a Psikyo-written function for writing sprites.
-void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
-	switch (arg0) {
+void SetSprite(uint16_t type, struct_0x606006C* arg1) {
+	switch (type) {
 	case 0u:
 		NumSprites = SPRITE_FIRST;
 		_0x6061932.tempSprite[0] = 0xFFF0u;
@@ -82,13 +82,23 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 		return;
 
 	case 4u:
-		_0x6061932.tempSprite[0] = arg1->y1;
-		_0x6061932.tempSprite[1] = arg1->x1;
+		_0x6061932.tempSprite[0] = arg1->word0;
+		_0x6061932.tempSprite[1] = arg1->word1;
 		// Set sprite's vertical flip, unknown word 2 bit, sprite priority, height, and height scale.
-		_0x6061932.tempSprite[2] = (arg1->objectTable[0][2] & (OBJECT_UNKNOWN0 | OBJECT_H)) | (arg1->flipYSprPriH << 8) | arg1->scaleY;
-		// Set sprite's horizontal flip, unknown word 3 bit, background priority, width, and width scale.
-		// Also or's in a bitmask for some reason, that can set bits [15, 8] of the word.
-		_0x6061932.tempSprite[3] = (arg1->_0x12 << 9) | (arg1->objectTable[0][3] & (OBJECT_UNKNOWN1 | OBJECT_W)) | ((arg1->flipXBgPri & 3u) << 12) | arg1->scaleX;
+		_0x6061932.tempSprite[2] =
+			(arg1->objectTable[0][2] & (OBJECT_UNKNOWN0 | OBJECT_H)) |
+			(arg1->flipYSprPriH << 8) |
+			arg1->scaleY;
+		// Set sprite's horizontal flip, unknown word 3 bit, background
+		// priority, width, and width scale.
+		// Also or's in a bitmask for some reason, that can set bits [15, 8] of
+		// the word. It appears the or'd in mask is intended to set flipX, as
+		// everything else in word 3 is set here.
+		_0x6061932.tempSprite[3] =
+			(arg1->flipXBgPriW << 9) |
+			(arg1->objectTable[0][3] & (OBJECT_UNKNOWN1 | OBJECT_W)) |
+			OBJECT_TOBGPRI(arg1->flipXBgPri) |
+			OBJECT_TOSCALEX(arg1->scaleX);
 		uint16_t palNum;
 		if (arg1->palNum == 0u) {
 			palNum = OBJECT_GETPALNUM(arg1->objectTable);
@@ -107,14 +117,14 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 
 	case 5u:
 		// Set X and Y position of the sprite, but clear all other bits in words 0 and 1.
-        _0x6061932.tempSprite[0] = arg1->y1 & OBJECT_Y;
-        _0x6061932.tempSprite[1] = arg1->x1 & OBJECT_X;
+        _0x6061932.tempSprite[0] = arg1->word0 & OBJECT_Y;
+        _0x6061932.tempSprite[1] = arg1->word1 & OBJECT_X;
 		// Set sprite's vertical flip, unknown word 2 bit, sprite priority, height, and height scale.
         _0x6061932.tempSprite[2] = (arg1->flipYSprPriH << 8) | arg1->scaleY;
 		// Set sprite's horizontal flip, unknown word 3 bit, background priority, width, and width scale.
-        _0x6061932.tempSprite[3] = (arg1->_0x12 << 8) | arg1->scaleX;
+        _0x6061932.tempSprite[3] = (arg1->flipXBgPriW << 8) | arg1->scaleX;
 		// Set sprite's palette, BPP, alpha, and upper 3 tile number bits.
-		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(arg1->palNum) | arg1->bppAlphaUpper3TileBits;
+		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(arg1->palNum) | arg1->bppAlphaTileTop;
 		// Set sprite's lower 16 tile number bits.
         _0x6061932.tempSprite[5] = arg1->objectTable[0][5];
 		// Add sprite.
@@ -123,7 +133,7 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 		return;
 
 	case 6u: {
-		ObjectData* animFrameObject = arg1->objectTable + arg1->animFrame;
+		ObjectData* animFrameObject = &arg1->objectTable[arg1->animFrame];
 		uint8_t flipXBgPriW;
 		if (arg1->_0x20 < 4) {
 			_0x6061932.tempSprite[0] = OBJECT_TOY(arg1->y + (*animFrameObject)[0]);
@@ -152,18 +162,17 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 			flipXBgPriW = (uint8_t)arg1->verticalHorizontal | 0x10u;
 		}
 
-		_0x6061932.tempSprite[0] &= OBJECT_Y;
-		_0x6061932.tempSprite[1] &= OBJECT_X;
 		_0x6061932.tempSprite[3] |= (uint16_t)flipXBgPriW << 8;
 		_0x6061932.tempSprite[4] |= (*animFrameObject)[4] & OBJECT_PALNUM;
+		_0x6061932.tempSprite[5] = (*animFrameObject)[5];
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
 		return;
 	}
 
 	case 7u:
-		_0x6061932.tempSprite[0] = arg1->y + (arg1->objectTable[0][0] & OBJECT_Y);
-		_0x6061932.tempSprite[1] = arg1->y + (arg1->objectTable[0][1] & OBJECT_X);
+		_0x6061932.tempSprite[0] = OBJECT_TOY(arg1->y + arg1->objectTable[0][0]);
+		_0x6061932.tempSprite[1] = OBJECT_TOX(arg1->x + arg1->objectTable[0][1]);
 		_0x6061932.tempSprite[2] |= (*arg1->objectTable)[2] & ~OBJECT_SCALEY;
 		_0x6061932.tempSprite[3] |= (arg1->objectTable[0][3] & ~OBJECT_SCALEX) | OBJECT_TOBGPRI(1);
 		_0x6061932.tempSprite[4] = arg1->objectTable[0][4];
@@ -173,8 +182,8 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 		return;
 
 	case 8u:
-		_0x6061932.tempSprite[0] = arg1->y + (arg1->objectTable[0][0] & OBJECT_Y);
-		_0x6061932.tempSprite[1] = arg1->x + (arg1->objectTable[0][1] & OBJECT_X);
+		_0x6061932.tempSprite[0] = OBJECT_TOY(arg1->y + arg1->objectTable[0][0]);
+		_0x6061932.tempSprite[1] = OBJECT_TOX(arg1->x + arg1->objectTable[0][1]);
 		_0x6061932.tempSprite[2] = (arg1->objectTable[0][2] & ~OBJECT_SCALEY) | UNSCALED;
 		_0x6061932.tempSprite[3] = (arg1->objectTable[0][3] & ~OBJECT_SCALEX) | UNSCALED | OBJECT_TOBGPRI(2);
 		_0x6061932.tempSprite[4] = arg1->objectTable[0][4];
@@ -184,15 +193,36 @@ void _0x602DA0C(uint8_t arg0, struct_0x606006C* arg1) {
 		return;
 
 	case 9u:
-		// TODO
+		_0x6061932.tempSprite[0] = OBJECT_TOY(200);
+		_0x6061932.tempSprite[1] = OBJECT_TOX(10);
+		_0x6061932.tempSprite[2] = UNSCALED;
+		_0x6061932.tempSprite[3] = OBJECT_TOBGPRI(3u) | UNSCALED;
+		_0x6061932.tempSprite[4] = OBJECT_TOTILETOP(0x1Fu);
+		_0x6061932.tempSprite[5] = OBJECT_TOTILEBOTTOM(0x1Fu);
+		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
+		NumSprites++;
 		return;
 
 	case 10u:
-		// TODO
+		_0x6061932.tempSprite[0] = arg1->word0;
+		_0x6061932.tempSprite[1] = arg1->word1;
+		_0x6061932.tempSprite[2] = (arg1->flipYSprPriH << 8) | UNSCALED;
+		_0x6061932.tempSprite[3] = (arg1->flipXBgPriW << 8) | UNSCALED;
+		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(arg1->palNum) | OBJECT_TOTILETOP(0xFu);
+		_0x6061932.tempSprite[5] = OBJECT_TOTILEBOTTOM(0xFu);
+		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
+		NumSprites++;
 		return;
 
 	case 11u:
-		// TODO
+		_0x6061932.tempSprite[0] = arg1->word0;
+		_0x6061932.tempSprite[1] = arg1->word1;
+		_0x6061932.tempSprite[2] = (arg1->flipYSprPriH << 8) | OBJECT_TOSCALEY(arg1->scaleY);
+		_0x6061932.tempSprite[3] = (arg1->flipXBgPriW << 8) | OBJECT_TOSCALEX(arg1->scaleX);
+		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(arg1->palNum) | arg1->bppAlphaTileTop;
+		_0x6061932.tempSprite[5] = arg1->tileBottom;
+		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
+		NumSprites++;
 		return;
 
 	default:

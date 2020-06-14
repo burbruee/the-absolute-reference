@@ -11,23 +11,33 @@
 
 extern const int16_t _0x60356C8[4];
 
-// TODO: Looks like this could be an "object animation" (ObjectAnim).
+// TODO: Could be data for setting sprites with SetSprite and other functions
+// (so name it SetSpriteData). Might only be for setting one sprite at a time,
+// unlike the object functions that write multiple sprites for a single object.
+// For SetSprite, objectTable either points to one ObjectData for a static
+// sprite or an ObjectData array with one ObjectData per animation frame.
 // SH-2: sizeof(struct_0x606006C) == 0x40
 typedef struct struct_0x606006C {
 	const ObjectData* objectTable;
 	int16_t y;
 	int16_t x;
-	int16_t y1;
-	int16_t x1;
+	uint16_t word0;
+	uint16_t word1;
 	uint16_t flipYSprPriH;
-	uint16_t _0x12;
+	uint16_t flipXBgPriW;
 	uint8_t scaleY;
 	uint8_t scaleX;
 	int16_t animFrame;
 	uint16_t flipXBgPri;
 	uint16_t palNum;
-	uint8_t bppAlphaUpper3TileBits;
+	uint8_t bppAlphaTileTop;
+	uint16_t tileBottom;
+
+	// In SetSprite setting type 6, this can affect whether the flip settings
+	// are used; when less than 4, no flip settings are used, otherwise flip
+	// settings are used alongside some other adjustments to the set data.
 	int16_t _0x20;
+
 	uint16_t verticalHorizontal;
 	int16_t _0x28;
 	uint8_t layer;

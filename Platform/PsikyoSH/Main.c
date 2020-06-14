@@ -370,7 +370,7 @@ static void InitVideo() {
 		}
 	}
 
-	_0x602DA0C(0u, NULL);
+	SetSprite(0u, NULL);
 	SpriteNames[0] = 0u;
 	SpriteNames[1] = SPRITENAME_TERMINATE;
 }

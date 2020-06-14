@@ -7,7 +7,6 @@
 #include "Math.h"
 #include "Save.h"
 #include "Video.h"
-#include "Bg.h"
 #include "Pal.h"
 #include "PalNum.h"
 #include "Sound.h"

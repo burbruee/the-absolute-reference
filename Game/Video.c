@@ -257,7 +257,7 @@ void InitSpriteAlpha() {
 }
 
 void _0x602419C() {
-	_0x602DA0C(1, NULL);
+	SetSprite(1, NULL);
 	InitSpriteAlpha();
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x67u;
@@ -474,7 +474,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 			else {
 				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaUpper3TileBits & 0x70u);
+			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaTileTop & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
 			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
 				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
@@ -596,7 +596,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 			else {
 				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaUpper3TileBits & 0x70u);
+			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaTileTop & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
 			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
 				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
