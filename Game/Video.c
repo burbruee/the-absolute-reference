@@ -643,6 +643,10 @@ void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
 	}
 }
 
+void _0x6024ED8() {
+
+}
+
 void _0x6025078() {
 	if (CurrentPauseMode != PAUSEMODE_NOPAUSE) {
 		return;

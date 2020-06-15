@@ -446,6 +446,7 @@ static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_
 			}
 		}
 	}
+	return -1;
 }
 
 static RankingPlace NormalRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
