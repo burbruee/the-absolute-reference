@@ -33,7 +33,7 @@ static void _0x6000AEC();
 // timing/input/rendering/audio done where the code waits on vsync.
 void main() {
 	bool canExitMemCheck = false;
-	void* sequenceEntry = (*BuildData.sequence)[7];
+	void* sequenceEntry = (*SequenceDataTablePtr)[7];
 
 	// System init.
 	_0x602ACB0();
@@ -49,7 +49,7 @@ void main() {
 	InitEntities();
 	InitPalCycles();
 	_0x602419C();
-	_0x6000AE0(); // TODO
+	_0x6000AE0();
 	InitTodaysBestRankings();
 	_0x6065644 = 0u;
 	_0x606564C = 0u;
@@ -385,7 +385,7 @@ static void InitVideo() {
 }
 
 static void _0x6000AE0() {
-	_0x607926C = (*BuildData.sequence)[7];
+	_0x607926C = (*SequenceDataTablePtr)[7];
 }
 
 static void _0x6000AEC() {}

@@ -48,3 +48,5 @@ extern ROMDATA BgMap16 BgMapSection7;
 extern ROMDATA BgMap16 BgMapSection8;
 extern ROMDATA BgMap16 BgMapSection9;
 extern ROMDATA BgMap16 BgMapVersus;
+
+extern ROMDATA BgMap* BgMapTable[11];

@@ -2,4 +2,4 @@
 #include "Game/Pal.h"
 
 ROMDATA ObjectDataTable Objects;
-ROMDATA PalDataTable Pals;
+ROMDATA PalData Pals;

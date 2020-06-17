@@ -3,13 +3,24 @@
 #include "PlatformTypes.h"
 #include "VideoDefs.h"
 
-typedef struct PalDataTable {
+typedef struct PalData {
 	char header[8];
 	Color data[0x22B * NUMPALCOLORS_4BPP];
-} PalDataTable;
+} PalData;
 
-extern ROMDATA PalDataTable Pals;
+extern ROMDATA PalData Pals;
 #define PALPTR(i) ((const Color*)&Pals.data[(i) * NUMPALCOLORS_4BPP])
+
+typedef struct PalTableData {
+	char header[8];
+	Color* palettes[133];
+} PalTableData;
+
+// The palettes table contains palette lists; each list in the table is an
+// array of one or more palette pointers, terminated by a NULL pointer, each
+// list directly following the previous in the table. BuildData.h's NumPalLists
+// contains the number of palette lists in this table.
+extern ROMDATA PalTableData PalsTable;
 
 // TODO: Define all palettes here.
 
