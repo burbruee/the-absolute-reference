@@ -1,4 +1,6 @@
 #include "Game/Player.h"
+#include "Game/Ranking.h"
+#include "Game/Entity.h"
 #include "Game/Input.h"
 #include "Game/ShowText.h"
 #include "Game/Debug.h"
@@ -22,6 +24,13 @@ static void _0x6000AE0();
 static void _0x6000AEC();
 
 // TODO: Lots of undefined things here.
+// TODO: Change to there not being port-specific main() functions to a setup
+// where some extra functions are added for ports (like a Startup() function
+// called at the top of main()), with those extras being #define'd out for
+// PsikyoSH, etc. Those entry points to the port-specific code would go into
+// Platform/PlatformFunctions.h.
+// Also, for SDL2, it will be single-threaded, with
+// timing/input/rendering/audio done where the code waits on vsync.
 void main() {
 	bool canExitMemCheck = false;
 	void* sequenceEntry = (*BuildData.sequence)[7];
@@ -40,7 +49,7 @@ void main() {
 	InitEntities();
 	InitPalCycles();
 	_0x602419C();
-	_0x6000AE0();
+	_0x6000AE0(); // TODO
 	InitTodaysBestRankings();
 	_0x6065644 = 0u;
 	_0x606564C = 0u;

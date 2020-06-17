@@ -23,10 +23,10 @@ extern RAMDATA uint8_t EEPROM[4];
 
 extern RAMDATA uint8_t SOUNDCTRL[8];
 
-extern RAMDATA void* GRAPHICSRAM[0x10000 / sizeof(void*)];
-#define SPRITERAM ((RAMDATA uint16_t*)&GRAPHICSRAM[0x00000 / sizeof(void*)])
-#define BGRAM (&GRAPHICSRAM[0x004000 / sizeof(void*)])
-#define BACKDROPRAM ((RAMDATA Color*)(&BGRAM[0x100 / sizeof(void*)]))
+extern RAMDATA uint32_t GRAPHICSRAM[0x10000 / sizeof(uint32_t)];
+#define SPRITERAM ((RAMDATA uint16_t*)&GRAPHICSRAM[0x00000 / sizeof(uint32_t)])
+#define BGRAM (&GRAPHICSRAM[0x004000 / sizeof(uint32_t)])
+#define BACKDROPRAM ((RAMDATA Color*)(&BGRAM[0x100 / sizeof(uint32_t)]))
 #define NUMBACKDROPLINES 0x100u
 
 #define NUMPALS 0x100u

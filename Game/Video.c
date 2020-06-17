@@ -1,4 +1,5 @@
 #include "Video.h"
+#include "SpriteInit.h"
 #include "Fixed.h"
 #include "HwSprite.h"
 #include "Macros.h"
@@ -66,7 +67,7 @@ static int16_t _0x60AD224;
 
 Bg Bgs[4];
 
-typedef struct struct_0x60B0FE0_0x0 {
+typedef struct struct_0x60B0FE0 {
 	void (*update)(void*, void*, void*, void*, void*);
 	void* args[5];
 } struct_0x60B0FE0;
@@ -643,8 +644,69 @@ void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
 	}
 }
 
-void _0x6024ED8() {
+// TODO: Could be InitBgIndex().
+void _0x6024E5C(int16_t i) {
+	Bgs[i]._0x2 = 0;
+	Bgs[i]._0x4 = 1;
+	Bgs[i]._0x6 = 0;
+	Bgs[i]._0xA = 3;
+	Bgs[i]._0xC = 0;
+	Bgs[i].darkness = 0;
+	Bgs[i]._0x10 = 0;
+	Bgs[i]._0x14 = 0;
+	Bgs[i]._0x30 = 0;
+	Bgs[i]._0x34 = 0;
+	Bgs[i]._0x8 = 0;
+	Bgs[i]._0x40 = 0;
+	Bgs[i]._0x44 = 0;
+	Bgs[i]._0x4C = 0;
 
+	for (size_t k = 0u; k < lengthoffield(Bg, _0x18); k++) {
+		Bgs[i]._0x18[k] = -1;
+	}
+
+	for (size_t k = 0u; k < lengthoffield(Bg, _0x38); k++) {
+		Bgs[i]._0x38[k] = 0;
+	}
+}
+
+// TODO: Could be InitBg().
+void _0x6024ED8() {
+	BgMapBanks[0] = 10u;
+	BgMapBanks[1] = 12u;
+	BgMapBanks[2] = 14u;
+	BgMapBanks[3] = 16u;
+
+	BgMapSettings[0] = 0u;
+	BgMapSettings[1] = 0u;
+
+	_0x2405FFEB |= 0x40u;
+
+	_0x60B13A4 = false;
+
+	for (size_t i = 0u; i < lengthof(Bgs); i++) {
+		Bgs[i]._0x0 = 0;
+		_0x6024E5C(i);
+	}
+
+	for (size_t i = 0u; i < lengthof(_0x60AD228); i++) {
+		_0x60AD228[i]._0x0 = 0u;
+		for (size_t bank = 0u; bank < 2u; bank++) {
+			// TODO: Create a RAM macro here, once this is better understood.
+			_0x60AD228[i]._0x4[bank] = &GRAPHICSRAM[(0x5000u + i * 0x1000u + bank * 0x800u) / sizeof(uint32_t)];
+			_0x60AD228[i]._0xC[bank] = bank + i * 2 + 10u;
+		}
+		_0x60AD228[i]._0x10 = NULL;
+		_0x60AD228[i]._0x14 = 0;
+		_0x60AD228[i]._0x60 = NULL;
+		_0x60AD228[i]._0x64 = 0;
+	}
+
+	for (size_t i = 0u; i < lengthof(_0x60B0FE0); i++) {
+		for (size_t k = 0u; k < lengthof(*_0x60B0FE0); k++) {
+			MemSet(&_0x60B0FE0[i][k], 0, sizeof(struct_0x60B0FE0));
+		}
+	}
 }
 
 void _0x6025078() {
@@ -745,6 +807,28 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 	BgMapBanks[3] = bgMapBank3;
 	BgMapSettings[0] = bgMapSettings01;
 	BgMapSettings[1] = bgMapSettings23;
+}
+
+// TODO: Could be AllocBg(); returns the background index allocated or -1 on
+// failure.
+int32_t _0x60257EE() {
+	int32_t i;
+
+	for (i = 0; i < lengthof(Bgs); i++) {
+		if (Bgs[i]._0x0 == 0) {
+			break;
+		}
+	}
+
+	if (i < 4) {
+		_0x6024E5C(i);
+		Bgs[i]._0x0 = 1;
+	}
+	else {
+		i = -1;
+	}
+
+	return i;
 }
 
 int32_t _0x6025918() {
@@ -913,6 +997,10 @@ GameBg* _0x6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) 
 
 void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
 	// TODO
+}
+
+void _0x6026FDC(int16_t arg0, int16_t arg1) {
+	Bgs[arg0]._0xA = arg1;
 }
 
 void SetBgDarkness(int16_t bgIndex, int16_t darkness) {

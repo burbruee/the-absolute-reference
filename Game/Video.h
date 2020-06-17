@@ -252,6 +252,7 @@ void _0x6026870(int16_t, int16_t, int16_t);
 GameBg* _0x6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
 void _0x6026FCA(uint16_t, uint16_t);
+void _0x6026FDC(int16_t, int16_t);
 // TODO
 void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO

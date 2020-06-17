@@ -9,7 +9,7 @@ create a thread just for executing the Loop function, if you want a separate
 renderer thread; the SDL2 port demonstrates that style of implementation.
 
 The Util subdirectory contains some basic functions that are fully portable,
-and intended as a way to start developing a new platform, and as a reference to
+and intended as a way to start developing a new port, and as a reference to
 help development of specialized platform-specific code, such as hardware
 accelerated renderers.
 
