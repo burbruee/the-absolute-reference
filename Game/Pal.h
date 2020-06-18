@@ -8,8 +8,8 @@ typedef struct PalData {
 	Color data[0x22B * NUMPALCOLORS_4BPP];
 } PalData;
 
-extern ROMDATA PalData Pals;
-#define PALPTR(i) ((const Color*)&Pals.data[(i) * NUMPALCOLORS_4BPP])
+extern ROMDATA PalData Pal;
+#define PALPTR(i) ((const Color*)&Pal.data[(i) * NUMPALCOLORS_4BPP])
 
 typedef struct PalTableData {
 	char header[8];
@@ -20,7 +20,7 @@ typedef struct PalTableData {
 // array of one or more palette pointers, terminated by a NULL pointer, each
 // list directly following the previous in the table. BuildData.h's NumPalLists
 // contains the number of palette lists in this table.
-extern ROMDATA PalTableData PalsTable;
+extern ROMDATA PalTableData PalTable;
 
 // TODO: Define all palettes here.
 

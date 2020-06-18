@@ -1,8 +1,8 @@
 #include "Pal.h"
 
-ROMDATA PalData Pals;
+ROMDATA PalData Pal;
 
-ROMDATA PalTableData PalsTable = {
+ROMDATA PalTableData PalTable = {
 	{
 		'P', 'L', 'T', ' ', 'T', 'B', 'L', ' '
 	},
