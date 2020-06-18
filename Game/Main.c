@@ -12,6 +12,7 @@
 #include "Frame.h"
 #include "Button.h"
 #include "SpriteInit.h"
+#include "Loop.h"
 #include "HwData.h"
 #include "MemCheck.h"
 #include "Platform/Util/Macros.h"
@@ -52,10 +53,10 @@ void main() {
 	_0x602419C();
 	SetSystemGraphicDataPtr();
 	InitTodaysBestRankings();
-	_0x6065644 = 0u;
-	_0x606564C = 0u;
-	InitNextPauseMode();
-	CurrentLoop = LOOP_DEMO;
+	Uptime = 0u;
+	//_0x606564C = 0u; // Set, but never used.
+	DisablePause();
+	CurrentMainLoopState = MAINLOOP_DEMO;
 	_0x602AC68(SystemGraphicDataPtr->_0x118);
 	SetPal(1u, 1u, _0x6030C7C);
 	_0x602BC50(0u);
@@ -63,12 +64,10 @@ void main() {
 	SetPal(158u, 1u, _0x68450);
 	SetPal(149u, 7u, _0x68250);
 	SetPal(156, 1u, _0x68190);
-	// TODO: Might be better named SetBackdropColor, if no back scanlines
-	// color setting is available.
-	SetFrontScanlinesColor(COLOR(0x00, 0x00, 0x00));
+	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
 	InitScanlinesBank(0u);
 
-	// Save data reset, if the tilt DIP switch is active, and player 1 button 1 is pressed.
+	// Save data reset, if the tilt DIP switch is active and player 1 button 1 is pressed.
 	if ((~INPUTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTS[INPUT_BUTTONS1P] & BUTTON_1)) {
 		_0x600ABD2();
 		InitPlayStatus();
@@ -80,9 +79,9 @@ void main() {
 	}
 
 	_0x602F8BC();
-	MemCheckData[4] = _0x600AB74();
-	MemCheckData[4] &= RestorePlayStatus();
-	MemCheckData[4] &= RestoreBestScore();
+	MemCheckData[MEMCHECK_EEPROM] = _0x600AB74();
+	MemCheckData[MEMCHECK_EEPROM] &= RestorePlayStatus();
+	MemCheckData[MEMCHECK_EEPROM] &= RestoreBestScore();
 	for (size_t section = 0u; section < 10u; section++) {
 		BestMasterSectionTimes[section] = Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data & 0xFFFFF;
 		TADeathSectionTimes[section] = TIME(0, 42, 0);
@@ -98,16 +97,16 @@ void main() {
 		// TODO: Maybe TGM2 has the code?
 	}
 
-	uint32_t numMemCheckFrames;
+	uint32_t memCheckDuration;
 	if ((MemCheckData[MEMCHECK_WORKRAM] & MemCheckData[MEMCHECK_GRAPHICSRAM] & MemCheckData[MEMCHECK_PALETTERAM] & MemCheckData[MEMCHECK_SCALERAM] & MemCheckData[MEMCHECK_EEPROM]) != MEMCHECKSTATUS_NOGOOD) {
-		numMemCheckFrames = TIME(0, 1, 0);
+		memCheckDuration = TIME(0, 1, 0);
 	}
 	else {
-		numMemCheckFrames = TIME(0, 10, 0);
+		memCheckDuration = TIME(0, 10, 0);
 		canExitMemCheck = true;
 	}
 
-	RegionUSACanada = false;
+	bool RegionUSACanada = false;
 	if ((EEPROM[0] & REGION_SETTING) == REGION_USACANADA) {
 		RegionUSACanada = true;
 	}
@@ -138,7 +137,7 @@ void main() {
 	// normally after the memory check screen, though.
 	// TODO: The character ROM pairs are named char0000 to char0007. Sound
 	// ROM is just "sound".
-	if (charSoundMemCheck ? _0x60302C4() : numMemCheckFrames != 0) {
+	if (charSoundMemCheck ? _0x60302C4() : memCheckDuration != 0) {
 		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 			charSoundMemCheck = true;
 		}
@@ -147,10 +146,10 @@ void main() {
 
 		_0x602BB0C();
 		_0x600DC38();
-		if (numMemCheckFrames != 0u) numMemCheckFrames--;
+		if (memCheckDuration != 0u) memCheckDuration--;
 
 		if ((SystemButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) && canExitMemCheck) {
-			numMemCheckFrames = 0u;
+			memCheckDuration = 0u;
 		}
 
 		const char *memCheckOK;
