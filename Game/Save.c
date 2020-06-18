@@ -37,7 +37,7 @@ void InitPlayStatus() {
 	Save->versusCount = 0u;
 	Save->twinCount = 0u;
 	Save->playCount = 0u;
-	InitSeed += Rand(1192u) + NumScreenFrames;
+	InitSeed += Rand(1192u) + ScreenTime;
 	Save->initSeed = InitSeed;
 }
 

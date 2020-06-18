@@ -129,7 +129,7 @@ static void UpdateEntityAllClear(Entity* entity) {
 		DisplayObject(&data->objectTable[entity->frames], data->y - 32, data->x - 32, data->palNum, 115u);
 	}
 
-	uint8_t palNum = NumScreenFrames % 4 == 0u ? 2u : 8u;
+	uint8_t palNum = ScreenTime % 4 == 0u ? 2u : 8u;
 	DisplayObject(OBJECT_BRAVO, 100, player->screenPos[0] - 48, palNum, 115u);
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frames >= 60) {
 		FreeEntity(entity);

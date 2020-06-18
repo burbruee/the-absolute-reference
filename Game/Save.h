@@ -38,7 +38,7 @@ extern SaveData* const Save;
 
 #define offsetofSaveData(m) (offsetof(SaveData, m) + 0x100 - sizeof(void*) * ((sizeof(SaveData) / sizeof(void*)) + (sizeof(SaveData) % sizeof(void*) != 0)))
 
-// When accessing EEPROM to save/load save data, use these.
+// When accessing EEP-ROM to read/write save data, use these.
 #define WriteSave(m) WriteEeprom(offsetofSaveData(m), &Save->m, sizeof(Save->m));
 #define ReadSave(m) ReadEeprom(offsetofSaveData(m), &Save->m, sizeof(Save->m));
 

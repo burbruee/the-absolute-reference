@@ -1,18 +1,19 @@
-#include "Game/Player.h"
-#include "Game/Ranking.h"
-#include "Game/Entity.h"
-#include "Game/Input.h"
-#include "Game/ShowText.h"
-#include "Game/Debug.h"
-#include "Game/BuildData.h"
-#include "Game/RegionWarning.h"
-#include "Game/Fixed.h"
-#include "Game/Setting.h"
-#include "Game/Sound.h"
-#include "Game/Frame.h"
-#include "Game/Button.h"
-#include "Game/SpriteInit.h"
-#include "Game/HwData.h"
+#include "Player.h"
+#include "Ranking.h"
+#include "Entity.h"
+#include "Input.h"
+#include "ShowText.h"
+#include "Debug.h"
+#include "BuildData.h"
+#include "RegionWarning.h"
+#include "Fixed.h"
+#include "Setting.h"
+#include "Sound.h"
+#include "Frame.h"
+#include "Button.h"
+#include "SpriteInit.h"
+#include "HwData.h"
+#include "MemCheck.h"
 #include "Platform/Util/Macros.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -20,7 +21,7 @@
 RegionWarning CurrentRegionWarning;
 
 static void InitVideo();
-static void _0x6000AE0();
+static void SetSystemGraphicDataPtr();
 static void _0x6000AEC();
 
 // TODO: Lots of undefined things here.
@@ -33,11 +34,11 @@ static void _0x6000AEC();
 // timing/input/rendering/audio done where the code waits on vsync.
 void main() {
 	bool canExitMemCheck = false;
-	void* sequenceEntry = (*SequenceDataTablePtr)[7];
+	SystemGraphicData* graphicData = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
 
 	// System init.
 	_0x602ACB0();
-	NumScreenFrames = 0u;
+	ScreenTime = 0u;
 	NumVideoSetters = 0u;
 	InitSound();
 	PlaySoundEffect(SOUNDEFFECT_READY);
@@ -49,13 +50,13 @@ void main() {
 	InitEntities();
 	InitPalCycles();
 	_0x602419C();
-	_0x6000AE0();
+	SetSystemGraphicDataPtr();
 	InitTodaysBestRankings();
 	_0x6065644 = 0u;
 	_0x606564C = 0u;
 	InitNextPauseMode();
 	CurrentLoop = LOOP_DEMO;
-	_0x602AC68((*_0x607926C)->_0x118);
+	_0x602AC68(SystemGraphicDataPtr->_0x118);
 	SetPal(1u, 1u, _0x6030C7C);
 	_0x602BC50(0u);
 	SetPal(1u, 15u, _0x63B50);
@@ -119,11 +120,11 @@ void main() {
 	SetPal(81, 1, _0x67910);
 
 	bool charSoundMemCheck = false;
-	uint32_t *workRAMStatus = &MemCheckData[MEMCHECK_WORKRAM];
-	uint32_t *graphicsRAMStatus = &MemCheckData[MEMCHECK_GRAPHICSRAM];
-	uint32_t *paletteRAMStatus = &MemCheckData[MEMCHECK_PALETTERAM];
-	uint32_t *scaleRAMStatus = &MemCheckData[MEMCHECK_SCALERAM];
-	uint32_t *eepROMStatus = &MemCheckData[MEMCHECK_EEPROM];
+	uint32_t *workRamStatus = &MemCheckData[MEMCHECK_WORKRAM];
+	uint32_t *graphicsRamStatus = &MemCheckData[MEMCHECK_GRAPHICSRAM];
+	uint32_t *paletteRamStatus = &MemCheckData[MEMCHECK_PALETTERAM];
+	uint32_t *scaleRamStatus = &MemCheckData[MEMCHECK_SCALERAM];
+	uint32_t *eepRomStatus = &MemCheckData[MEMCHECK_EEPROM];
 
 	// Show memory check status.
 	//
@@ -163,16 +164,16 @@ void main() {
 			memCheckOK = "X"; \
 		} \
 		_0x600DDA0(146, 20 + 20 * row, memCheckOK, false);
-		SHOWMEMCHECKSTATUS(*workRAMStatus, "WORK RAM", 0);
-		SHOWMEMCHECKSTATUS(*graphicsRAMStatus & *paletteRAMStatus & *scaleRAMStatus, "VIDEO RAM", 1);
-		SHOWMEMCHECKSTATUS(*eepROMStatus, "EEP-ROM", 2);
+		SHOWMEMCHECKSTATUS(*workRamStatus, "WORK RAM", 0);
+		SHOWMEMCHECKSTATUS(*graphicsRamStatus & *paletteRamStatus & *scaleRamStatus, "VIDEO RAM", 1);
+		SHOWMEMCHECKSTATUS(*eepRomStatus, "EEP-ROM", 2);
 	}
 
 	SetFrontScanlinesColor(COLOR(0x00, 0x00, 0x00));
 	InitScanlinesBank(0);
 	int16_t var_13C = _0x6024B0C();
 	int16_t var_128 = var_13C;
-	_0x6024C3C(var_13C, 60, 266, sequenceEntry->_0x0);
+	_0x6024C3C(var_13C, 60, 266, graphicData->objectTable);
 
 	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
 		const char **messageUseOnly;
@@ -320,7 +321,7 @@ void main() {
 	_0x6024B78(var_128);
 	UpdateFrame();
 
-	CurrentScreen = SCREEN_DEVELOPER;
+	Screen = SCREEN_DEVELOPER;
 	_0x6009410(); // TODO: Reimplement this function next. Rename this Loop().
 }
 
@@ -384,8 +385,8 @@ static void InitVideo() {
 	SpriteNames[1] = SPRITENAME_TERMINATE;
 }
 
-static void _0x6000AE0() {
-	_0x607926C = (*SequenceDataTablePtr)[7];
+static void SetSystemGraphicDataPtr() {
+	SystemGraphicDataPtr = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
 }
 
 static void _0x6000AEC() {}

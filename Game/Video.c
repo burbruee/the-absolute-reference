@@ -329,7 +329,7 @@ void _0x6024244() {
 
 		case 2u:
 			if (!(var2->_0x2C & 0x8000)) {
-				if (NumScreenFramesOdd) {
+				if (ScreenTimeOdd) {
 					if ((var2->_0x2C & 0x20) || CurrentPauseMode >= PAUSEMODE_GAME) {
 						_0x60243E8(var2);
 					}
@@ -400,7 +400,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 	}
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
-		if (((*object)[0] & 0x8000u) == 0 || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0 ) {
+		if (((*object)[0] & 0x8000u) == 0 || ((ScreenTimeOdd + 1) & arg0->_0x2F) == 0 ) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 
@@ -528,7 +528,7 @@ void _0x602471C(struct_0x606006C* arg0) {
 
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
-		if (((*object)[0] & 0x8000u) == 0u || ((NumScreenFramesOdd + 1) & arg0->_0x2F) == 0u) {
+		if (((*object)[0] & 0x8000u) == 0u || ((ScreenTimeOdd + 1) & arg0->_0x2F) == 0u) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 			if (arg0->verticalHorizontal & 0x8000u) {

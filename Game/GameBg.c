@@ -8,7 +8,7 @@
 
 GameBg CurrentGameBg;
 
-static uint8_t AttractSection = 0u;
+static uint8_t DemoSection = 0u;
 
 static ROMDATA Color* const BgPalPtrs[] = {
 	PAL_BGMAPSECTION0,
@@ -64,15 +64,15 @@ void _0x6016A30(uint8_t arg0) {
 
 	CurrentGameBg._0x13 = 2;
 	CurrentGameBg._0x16[0] = 2;
-	if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
-		if (CurrentScreen == SCREEN_VERSUSDEMO) {
+	if (CurrentMainLoopState == MAINLOOP_DEMO) {
+		if (Screen == SCREEN_VERSUSDEMO) {
 			CurrentGameBg.index = 10;
 		}
-		else if (CurrentScreen == SCREEN_TWINDEMO) {
+		else if (Screen == SCREEN_TWINDEMO) {
 			CurrentGameBg.index = Rand(9u);
 		}
 		else {
-			CurrentGameBg.index = AttractSection;
+			CurrentGameBg.index = DemoSection;
 		}
 	}
 	else {
@@ -95,8 +95,8 @@ void _0x6016B40() {
 		SetBgDarkness(CurrentGameBg._0x1E, 63);
 		CurrentGameBg._0x13 = 3;
 		CurrentGameBg._0x16[0] = 2;
-		if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
-			CurrentGameBg.index = AttractSection;
+		if (CurrentMainLoopState == MAINLOOP_DEMO) {
+			CurrentGameBg.index = DemoSection;
 		}
 		else {
 			CurrentGameBg.index = CurrentGameBg._0x12;
@@ -153,7 +153,7 @@ void UpdateGameBg() {
 		if (CurrentGameBg._0x10 & 0x01u) {
 			_0x6016A30(0);
 		}
-		else if (!Attract && CurrentGameBg._0x13 == 1 && CurrentMainLoopState != MAINLOOP_TEST && !(GameFlags & GAME_VERSUS)) {
+		else if (!Demo && CurrentGameBg._0x13 == 1 && CurrentMainLoopState != MAINLOOP_TEST && !(GameFlags & GAME_VERSUS)) {
 			int16_t section1p = -1;
 			int16_t section2p = -1;
 			if (
@@ -181,8 +181,8 @@ void UpdateGameBg() {
 					CurrentGameBg._0x12 = section;
 					_0x6016A30(1);
 				}
-				if (AttractSection < section) {
-					AttractSection = section;
+				if (DemoSection < section) {
+					DemoSection = section;
 				}
 			}
 		}
@@ -196,8 +196,8 @@ void UpdateGameBg() {
 				SetBgDarkness(CurrentGameBg._0x1E, 63);
 				CurrentGameBg._0x13 = 3u;
 				CurrentGameBg._0x16[0] = 2;
-				if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
-					CurrentGameBg.index = AttractSection;
+				if (CurrentMainLoopState == MAINLOOP_DEMO) {
+					CurrentGameBg.index = DemoSection;
 				}
 				else {
 					CurrentGameBg.index = CurrentGameBg._0x12;

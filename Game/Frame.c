@@ -14,9 +14,9 @@
 
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
-bool NumScreenFramesOdd;
+bool ScreenTimeOdd;
 
-uint32_t NumScreenFrames;
+uint32_t ScreenTime;
 
 uint32_t RandScale;
 
@@ -29,8 +29,8 @@ bool TestModeDisabled;
 uint16_t _0x6060024;
 uint32_t _0x6060028;
 // TODO: Replace all vblank data with macros, so atomic types can be used.
-volatile uint32_t NumVblanks;
-volatile bool VblankFinished;
+uint32_t NumVblanks;
+bool VblankFinished;
 
 uint32_t _0x6065644;
 uint32_t _0x6065648;
@@ -48,7 +48,7 @@ void _0x602ACB0() {
 }
 
 bool UpdateFrame() {
-	NumScreenFramesOdd = NumScreenFrames % 2u;
+	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
 	_0x60237DE();
@@ -72,7 +72,7 @@ bool UpdateFrame() {
 		startTestMode = true;
 	}
 
-	NumScreenFrames++;
+	ScreenTime++;
 	_0x6065644++;
 	_0x6065648++;
 
@@ -80,7 +80,7 @@ bool UpdateFrame() {
 }
 
 bool _0x602AECA() {
-	NumScreenFramesOdd = NumScreenFrames % 2u;
+	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
 	UpdatePlayers();
@@ -101,7 +101,7 @@ bool _0x602AECA() {
 		startTestMode = true;
 	}
 
-	NumScreenFrames++;
+	ScreenTime++;
 	_0x6065644++;
 	_0x6065648++;
 
@@ -110,7 +110,7 @@ bool _0x602AECA() {
 
 bool UpdateGame() {
 	UpdateInputs();
-	NumScreenFramesOdd = NumScreenFrames % 2u;
+	ScreenTimeOdd = ScreenTime % 2u;
 	InitSpriteLayers();
 	UpdateEntities();
 	UpdatePlayers();
@@ -123,7 +123,7 @@ bool UpdateGame() {
 	WriteSpriteLayers();
 	_0x6025078();
 	NumSprites = SPRITE_FIRST;
-	NumScreenFrames++;
+	ScreenTime++;
 	_0x6065644++;
 	_0x6065648++;
 	_0x602523C();
@@ -139,21 +139,21 @@ bool UpdateGame() {
 	}
 }
 
-static ButtonInput AttractButtonsOld[NUMPLAYERS] = { BUTTON_NONE, BUTTON_NONE };
+static ButtonInput DemoButtonsOld[NUMPLAYERS] = { BUTTON_NONE, BUTTON_NONE };
 
-bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
+bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	UpdateInputs();
 	ButtonInput systemButtons2p = SystemButtonsDown[PLAYER2];
 	ButtonInput systemButtons1p = SystemButtonsDown[PLAYER1];
-	NumScreenFramesOdd = NumScreenFrames % 2u;
+	ScreenTimeOdd = ScreenTime % 2u;
 	SystemButtonsDown[PLAYER1] = *buttonsDown1p;
 	SystemButtonsDown[PLAYER2] = *buttonsDown2p;
 	GameButtonsDown[PLAYER1] = *buttonsDown1p;
 	GameButtonsDown[PLAYER2] = *buttonsDown2p;
-	GameButtonsNew[PLAYER1] = ~AttractButtonsOld[PLAYER1] & GameButtonsDown[PLAYER1];
-	GameButtonsNew[PLAYER2] = ~AttractButtonsOld[PLAYER2] & GameButtonsDown[PLAYER2];
-	AttractButtonsOld[PLAYER1] = GameButtonsDown[PLAYER1];
-	AttractButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
+	GameButtonsNew[PLAYER1] = ~DemoButtonsOld[PLAYER1] & GameButtonsDown[PLAYER1];
+	GameButtonsNew[PLAYER2] = ~DemoButtonsOld[PLAYER2] & GameButtonsDown[PLAYER2];
+	DemoButtonsOld[PLAYER1] = GameButtonsDown[PLAYER1];
+	DemoButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
 
 	InitSpriteLayers();
 	_0x60237DE();
@@ -171,7 +171,7 @@ bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	WriteSpriteLayers();
 	_0x6025078();
 	NumSprites = SPRITE_FIRST;
-	NumScreenFrames++;
+	ScreenTime++;
 	_0x6065644++;
 	_0x6065648++;
 	_0x602523C();

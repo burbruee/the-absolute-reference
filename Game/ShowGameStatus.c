@@ -28,7 +28,7 @@ void ShowNextLabel(Player* player, int16_t x) {
 			player->nextScaleV = F16(8, 0x00);
 			player->nextScaleA = F16(1, 0x00);
 		}
-		else if ((NumScreenFrames % 32u) == 0u && player->numItemBarBlocks > 17u) {
+		else if ((ScreenTime % 32u) == 0u && player->numItemBarBlocks > 17u) {
 			player->nextScale = F16(0, 0x00);
 			player->nextScaleV = (player->numItemBarBlocks - 17) << 9;
 			player->nextScaleA = (player->numItemBarBlocks - 17) << 5;
@@ -67,7 +67,7 @@ void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 			player->levelScaleV -= F16(0, 0x40);
 		}
 
-		if (NumScreenFrames % 20) {
+		if (ScreenTime % 20) {
 			player->levelScale = F16(0, 0x00);
 			player->levelScaleV = F16(4, 0x00);
 		}
@@ -177,7 +177,7 @@ void ShowItemBar(Player* player) {
 	uint8_t palNum = 13u;
 	int16_t x = player->num == PLAYER1 ? 111 : 197;
 
-	if (player->numItemBarBlocks == 20u && NumScreenFrames % 4u) {
+	if (player->numItemBarBlocks == 20u && ScreenTime % 4u) {
 		palNum = 153u;
 	}
 
@@ -342,9 +342,9 @@ void ShowOtherItemDescriptions(Item* item) {
 
 // TODO: Name the objects used here.
 void _0x600FC50() {
-	if (NumScreenFrames & 0x60) {
+	if (ScreenTime & 0x60) {
 		int16_t y, x;
-		if (Attract) {
+		if (Demo) {
 			y = 170;
 		}
 		else {
@@ -398,7 +398,7 @@ void _0x600FC50() {
 }
 
 void ShowStartRequirement(Player* player) {
-	if ((NumScreenFrames & 0x60) && CanStart(player->num, false)) {
+	if ((ScreenTime & 0x60) && CanStart(player->num, false)) {
 		const uint16_t layer = 125u;
 		if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
 			if (player->num == PLAYER1) {
@@ -488,7 +488,7 @@ void ShowCredits() {
 		started |= STARTED_PLAYER2;
 	}
 
-	if (Attract) {
+	if (Demo) {
 		started = STARTED_NONE;
 	}
 
@@ -564,7 +564,7 @@ void ShowModeCodes(Player* player) {
 		layer = LAYER_GAMESTATUS;
 	}
 	else {
-		if (CurrentMainLoopState == MAINLOOP_ATTRACT) {
+		if (CurrentMainLoopState == MAINLOOP_DEMO) {
 			y = 180;
 			x = FieldPos[(player->num + 2) * 2];
 			layer = LAYER_GAMESTATUS;
@@ -633,7 +633,7 @@ void ShowChallengerMode(Player* player) {
 
 void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums) {
 	bool gold = false;
-	if (player->gravity >= F32(20, 0x0000) && NumScreenFrames % 4u) {
+	if (player->gravity >= F32(20, 0x0000) && ScreenTime % 4u) {
 		gold = true;
 	}
 
@@ -730,7 +730,7 @@ void ShowPlayersStatus() {
 			ShowVersusRounds(player);
 			ShowLevelLabel(player, 167, playerNum == PLAYER1 ? 111 : 178);
 
-			if (Attract) {
+			if (Demo) {
 				ShowLevel(player, NextSectionLevels[2], levelY, playerNum == PLAYER1 ? 111 : 185, *progressPalNum);
 			}
 			else {
@@ -745,7 +745,7 @@ void ShowPlayersStatus() {
 
 		if (Players->clearTime < TIME(0, 20, 0)) {
 			uint8_t versusTimePalNum;
-			if ((NumScreenFrames & 4u) || Players->clearTime == 0u) {
+			if ((ScreenTime & 4u) || Players->clearTime == 0u) {
 				// TODO: Name this palette number.
 				versusTimePalNum = 156u;
 			}

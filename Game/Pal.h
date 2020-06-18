@@ -5,7 +5,7 @@
 
 typedef struct PalData {
 	char header[8];
-	Color data[0x22B * NUMPALCOLORS_4BPP];
+	Color data[555u * NUMPALCOLORS_4BPP];
 } PalData;
 
 extern ROMDATA PalData Pal;
@@ -13,7 +13,7 @@ extern ROMDATA PalData Pal;
 
 typedef struct PalTableData {
 	char header[8];
-	Color* palettes[133];
+	Color* data[133];
 } PalTableData;
 
 // The palettes table contains palette lists; each list in the table is an

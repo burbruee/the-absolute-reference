@@ -97,7 +97,7 @@ static uint32_t xtrct(uint32_t Rm, uint32_t Rn) {
 uint32_t RandSeed;
 
 uint32_t Rand(uint32_t upperBound) {
-	RandSeed = RandScale * ((RandSeed << 3) - RandSeed + NumScreenFrames);
+	RandSeed = RandScale * ((RandSeed << 3) - RandSeed + ScreenTime);
 	RandSeed = SHUFFLE(RandSeed, 1, 0, 2, 3);
 
 	// TODO: For SH-2 ports, change this part to generate result using inline

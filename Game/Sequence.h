@@ -1,7 +1,14 @@
 #pragma once
 
+#include "Object.h"
 #include "PlatformTypes.h"
+#include "Macros.h"
 
-extern ROMDATA void* SequenceDataTable[13];
+extern ROMDATA void* SequenceDataTable[17];
 
-extern ROMDATA void* _0x607926C;
+#define SEQUENCE_SYSTEMGRAPHIC 7u
+typedef struct SystemGraphicData {
+	ObjectData* objectTable;
+	int16_t* _0x118;
+} SystemGraphicData;
+extern ROMDATA SystemGraphicData* SystemGraphicDataPtr;

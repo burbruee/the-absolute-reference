@@ -936,7 +936,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 			else if (player->modeFlags & MODE_NORMAL) {
 				ShowRankingScore(player->score, 148, rankingX + 24);
 			}
-			uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
+			uint8_t flashPal = ScreenTime % 4 ? 8u : 0u;
 			if (entryFlash == ENTRYFLASH_TRUE) {
 				ShowRankingName(newRanking->nameEntries->name, 183, rankingX + 36, flashPal, 110u);
 			}
@@ -955,7 +955,7 @@ static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entr
 		return;
 	}
 
-	uint8_t flashPalNum = NumScreenFrames % 4 ? 8u : 0u;
+	uint8_t flashPalNum = ScreenTime % 4 ? 8u : 0u;
 	if (entryFlash == ENTRYFLASH_TRUE) {
 		ShowRankingName(newRanking->nameEntries->name, 117, labelX + 36, flashPalNum, 110u);
 	}
@@ -982,7 +982,7 @@ static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash
 
 	ShowClearTime(newRanking->player->clearTime, 130, 121);
 
-	uint8_t flashPal = NumScreenFrames % 4 ? 8u : 0u;
+	uint8_t flashPal = ScreenTime % 4 ? 8u : 0u;
 
 	ShowRankingName(newRanking->nameEntries[PLAYER1].name, 167, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER1].numChars > 3 ? flashPal : 0u, 110u);
 	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124, flashPal, 110u);

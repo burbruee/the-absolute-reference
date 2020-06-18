@@ -9,9 +9,19 @@
 // frame.
 extern PauseMode CurrentPauseMode;
 
-extern bool NumScreenFramesOdd;
+// True if ScreenTime is odd.
+extern bool ScreenTimeOdd;
 
-extern uint32_t NumScreenFrames;
+// Number of frames in the current screen. Reset when the screen transitions to
+// another screen.
+extern uint32_t ScreenTime;
+
+// Total number of frames since startup.
+extern uint32_t Uptime;
+
+// Total number of frames spent in the demo; it's really just the time not
+// spent in-game, but is copied into Save->demoWaitTime.
+extern uint32_t DemoWaitTime;
 
 // Platforms have to update RandScale by adding a value proportional to the
 // amount of time remaining until the next vblank after the code has finished
@@ -30,11 +40,8 @@ extern bool TestModeDisabled;
 extern uint16_t _0x6060024;
 extern uint32_t _0x6060028;
 
-// TODO: Figure out a way to make these atomic for SDL2 and volatile for
-// PsikyoSH. Or even make them PsikyoSH-specific, and control frame updating
-// some other way for SDL2 etc.
-extern volatile uint32_t NumVblanks;
-extern volatile bool VblankFinished;
+extern uint32_t NumVblanks;
+extern bool VblankFinished;
 
 void _0x602ACB0();
 void _0x602ACE0(uint16_t);
@@ -60,4 +67,4 @@ void Vblank();
 bool UpdateFrame();
 bool _0x602AECA();
 bool UpdateGame();
-bool UpdateAttract(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);
+bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);

@@ -298,7 +298,7 @@ struct Player {
 	char rankingCode[NUMRANKINGCODEDIGITS];
 };
 
-extern bool Attract;
+extern bool Demo;
 
 // TODO: Rename the BIT constants once they're understood. Also, remove the
 // entirely unused BIT constants, once all game code is written.

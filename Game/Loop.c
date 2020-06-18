@@ -115,7 +115,7 @@ void InitGame() {
 MainLoopState RunGameLoop() {
 	bool loop = true;
 	CurrentGameLoopState = 5;
-	NumScreenFrames = 0u;
+	ScreenTime = 0u;
 
 	while (loop) {
 		switch (CurrentGameLoopState) {
@@ -140,8 +140,8 @@ MainLoopState RunGameLoop() {
 		}
 	}
 
-	CurrentScreen = SCREEN_NORMALRANKING;
-	return MAINLOOP_ATTRACT;
+	Screen = SCREEN_NORMALRANKING;
+	return MAINLOOP_DEMO;
 }
 
 // TODO
@@ -379,7 +379,7 @@ void RunMainLoop() {
 		InitSeed += Rand(1192u) + 1u;
 
 		switch (CurrentMainLoopState) {
-			case MAINLOOP_ATTRACT:
+			case MAINLOOP_DEMO:
 				CurrentMainLoopState = RunAttractLoop();
 				continue;
 
@@ -395,6 +395,6 @@ void RunMainLoop() {
 				break;
 		}
 
-		CurrentMainLoopState = MAINLOOP_ATTRACT;
+		CurrentMainLoopState = MAINLOOP_DEMO;
 	}
 }

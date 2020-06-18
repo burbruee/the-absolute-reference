@@ -37,7 +37,7 @@
 
 const uint16_t NextSectionLevels[10] = {100u, 200u, 300u, 400u, 500u, 600u, 700u, 800u, 900u, 999u};
 
-bool Attract;
+bool Demo;
 
 GameFlag GameFlags;
 
@@ -231,10 +231,10 @@ void InitPlayer(PlayerNum playerNum) {
 	}
 
 	// Block randomizer.
-	if ((GameFlags & GAME_DOUBLES) && !Attract) {
+	if ((GameFlags & GAME_DOUBLES) && !Demo) {
 		InitSeed += Rand(1192u) + 1u;
 	}
-	if ((GameFlags & GAME_TWIN) && !Attract) {
+	if ((GameFlags & GAME_TWIN) && !Demo) {
 		InitSeed += Rand(1192u) + 1u;
 	}
 	player->seed = InitSeed;
@@ -497,7 +497,7 @@ void UpdatePlayerPlaying(Player* player) {
 void UpdatePlayerAbsent(Player* player) {
 	if (player->otherPlayer->nowFlags & NOW_SELECTING) {
 		// TODO: Detail how this works. It controls displaying the "PLEASE WAIT" message on and off.
-		if (NumScreenFrames & 0x60) {
+		if (ScreenTime & 0x60) {
 			DisplayObject(OBJECT_PLEASEWAIT, 120, player->screenPos[0], 0u, 110u);
 		}
 	}
@@ -1021,7 +1021,7 @@ void UpdateSiren(Player* player) {
 
 	// Play the siren while there's more than ten squares in those top five
 	// rows.
-	if (numBlocks > 10 && NumScreenFrames % 20u == 0u) {
+	if (numBlocks > 10 && ScreenTime % 20u == 0u) {
 		int16_t sirenIndex = numBlocks / 10;
 		if (sirenIndex > lengthof(SirenSoundEffects) - 1) {
 			sirenIndex = 4;
@@ -2201,7 +2201,7 @@ uint8_t GenNextBlockNum(Player* player) {
 		blockNum = GenNextInt(&player->seed, true) % 7;
 	}
 
-	if (!Attract) {
+	if (!Demo) {
 		blockNum %= 7;
 	}
 	return blockNum;
@@ -2291,7 +2291,7 @@ void UpdatePlayNext(Player* player) {
 	player->activeBlock = player->nextBlock;
 	player->activeBlockItemType = player->nextBlockItemType;
 	uint8_t nextBlockNum;
-	for (uint8_t numRetries = Attract ? 6u : 5u; numRetries != 0u; numRetries--) {
+	for (uint8_t numRetries = Demo ? 6u : 5u; numRetries != 0u; numRetries--) {
 		nextBlockNum = GenNextBlockNum(player);
 		if (RANDOMIZER_USEHISTORY) {
 			int16_t numRejects = 0;
@@ -2909,7 +2909,7 @@ void UpdatePlayVersusOver(Player* player) {
 	}
 	else if (GameFlags & winnerFlag) {
 		objectIndex = 1u;
-		if (NumScreenFrames % 4) {
+		if (ScreenTime % 4) {
 			palNum = 8u;
 		}
 		else {
@@ -3121,8 +3121,8 @@ void GenNextItem(Player* player) {
 		bool retry = true;
 		while (retry) {
 			uint16_t sumMax;
-			if (!Attract || CurrentScreen != SCREEN_VERSUSDEMO) {
-				sumMax = (NumScreenFrames + Rand(4750u)) % seedSum + 1u;
+			if (!Demo || Screen != SCREEN_VERSUSDEMO) {
+				sumMax = (ScreenTime + Rand(4750u)) % seedSum + 1u;
 			}
 			else if (player->num == PLAYER1) {
 				sumMax = 0u;

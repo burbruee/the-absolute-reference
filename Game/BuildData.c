@@ -12,8 +12,9 @@
 // the original BuildDate in TAP, alongside the BuildDate in TGM2.
 const char* BuildDate = "NA Dec 12 11:54";
 
-const uint16_t _0x40010 = 555u;
-const uint16_t NumBgMaps = 11u;
+const uint16_t PalDataLength = lengthoffield(PalData, data);
+
+const uint16_t NumBgMaps = lengthof(BgMapTable);
 
 const uint32_t _0x40014 = 0u;
 const uint16_t NumPalLists = 19u;
@@ -23,7 +24,7 @@ const int16_t NumObjects = 1682;
 
 const int16_t _0x4001E = 516;
 
-const Color** PalDataTablePtr = &Pal.data;
+const Color** PalDataPtr = &Pal.data;
 const BgMap*** BgMapTablePtr = &BgMapTable;
 
 // TODO: Currently the code doesn't ensure the background maps are stored
@@ -38,7 +39,7 @@ const ObjectData** ObjectDataTablePtr = &Objects.data;
 //const MidiData** MidiDataPtr;
 // TODO
 //const RectData** RectDataTablePtr;
-const Color*** PalTablePtr = &PalTable.palettes;
+const Color*** PalTableDataPtr = &PalTable.data;
 const uint8_t** ChecksumDataPtr = &Checksum.data;
 const uint32_t _0x40044 = 8u;
-const Color*** _0x40048 = &PalTable.palettes;
+const Color*** _0x40048 = &PalTable.data;

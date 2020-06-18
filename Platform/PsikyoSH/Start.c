@@ -2,7 +2,7 @@
 // TAP code. Or just try to get this C code, with some inline SH-2 assembly, to
 // work.
 
-#include "Start.h"
+#include "MemCheck.h"
 #include "Game/HwSprite.h"
 #include "PlatformTypes.h"
 #include "Game/HwData.h"
@@ -13,7 +13,6 @@
 // TODO: In the SH-2 assembly, define the interrupt vector table. It
 // immediately precedes _start, and is in ROM address range 0x00000000 to 0x000003FF.
 
-uint32_t MemCheckData[NUMMEMCHECKS];
 
 volatile SpriteScale *Scales = (volatile SpriteScale*)SCALERAM;
 
