@@ -1007,9 +1007,22 @@ void SetBgDarkness(int16_t bgIndex, int16_t darkness) {
 	Bgs[bgIndex].darkness = darkness;
 }
 
+void SetScanlinesBank(uint8_t bankNum) {
+	VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
+}
+
+void VideoSetScanlinesBank(void* unused0, void* unused1, void* unused2) {
+	ScanlinesBank[0] = 8u;
+}
+
 void _0x60294C0(uint8_t arg0) {
 	// TODO: Make a define for register 0x0B.
 	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | (arg0 & 0x07u);
+}
+
+void SetBackdropColor(Color color) {
+	VideoSetters[NumVideoSetters].set = VideoSetBackdropColor;
+	VideoSetters[NumVideoSetters].args[0] = color;
 }
 
 void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2) {
@@ -1299,5 +1312,15 @@ struct {
 void _0x602AB9E() {
 	for (size_t i = 0; i < lengthof(_0x6064550); i++) {
 		_0x6064550[i].offset_0 = 0x00000000u;
+	}
+}
+
+// TODO: Consider changing arg0 to a struct type. Elements [1, 3] of the array
+// could be "int16_t argData[3]", and arg0[0] could be some sort of 16-bit type
+// value.
+void _0x602AC68(int16_t* arg0) {
+	int16_t var0 = arg0[0];
+	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {
+		_0x602A96A(var1[1], ((int32_t)var1[2] << 16) | var1[3]);
 	}
 }

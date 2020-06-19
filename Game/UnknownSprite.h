@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Video.h"
+
 // _0x602B7D8
 // _0x602B84A
 // _0x602B8BC
@@ -11,7 +13,7 @@ void _0x602BA70();
 // _0x602BB0C
 // _0x602BBA6
 // _0x602BC4A
-// _0x602BC50
+void _0x602BC50(uint8_t);
 // _0x602BC58
 // _0x602BC60
 // _0x602BC68

@@ -1,10 +1,10 @@
 #pragma once
 
-typedef enum RegionWarning {
+typedef enum RegionWarningState {
 	REGIONWARNING_JAPAN,
 	REGIONWARNING_SKIP,
 	REGIONWARNING_KOREA,
 	REGIONWARNING_REGIONSETTING
-} RegionWarning;
-extern RegionWarning CurrentRegionWarning;
+} RegionWarningState;
+extern RegionWarningState RegionWarning;
 

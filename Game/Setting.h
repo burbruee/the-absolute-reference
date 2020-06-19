@@ -28,7 +28,7 @@ typedef enum Setting {
 	SETTING_PRICE1P,
 	SETTING_PRICE2P,
 	SETTING_INDEX9,
-	SETTING_INDEX10,
-	NUMSETTINGS = 20
+	SETTING_SETTINGSCHECKSUM,
+	NUMSETTINGS // The number of actually-used settings. The number of available settings is fixed at 16.
 } Setting;
-extern uint16_t Settings[NUMSETTINGS];
+extern uint16_t Settings[16];

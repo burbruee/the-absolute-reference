@@ -23,6 +23,8 @@ extern uint32_t Uptime;
 // spent in-game, but is copied into Save->demoWaitTime.
 extern uint32_t DemoWaitTime;
 
+extern uint16_t _0x606564C;
+
 // Platforms have to update RandScale by adding a value proportional to the
 // amount of time remaining until the next vblank after the code has finished
 // processing a frame. A number of CPU cycles would suffice. A time value would

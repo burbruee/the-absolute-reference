@@ -10,7 +10,7 @@ typedef enum MemCheck {
 	MEMCHECK_PALETTERAM,
 	MEMCHECK_SCALERAM,
 	MEMCHECK_EEPROM, // EEP-ROM checking appears to have been removed from the code.
-	MEMCHECK_ROMCHECKSUM,
+	MEMCHECK_PROGRAMCHECKSUM,
 	NUMMEMCHECKS
 } MemCheck;
 extern uint32_t MemCheckData[NUMMEMCHECKS];

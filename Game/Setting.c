@@ -1,3 +1,3 @@
 #include "Setting.h"
 
-uint16_t Settings[NUMSETTINGS];
+uint16_t Settings[16];

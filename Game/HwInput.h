@@ -49,5 +49,5 @@ typedef enum ServiceInput {
 	SERVICE_COIN2 = PLAYER2 + 1,
 	SERVICE_ADDSERVICE = 1 << (NUMPLAYERS + 0),
 	SERVICE_TEST = 1 << (NUMPLAYERS + 3),
-	SERVICE_TILT = 1 << (NUMPLAYERS + 4) // TODO: Consider renaming to SERVICE_PAUSE.
+	SERVICE_TILT = 1 << (NUMPLAYERS + 4) // TODO: Consider renaming to SERVICE_DEBUG.
 } ServiceInput;

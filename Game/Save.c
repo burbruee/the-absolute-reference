@@ -85,8 +85,8 @@ bool LoadPlayStatus() {
 }
 
 void SaveProgramChecksum(uint16_t programChecksum) {
-	WriteEeprom(0xFCu, &programChecksum, sizeof(uint16_t));
 	Save->programChecksum = programChecksum;
+	WriteSave(programChecksum);
 }
 
 bool LoadProgramChecksum(uint16_t programChecksum) {

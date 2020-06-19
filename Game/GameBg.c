@@ -64,7 +64,7 @@ void _0x6016A30(uint8_t arg0) {
 
 	CurrentGameBg._0x13 = 2;
 	CurrentGameBg._0x16[0] = 2;
-	if (CurrentMainLoopState == MAINLOOP_DEMO) {
+	if (MainLoop == MAINLOOP_DEMO) {
 		if (Screen == SCREEN_VERSUSDEMO) {
 			CurrentGameBg.index = 10;
 		}
@@ -95,7 +95,7 @@ void _0x6016B40() {
 		SetBgDarkness(CurrentGameBg._0x1E, 63);
 		CurrentGameBg._0x13 = 3;
 		CurrentGameBg._0x16[0] = 2;
-		if (CurrentMainLoopState == MAINLOOP_DEMO) {
+		if (MainLoop == MAINLOOP_DEMO) {
 			CurrentGameBg.index = DemoSection;
 		}
 		else {
@@ -153,7 +153,7 @@ void UpdateGameBg() {
 		if (CurrentGameBg._0x10 & 0x01u) {
 			_0x6016A30(0);
 		}
-		else if (!Demo && CurrentGameBg._0x13 == 1 && CurrentMainLoopState != MAINLOOP_TEST && !(GameFlags & GAME_VERSUS)) {
+		else if (!Demo && CurrentGameBg._0x13 == 1 && MainLoop != MAINLOOP_TEST && !(GameFlags & GAME_VERSUS)) {
 			int16_t section1p = -1;
 			int16_t section2p = -1;
 			if (
@@ -196,7 +196,7 @@ void UpdateGameBg() {
 				SetBgDarkness(CurrentGameBg._0x1E, 63);
 				CurrentGameBg._0x13 = 3u;
 				CurrentGameBg._0x16[0] = 2;
-				if (CurrentMainLoopState == MAINLOOP_DEMO) {
+				if (MainLoop == MAINLOOP_DEMO) {
 					CurrentGameBg.index = DemoSection;
 				}
 				else {

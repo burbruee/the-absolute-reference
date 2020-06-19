@@ -1,4 +1,5 @@
 #include "Loop.h"
+#include "Screen.h"
 #include "Player.h"
 #include "Item.h"
 #include "ShowText.h"
@@ -17,11 +18,11 @@
 typedef enum GameLoopState {
 	GAMELOOP_CONTINUE = 0,
 	GAMELOOP_STOP = 2,
-	GAMELOOP_START = 5,
+	GAMELOOP_INIT = 5,
 	GAMELOOP_TEST = 7,
-	GAMELOOP_GAME = 8
+	GAMELOOP_START = 8
 } GameLoopState;
-static uint32_t CurrentGameLoopState;
+static GameLoopState GameLoop;
 
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
 static uint8_t _0x6079296;
@@ -76,7 +77,7 @@ void InitGame() {
 	CurrentGameMusic = GAMEMUSIC_0;
 	_0x6079299 = 0u;
 
-	CurrentGameLoopState = GAMELOOP_START;
+	GameLoop = GAMELOOP_INIT;
 
 	InitPlayers();
 	InitItems();
@@ -109,33 +110,34 @@ void InitGame() {
 	AlphaValues[2] = 0x00u;
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x66u;
-	UpdateFrame(); // TODO
+	UpdateFrame();
 }
 
 MainLoopState RunGameLoop() {
 	bool loop = true;
-	CurrentGameLoopState = 5;
+	InitGame();
+	GameLoop = GAMELOOP_INIT;
 	ScreenTime = 0u;
 
 	while (loop) {
-		switch (CurrentGameLoopState) {
+		switch (GameLoop) {
 		case GAMELOOP_STOP:
 			loop = false;
 			break;
 
-		case GAMELOOP_START:
-			CurrentGameLoopState = StartGameLoop();
+		case GAMELOOP_INIT:
+			GameLoop = InitGameLoop();
 			break;
 
 		case GAMELOOP_TEST:
 			return MAINLOOP_TEST;
 
-		case GAMELOOP_GAME:
-			CurrentGameLoopState = GameLoop();
+		case GAMELOOP_START:
+			GameLoop = StartGameLoop();
 			break;
 
 		default:
-			CurrentGameLoopState = GAMELOOP_GAME;
+			GameLoop = GAMELOOP_START;
 			break;
 		}
 	}
@@ -155,7 +157,7 @@ uint8_t NumVersusRoundsSetting() {
 // TODO: ...
 
 uint16_t GameStartPlayer;
-GameLoopState GameLoop() {
+GameLoopState StartGameLoop() {
 	_0x602AA4C();
 
 	if (UpdateFrame()) return GAMELOOP_TEST;
@@ -371,30 +373,35 @@ static void UpdateGameMusic() {
 	// TODO
 }
 
-MainLoopState CurrentMainLoopState;
+MainLoopState MainLoop;
 void RunMainLoop() {
+	// TODO: Change "while (true)" here to something like "while (!QUIT)", so
+	// ports to OS's can exit the game. Usage of QUIT will have to be put
+	// throughout the code, so a quit event can cause the program to quit. For
+	// platforms that shouldn't have a quit condition, just define QUIT to
+	// "false".
 	while (true) {
 		UpdateFrame();
 
 		InitSeed += Rand(1192u) + 1u;
 
-		switch (CurrentMainLoopState) {
+		switch (MainLoop) {
 			case MAINLOOP_DEMO:
-				CurrentMainLoopState = RunAttractLoop();
+				MainLoop = RunDemoLoop();
 				continue;
 
 			case MAINLOOP_GAME:
-				CurrentMainLoopState = RunGameLoop();
+				MainLoop = RunGameLoop();
 				continue;
 
 			case MAINLOOP_TEST:
-				CurrentMainLoopState = RunTestLoop();
+				MainLoop = RunTestLoop();
 				break;
 
 			default:
 				break;
 		}
 
-		CurrentMainLoopState = MAINLOOP_DEMO;
+		MainLoop = MAINLOOP_DEMO;
 	}
 }

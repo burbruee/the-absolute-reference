@@ -108,8 +108,8 @@ void InitTodaysBestRankings();
 // TODO: Functions from _0x6011D28 to _0x6012828. I think they handle the
 // rankings shown in the demo screen.
 uint32_t RankingsChecksum();
+void CheckSaveRankings();
 void SaveRankings();
-void ForceSaveRankings();
 bool LoadRankings();
 
 void NextPlayRanking(Player *player);

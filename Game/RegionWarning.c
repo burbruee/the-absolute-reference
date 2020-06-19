@@ -1,3 +1,3 @@
 #include "RegionWarning.h"
 
-RegionWarning CurrentRegionWarning;
+RegionWarningState RegionWarning;

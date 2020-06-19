@@ -15,8 +15,10 @@
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
 bool ScreenTimeOdd;
-
 uint32_t ScreenTime;
+uint32_t Uptime;
+uint32_t DemoWaitTime;
+uint16_t _0x606564C;
 
 uint32_t RandScale;
 
@@ -28,12 +30,8 @@ bool TestModeDisabled;
 
 uint16_t _0x6060024;
 uint32_t _0x6060028;
-// TODO: Replace all vblank data with macros, so atomic types can be used.
 uint32_t NumVblanks;
 bool VblankFinished;
-
-uint32_t _0x6065644;
-uint32_t _0x6065648;
 
 void _0x602ACB0() {
 	_0x6060024 = 0xFFFFu;
@@ -65,7 +63,7 @@ bool UpdateFrame() {
 	ADVANCE_FRAME();
 
 	bool startTestMode;
-	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		startTestMode = false;
 	}
 	else {
@@ -73,8 +71,8 @@ bool UpdateFrame() {
 	}
 
 	ScreenTime++;
-	_0x6065644++;
-	_0x6065648++;
+	Uptime++;
+	DemoWaitTime++;
 
 	return startTestMode;
 }
@@ -94,7 +92,7 @@ bool _0x602AECA() {
 	ADVANCE_FRAME();
 
 	bool startTestMode;
-	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		startTestMode = false;
 	}
 	else {
@@ -102,8 +100,8 @@ bool _0x602AECA() {
 	}
 
 	ScreenTime++;
-	_0x6065644++;
-	_0x6065648++;
+	Uptime++;
+	DemoWaitTime++;
 
 	return startTestMode;
 }
@@ -124,14 +122,14 @@ bool UpdateGame() {
 	_0x6025078();
 	NumSprites = SPRITE_FIRST;
 	ScreenTime++;
-	_0x6065644++;
-	_0x6065648++;
+	Uptime++;
+	DemoWaitTime++;
 	_0x602523C();
 	_0x602DAD4();
 
 	ADVANCE_FRAME();
 
-	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
 	}
 	else {
@@ -172,14 +170,14 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	_0x6025078();
 	NumSprites = SPRITE_FIRST;
 	ScreenTime++;
-	_0x6065644++;
-	_0x6065648++;
+	Uptime++;
+	DemoWaitTime++;
 	_0x602523C();
 	_0x602DAD4();
 
 	ADVANCE_FRAME();
 
-	if (CurrentMainLoopState == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
 	}
 	else {

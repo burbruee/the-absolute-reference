@@ -355,7 +355,7 @@ static uint32_t RankingsChecksum() {
 	return ++checksum;
 }
 
-void SaveRankings() {
+void CheckSaveRankings() {
 	if (!Debug && RankingFlags) {
 		uint16_t checksum = RankingsChecksum();
 		Save->rankingsChecksum = checksum;
@@ -384,9 +384,9 @@ void SaveRankings() {
 	}
 }
 
-void ForceSaveRankings() {
+void SaveRankings() {
 	RankingFlags = RANKINGFLAG_ALL;
-	SaveRankings();
+	CheckSaveRankings();
 }
 
 bool LoadRankings() {
@@ -408,7 +408,7 @@ bool LoadRankings() {
 	if (checksum != (uint16_t)RankingsChecksum()) {
 		InitRankings();
 		RankingFlags = RANKINGFLAG_ALL;
-		SaveRankings();
+		CheckSaveRankings();
 		return false;
 	}
 	else {

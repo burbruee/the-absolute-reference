@@ -256,9 +256,12 @@ void _0x6026FDC(int16_t, int16_t);
 // TODO
 void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO
-void _0x60294C0(uint8_t arg0);
+void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't used it. -Brandon McGriff
+void VideoSetScanlinesBank(void*, void*, void*);
 // TODO
-void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2);
+void _0x60294C0(uint8_t arg0);
+void SetBackdropColor(Color color);
+void VideoSetBackdropColor(uintptr_t color, void*, void*);
 // TODO
 // Runs all the video setters.
 void SetVideo();
@@ -292,4 +295,5 @@ void _0x602AA4C();
 void _0x602AA64();
 void _0x602AB9E();
 // TODO
+void _0x602AC68(int16_t*);
 // NOTE: This should probably only contain functions from AllocSpriteLayerNames to _0x602AC68.

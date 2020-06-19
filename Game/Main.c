@@ -1,4 +1,7 @@
+#include "Main.h"
 #include "Player.h"
+#include "Save.h"
+#include "Screen.h"
 #include "Ranking.h"
 #include "Entity.h"
 #include "Input.h"
@@ -12,6 +15,7 @@
 #include "Frame.h"
 #include "Button.h"
 #include "SpriteInit.h"
+#include "UnknownSprite.h"
 #include "Loop.h"
 #include "HwData.h"
 #include "MemCheck.h"
@@ -19,7 +23,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-RegionWarning CurrentRegionWarning;
+ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
+
+RegionWarningState RegionWarning;
 
 static void InitVideo();
 static void SetSystemGraphicDataPtr();
@@ -33,7 +39,7 @@ static void _0x6000AEC();
 // Platform/PlatformFunctions.h.
 // Also, for SDL2, it will be single-threaded, with
 // timing/input/rendering/audio done where the code waits on vsync.
-void main() {
+int main() {
 	bool canExitMemCheck = false;
 	SystemGraphicData* graphicData = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
 
@@ -54,44 +60,46 @@ void main() {
 	SetSystemGraphicDataPtr();
 	InitTodaysBestRankings();
 	Uptime = 0u;
-	//_0x606564C = 0u; // Set, but never used.
+	_0x606564C = 0u; // Set, but never used.
 	DisablePause();
-	CurrentMainLoopState = MAINLOOP_DEMO;
+	MainLoop = MAINLOOP_DEMO;
 	_0x602AC68(SystemGraphicDataPtr->_0x118);
-	SetPal(1u, 1u, _0x6030C7C);
+	SetPal(1u, 1u, Pal1);
 	_0x602BC50(0u);
-	SetPal(1u, 15u, _0x63B50);
-	SetPal(158u, 1u, _0x68450);
-	SetPal(149u, 7u, _0x68250);
-	SetPal(156, 1u, _0x68190);
+	SetPal(1u, 15u, PALPTR(0xEB));
+	SetPal(158u, 1u, PALPTR(0x20F));
+	SetPal(149u, 7u, PALPTR(0x207));
+	SetPal(156, 1u, PALPTR(0x204));
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
-	InitScanlinesBank(0u);
+	SetScanlinesBank(0u);
 
-	// Save data reset, if the tilt DIP switch is active and player 1 button 1 is pressed.
+	// Reset save data if the tilt DIP switch is active and 1P button 1 is
+	// pressed.
 	if ((~INPUTS[INPUT_SERVICE] & SERVICE_TILT) && (~INPUTS[INPUT_BUTTONS1P] & BUTTON_1)) {
-		_0x600ABD2();
+		InitSettings();
 		InitPlayStatus();
-		InitBestScore();
-		_0x600ABEE();
-		BackupPlayStatus();
-		ForceSaveRankings();
-		BackupROMChecksum((uint16_t)MemCheckData[MEMCHECK_ROMCHECKSUM]);
+		InitRankings();
+		SaveSettings();
+		SavePlayStatus();
+		SaveRankings();
+		SaveProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]);
 	}
 
+	// TODO: Code below.
 	_0x602F8BC();
 	MemCheckData[MEMCHECK_EEPROM] = _0x600AB74();
 	MemCheckData[MEMCHECK_EEPROM] &= RestorePlayStatus();
 	MemCheckData[MEMCHECK_EEPROM] &= RestoreBestScore();
 	for (size_t section = 0u; section < 10u; section++) {
-		BestMasterSectionTimes[section] = Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data & 0xFFFFF;
-		TADeathSectionTimes[section] = TIME(0, 42, 0);
+		BestMasterSectionTimes[section] = RANKINGDATA_GETVALUE(Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data);
+		BestTaDeathSectionTimes[section] = TIME(0, 42, 0);
 	}
 
-	if (Settings[SETTING_SCREEN] == SCREENSETTING_REVERSE) {
+	if (Settings[SETTING_SCREEN] == SCREENSETTING_FLIP) {
 		VideoRegisters.screen |= 0xC0; // Set horizontal/vertical screen flip.
 	}
 
-	if (!RestoreROMChecksum((uint16_t)MemCheckData[MEMCHECK_ROMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
+	if (!RestoreROMChecksum((uint16_t)MemCheckData[MEMCHECK_PROGRAMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 		// Nothing here. There was probably code here that was
 		// commented out in the released version of TAP.
 		// TODO: Maybe TGM2 has the code?
@@ -110,8 +118,8 @@ void main() {
 	if ((EEPROM[0] & REGION_SETTING) == REGION_USACANADA) {
 		RegionUSACanada = true;
 	}
-	if (CurrentRegionWarning == REGIONWARNING_SKIP && (EEPROM[0] & REGION_SETTING) == REGION_JAPAN) {
-		CurrentRegionWarning = REGIONWARNING_JAPAN;
+	if (RegionWarning == REGIONWARNING_SKIP && (EEPROM[0] & REGION_SETTING) == REGION_JAPAN) {
+		RegionWarning = REGIONWARNING_JAPAN;
 	}
 
 	SetPal(0, 1, _0x6030CBC);
@@ -169,14 +177,14 @@ void main() {
 	}
 
 	SetFrontScanlinesColor(COLOR(0x00, 0x00, 0x00));
-	InitScanlinesBank(0);
+	SetScanlinesBank(0);
 	int16_t var_13C = _0x6024B0C();
 	int16_t var_128 = var_13C;
 	_0x6024C3C(var_13C, 60, 266, graphicData->objectTable);
 
 	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
 		const char **messageUseOnly;
-		switch (CurrentRegionWarning) {
+		switch (RegionWarning) {
 			case REGIONWARNING_JAPAN: // 0
 				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
 
@@ -198,7 +206,7 @@ void main() {
 
 			case REGIONWARNING_SKIP: // 1
 				if ((EEPROM[0] & REGION_SETTING) == REGION_JAPAN /* 0 */) {
-					CurrentRegionWarning = REGIONWARNING_JAPAN;
+					RegionWarning = REGIONWARNING_JAPAN;
 
 					_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
 
@@ -300,7 +308,7 @@ void main() {
 		}
 		_0x606006C[var_13C]._0x2C |= 0x8000;
 
-		InitScanlinesBank(0u);
+		SetScanlinesBank(0u);
 		_0x6029814(0x0000, 0x0000, 0, 0xFF);
 		SetPal(80u, 1u, _0x678D0);
 
@@ -315,13 +323,13 @@ void main() {
 				frames = 600u;
 			}
 		}
+		_0x6024B78(var_13C);
+		UpdateFrame();
 	}
 
-	_0x6024B78(var_128);
-	UpdateFrame();
-
-	Screen = SCREEN_DEVELOPER;
-	_0x6009410(); // TODO: Reimplement this function next. Rename this Loop().
+	Screen = SCREEN_COPYRIGHT;
+	RunMainLoop();
+	return 0;
 }
 
 static const uint16_t InitScaleRam[0x100] = {

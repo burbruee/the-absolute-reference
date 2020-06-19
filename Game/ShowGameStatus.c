@@ -564,7 +564,7 @@ void ShowModeCodes(Player* player) {
 		layer = LAYER_GAMESTATUS;
 	}
 	else {
-		if (CurrentMainLoopState == MAINLOOP_DEMO) {
+		if (MainLoop == MAINLOOP_DEMO) {
 			y = 180;
 			x = FieldPos[(player->num + 2) * 2];
 			layer = LAYER_GAMESTATUS;
