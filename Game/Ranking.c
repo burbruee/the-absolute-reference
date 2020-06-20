@@ -446,7 +446,7 @@ static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_
 			}
 		}
 	}
-	return -1;
+	return RANKINGPLACE_NOSTANDING;
 }
 
 static RankingPlace NormalRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
@@ -456,7 +456,7 @@ static RankingPlace NormalRankingPlace(Player* player, Ranking* rankings, int16_
 			return place;
 		}
 	}
-	return -1;
+	return RANKINGPLACE_NOSTANDING;
 }
 
 static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, Ranking* timeRankings, Ranking* levelRankings, int16_t numRankings) {
@@ -468,7 +468,7 @@ static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, Rankin
 			return place;
 		}
 	}
-	return -1;
+	return RANKINGPLACE_NOSTANDING;
 }
 
 static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {

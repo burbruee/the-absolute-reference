@@ -29,6 +29,9 @@ typedef enum Setting {
 	SETTING_PRICE2P,
 	SETTING_INDEX9,
 	SETTING_SETTINGSCHECKSUM,
-	NUMSETTINGS // The number of actually-used settings. The number of available settings is fixed at 16.
+
+	// The number of actually-used settings. The number of available settings
+	// is fixed at 16, due to the limited space in EEP-ROM.
+	NUMSETTINGS
 } Setting;
 extern uint16_t Settings[16];
