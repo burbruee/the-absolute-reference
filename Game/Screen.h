@@ -2,6 +2,7 @@
 
 #include "Setting.h"
 #include "Macros.h"
+#include <stdbool.h>
 
 typedef enum ScreenState {
 	SCREEN_MEMCHECK,
@@ -23,5 +24,8 @@ extern ScreenState Screen;
 
 extern const uint16_t DefaultSettings[NUMSETTINGS];
 
+// TODO
+bool SettingsValid();
 void InitSettings();
 void SaveSettings();
+// TODO

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define MEMCHECKSTATUS_OKAY 0x35530F0F
+#define MEMCHECKSTATUS_OKAY   0x35530F0F
 #define MEMCHECKSTATUS_NOGOOD 0x00000000
 typedef enum MemCheck {
 	MEMCHECK_WORKRAM,

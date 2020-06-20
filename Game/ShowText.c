@@ -103,39 +103,39 @@ void ShowText(int16_t x, int16_t y, const char* text, uint8_t palNum, bool alpha
 // defined for each PsikyoSH font character, once all the non-ASCII characters
 // have been documented. Knowing what each character is should help a lot in
 // naming this function, too. It's definitely a ShowSystem* function, though.
-void _0x600DDA0(int16_t x, int16_t y, const char* text, bool alpha) {
+void ShowSystemSpecialText(int16_t x, int16_t y, const char* text, bool alpha) {
 	for (const char* c = text; *c != '\0'; c++) {
 		switch (*c) {
 		case 'N':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x1D], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x1D], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case 'O':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x1B], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x1B], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case 'X':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x1A], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x1A], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case '1':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x06], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x06], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case '2':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x07], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x07], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case 'W':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x08], y - 2, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x08], y - 2, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		case '>':
-			ShowObjectEx(&OBJECTTABLE_CHARS[0x0A], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS[0x0A], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 
 		default:
-			ShowObjectEx(&OBJECTTABLE_CHARS['?'], y, x, 82u, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(&OBJECTTABLE_CHARS['?'], y, x, PALNUM_SYSTEMSPECIALTEXT, 125u, UNSCALED, UNSCALED, alpha);
 			break;
 		}
 	}

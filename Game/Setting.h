@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+typedef enum ScreenMode {
+	SCREENMODE_FLIP = 1
+} ScreenMode;
+
 typedef enum CoinSlot {
 	COINSLOT_SAME,
 	COINSLOT_INDIVIDUAL
@@ -18,7 +22,7 @@ typedef enum CoinMode {
 } CoinMode;
 
 typedef enum Setting {
-	SETTING_SCREEN,
+	SETTING_SCREENMODE,
 	SETTING_NUMVERSUSROUNDS,
 	SETTING_MAXVERSUSSECTION,
 	SETTING_INDEX3,

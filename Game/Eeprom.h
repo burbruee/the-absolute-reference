@@ -12,6 +12,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+typedef enum Region {
+	REGION_JAPAN = 0,
+	REGION_USACANADA = 1 << 0,
+	REGION_KOREA = 1 << 1,
+	REGION_HONGKONG = 1 << 2,
+	REGION_TAIWAN = 1 << 3,
+	REGION_SETTING = 0xF
+} Region;
+
 void _0x602F658(uint8_t);
 void _0x602F704();
 void _0x602F7DC();

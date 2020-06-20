@@ -35,7 +35,7 @@ typedef struct struct_0x606006C {
 
 	// In SetSprite setting type 6, this can affect whether the flip settings
 	// are used; when less than 4, no flip settings are used, otherwise flip
-	// settings are used alongside some other adjustments to the set data.
+	// settings are used along with some other adjustments to the set data.
 	int16_t _0x20;
 
 	uint16_t verticalHorizontal;
@@ -51,7 +51,7 @@ typedef struct struct_0x606006C {
 	int16_t _0x38;
 } struct_0x606006C;
 
-// The number of sprites written to the sprite table.
+// The number of sprites written to Sprites.
 extern int16_t NumSprites;
 
 typedef struct struct_0x607D218 {
@@ -282,7 +282,7 @@ typedef enum PalCycleType {
 #define MAXPALCYCLES 32
 void InitPalCycles();
 void UpdatePalCycles();
-void NewPalCycle(uint8_t palNum, Color *pal0, Color *pal1, int16_t perPalDelay, PalCycleType type, uint8_t stride, uint8_t endStep);
+void NewPalCycle(uint8_t palNum, Color *pal0, Color *pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep);
 // Pass this to FreePalCycles to free all cycles.
 #define FREEALLPALCYCLES NUMPALS
 void FreePalCycles(uint16_t palNum);

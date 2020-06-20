@@ -1,7 +1,7 @@
 #include "Main.h"
+#include "Screen.h"
 #include "Player.h"
 #include "Save.h"
-#include "Screen.h"
 #include "Ranking.h"
 #include "Entity.h"
 #include "Input.h"
@@ -14,8 +14,11 @@
 #include "Sound.h"
 #include "Frame.h"
 #include "Button.h"
+#include "ShowText.h"
 #include "SpriteInit.h"
 #include "UnknownSprite.h"
+#include "Pal.h"
+#include "PalNum.h"
 #include "Loop.h"
 #include "HwData.h"
 #include "MemCheck.h"
@@ -31,6 +34,8 @@ static void InitVideo();
 static void SetSystemGraphicDataPtr();
 static void _0x6000AEC();
 
+ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
+
 // TODO: Lots of undefined things here.
 // TODO: Change to there not being port-specific main() functions to a setup
 // where some extra functions are added for ports (like a Startup() function
@@ -40,7 +45,7 @@ static void _0x6000AEC();
 // Also, for SDL2, it will be single-threaded, with
 // timing/input/rendering/audio done where the code waits on vsync.
 int main() {
-	bool canExitMemCheck = false;
+	bool memCheckOkay = false;
 	SystemGraphicData* graphicData = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
 
 	// System init.
@@ -85,33 +90,37 @@ int main() {
 		SaveProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]);
 	}
 
-	// TODO: Code below.
 	_0x602F8BC();
-	MemCheckData[MEMCHECK_EEPROM] = _0x600AB74();
-	MemCheckData[MEMCHECK_EEPROM] &= RestorePlayStatus();
-	MemCheckData[MEMCHECK_EEPROM] &= RestoreBestScore();
+	MemCheckData[MEMCHECK_EEPROM] = SettingsValid();
+	MemCheckData[MEMCHECK_EEPROM] &= LoadPlayStatus();
+	MemCheckData[MEMCHECK_EEPROM] &= LoadRankings();
 	for (size_t section = 0u; section < 10u; section++) {
 		BestMasterSectionTimes[section] = RANKINGDATA_GETVALUE(Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data);
 		BestTaDeathSectionTimes[section] = TIME(0, 42, 0);
 	}
 
-	if (Settings[SETTING_SCREEN] == SCREENSETTING_FLIP) {
-		VideoRegisters.screen |= 0xC0; // Set horizontal/vertical screen flip.
+	if (Settings[SETTING_SCREENMODE] == SCREENMODE_FLIP) {
+		VideoSettings[0] |= 0xC0u; // Set horizontal/vertical screen flip.
 	}
 
-	if (!RestoreROMChecksum((uint16_t)MemCheckData[MEMCHECK_PROGRAMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
+	if (!LoadProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 		// Nothing here. There was probably code here that was
 		// commented out in the released version of TAP.
 		// TODO: Maybe TGM2 has the code?
 	}
 
 	uint32_t memCheckDuration;
-	if ((MemCheckData[MEMCHECK_WORKRAM] & MemCheckData[MEMCHECK_GRAPHICSRAM] & MemCheckData[MEMCHECK_PALETTERAM] & MemCheckData[MEMCHECK_SCALERAM] & MemCheckData[MEMCHECK_EEPROM]) != MEMCHECKSTATUS_NOGOOD) {
-		memCheckDuration = TIME(0, 1, 0);
+	memCheckOkay =
+		MemCheckData[MEMCHECK_WORKRAM] &
+		MemCheckData[MEMCHECK_GRAPHICSRAM] &
+		MemCheckData[MEMCHECK_PALETTERAM] &
+		MemCheckData[MEMCHECK_SCALERAM] &
+		MemCheckData[MEMCHECK_EEPROM];
+	if (memCheckOkay) {
+		memCheckDuration = TIME(0, 10, 0);
 	}
 	else {
-		memCheckDuration = TIME(0, 10, 0);
-		canExitMemCheck = true;
+		memCheckDuration = TIME(0, 1, 0);
 	}
 
 	bool RegionUSACanada = false;
@@ -122,9 +131,9 @@ int main() {
 		RegionWarning = REGIONWARNING_JAPAN;
 	}
 
-	SetPal(0, 1, _0x6030CBC);
-	SetPal(10, 1, _0x6030C7C);
-	SetPal(81, 1, _0x67910);
+	SetPal(PALNUM_SMALLTEXT, 1, PalSmallText);
+	SetPal(PALNUM_10, 1, Pal1);
+	SetPal(PALNUM_SYSTEMTEXT, 1, PAL_SYSTEMTEXT);
 
 	bool charSoundMemCheck = false;
 	uint32_t *workRamStatus = &MemCheckData[MEMCHECK_WORKRAM];
@@ -145,7 +154,8 @@ int main() {
 	// normally after the memory check screen, though.
 	// TODO: The character ROM pairs are named char0000 to char0007. Sound
 	// ROM is just "sound".
-	if (charSoundMemCheck ? _0x60302C4() : memCheckDuration != 0) {
+	// TODO: Code below.
+	while (charSoundMemCheck ? _0x60302C4() : memCheckDuration != 0) {
 		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 			charSoundMemCheck = true;
 		}
@@ -153,31 +163,31 @@ int main() {
 		UpdateFrame();
 
 		_0x602BB0C();
-		_0x600DC38();
+		InitSystemTextPal();
 		if (memCheckDuration != 0u) memCheckDuration--;
 
-		if ((SystemButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) && canExitMemCheck) {
+		if ((SystemButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) && memCheckOkay) {
 			memCheckDuration = 0u;
 		}
 
-		const char *memCheckOK;
 		#define SHOWMEMCHECKSTATUS(status, labelText, row) \
-		if ((status) != MEMCHECKSTATUS_NOGOOD) { \
-			ShowSystemText(memCheckLabelX, memCheckY, (labelText), false); \
-			memCheckOK = "O"; \
+		if (status) { \
+			ShowSystemText(20 * (row + 1), 65, (labelText), false); \
+			ShowSystemSpecialText(146, 20 * (row + 1), "O", false); \
 		} \
 		else { \
-			ShowSystemText(memCheckLabelX, memCheckY, (labelText), false); \
-			memCheckOK = "X"; \
-		} \
-		_0x600DDA0(146, 20 + 20 * row, memCheckOK, false);
+			ShowSystemText(20 * (row + 1), 65, (labelText), false); \
+			ShowSystemSpecialText(146, 20 * (row + 1), "X", false); \
+		}
 		SHOWMEMCHECKSTATUS(*workRamStatus, "WORK RAM", 0);
 		SHOWMEMCHECKSTATUS(*graphicsRamStatus & *paletteRamStatus & *scaleRamStatus, "VIDEO RAM", 1);
 		SHOWMEMCHECKSTATUS(*eepRomStatus, "EEP-ROM", 2);
+		#undef SHOWMEMCHECKSTATUS
 	}
 
-	SetFrontScanlinesColor(COLOR(0x00, 0x00, 0x00));
+	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
+	// TODO: Code below.
 	int16_t var_13C = _0x6024B0C();
 	int16_t var_128 = var_13C;
 	_0x6024C3C(var_13C, 60, 266, graphicData->objectTable);

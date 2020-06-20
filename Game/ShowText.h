@@ -15,7 +15,7 @@ void ShowSystemText(int16_t x, int16_t y, const char* text, bool alpha);
 
 void ShowText(int16_t x, int16_t y, const char* text, uint8_t palNum, bool alpha);
 
-void _0x600DDA0(int16_t x, int16_t y, const char* text, bool alpha);
+void ShowSystemSpecialText(int16_t x, int16_t y, const char* text, bool alpha);
 
 // NOTE: Though there is a hint that NUMALIGN_CENTER was in TAP's source code
 // (1 is passed as numAlign), true centering isn't done in any of the code.
