@@ -12,7 +12,7 @@ void _0x602BB0C();
 // _0x602BBA6
 // _0x602BC4A
 void _0x602BC50(uint8_t);
-// _0x602BC58
+void _0x602BC58(uint8_t);
 // _0x602BC60
 // _0x602BC68
 // _0x602BD18

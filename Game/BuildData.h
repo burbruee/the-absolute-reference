@@ -24,7 +24,7 @@ extern const int16_t NumObjectData;
 extern const int16_t NumObjects;
 
 extern const int16_t _0x4001E; // TODO: Could be the number of palettes (with 256-color palettes maybe counting as one).
-// TODO: Fix the pointers here. ChecksumDataPtr is now correct, though.
+// TODO: Fix the pointers here. BuildChecksumDataPtr is now correct, though.
 extern const uint32_t** PalDataPtr;
 
 extern const BgMap*** BgMapTablePtr;
@@ -42,7 +42,7 @@ extern const ObjectData** ObjectDataTablePtr;
 
 extern const Color*** PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 
-extern const uint16_t* ChecksumDataPtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0.
+extern const uint16_t* BuildChecksumDataPtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0.
 extern const uint32_t _0x40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
 extern const Color*** _0x40048;

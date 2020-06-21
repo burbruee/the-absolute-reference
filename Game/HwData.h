@@ -49,8 +49,7 @@ extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define VideoSettings (&VIDEOREGS[0x0E])
 #define _0x2405FFF0 (VIDEOREGS[0x10])
 #define _0x2405FFF1 (VIDEOREGS[0x11])
-#define _0x2405FFF2 (VIDEOREGS[0x12])
-#define _0x2405FFF3 (VIDEOREGS[0x13])
+#define VideoGraphicsCheckBank (&VIDEOREGS[0x12])
 #define _0x2405FFF4 (VIDEOREGS[0x14])
 #define _0x2405FFF5 (VIDEOREGS[0x15])
 #define _0x2405FFF6 (VIDEOREGS[0x16])
@@ -58,6 +57,11 @@ extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define BgMapBanks (&VIDEOREGS[0x18])
 #define ScanlinesBank (&VIDEOREGS[0x1C])
 #define BgMapSettings (&VIDEOREGS[0x1E])
+
+// TODO: Implement updating of this. It's used in checksum calculations. Will
+// probably have to change it to a macro that does something behind the scenes,
+// since it's controlled by a video register.
+extern RAMDATA uint32_t GRAPHICSCHECK[0x20000 / sizeof(uint32_t)];
 
 extern RAMDATA uint8_t _0xFFFFFE10;
 extern RAMDATA uint8_t _0xFFFFFE11;

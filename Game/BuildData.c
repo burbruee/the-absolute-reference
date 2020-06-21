@@ -40,6 +40,6 @@ const ObjectData** ObjectDataTablePtr = &Objects.data;
 // TODO
 //const RectData** RectDataTablePtr;
 const Color*** PalTableDataPtr = &PalTable.data;
-const uint16_t* ChecksumDataPtr = Checksum.data;
+const uint16_t* BuildChecksumDataPtr = BuildChecksum.data;
 const uint32_t _0x40044 = 8u;
 const Color*** _0x40048 = &PalTable.data;

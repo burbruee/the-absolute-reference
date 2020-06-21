@@ -10,6 +10,8 @@ void _0x602BB0C() {
 			_0x6061932.tempSprite[6]++;
 			if (_0x6061932.tempSprite[6] != i) {
 				uint16_t* var0 = &_0x606106C[i];
+
+				// Swap *var0 and _0x606106C[_0x6061932.tempSprite[6]].
 				*var0 ^= _0x606106C[_0x6061932.tempSprite[6]];
 				_0x606106C[_0x6061932.tempSprite[6]] ^= *var0;
 				*var0 ^= _0x606106C[_0x6061932.tempSprite[6]];
@@ -20,6 +22,10 @@ void _0x602BB0C() {
 
 void _0x602BC50(uint8_t arg0) {
 	_0x6061932.tempSprite[7] = arg0;
+}
+
+void _0x602BC58(uint8_t arg0) {
+	_0x6061932._0x12 = arg0;
 }
 
 void _0x602C5C2() {

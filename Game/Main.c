@@ -369,7 +369,7 @@ static void InitVideo() {
 	VideoSettings[1] = 0xB8u;
 	_0x2405FFF0 = 0x00u;
 	_0x2405FFF1 = 0xAAu;
-	_0x2405FFF2 = 0x30u;
+	VideoGraphicsCheckBank[0] = 0x30u;
 	IRQCTRL[0] = 0u;
 	IRQCTRL[0] |= 0x84u;
 	IRQCTRL[1] |= 0x80u;
