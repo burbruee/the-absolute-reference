@@ -20,6 +20,7 @@
 #include "Pal.h"
 #include "PalNum.h"
 #include "Loop.h"
+#include "Checksum.h"
 #include "HwData.h"
 #include "MemCheck.h"
 #include "Platform/Util/Macros.h"

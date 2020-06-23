@@ -4,6 +4,8 @@
 #include "ShowText.h"
 #include "PalNum.h"
 #include "Sound.h"
+#include "ShowObject.h"
+#include "Layer.h"
 #include "HwData.h"
 
 // TODO: Implement a way for the build system to calculate the checksums and
@@ -177,7 +179,7 @@ bool _0x60302C4() {
 		}
 		else {
 			ShowText(nameX, y, "CHAR", PALNUM_SYSTEMTEXT, false);
-			_0x60304AE(_0x6035B28[i], y, 92, 4, 1, 2, PALNUM_SYSTEMTEXT, false); // TODO
+			ShowHexNum(_0x6035B28[i], y, 92, 4, 1, 2, PALNUM_SYSTEMTEXT, false);
 			if (checksumSrc[1] == checksumDst[1]) {
 				ShowText(statusX, y, "OK", PALNUM_SYSTEMTEXT, false);
 			}
@@ -227,4 +229,66 @@ bool _0x60302C4() {
 		_0x60B19AC--;
 	}
 	return true;
+}
+
+static const ObjectData* ObjectTableHexDigits[0x10] = {
+	&OBJECTTABLE_HEXDIGITS[0],
+	&OBJECTTABLE_HEXDIGITS[1],
+	&OBJECTTABLE_HEXDIGITS[2],
+	&OBJECTTABLE_HEXDIGITS[3],
+	&OBJECTTABLE_HEXDIGITS[4],
+	&OBJECTTABLE_HEXDIGITS[5],
+	&OBJECTTABLE_HEXDIGITS[6],
+	&OBJECTTABLE_HEXDIGITS[7],
+	&OBJECTTABLE_HEXDIGITS[8],
+	&OBJECTTABLE_HEXDIGITS[9],
+	&OBJECTTABLE_HEXDIGITS[10],
+	&OBJECTTABLE_HEXDIGITS[11],
+	&OBJECTTABLE_HEXDIGITS[12],
+	&OBJECTTABLE_HEXDIGITS[13],
+	&OBJECTTABLE_HEXDIGITS[14],
+	&OBJECTTABLE_HEXDIGITS[15],
+};
+
+void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha) {
+	int32_t i = numDigits--;
+	int32_t base16Place = 1;
+	while (numDigits != 0) {
+		numDigits--;
+		base16Place <<= 4;
+	}
+
+	for (; i != 0; i--, base16Place >>= 4) {
+		int32_t digit = num / base16Place;
+		num -= base16Place * digit;
+		if (digit > 0xF) {
+			digit %= 0x10;
+		}
+
+		ObjectData* digitObject;
+		if (digit == 0) {
+			if (displayZeroes || i == 1) {
+				digitObject = ObjectTableHexDigits[0];
+			}
+			else {
+				digitObject = NULL;
+			}
+		}
+		else {
+			digitObject = ObjectTableHexDigits[digit];
+			displayZeroes = true;
+		}
+
+		if (digitObject != NULL) {
+			ShowObjectEx(digitObject, y, x, palNum, 125u, UNSCALED, UNSCALED, alpha);
+			x += TEXT_DIGITWIDTH;
+		}
+		else if (numAlign == NUMALIGN_RIGHT) {
+			x += TEXT_DIGITWIDTH;
+		}
+
+		if (base16Place < 0) {
+			base16Place += 0xF;
+		}
+	}
 }
