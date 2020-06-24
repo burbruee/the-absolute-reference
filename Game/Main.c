@@ -28,37 +28,44 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// TODO: Init these from the program ROM.
 ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
+ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
 
-RegionWarningState RegionWarning;
+// If this is set to REGIONWARNING_SKIP and the EEP-ROM region isn't Japan,
+// then the warning screen won't be shown.
+static RegionWarningState RegionWarning = REGIONWARNING_JAPAN;
 
 static void InitVideo();
 static void SetSystemGraphicDataPtr();
 static void _0x6000AEC();
 
-ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
-
-const char* MessageJapanUseOnly[] = {
+// These messages are just the bare minimum to get across what the original
+// messages said. The original messages aren't copied here, as the rights
+// holder of them might claim they're copyrighted. They're still all arrays of
+// strings, though, matching the format of the original messages. The original
+// messages just warned that the game should only be used in the region set in
+// EEP-ROM.
+//
+// I assume these are just standard messages provided by Psikyo for all games
+// on the PsikyoSH boards, and their presence doesn't necessarily imply Arika
+// planned to release TAP in non-Japan regions. -Brandon McGriff
+static const char* RegionMessageJapan[] = {
 	"Japan region."
 };
-
-const char* MessageUSACanadaUseOnly[] = {
+static const char* RegionMessageUsaCanada[] = {
 	"USA and Canada region."
 };
-
-const char* MessageKoreaUseOnly[] = {
+static const char* RegionMessageKorea[] = {
 	"Korea region."
 };
-
-const char* MessageHongKongUseOnly[] = {
+static const char* RegionMessageHongKong[] = {
 	"Hong Kong region."
 };
-
-const char* MessageTaiwanUseOnly[] = {
+static const char* RegionMessageTaiwan[] = {
 	"Taiwan region."
 };
 
-// TODO: Lots of undefined things here.
 // TODO: Change to there not being port-specific main() functions to a setup
 // where some extra functions are added for ports (like a Startup() function
 // called at the top of main()), with those extras being #define'd out for
@@ -67,7 +74,6 @@ const char* MessageTaiwanUseOnly[] = {
 // Also, for SDL2, it will be single-threaded, with
 // timing/input/rendering/audio done where the code waits on vsync.
 int main() {
-	bool memCheckOkay = false;
 	SystemGraphicData* graphicData = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
 
 	// System init.
@@ -112,7 +118,7 @@ int main() {
 		SaveProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]);
 	}
 
-	_0x602F8BC(); // TODO
+	_0x602F8BC();
 	MemCheckData[MEMCHECK_EEPROM] = SettingsValid();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadPlayStatus();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadRankings();
@@ -132,7 +138,7 @@ int main() {
 	}
 
 	uint32_t memCheckDuration;
-	memCheckOkay =
+	bool memCheckOkay =
 		MemCheckData[MEMCHECK_WORKRAM] &
 		MemCheckData[MEMCHECK_GRAPHICSRAM] &
 		MemCheckData[MEMCHECK_PALETTERAM] &
@@ -174,9 +180,8 @@ int main() {
 	// memory check screen instead of waiting 10 seconds, regardless of
 	// whether the tilt DIP switch is active. The game still starts
 	// normally after the memory check screen, though.
-	// TODO: The character ROM pairs are named char0000 to char0007. Sound
+	// TODO: The character ROM pairs are named "char0000" to "char0007". Sound
 	// ROM is just "sound".
-	// TODO: Code below.
 	while (charSoundMemCheck ? _0x60302C4() : memCheckDuration != 0) {
 		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 			charSoundMemCheck = true;
@@ -236,8 +241,8 @@ int main() {
 
 					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
-					const char **line = MessageJapanUseOnly;
-					for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, line++) {
+					const char **line = RegionMessageJapan;
+					for (size_t lineNum = 0; lineNum < lengthof(RegionMessageJapan); lineNum++, y += 20, line++) {
 						ShowSystemText(55, y, *line, false);
 					}
 				}
@@ -258,8 +263,8 @@ int main() {
 
 						ShowSystemTextCentered(30, "- Warning! -", 0u);
 						int16_t y = 60;
-						const char **line = MessageJapanUseOnly;
-						for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, line++) {
+						const char **line = RegionMessageJapan;
+						for (size_t lineNum = 0; lineNum < lengthof(RegionMessageJapan); lineNum++, y += 20, line++) {
 							ShowSystemText(55, y, *line, false);
 						}
 					}
@@ -278,8 +283,8 @@ int main() {
 
 					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
-					const char **line = MessageKoreaUseOnly;
-					for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 20, line++) {
+					const char **line = RegionMessageKorea;
+					for (size_t lineNum = 0; lineNum < lengthof(RegionMessageKorea); lineNum++, y += 20, line++) {
 						ShowSystemText(55, y, *line, false);
 					}
 				}
@@ -300,8 +305,8 @@ int main() {
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **line = MessageUSACanadaUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageUSACanadaUseOnly); lineNum++, y += 24, line++) {
+							const char **line = RegionMessageUsaCanada;
+							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageUsaCanada); lineNum++, y += 24, line++) {
 								_0x602B7D8(*line, y, 40);
 							}
 							break;
@@ -310,8 +315,8 @@ int main() {
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **line = MessageKoreaUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 24, line++) {
+							const char **line = RegionMessageKorea;
+							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageKorea); lineNum++, y += 24, line++) {
 								_0x602B7D8(*line, y, 40);
 							}
 							break;
@@ -320,8 +325,8 @@ int main() {
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **line = MessageHongKongUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageHongKongUseOnly); lineNum++, y += 24, line++) {
+							const char **line = RegionMessageHongKong;
+							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageHongKong); lineNum++, y += 24, line++) {
 								_0x602B7D8(*line, y, 40);
 							}
 							break;
@@ -330,8 +335,8 @@ int main() {
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **line = MessageTaiwanUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageTaiwanUseOnly); lineNum++, y += 24, line++) {
+							const char **line = RegionMessageTaiwan;
+							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageTaiwan); lineNum++, y += 24, line++) {
 								_0x602B7D8(*line, y, 40);
 							}
 							break;

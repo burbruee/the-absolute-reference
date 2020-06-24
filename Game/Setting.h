@@ -34,8 +34,9 @@ typedef enum Setting {
 	SETTING_INDEX9,
 	SETTING_SETTINGSCHECKSUM,
 
-	// The number of actually-used settings. The number of available settings
-	// is fixed at 16, due to the limited space in EEP-ROM.
+	// The number of actually-used settings. The number of saved settings is
+	// fixed at 16, due to the limited space in EEP-ROM, though 20 settings are
+	// used by the code in some spots.
 	NUMSETTINGS
 } Setting;
-extern uint16_t Settings[16];
+extern uint16_t Settings[20];
