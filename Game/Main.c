@@ -15,6 +15,7 @@
 #include "Frame.h"
 #include "Button.h"
 #include "ShowText.h"
+#include "ShowObject.h"
 #include "SpriteInit.h"
 #include "UnknownSprite.h"
 #include "Pal.h"
@@ -36,6 +37,26 @@ static void SetSystemGraphicDataPtr();
 static void _0x6000AEC();
 
 ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
+
+const char* MessageJapanUseOnly[] = {
+	"Japan region."
+};
+
+const char* MessageUSACanadaUseOnly[] = {
+	"USA and Canada region."
+};
+
+const char* MessageKoreaUseOnly[] = {
+	"Korea region."
+};
+
+const char* MessageHongKongUseOnly[] = {
+	"Hong Kong region."
+};
+
+const char* MessageTaiwanUseOnly[] = {
+	"Taiwan region."
+};
 
 // TODO: Lots of undefined things here.
 // TODO: Change to there not being port-specific main() functions to a setup
@@ -91,7 +112,7 @@ int main() {
 		SaveProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]);
 	}
 
-	_0x602F8BC();
+	_0x602F8BC(); // TODO
 	MemCheckData[MEMCHECK_EEPROM] = SettingsValid();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadPlayStatus();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadRankings();
@@ -188,35 +209,42 @@ int main() {
 
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
-	// TODO: Code below.
 	int16_t var_13C = _0x6024B0C();
 	int16_t var_128 = var_13C;
 	_0x6024C3C(var_13C, 60, 266, graphicData->objectTable);
 
 	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
-		const char **messageUseOnly;
 		switch (RegionWarning) {
-			case REGIONWARNING_JAPAN: // 0
-				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
+			case REGIONWARNING_JAPAN:
+				_0x6029814(0x7F00u, 0x7F00u, 0u, 0xFFu);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
 
-					if ((((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))) && numWarningFrames > 60u) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
+					if (
+						(
+							(
+								(ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) ||
+								(ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1))
+							) &&
+							numWarningFrames > 60u
+						) ||
+						!(INPUTS[INPUT_SERVICE] & SERVICE_TEST)
+						) {
 						numWarningFrames = 600u;
 					}
 
 					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
-					const char **messageLine = MessageJapanUseOnly;
-					for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, messageLine++) {
-						ShowSystemText(55, y, *messageLine, false);
+					const char **line = MessageJapanUseOnly;
+					for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, line++) {
+						ShowSystemText(55, y, *line, false);
 					}
 				}
 				break;
 
-			case REGIONWARNING_SKIP: // 1
-				if ((EEPROM[0] & REGION_SETTING) == REGION_JAPAN /* 0 */) {
+			case REGIONWARNING_SKIP:
+				if ((EEPROM[0] & REGION_SETTING) == REGION_JAPAN) {
 					RegionWarning = REGIONWARNING_JAPAN;
 
 					_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
@@ -230,15 +258,15 @@ int main() {
 
 						ShowSystemTextCentered(30, "- Warning! -", 0u);
 						int16_t y = 60;
-						const char **messageLine = MessageJapanUseOnly;
-						for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, messageLine++) {
-							ShowSystemText(55, y, *messageLine, false);
+						const char **line = MessageJapanUseOnly;
+						for (size_t lineNum = 0; lineNum < lengthof(MessageJapanUseOnly); lineNum++, y += 20, line++) {
+							ShowSystemText(55, y, *line, false);
 						}
 					}
 				}
 				break;
 
-			case REGIONWARNING_KOREA: // 2
+			case REGIONWARNING_KOREA:
 				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
@@ -250,14 +278,14 @@ int main() {
 
 					ShowSystemTextCentered(30, "- Warning! -", 0u);
 					int16_t y = 60;
-					const char **messageLine = MessageKoreaUseOnly;
-					for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 20, messageLine++) {
-						ShowSystemText(55, y, *messageLine, false);
+					const char **line = MessageKoreaUseOnly;
+					for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 20, line++) {
+						ShowSystemText(55, y, *line, false);
 					}
 				}
 				break;
 
-			case REGIONWARNING_REGIONSETTING: // 3
+			case REGIONWARNING_REGIONSETTING:
 				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
@@ -268,43 +296,43 @@ int main() {
 					}
 
 					switch (EEPROM[0] & REGION_SETTING) {
-						case REGION_USACANADA: // 1
+						case REGION_USACANADA:
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **messageLine = MessageUSACanadaUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageUSACanadaUseOnly); lineNum++, y += 24, messageLine++) {
-								_0x602B7D8(*messageLine, y, 40);
+							const char **line = MessageUSACanadaUseOnly;
+							for (size_t lineNum = 0; lineNum < lengthof(MessageUSACanadaUseOnly); lineNum++, y += 24, line++) {
+								_0x602B7D8(*line, y, 40);
 							}
 							break;
 
-						case REGION_KOREA: // 2
+						case REGION_KOREA:
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **messageLine = MessageKoreaUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 24, messageLine++) {
-								_0x602B7D8(*messageLine, y, 40);
+							const char **line = MessageKoreaUseOnly;
+							for (size_t lineNum = 0; lineNum < lengthof(MessageKoreaUseOnly); lineNum++, y += 24, line++) {
+								_0x602B7D8(*line, y, 40);
 							}
 							break;
 
-						case REGION_HONGKONG: // 4
+						case REGION_HONGKONG:
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **messageLine = MessageHongKongUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageHongKongUseOnly); lineNum++, y += 24, messageLine++) {
-								_0x602B7D8(*messageLine, y, 40);
+							const char **line = MessageHongKongUseOnly;
+							for (size_t lineNum = 0; lineNum < lengthof(MessageHongKongUseOnly); lineNum++, y += 24, line++) {
+								_0x602B7D8(*line, y, 40);
 							}
 							break;
 
-						case REGION_TAIWAN: // 8
+						case REGION_TAIWAN:
 							_0x606006C[var_13C]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
-							const char **messageLine = MessageTaiwanUseOnly;
-							for (size_t lineNum = 0; lineNum < lengthof(MessageTaiwanUseOnly); lineNum++, y += 24, messageLine++) {
-								_0x602B7D8(*messageLine, y, 40);
+							const char **line = MessageTaiwanUseOnly;
+							for (size_t lineNum = 0; lineNum < lengthof(MessageTaiwanUseOnly); lineNum++, y += 24, line++) {
+								_0x602B7D8(*line, y, 40);
 							}
 							break;
 
@@ -321,14 +349,14 @@ int main() {
 
 		SetScanlinesBank(0u);
 		_0x6029814(0x0000, 0x0000, 0, 0xFF);
-		SetPal(80u, 1u, _0x678D0);
+		SetPal(80u, 1u, PALPTR(0x1E1));
 
 		// TODO: Rename "frames" once it's understood what this is showing.
 		for (uint32_t frames = 0u; frames < 500u; frames++) {
 			UpdateFrame();
 
-			ShowObject(_0xA7A0C, 104, 32, 80u, 125u);
-			ShowObject(_0xA79F4, 0, 0, 80u, 125u);
+			ShowObject(OBJECTPTR(0x26B), 104, 32, 80u, 125u);
+			ShowObject(OBJECTPTR(0x269), 0, 0, 80u, 125u);
 
 			if ((ButtonsDown[PLAYER1] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)) || !(INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 				frames = 600u;

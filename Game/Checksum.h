@@ -15,7 +15,7 @@ typedef struct ChecksumData {
 	// TODO: Probably change this to an array of BuildChecksum structs; each struct
 	// would contain 4 uint16_t, the first would be "uint16_t type" and the
 	// remaining three "uint16_t data[3]".
-	uint16_t data[8 * 5];
+	uint16_t data[4 * 10];
 } ChecksumData;
 
 extern const ChecksumData BuildChecksum;

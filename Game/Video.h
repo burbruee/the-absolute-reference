@@ -43,6 +43,7 @@ typedef struct struct_0x606006C {
 	uint8_t layer;
 	uint8_t _0x2B;
 	uint16_t _0x2C;
+	uint8_t _0x2E;
 	uint8_t _0x2F;
 	int16_t _0x30;
 	int16_t _0x32;
@@ -267,7 +268,7 @@ void VideoSetBackdropColor(uintptr_t color, void*, void*);
 void SetVideo();
 // Disables all video setters.
 void ResetVideoSetters();
-void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t arg2, uint8_t arg3);
+void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t bgStart, uint8_t bgEnd);
 // The current palette is stepped every frame between the pal* arrays: N -> M
 // (starting with palN, stepping towards palM). Palette cycles that stop free
 // themselves when finished. Up to 32 palette cycles can be active.

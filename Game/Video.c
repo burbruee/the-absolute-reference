@@ -28,12 +28,12 @@ struct_0x6061932 _0x6061932;
 //
 // Each element is both the name for the first sprite in a layer, and an index
 // into SpriteLayerNames where any remaining sprite names for that layer
-// start.
+// bgStart.
 static int16_t SpriteLayers[128];
 
 // Table of the sprite names in each layer that are after the first name.  Each
 // element is both a sprite name and the index in the layer name table of the
-// next sprite name in the layer. The end of a layer is marked with a zero
+// next sprite name in the layer. The bgEnd of a layer is marked with a zero
 // valued name.
 static int16_t SpriteLayerNames[MAXSPRITES];
 
@@ -230,20 +230,20 @@ PauseMode GetNextPauseMode() {
 
 void AllocSpriteLayerNames(int16_t layer, int16_t num) {
 	// Write sprite names beyond the first name to the data table.
-	// The new names will be appended onto the end of the table.
+	// The new names will be appended onto the bgEnd of the table.
 	int16_t numNames = num - 1;
 	int16_t i;
 	for (i = 0; i < numNames; i++) {
 		SpriteLayerNames[NumSprites + i] = NumSprites + i + 1;
 	}
 
-	// Modify the layer data so the end of the data newly written to the
+	// Modify the layer data so the bgEnd of the data newly written to the
 	// layer data table leads to the list of names that were previously in
 	// the layer.
 	SpriteLayerNames[NumSprites + i] = SpriteLayers[layer];
 
 	// Set the first sprite name of the selected layer in the layer table to
-	// the start of the new names.
+	// the bgStart of the new names.
 	SpriteLayers[layer] = NumSprites;
 }
 
@@ -627,6 +627,50 @@ void InitSpriteLayers() {
 	for (int16_t layer = 0; layer < lengthof(SpriteLayers); layer++) {
 		SpriteLayers[layer] = SPRITELAYER_FREE;
 	}
+}
+
+int16_t _0x6024B0C() {
+	int16_t var0 = _0x606106C[_0x60AD224];
+	_0x60AD224++;
+	_0x606006C[var0].flipXBgPri = 1u;
+    _0x606006C[var0].verticalHorizontal = 0u;
+    _0x606006C[var0].scaleX = UNSCALED;
+    _0x606006C[var0].scaleY = UNSCALED;
+    _0x606006C[var0].palNum = 0u;
+    _0x606006C[var0].bppAlphaTileTop = 0u;
+    _0x606006C[var0].layer = 16u;
+    _0x606006C[var0]._0x2B = 1u;
+    _0x606006C[var0]._0x2C = 0xA030u;
+    _0x606006C[var0]._0x2E = 0u;
+    _0x606006C[var0]._0x30 = 0;
+    _0x606006C[var0]._0x32 = 0;
+    _0x606006C[var0]._0x34 = 0;
+    _0x606006C[var0].animFrame = 0;
+    _0x606006C[var0]._0x36 = 0;
+    _0x606006C[var0]._0x28 = 0;
+    return var0;
+}
+
+void _0x6024B78(int16_t arg0) {
+	if ((-1 < arg0) && (arg0 < 0x40)) {
+		_0x606006C[arg0]._0x2B = 0u;
+		_0x606006C[arg0]._0x2C = 0x8000u;
+		int32_t var1 = 0;
+		int16_t var0 = _0x606106C[0];
+		while (var0 != arg0) {
+			var1 += 1;
+			var0 = _0x606106C[var1];
+		}
+		_0x60AD224 += -1;
+		if (var1 != _0x60AD224) {
+			int16_t* var2 = &_0x606106C[var1];
+			// Swap *var2 and _0x606106C[_0x60AD224].
+			_0x606106C[_0x60AD224] ^= *var2;
+			*var2 ^= _0x606106C[_0x60AD224];
+			_0x606106C[_0x60AD224] ^= *var2;
+		}
+	}
+	return;
 }
 
 void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
@@ -1062,8 +1106,45 @@ void ResetVideoSetters() {
 	NumVideoSetters = 0u;
 }
 
-void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t arg2, uint8_t arg3) {
-	// TODO
+// TODO: Appears to fill background RAM.
+void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t bgStart, uint8_t bgEnd) {
+	// Check if the start and size need to be swapped.
+	if (bgStart > bgEnd) {
+		// Swap bgStart and bgEnd.
+		bgEnd ^= bgStart;
+		bgStart ^= bgEnd;
+		bgEnd ^= bgStart;
+
+		// Swap arg0 and arg1.
+		arg1 ^= arg0;
+		arg0 ^= arg1;
+		arg1 ^= arg0;
+	}
+	uint32_t size = bgEnd - bgStart;
+
+	// Write background data.
+	uint32_t num3 = 0;
+	uint32_t num2 = 0;
+	uint32_t num1 = 0;
+	for (uint32_t* bgData = &BGRAM[bgStart]; bgStart < bgEnd; bgStart++, bgData++) {
+		// Bits [31, 24].
+		num3 += ((arg1 >> 24) & 0xFFu) - ((arg0 >> 24) & 0xFFu);
+		uint32_t offset3 = num3 / size;
+
+		// Bits [23, 16].
+		num1 += ((arg1 >> 16) & 0xFFu) - ((arg0 >> 16) & 0xFFu);
+		uint32_t offset2 = num1 / size;
+
+		// Bits [15, 8].
+		num1 += ((arg1 >>  8) & 0xFFu) - ((arg0 >>  8) & 0xFFu);
+		uint32_t offset1 = num1 / size;
+
+		// Bits [7, 0] are set to zero.
+		*bgData =
+			(((((arg0 >>  8) & 0xFFu) + offset1) <<  8) & 0x0000FF00u) |
+			(((((arg0 >> 16) & 0xFFu) + offset2) << 16) & 0x00FF0000u) |
+			(((((arg0 >> 24) & 0xFFu) + offset3) << 24) & 0xFF000000u);
+	}
 }
 
 typedef struct FixedColor {
@@ -1241,12 +1322,12 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 	for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
 		#define INITCOMPONENT(c, C) \
 		if (cycle->stride > 0) { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00); \
+			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[bgStart]) & 0xFC, 0x00); \
 		} \
 		else { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
+			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[bgStart]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
+		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[bgStart]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[bgStart]) & 0xFC, 0x00))
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);
