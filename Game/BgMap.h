@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PlatformTypes.h"
+#include <stdint.h>
 
 typedef enum BgMapTileInfo {
 	BGMAPTILEINFO_TILENUM = 0x7FFFF,

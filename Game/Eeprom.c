@@ -3,6 +3,10 @@
 #include "HwData.h"
 #include <stdbool.h>
 
+// NOTE: Don't remove the empty loops after EEP-ROM accesses in here; the
+// PsikyoSH hardware probably requires some wait cycles between EEP-ROM
+// accesses for the hardware to update.
+
 void _0x602F658(uint8_t arg0) {
 	EEPROM[0] = (arg0 << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);

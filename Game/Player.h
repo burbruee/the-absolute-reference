@@ -405,5 +405,6 @@ void LockActiveBlock(Player *player, LockType lockType);
 // They can't be reenabled by just changing this; code supporting those modes
 // must be added.
 #define NUMENABLEDMODECODES (NUMMODECODES - 2)
+void InitModeCodes(Player* player);
 
 #define RANDOMIZER_USEHISTORY true

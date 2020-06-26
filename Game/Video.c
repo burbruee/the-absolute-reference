@@ -1322,12 +1322,12 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 	for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
 		#define INITCOMPONENT(c, C) \
 		if (cycle->stride > 0) { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[bgStart]) & 0xFC, 0x00); \
+			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00); \
 		} \
 		else { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[bgStart]) & 0xFC, 0x00); \
+			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[bgStart]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[bgStart]) & 0xFC, 0x00))
+		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);

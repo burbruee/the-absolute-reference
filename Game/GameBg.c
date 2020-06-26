@@ -5,6 +5,7 @@
 #include "Loop.h"
 #include "Math.h"
 #include "Player.h"
+#include "Screen.h"
 
 GameBg CurrentGameBg;
 
