@@ -44,7 +44,65 @@ void InitDemoLoop() {
 	_0x602AA16();
 }
 
-MainLoopState RunDemoLoop();
+MainLoopState RunDemoLoop() {
+	InitDemoLoop();
+	DisablePause();
+
+	for (bool runDemoLoop = true, stopDemoLoop = UpdateFrame(); !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
+		switch (Screen) {
+		case SCREEN_COPYRIGHT:
+			Screen = StartCopyrightScreen();
+			break;
+
+		case SCREEN_TITLE:
+			Screen = StartTitleScreen();
+			break;
+
+		case SCREEN_DEVELOPER:
+			Screen = StartDeveloperScreen();
+			if (Screen == SCREEN_GAME) {
+				runDemoLoop = false;
+			}
+			break;
+
+		case SCREEN_TWINDEMO:
+		case SCREEN_VERSUSDEMO:
+		case SCREEN_DOUBLESDEMO:
+			Screen = StartDemoScreen();
+			break;
+
+		case SCREEN_NORMALRANKING:
+		case SCREEN_MASTERRANKING:
+		case SCREEN_MASTERSECTIONTIMERANKING:
+		case SCREEN_DOUBLESRANKING:
+			Screen = StartRankingScreen();
+			break;
+
+		case SCREEN_TESTMODE:
+			return MAINLOOP_TEST;
+
+		case SCREEN_VERSIONTITLE:
+			Screen = StartVersionTitleScreen();
+			if (Screen == SCREEN_GAME) {
+				runDemoLoop = false;
+			}
+			break;
+
+		case SCREEN_GAME:
+			return MAINLOOP_GAME;
+
+		default:
+			Screen = SCREEN_COPYRIGHT;
+			break;
+		}
+
+		if (!runDemoLoop) {
+			return MAINLOOP_GAME;
+		}
+	}
+
+	return MAINLOOP_TEST;
+}
 
 ScreenState StartRankingScreen();
 ScreenState StartCopyrightScreen();
