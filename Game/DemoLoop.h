@@ -21,12 +21,4 @@ DemoScreenState DemoScreen;
 
 bool _0x06014234();
 
-void InitDemoLoop();
 MainLoopState RunDemoLoop();
-
-ScreenState StartRankingScreen();
-ScreenState StartCopyrightScreen();
-ScreenState StartTitleScreen();
-ScreenState StartDeveloperScreen();
-ScreenState StartVersionTitleScreen();
-ScreenState StartDemoScreen();

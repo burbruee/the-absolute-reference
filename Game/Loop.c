@@ -1,4 +1,5 @@
 #include "Loop.h"
+#include "DemoLoop.h"
 #include "Screen.h"
 #include "Player.h"
 #include "Item.h"

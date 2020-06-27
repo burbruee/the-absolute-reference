@@ -8,7 +8,8 @@
 #include "Frame.h"
 
 // TODO: Just a guess, but this probably returns whether the demo loop should
-// show the version title screen.
+// show the version title screen after a credit input, or button input when the
+// player(s) can start a game.
 bool _0x06014234() {
 	return
 		AddCoin[PLAYER1] || AddCoin[PLAYER2] ||
@@ -17,7 +18,7 @@ bool _0x06014234() {
 		(CanStart(PLAYER2, false) && (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)));
 }
 
-void InitDemoLoop() {
+static void InitDemoLoop() {
 	_0x6029814(0u, 0u, 0u, 0xFFu);
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x66u;
@@ -32,8 +33,8 @@ void InitDemoLoop() {
 	_0x60169DC();
 	_0x602E72A(0u);
 	InitPlayers();
-	InitModeCodes(Players);
-	InitModeCodes(Players + 1);
+	InitModeCodes(&Players[PLAYER1]);
+	InitModeCodes(&Players[PLAYER2]);
 	_0x6064750 = NULL;
 	Demo = false;
 	ScreenTime = 0u;
@@ -43,6 +44,13 @@ void InitDemoLoop() {
 	UpdateFrame();
 	_0x602AA16();
 }
+
+static ScreenState StartRankingScreen();
+static ScreenState StartCopyrightScreen();
+static ScreenState StartTitleScreen();
+static ScreenState StartDeveloperScreen();
+static ScreenState StartVersionTitleScreen();
+static ScreenState StartDemoScreen();
 
 MainLoopState RunDemoLoop() {
 	InitDemoLoop();
@@ -104,9 +112,26 @@ MainLoopState RunDemoLoop() {
 	return MAINLOOP_TEST;
 }
 
-ScreenState StartRankingScreen();
-ScreenState StartCopyrightScreen();
-ScreenState StartTitleScreen();
-ScreenState StartDeveloperScreen();
-ScreenState StartVersionTitleScreen();
-ScreenState StartDemoScreen();
+static ScreenState StartRankingScreen() {
+	// TODO
+}
+
+static ScreenState StartCopyrightScreen() {
+	// TODO
+}
+
+static ScreenState StartTitleScreen() {
+	// TODO
+}
+
+static ScreenState StartDeveloperScreen() {
+	// TODO
+}
+
+static ScreenState StartVersionTitleScreen() {
+	// TODO
+}
+
+static ScreenState StartDemoScreen() {
+	// TODO
+}
