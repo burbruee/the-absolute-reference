@@ -190,8 +190,55 @@ void* _0x6023DAE(struct_0x607D218* arg0) {
 }
 
 void _0x6023E5A(struct_0x607D218* arg0) {
-	// TODO
-	return NULL;
+	struct_0x607D218* var0 = arg0->_0x0;
+	struct_0x607D218* var1 = arg0->_0x4;
+	struct_0x607D218* var2 = arg0->_0x8;
+	struct_0x607D218* var3 = arg0->_0xC;
+
+	if (var1 == NULL) {
+		if (var2 == NULL) {
+			if (var0 != NULL) {
+				var0->_0x4 = var3;
+			}
+		}
+		else {
+			var2->_0xC = var3;
+		}
+		if (var3 != NULL) {
+			var3->_0x8 = var2;
+		}
+	}
+	else {
+		if (var2 == NULL) {
+			if (var0 != NULL) {
+				var0->_0x4 = var1;
+			}
+		}
+		else {
+			var2->_0xC = var1;
+		}
+		var1->_0x8 = var2;
+		for (var1->_0x0 = var0; var1->_0xC != NULL; var1->_0x0 = var0, var1 = var1->_0xC);
+		if (var3 != NULL) {
+			var1->_0xC = var3;
+			var3->_0x8 = var1;
+		}
+	}
+	if (arg0 == _0x607D210) {
+		_0x607D210 = arg0->_0x14;
+	}
+	if (arg0 == _0x607D214) {
+		_0x607D214 = arg0->_0x10;
+	}
+	arg0->_0x1A = 0u;
+	if (arg0->_0x10 != NULL) {
+		arg0->_0x10->_0x14 = arg0->_0x14;
+	}
+	if (arg0->_0x14 != NULL) {
+		arg0->_0x14->_0x10 = arg0->_0x10;
+	}
+	_0x6060068--;
+	_0x607CF10[_0x6060068] = arg0;
 }
 
 void* _0x6023EFE(struct_0x607D218* arg0, struct_0x607D218* arg1) {
@@ -205,7 +252,14 @@ void* _0x6023FA4(void (**arg0)(), struct_0x607D218* arg1) {
 }
 
 void _0x6024030(struct_0x607D218* arg0) {
-	// TODO
+	struct_0x607D218* var0 = _0x606005C;
+	_0x606005C = arg0;
+	arg0->_0x3FC();
+	_0x6023E5A(arg0);
+	if (arg0 == var0) {
+		_0x60AD21E = 1u;
+	}
+	_0x606005C = var0;
 }
 
 void _0x602406E() {
@@ -1375,6 +1429,11 @@ static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
 			PALRAM[palNum * NUMPALCOLORS_4BPP + j] = pal[j];
 		}
 	}
+}
+
+void _0x602AA16() {
+	_0x60294C0(7u);
+	VideoSetBackdropColor(0u, NULL, NULL);
 }
 
 void _0x602AA4C() {

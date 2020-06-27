@@ -57,8 +57,8 @@ extern int16_t NumSprites;
 
 typedef struct struct_0x607D218 {
 	struct_0x607D218* _0x0;
-	void (*_0x4)();
-	void (*_0x8)();
+	struct_0x607D218* _0x4;
+	struct_0x607D218* _0x8;
 	struct_0x607D218* _0xC;
 	struct_0x607D218* _0x10;
 	struct_0x607D218* _0x14;
@@ -68,6 +68,7 @@ typedef struct struct_0x607D218 {
 	struct_0x607D218* _0x20;
 	void* _0x300[60];
 	void (*_0x3F8)();
+	void (*_0x3FC)();
 } struct_0x607D218;
 
 extern struct_0x607D218* _0x606005C = NULL;
@@ -292,6 +293,7 @@ void EnablePalCycles();
 // TODO
 void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal);
 // TODO
+void _0x602AA16();
 void _0x602AA4C();
 void _0x602AA64();
 void _0x602AB9E();

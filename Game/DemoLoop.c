@@ -23,7 +23,7 @@ void InitDemoLoop() {
 	SpritePriority[1] = 0x66u;
 	_0x602AA4C();
 	if (_0x6064750 != NULL) {
-		_0x6024030(_0x6064750); // TODO
+		_0x6024030(_0x6064750);
 	}
 	_0x6023790();
 	_0x602AB9E();
@@ -41,7 +41,7 @@ void InitDemoLoop() {
 	DemoWaitTime = 0u;
 	GameStartPlayer = STARTPLAYER_NONE;
 	UpdateFrame();
-	_0x602AA16(); // TODO
+	_0x602AA16();
 }
 
 MainLoopState RunDemoLoop();
