@@ -1,4 +1,5 @@
 #include "Video.h"
+#include "GameBg.h"
 #include "SpriteInit.h"
 #include "Fixed.h"
 #include "HwSprite.h"

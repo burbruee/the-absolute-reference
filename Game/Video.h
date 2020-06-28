@@ -286,7 +286,7 @@ void InitPalCycles();
 void UpdatePalCycles();
 void NewPalCycle(uint8_t palNum, Color *pal0, Color *pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep);
 // Pass this to FreePalCycles to free all cycles.
-#define FREEALLPALCYCLES NUMPALS
+#define FREEALLPALCYCLES 500u
 void FreePalCycles(uint16_t palNum);
 void DisablePalCycles();
 void EnablePalCycles();

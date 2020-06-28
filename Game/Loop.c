@@ -63,7 +63,7 @@ void InitGame() {
 
 	_0x602419C();
 	_0x602AB9E();
-	FreePalCycles(500u);
+	FreePalCycles(FREEALLPALCYCLES);
 
 	Game.numVersusRounds = 0u;
 	Game.numVersusRoundWins[PLAYER2] = 0u;
@@ -275,7 +275,7 @@ GameLoopState StartGameLoop() {
 					state = 2;
 				}
 
-				if (_0x6014234()) {
+				if (NextScreenVersionTitle()) {
 					_0x6079294 = 0;
 				}
 			}

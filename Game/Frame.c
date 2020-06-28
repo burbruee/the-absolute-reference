@@ -55,9 +55,9 @@ bool UpdateFrame() {
 	_0x6025078();
 	_0x602523C();
 	UpdateGameBg();
-	_0x602C5C2();
+	_0x602C5C2(); // TODO
 	WriteSpriteLayers();
-	_0x602DAD4();
+	_0x602DAD4(); // TODO
 	NumSprites = SPRITE_FIRST;
 
 	ADVANCE_FRAME();

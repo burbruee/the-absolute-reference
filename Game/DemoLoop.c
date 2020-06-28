@@ -6,11 +6,11 @@
 #include "Player.h"
 #include "Sound.h"
 #include "Frame.h"
+#include "Pal.h"
+#include "ShowObject.h"
+#include "Entity.h"
 
-// TODO: Just a guess, but this probably returns whether the demo loop should
-// show the version title screen after a credit input, or button input when the
-// player(s) can start a game.
-bool _0x06014234() {
+bool NextScreenVersionTitle() {
 	return
 		AddCoin[PLAYER1] || AddCoin[PLAYER2] ||
 		AddService ||
@@ -28,7 +28,7 @@ static void InitDemoLoop() {
 	}
 	_0x6023790();
 	_0x602AB9E();
-	FreePalCycles(500u);
+	FreePalCycles(FREEALLPALCYCLES);
 	_0x602419C();
 	_0x60169DC();
 	_0x602E72A(0u);
@@ -117,7 +117,71 @@ static ScreenState StartRankingScreen() {
 }
 
 static ScreenState StartCopyrightScreen() {
-	// TODO
+	_0x602AA4C();
+	if (UpdateFrame()) {
+		return SCREEN_TESTMODE;
+	}
+
+	_0x602AB9E();
+	FreePalCycles(FREEALLPALCYCLES);
+	_0x6029814(0u, 0u, 0x00u, 0xFFu);
+
+	for (bool nextScreenVersionTitle = false; !nextScreenVersionTitle; nextScreenVersionTitle = NextScreenVersionTitle()) {
+		if (_0x6064750 == NULL) {
+			ResetVideoSetters();
+			_0x602406E(); // TODO
+			InitEntities();
+			_0x6026FCA(CurrentGameBg._0x1E, 0u); // TODO
+			SetPal(160u, NUMPALCOLORS_4BPP, PALPTR(0x205));
+
+			for (int16_t frames = 0; frames < 3; frames++) {
+				if (UpdateFrame()) {
+					return SCREEN_TESTMODE;
+				}
+			}
+
+			SpritePriority[0] = 0x13u;
+			SpritePriority[1] = 0x66u;
+			_0x6029498(6); // TODO
+			SetBackdropColor(COLOR(0u, 0u, 0u));
+			AlphaValues[4] = 0x1Fu;
+			_0x6029546(0, 0x14, 0, 6); // TODO
+
+			for (int16_t frames = 300; frames != 0; frames--) {
+				if (UpdateFrame()) {
+					_0x602406E(); // TODO
+					return SCREEN_TESTMODE;
+				}
+				if (NextScreenVersionTitle()) {
+					_0x602406E(); // TODO
+					return SCREEN_VERSIONTITLE;
+				}
+				ShowObject(OBJECTPTR(0x658), 0, 0, 160u, 40u); // TODO: Define a constant for the object pointer.
+			}
+
+			for (bool stopDemoLoop = false; !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
+				if (_0x6064750 == NULL) {
+					UpdateFrame();
+					_0x602406E(); // TODO
+					_0x6029546(2, 10, 0, 6); // TODO
+					for (int16_t frames = 0; frames < 10; frames++) {
+						if (UpdateFrame()) {
+							_0x602406E(); // TODO
+							return SCREEN_TESTMODE;
+						}
+					}
+					return SCREEN_DEVELOPER;
+				}
+			}
+			return SCREEN_TESTMODE;
+		}
+
+		if (UpdateFrame()) {
+			return SCREEN_TESTMODE;
+		}
+	}
+
+	return SCREEN_VERSIONTITLE;
 }
 
 static ScreenState StartTitleScreen() {

@@ -19,6 +19,6 @@ typedef enum DemoScreenState {
 
 DemoScreenState DemoScreen;
 
-bool _0x06014234();
+bool NextScreenVersionTitle();
 
 MainLoopState RunDemoLoop();

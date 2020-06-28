@@ -4,9 +4,8 @@
 #include "Video.h"
 #include <stdbool.h>
 
-// Read this to check the current pause mode, not NextPauseMode.
-// Only frame handling functions should write this, once, before updating a
-// frame.
+// Read this to check the current pause mode, not NextPauseMode. Only
+// frame-update functions should write to this, once, before updating a frame.
 extern PauseMode CurrentPauseMode;
 
 // True if ScreenTime is odd.
@@ -64,8 +63,8 @@ void _0x602AD0E();
 // Platform/Util/Video.h separate from the render thread.
 void Vblank();
 
-// TODO: Do all these functions, when returning true, indicate execution should
-// transition to the test mode screen?
+// When any of these frame-update functions return true, the program must be
+// transitioned to the test mode screen.
 bool UpdateFrame();
 bool _0x602AECA();
 bool UpdateGame();
