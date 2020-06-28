@@ -675,10 +675,10 @@ static void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 	nameEntry->player = player;
 
 	nameEntry->timeoutFrames = TIME(0, 30, 0);
-
 	nameEntry->numChars = 0u;
 	nameEntry->charIndex = 0u;
-	nameEntry->autoshiftFrames = 12u;
+	nameEntry->autoshiftFrames = CS(20);
+	nameEntry->waitFrames = CS(50);
 
 	nameEntry->name[3] = *NameEntryChars[39];
 	nameEntry->name[2] = *NameEntryChars[39];
@@ -752,6 +752,7 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 				}
 			}
 			else if (nameEntry->charIndex == 41) {
+				done = true;
 				nameEntry->numChars = 4;
 				nameEntry->charIndex = 39;
 			}
@@ -786,6 +787,7 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 				nameEntry->name[--nameEntry->numChars] = ' ';
 			}
 			else {
+				done = true;
 				nameEntry->numChars = 4;
 				nameEntry->charIndex = 39;
 			}
@@ -802,6 +804,7 @@ static bool UpdateNameEntry(NameEntryData* nameEntry) {
 	}
 
 	if (--nameEntry->timeoutFrames == 0) {
+		done = true;
 		nameEntry->charIndex = 39;
 	}
 
