@@ -129,9 +129,9 @@ static ScreenState StartCopyrightScreen() {
 	for (bool nextScreenVersionTitle = false; !nextScreenVersionTitle; nextScreenVersionTitle = NextScreenVersionTitle()) {
 		if (_0x6064750 == NULL) {
 			ResetVideoSetters();
-			_0x602406E(); // TODO
+			_0x602406E();
 			InitEntities();
-			_0x6026FCA(CurrentGameBg._0x1E, 0u); // TODO
+			_0x6026FCA(CurrentGameBg._0x1E, 0u);
 			SetPal(160u, NUMPALCOLORS_4BPP, PALPTR(0x205));
 
 			for (int16_t frames = 0; frames < 3; frames++) {
@@ -145,15 +145,15 @@ static ScreenState StartCopyrightScreen() {
 			_0x6029498(6); // TODO
 			SetBackdropColor(COLOR(0u, 0u, 0u));
 			AlphaValues[4] = 0x1Fu;
-			_0x6029546(0, 0x14, 0, 6); // TODO
+			_0x6029546(0, 0x14, 0, 6);
 
 			for (int16_t frames = 300; frames != 0; frames--) {
 				if (UpdateFrame()) {
-					_0x602406E(); // TODO
+					_0x602406E();
 					return SCREEN_TESTMODE;
 				}
 				if (NextScreenVersionTitle()) {
-					_0x602406E(); // TODO
+					_0x602406E();
 					return SCREEN_VERSIONTITLE;
 				}
 				ShowObject(OBJECTPTR(0x658), 0, 0, 160u, 40u); // TODO: Define a constant for the object pointer.
@@ -162,11 +162,11 @@ static ScreenState StartCopyrightScreen() {
 			for (bool stopDemoLoop = false; !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
 				if (_0x6064750 == NULL) {
 					UpdateFrame();
-					_0x602406E(); // TODO
+					_0x602406E();
 					_0x6029546(2, 10, 0, 6); // TODO
 					for (int16_t frames = 0; frames < 10; frames++) {
 						if (UpdateFrame()) {
-							_0x602406E(); // TODO
+							_0x602406E();
 							return SCREEN_TESTMODE;
 						}
 					}

@@ -19,7 +19,7 @@ const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 struct_0x607D218* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
-static uint16_t _0x6060068 = 0u;
+static int16_t _0x6060068 = 0;
 struct_0x606006C _0x606006C[64];
 int16_t _0x606106C[64];
 struct_0x6061932 _0x6061932;
@@ -64,6 +64,7 @@ static struct_0x607D218 _0x607D218[192];
 static struct_0x607D218* _0x60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t _0x60AD21E = 0u;
+static int16_t _0x60AD220;
 static int16_t _0x60AD224;
 
 Bg Bgs[4];
@@ -185,9 +186,44 @@ int32_t _0x6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, in
 	return 0u;
 }
 
-void* _0x6023DAE(struct_0x607D218* arg0) {
-	// TODO
-	return NULL;
+struct_0x607D218* _0x6023DAE(struct_0x607D218* arg0) {
+	if (_0x6060068 >= lengthof(_0x607CF10) - 1) {
+		return NULL;
+	}
+
+	struct_0x607D218* var0 = _0x607CF10[_0x6060068];
+	MemSet(var0, sizeof(struct_0x607D218), 0u);
+
+	if (arg0 != NULL) {
+		var0->_0x0 = arg0;
+		var0->_0xC = arg0->_0x4;
+		if (arg0->_0x4 != NULL) {
+			arg0->_0x4->_0x8 = var0;
+		}
+		arg0->_0x4 = var0;
+	}
+
+	if (_0x6060068 == 0) {
+		var0->_0x10 = NULL;
+		var0->_0x14 = NULL;
+		_0x607D210 = var0;
+	}
+	else {
+		var0->_0x10 = _0x607D214;
+		var0->_0x14 = NULL;
+		_0x607D214->_0x14 = var0;
+	}
+
+	if (_0x60AD220 == 0) {
+		_0x60AD220 = 1;
+	}
+
+	_0x607D214 = var0;
+	var0->_0x1A = _0x60AD220++;
+
+	_0x6060068++;
+
+	return var0;
 }
 
 void _0x6023E5A(struct_0x607D218* arg0) {
@@ -242,7 +278,7 @@ void _0x6023E5A(struct_0x607D218* arg0) {
 	_0x607CF10[_0x6060068] = arg0;
 }
 
-void* _0x6023EFE(struct_0x607D218* arg0, struct_0x607D218* arg1) {
+struct_0x607D218* _0x6023EFE(struct_0x607D218* arg0, struct_0x607D218* arg1) {
 	// TODO
 	return NULL;
 }
@@ -264,7 +300,12 @@ void _0x6024030(struct_0x607D218* arg0) {
 }
 
 void _0x602406E() {
-	// TODO
+	if (_0x6060068 != 0u) {
+		for (struct_0x607D218* var0 = _0x607D210, * var1; var0 != NULL; var0 = var1) {
+			var1 = var0->_0x14;
+			_0x6024030(var0);
+		}
+	}
 }
 
 void _0x60240A8(void* arg0) {
@@ -1094,8 +1135,8 @@ GameBg* _0x6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) 
 	return gameBg;
 }
 
-void _0x6026FCA(uint16_t arg0, uint16_t arg1) {
-	// TODO
+void _0x6026FCA(int16_t bgIndex, int16_t arg1) {
+	Bgs[bgIndex]._0x2 = arg1;
 }
 
 void _0x6026FDC(int16_t arg0, int16_t arg1) {
@@ -1143,6 +1184,83 @@ void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2) {
 		backdropLineColor[13] = (Color)color;
 		backdropLineColor[14] = (Color)color;
 		backdropLineColor[15] = (Color)color;
+	}
+}
+
+void _0x6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
+	struct_0x607D218 *var0;
+	uint32_t numVideoSetters;
+	
+	if (arg0 != 4) {
+		if (_0x6064750 == NULL) {
+			_0x6064750 = _0x6023EFE(_0x60356D0, NULL); // TODO
+		}
+		if (arg3 & 0x8000) {
+			_0x6064750->_0x30 = 1u;
+		}
+		else {
+			_0x6064750->_0x30 = 0u;
+		}
+		_0x6064750->_0x2C = F32(0, 0x0000u);
+		F32I(_0x6064750->_0x2C) = 0x80;
+		var0 = _0x6064750;
+		var0->_0x2C = arg1 / _0x6064750->_0x2C;
+		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
+		if ((arg3 & 7) != 0) {
+			_0x6029498(arg3 & 7);
+		}
+		_0x6064750->_0x1A = arg0;
+		if (arg0 == 0) {
+			_0x6064750->_0x20 = 0xFFu;
+			if (arg2 == 0) {
+				_0x6064750->_0x24 = 0x80;
+			}
+			else {
+				_0x6064750->_0x24 = arg2;
+			}
+			_0x6064750->_0x2C = -_0x6064750->_0x2C;
+		}
+		else {
+			if (arg0 == 1) {
+				_0x6064750->_0x20 = ~0u;
+				if (arg2 == 0) {
+					_0x6064750->_0x24 = 0x80;
+				}
+				else {
+					_0x6064750->_0x24 = arg2;
+				}
+				_0x6064750->_0x2C = -_0x6064750->_0x2C;
+			}
+			else {
+				if (arg0 == 2) {
+					_0x6064750->_0x20 = COLOR(0, 0, 0);
+					if (arg2 == 0) {
+						_0x6064750->_0x24 = 0;
+					}
+					else {
+						_0x6064750->_0x24 = arg2;
+					}
+				}
+				else {
+					if (arg0 == 3) {
+						_0x6064750->_0x20 = COLOR(0xFF, 0xFF, 0xFF);
+						if (arg2 == 0) {
+							_0x6064750->_0x24 = 0;
+						}
+						else {
+							_0x6064750->_0x24 = arg2;
+						}
+					}
+				}
+			}
+		}
+		_0x6064750->_0x28 = F32(0, 0x0000u);
+		F32I(_0x6064750->_0x28) = _0x6064750->_0x24;
+		SetBackdropColor(_0x6064750->_0x20);
+	}
+	else if (_0x6064750 != NULL) {
+		_0x6024030(_0x6064750);
+		_0x6064750 = NULL;
 	}
 }
 

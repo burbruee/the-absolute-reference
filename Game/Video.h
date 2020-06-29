@@ -6,6 +6,7 @@
 #include "HwSprite.h"
 #include "DisplayObject.h"
 #include "PlatformTypes.h"
+#include "Fixed.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -65,7 +66,11 @@ typedef struct struct_0x607D218 {
 	uint16_t _0x18;
 	uint16_t _0x1A;
 	uint8_t _0x1C[4];
-	struct_0x607D218* _0x20;
+	Color _0x20;
+	int16_t _0x24;
+	Fixed32 _0x28;
+	Fixed32 _0x2C;
+	uint16_t _0x30; // TODO: Might be bool.
 	void* _0x300[60];
 	void (*_0x3F8)();
 	void (*_0x3FC)();
@@ -185,11 +190,11 @@ void* _0x6023C8A(struct_0x607D218*, void*);
 
 int32_t _0x6023CBC(void (*)(), uint32_t, int16_t, int16_t, int16_t, int16_t, int16_t, int16_t);
 
-void* _0x6023DAE(struct_0x607D218*);
+struct_0x607D218* _0x6023DAE(struct_0x607D218*);
 
 void _0x6023E5A(struct_0x607D218*);
 
-void* _0x6023EFE(struct_0x607D218*, struct_0x607D218*);
+struct_0x607D218* _0x6023EFE(struct_0x607D218*, struct_0x607D218*);
 
 void* _0x6023FA4(void (**)(), struct_0x607D218*);
 
@@ -253,7 +258,7 @@ void _0x602682A(int16_t, int16_t, int16_t, bool);
 void _0x6026870(int16_t, int16_t, int16_t);
 GameBg* _0x6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
-void _0x6026FCA(uint16_t, uint16_t);
+void _0x6026FCA(int16_t bgIndex, int16_t arg1);
 void _0x6026FDC(int16_t, int16_t);
 // TODO
 void SetBgDarkness(int16_t bgIndex, int16_t darkness);
@@ -264,6 +269,7 @@ void VideoSetScanlinesBank(void*, void*, void*);
 void _0x60294C0(uint8_t arg0);
 void SetBackdropColor(Color color);
 void VideoSetBackdropColor(uintptr_t color, void*, void*);
+void _0x6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
 // TODO
 // Runs all the video setters.
 void SetVideo();
