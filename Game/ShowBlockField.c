@@ -176,7 +176,7 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 		for (int16_t row = 0, y = startY; row < 4; row++, y += displaySize) {
 			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, row);
 			for (int16_t col = 0, x = startX; col < 4; col++, x += displaySize) {
-				if (blockDefRow[col] != BLOCKDEFSQUARE_EMPTY) {
+				if (blockDefRow[col] != DEFBLOCK_EMPTY) {
 					DisplayObjectEx(blockObject, y, x, palNum, 100u, scale, scale, false);
 				}
 			}

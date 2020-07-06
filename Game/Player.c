@@ -5,6 +5,7 @@
 // frontends define EEPROM access using functions.
 // TODO: Make all functions and data only used here private.
 #include "Player.h"
+#include "Screen.h"
 #include "Ranking.h"
 #include "Item.h"
 #include "ShowBlockField.h"
@@ -716,7 +717,7 @@ void UpdatePlayerSelecting(Player* player) {
 				player->subStates[SUBSTATE_SELECT] = SELECT_SINGLE;
 				PlaySoundEffect(SOUNDEFFECT_START);
 				if (!(player->modeFlags & (MODE_NORMAL | MODE_DOUBLES | MODE_TADEATH))) {
-					CheckItemMode(player);
+					CheckSetItemMode(player);
 				}
 			}
 		}
@@ -1030,7 +1031,7 @@ void UpdateSiren(Player* player) {
 	}
 }
 
-void CheckItemMode(Player* player) {
+void CheckSetItemMode(Player* player) {
 	if (GameButtonsDown[player->num] == (BUTTON_START | BUTTON_3 | BUTTON_2)) {
 		player->modeFlags |= MODE_ITEM;
 	}
@@ -1312,7 +1313,7 @@ static inline void CountBlockings(const Player* player, const int16_t col, const
 			MatrixBlock* matrixBlock = &MATRIX(player, matrixRow, col);
 			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, blockRow);
 			for (int16_t blockCol = 0; blockCol < size; blockCol++, matrixBlock++) { 
-				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != BLOCKDEFSQUARE_EMPTY && (matrixBlock->block & ~BLOCK_INVISIBLE)) {
+				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != DEFBLOCK_EMPTY && (matrixBlock->block & ~BLOCK_INVISIBLE)) {
 					if (matrixBlock->block & BLOCK_BLOCKING) {
 						entry->numPlayerBlockings++;
 					}
@@ -1362,43 +1363,41 @@ static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation)
 // than requiring it be updated after calling this.
 bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation rotation) {
 	if (player->activeBlock & BLOCK_BIG) {
-		row -= 2;
-		int16_t fieldRow = row + 1;
-		int16_t fieldRowBelow = row - 1;
-		BlockDefSquare* def = BLOCKDEF(player->activeBlock & BLOCK_TYPE);
-		for (int16_t defRow = 0; fieldRow - defRow < 8; defRow++) {
-			if (row - defRow < player->matrixHeight) {
+		col -= 2;
+		for (int16_t defRow = 0; defRow < 8; defRow++) {
+			if ((row + 1) - defRow < player->matrixHeight) {
 				for (int16_t defCol = 0; defCol < 8; defCol++) {
-					if (col + defCol >= 0 && col + defCol <= player->matrixWidth - 1) {
-						Block fieldBlock = MATRIX(player, fieldRow - defRow, col + defCol).block;
-						BlockDefSquare* defRowSquare = BLOCKDEFROWBIG(def, rotation, defRow);
-						if (defRowSquare[defCol / 2] != BLOCKDEFSQUARE_EMPTY && fieldBlock != NULLBLOCK) {
-							// The active block is blocked in the current
-							// position/rotation. I-blocks don't kick, so those
-							// are blocked at this point. Otherwise, ARS kicks
-							// are attempted.
-							if ((player->activeBlock & BLOCK_TYPE) != BLOCKTYPE_I) {
-								// Reject rotations blocked in the middle column of 3x3 blocks.
-								if (defCol == 2 || defCol == 3) {
-									return true;
-								} 
+					if (
+						col + defCol >= 0 &&
+						col + defCol <= player->matrixWidth - 1 &&
+						DEFBLOCKBIG(player->activeBlock & BLOCK_TYPE, rotation, defRow, defCol) != DEFBLOCK_EMPTY &&
+						MATRIX(player, (row + 1) - defRow, col + defCol).block != NULLBLOCK) {
+						// The active block is blocked in the current
+						// position/rotation.
 
-								// Kick right by default.
-								for (int16_t kick = 1; kick < 2; kick++) {
-									if (!Blocked(player, col + kick * 2 + 2, fieldRowBelow, rotation)) {
-										F32I(player->activePos[0]) += kick * 2;
-										return false;
-									}
-								}
-								// Failing that, kick left.
-								for (int16_t kick = 1; kick < 2; kick++) {
-									if (!Blocked(player, col - kick * 2 + 2, fieldRowBelow, rotation)) {
-										F32I(player->activePos[0]) -= kick * 2;
-										return false;
-									}
-								}
-							}
+						// I blocks never kick.
+						if ((player->activeBlock & BLOCK_TYPE) == BLOCKTYPE_I) {
 							return true;
+						}
+
+						// Reject rotations blocked in the middle column of 3x3 blocks.
+						if (defCol == 2 || defCol == 3) {
+							return true;
+						} 
+
+						// Kick right by default.
+						for (int16_t kick = 1; kick < 2; kick++) {
+							if (!Blocked(player, col + kick * 2 + 2, row, rotation)) {
+								F32I(player->activePos[0]) += kick * 2;
+								return false;
+							}
+						}
+						// Failing that, kick left.
+						for (int16_t kick = 1; kick < 2; kick++) {
+							if (!Blocked(player, col - kick * 2 + 2, row, rotation)) {
+								F32I(player->activePos[0]) -= kick * 2;
+								return false;
+							}
 						}
 					}
 				}
@@ -1406,35 +1405,40 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 		}
 	}
 	else {
-		BlockDefSquare* def = BLOCKDEF(player->activeBlock & BLOCK_TYPE);
 		for (int16_t defRow = 0; defRow < 4; defRow++) {
 			if (row - defRow < player->matrixHeight) {
-				Block* fieldBlock = &MATRIX(player, row - defRow, col).block;
-				BlockDefSquare* defRowSquare = BLOCKDEFROW(def, rotation, defRow);
-				for (int16_t defCol = 0; defCol < 4; defCol++, fieldBlock++) {
-					if (col + defCol >= 0 && col + defCol <= player->matrixWidth - 1 && *fieldBlock != NULLBLOCK) {
+				for (int16_t defCol = 0; defCol < 4; defCol++) {
+					if (
+						col + defCol >= 0 &&
+						col + defCol <= player->matrixWidth - 1 &&
+						DEFBLOCK(player->activeBlock & BLOCK_TYPE, rotation, defRow, defCol) != DEFBLOCK_EMPTY &&
+						MATRIX(player, row - defRow, col).block != NULLBLOCK) {
 						// The active block is blocked in the current
-						// position/rotation. I-blocks don't kick, so those are
-						// blocked at this point. Otherwise, ARS kicks are
-						// attempted.
-						if ((player->activeBlock & BLOCK_TYPE) != BLOCKTYPE_I) {
-							// Reject rotations blocked in the middle column of 3x3 blocks.
-							if (defCol == 1) {
-								return true;
-							}
+						// position/rotation.
 
-							// Kick right by default.
-							if (!Blocked(player, col + 1, row, rotation)) {
-								F32I(player->activePos[0])++;
-								return false;
-							}
-							// Failing that, kick left.
-							else if (!Blocked(player, col - 1, row, rotation)) {
-								F32I(player->activePos[0])--;
-								return false;
-							}
+						// I blocks never kick.
+						if ((player->activeBlock & BLOCK_TYPE) != BLOCKTYPE_I) {
+							return true;
 						}
-						return true;
+
+						// Reject rotations blocked in the middle column of 3x3 blocks.
+						if (defCol == 1) {
+							return true;
+						}
+
+						// Kick right by default.
+						if (!Blocked(player, col + 1, row, rotation)) {
+							F32I(player->activePos[0])++;
+							return false;
+						}
+						// Failing that, kick left.
+						else if (!Blocked(player, col - 1, row, rotation)) {
+							F32I(player->activePos[0])--;
+							return false;
+						}
+						else {
+							return true;
+						}
 					}
 				}
 			}
@@ -1733,7 +1737,7 @@ static inline void WriteBlockToMatrix(Player* player, const LockType lockType, c
 		if (matrixRow < player->matrixHeight) {
 			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, lockRotation, blockRow);
 			for (int16_t blockCol = 0; blockCol < lockBlockSize; blockCol++) {
-				if (BLOCKDEFSQUARE(blockDefRow, blockCol) != BLOCKDEFSQUARE_EMPTY) {
+				if (BLOCKDEFCOL(blockDefRow, blockCol) != DEFBLOCK_EMPTY) {
 					if (lockType != LOCKTYPE_GAMEOVER) {
 						MATRIX(player, matrixRow, lockCol + blockCol).block = player->activeBlock | BLOCK_FLASH | TOBLOCKFLASHFRAMES(2u);
 					}
@@ -2993,7 +2997,7 @@ void UpdatePlayStart(Player* player) {
 		}
 	}
 	else if ((player->num != Game.versusWinner || Game.numVersusWins == 0) && !(player->modeFlags & (MODE_NORMAL | MODE_DOUBLES | MODE_TADEATH))) {
-		CheckItemMode(player);
+		CheckSetItemMode(player);
 	}
 
 	switch (player->subStates[SUBSTATE_READYGO]) {

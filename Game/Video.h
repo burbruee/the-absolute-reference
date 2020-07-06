@@ -56,6 +56,10 @@ typedef struct struct_0x606006C {
 // The number of sprites written to Sprites.
 extern int16_t NumSprites;
 
+typedef struct struct_0x607D218_0x300 {
+	void (*_0x0[4])();
+} struct_0x607D218_0x300;
+
 typedef struct struct_0x607D218 {
 	struct_0x607D218* _0x0;
 	struct_0x607D218* _0x4;
@@ -71,10 +75,10 @@ typedef struct struct_0x607D218 {
 	Fixed32 _0x28;
 	Fixed32 _0x2C;
 	uint16_t _0x30; // TODO: Might be bool.
-	void* _0x300[60];
-	void (*_0x3F8)();
-	void (*_0x3FC)();
+	struct_0x607D218_0x300 _0x300[16];
 } struct_0x607D218;
+
+#define STRUCT_607D218_300_END(s) (&(s)->_0x300[15])
 
 extern struct_0x607D218* _0x606005C = NULL;
 
@@ -194,7 +198,7 @@ struct_0x607D218* _0x6023DAE(struct_0x607D218*);
 
 void _0x6023E5A(struct_0x607D218*);
 
-struct_0x607D218* _0x6023EFE(struct_0x607D218*, struct_0x607D218*);
+struct_0x607D218* _0x6023EFE(void (**)(), struct_0x607D218*);
 
 void* _0x6023FA4(void (**)(), struct_0x607D218*);
 

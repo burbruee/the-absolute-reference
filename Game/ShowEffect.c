@@ -420,7 +420,7 @@ static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, in
 	for (int16_t row = 0, pixelSpread = spread * size; row < 4; row++, squareY += pixelSpread, blockDef += 16u) {
 		BlockDefSquare* blockDefSquare = BLOCKDEFROW(blockDef, rotation, row);
 		for (int16_t col = 0; col < 4; col++, squareX += pixelSpread, blockDefSquare++) {
-			if (*blockDefSquare != BLOCKDEFSQUARE_EMPTY) {
+			if (*blockDefSquare != DEFBLOCK_EMPTY) {
 				DisplayObjectEx(blockObject, squareY, squareX, palNum, 100u, scale, scale, false);
 			}
 		}

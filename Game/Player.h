@@ -375,16 +375,18 @@ void ShowPlayers();
 
 // Nine block types, four rotations, each block is 4x4.
 //
-// The first two block definitions, for empty and wall squares, are unused, and
-// only present so BLOCKTYPE_* constants can be used as indices.
+// The first two block definitions, for empty and wall block types, are unused,
+// and only present so BLOCKTYPE_* constants can be used with BLOCKDEF.
 typedef const uint8_t BlockDefSquare;
 extern BlockDefSquare BlockDefs[9 * 4 * 4 * 4];
 #define BLOCKDEF(type) (&BlockDefs[(type) * 4 * 4 * 4])
-#define BLOCKDEFROW(blockDef, rotation, row) (&((blockDef)[(rotation) * 4 + (row) * 4 * 4]))
-#define BLOCKDEFROWBIG(blockDef, rotation, row) (&(blockDef)[(rotation) * 4 + (row)])
-#define BLOCKDEFSQUARE(blockDefRow, col) ((blockDefRow)[(col)])
-#define BLOCKDEFSQUAREBIG(blockDefRow, col) ((blockDefRow)[(col) / 2])
-#define BLOCKDEFSQUARE_EMPTY 0u
+#define BLOCKDEFROW(def, rotation, row) (&((def)[(rotation) * 4 + (row) * 4 * 4]))
+#define BLOCKDEFROWBIG(def, rotation, row) (&(def)[(rotation) * 4 + ((row) / 2) * 4 * 4])
+#define BLOCKDEFCOL(rowDef, col) ((rowDef)[(col)])
+#define BLOCKDEFCOLBIG(rowDef, col) ((rowDef)[(col) / 2])
+#define DEFBLOCK(type, rotation, row, col) BLOCKDEFCOL(BLOCKDEFROW(BLOCKDEF((type)), (rotation), (row)), (col))
+#define DEFBLOCKBIG(type, rotation, row, col) BLOCKDEFCOL(BLOCKDEFROW(BLOCKDEF((type)), (rotation), (row) / 2), (col) / 2)
+#define DEFBLOCK_EMPTY 0u
 
 void NextPlayLock(Player* player);
 

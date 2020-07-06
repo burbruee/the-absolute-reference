@@ -278,7 +278,7 @@ void _0x6023E5A(struct_0x607D218* arg0) {
 	_0x607CF10[_0x6060068] = arg0;
 }
 
-struct_0x607D218* _0x6023EFE(struct_0x607D218* arg0, struct_0x607D218* arg1) {
+struct_0x607D218* _0x6023EFE(void (**arg0)(), struct_0x607D218* arg1) {
 	// TODO
 	return NULL;
 }
@@ -1203,8 +1203,7 @@ void _0x6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 		}
 		_0x6064750->_0x2C = F32(0, 0x0000u);
 		F32I(_0x6064750->_0x2C) = 0x80;
-		var0 = _0x6064750;
-		var0->_0x2C = arg1 / _0x6064750->_0x2C;
+		_0x6064750->_0x2C /= arg1;
 		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
 		if ((arg3 & 7) != 0) {
 			_0x6029498(arg3 & 7);
