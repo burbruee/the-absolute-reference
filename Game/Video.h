@@ -70,7 +70,7 @@ typedef struct struct_0x607D218 {
 	uint16_t _0x18;
 	uint16_t _0x1A;
 	uint8_t _0x1C[4];
-	Color _0x20;
+	Color backdropColor;
 	int16_t _0x24;
 	Fixed32 _0x28;
 	Fixed32 _0x2C;
@@ -269,12 +269,14 @@ void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO
 void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't used it. -Brandon McGriff
 void VideoSetScanlinesBank(void*, void*, void*);
+void _0x6029498(int16_t);
 // TODO
 void _0x60294C0(uint8_t arg0);
 void SetBackdropColor(Color color);
 void VideoSetBackdropColor(uintptr_t color, void*, void*);
 void _0x6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
-// TODO
+void _0x602970C();
+void _0x602975E();
 // Runs all the video setters.
 void SetVideo();
 // Disables all video setters.

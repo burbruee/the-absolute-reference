@@ -24,7 +24,7 @@ const int16_t NumObjects = 1682;
 
 const int16_t _0x4001E = 516;
 
-const Color** PalDataPtr = &Pal.data;
+const Color* PalDataPtr = Pal.data;
 const BgMap*** BgMapTablePtr = &BgMapTable;
 
 // TODO: Currently the code doesn't ensure the background maps are stored
@@ -33,13 +33,13 @@ const BgMap*** BgMapTablePtr = &BgMapTable;
 // then getting pointers from that array for the background map table.
 const BgMap** BgMapsPtr = &BgMapSection2;
 
-const void*** SequenceDataTablePtr = &SequenceDataTable;
-const ObjectData** ObjectDataTablePtr = &Objects.data;
+const void** SequenceDataTablePtr = SequenceDataTable;
+const ObjectData* ObjectDataTablePtr = Objects.data;
 // TODO
-//const MidiData** MidiDataPtr;
+//const MidiData* MidiPtr = &Midi;
 // TODO
-//const RectData** RectDataTablePtr;
-const Color*** PalTableDataPtr = &PalTable.data;
-const uint16_t* BuildChecksumDataPtr = BuildChecksum.data;
+//const RectData* RectDataTablePtr = RectDataTable;
+const Color** PalTableDataPtr = PalTable.data;
+const BuildChecksumData* BuildChecksumDataPtr = BuildChecksum.checksums;
 const uint32_t _0x40044 = 8u;
-const Color*** _0x40048 = &PalTable.data;
+const Color** _0x40048 = PalTable.data;

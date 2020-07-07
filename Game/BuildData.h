@@ -24,13 +24,14 @@ extern const int16_t NumObjectData;
 extern const int16_t NumObjects;
 
 extern const int16_t _0x4001E; // TODO: Could be the number of palettes (with 256-color palettes maybe counting as one).
-// TODO: Fix the pointers here. BuildChecksumDataPtr is now correct, though.
-extern const uint32_t** PalDataPtr;
+// TODO: Fix the pointers here.
+// BuildChecksumDataPtr and SequenceDataTablePtr are correct.
+extern const Color* PalDataPtr;
 
 extern const BgMap*** BgMapTablePtr;
 extern const BgMap** BgMapsPtr;
 
-extern const void*** SequenceDataTablePtr;
+extern const void** SequenceDataTablePtr = SequenceDataTable;
 
 extern const ObjectData** ObjectDataTablePtr;
 

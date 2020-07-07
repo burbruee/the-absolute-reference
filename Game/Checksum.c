@@ -10,7 +10,7 @@
 
 // TODO: Implement a way for the build system to calculate the checksums and
 // put them here, if possible.
-const ChecksumData BuildChecksum = {
+const BuildChecksumData BuildChecksum = {
 	{ 'C', 'H', 'E', 'C', 'K', 'S', 'U', 'M' },
 	{
 		CHECKSUM_NORMAL,

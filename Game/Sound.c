@@ -47,8 +47,10 @@ void _0x602E560() {
 	//TODO
 }
 
+uint8_t _0x60B1818;
+
 void _0x602E56A() {
-	//TODO
+	_0x60B1818 = 0u;
 }
 
 void PlaySoundEffectCoin() {

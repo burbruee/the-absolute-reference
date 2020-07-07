@@ -103,7 +103,7 @@ int main() {
 	SetPal(158u, 1u, PALPTR(0x20F));
 	SetPal(149u, 7u, PALPTR(0x207));
 	SetPal(156, 1u, PALPTR(0x204));
-	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
+	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0u);
 
 	// Reset save data if the tilt DIP switch is active and 1P button 1 is
@@ -212,7 +212,7 @@ int main() {
 		#undef SHOWMEMCHECKSTATUS
 	}
 
-	SetBackdropColor(COLOR(0x00, 0x00, 0x00));
+	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
 	int16_t var_13C = _0x6024B0C();
 	int16_t var_128 = var_13C;

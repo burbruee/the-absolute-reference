@@ -143,7 +143,7 @@ static ScreenState StartCopyrightScreen() {
 			SpritePriority[0] = 0x13u;
 			SpritePriority[1] = 0x66u;
 			_0x6029498(6); // TODO
-			SetBackdropColor(COLOR(0u, 0u, 0u));
+			SetBackdropColor(COLOR(0u, 0u, 0u, 0u));
 			AlphaValues[4] = 0x1Fu;
 			_0x6029546(0, 0x14, 0, 6);
 

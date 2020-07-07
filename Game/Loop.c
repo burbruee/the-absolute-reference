@@ -114,6 +114,8 @@ void InitGame() {
 	UpdateFrame();
 }
 
+GameLoopState InitGameLoop();
+
 MainLoopState RunGameLoop() {
 	bool loop = true;
 	InitGame();
@@ -145,6 +147,20 @@ MainLoopState RunGameLoop() {
 
 	Screen = SCREEN_NORMALRANKING;
 	return MAINLOOP_DEMO;
+}
+
+GameLoopState InitGameLoop() {
+	GameFlags = GAME_TWIN;
+	InitPlayers();
+	Demo = false;
+	Game.numVersusWins = 0u;
+	Game.versusWinner = PLAYER1;
+	SetPal(226u, 10u, PALPTR(0x1C2));
+	SetPal(236u, 10u, PALPTR(0x1CC));
+	SetPal(246u, 10u, PALPTR(0x1D6));
+	_0x602E56A();
+	SettingsValid();
+	return GAMELOOP_START;
 }
 
 // TODO
