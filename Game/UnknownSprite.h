@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Video.h"
 #include "Object.h"
 #include <stdint.h>
 
@@ -25,7 +26,7 @@ void _0x602BC58(uint8_t);
 // _0x602C076
 // _0x602C0F8
 // _0x602C224
-// _0x602C3EE
+void _0x602C3EE(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type);
 void _0x602C5C2();
 // _0x602C6D4
 // _0x602C7E2

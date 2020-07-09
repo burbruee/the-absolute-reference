@@ -12,18 +12,18 @@
 
 extern const int16_t _0x60356C8[4];
 
-// TODO: Could be data for setting sprites with SetSprite and other functions
+// TODO: Could be data for setting sprites with AddSprite and other functions
 // (so name it SetSpriteData). Might only be for setting one sprite at a time,
 // unlike the object functions that write multiple sprites for a single object.
-// For SetSprite, objectTable either points to one ObjectData for a static
+// For AddSprite, objectTable either points to one ObjectData for a static
 // sprite or an ObjectData array with one ObjectData per animation frame.
-// SH-2: sizeof(struct_0x606006C) == 0x40
-typedef struct struct_0x606006C {
+// SH-2: sizeof(AddSpriteData) == 0x40
+typedef struct AddSpriteData {
 	const ObjectData* objectTable;
 	int16_t y;
 	int16_t x;
-	uint16_t word0;
-	uint16_t word1;
+	uint16_t y1;
+	uint16_t x1;
 	uint16_t flipYSprPriH;
 	uint16_t flipXBgPriW;
 	uint8_t scaleY;
@@ -34,7 +34,7 @@ typedef struct struct_0x606006C {
 	uint8_t bppAlphaTileTop;
 	uint16_t tileBottom;
 
-	// In SetSprite setting type 6, this can affect whether the flip settings
+	// In AddSprite setting type 6, this can affect whether the flip settings
 	// are used; when less than 4, no flip settings are used, otherwise flip
 	// settings are used along with some other adjustments to the set data.
 	int16_t _0x20;
@@ -49,9 +49,9 @@ typedef struct struct_0x606006C {
 	int16_t _0x30;
 	int16_t _0x32;
 	int16_t _0x34;
-	int16_t _0x36;
+	uint16_t _0x36;
 	int16_t _0x38;
-} struct_0x606006C;
+} AddSpriteData;
 
 // The number of sprites written to Sprites.
 extern int16_t NumSprites;
@@ -82,9 +82,9 @@ typedef struct struct_0x607D218 {
 
 extern struct_0x607D218* _0x606005C = NULL;
 
-extern struct_0x606006C _0x606006C[64];
+extern AddSpriteData SpriteAdders[64];
 
-extern int16_t _0x606106C[64];
+extern int16_t SpriteAdderNameTable[64];
 
 extern uint32_t _0x60618F0[16];
 
@@ -225,11 +225,11 @@ void FreeSpriteLayer(uint16_t layer);
 void InitSpriteAlpha();
 void _0x602419C();
 void _0x6024244();
-void _0x60243E8(struct_0x606006C* arg0);
-void _0x602471C(struct_0x606006C* arg0);
+void _0x60243E8(AddSpriteData* arg0);
+void _0x602471C(AddSpriteData* arg0);
 void WriteSpriteLayers();
 void InitSpriteLayers();
-int16_t _0x6024B0C();
+int16_t AllocSpriteAdder();
 void _0x6024B78(int16_t);
 void _0x6024C00(int16_t);
 void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable);

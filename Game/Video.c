@@ -20,8 +20,8 @@ struct_0x607D218* _0x606005C = NULL;
 static void (**_0x6060060)() = NULL;
 static uint16_t* _0x6060064 = NULL;
 static int16_t _0x6060068 = 0;
-struct_0x606006C _0x606006C[64];
-int16_t _0x606106C[64];
+AddSpriteData SpriteAdders[64];
+int16_t SpriteAdderNameTable[64];
 struct_0x6061932 _0x6061932;
 
 // Each index into this table is a sprite layer number. An element value of
@@ -65,7 +65,7 @@ static struct_0x607D218* _0x60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t _0x60AD21E = 0u;
 static int16_t _0x60AD220;
-static int16_t _0x60AD224;
+static int16_t NumSpriteAdders;
 
 Bg Bgs[4];
 
@@ -401,30 +401,30 @@ void InitSpriteAlpha() {
 }
 
 void _0x602419C() {
-	SetSprite(1, NULL);
+	AddSprite(1, NULL);
 	InitSpriteAlpha();
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x67u;
-	for (int16_t i = 0; i < lengthof(_0x606006C); i++) {
-		_0x606006C[i]._0x2B = 0u;
-		_0x606006C[i]._0x2C = 0x8000u;
-		_0x606106C[i] = i;
+	for (int16_t i = 0; i < lengthof(SpriteAdders); i++) {
+		SpriteAdders[i]._0x2B = 0u;
+		SpriteAdders[i]._0x2C = 0x8000u;
+		SpriteAdderNameTable[i] = i;
 	}
 
 	_0x6061932.tempSprite[6] = 0x003Fu;
 	_0x6061932._0x12 = 0x7Du;
 	_0x6061932._0x14 = 0x7Fu;
-	_0x60AD224 = 0;
+	NumSpriteAdders = 0;
 }
 
 void _0x6024244() {
-	int16_t* var0 = _0x606106C;
-	for (int16_t i = 0u; i < _0x60AD224; i++, var0++) {
+	int16_t* var0 = SpriteAdderNameTable;
+	for (int16_t i = 0u; i < NumSpriteAdders; i++, var0++) {
 		int32_t var1 = *var0;
-		struct_0x606006C* var2 = &_0x606006C[var1];
+		AddSpriteData* var2 = &SpriteAdders[var1];
 		switch (var2->_0x2B) {
-		case 0u:
-			while (CurrentPauseMode < PAUSEMODE_BG && --var2->_0x34 < 1) {
+		case 1u:
+			while (CurrentPauseMode < PAUSEMODE_BG && --var2->_0x34 <= 0) {
 				int16_t var3;
 				var2->_0x34 = var2->_0x36;
 				if (!(var2->_0x2C & 0x800)) {
@@ -497,7 +497,7 @@ void _0x6024244() {
 	}
 }
 
-void _0x60243E8(struct_0x606006C* arg0) {
+void _0x60243E8(AddSpriteData* arg0) {
 	int16_t numSprites;
 	ObjectData* object;
 
@@ -628,7 +628,7 @@ void _0x60243E8(struct_0x606006C* arg0) {
 	}
 }
 
-void _0x602471C(struct_0x606006C* arg0) {
+void _0x602471C(AddSpriteData* arg0) {
 	const ObjectData* object = arg0->objectTable;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
@@ -772,45 +772,45 @@ void InitSpriteLayers() {
 	}
 }
 
-int16_t _0x6024B0C() {
-	int16_t var0 = _0x606106C[_0x60AD224];
-	_0x60AD224++;
-	_0x606006C[var0].flipXBgPri = 1u;
-    _0x606006C[var0].verticalHorizontal = 0u;
-    _0x606006C[var0].scaleX = UNSCALED;
-    _0x606006C[var0].scaleY = UNSCALED;
-    _0x606006C[var0].palNum = 0u;
-    _0x606006C[var0].bppAlphaTileTop = 0u;
-    _0x606006C[var0].layer = 16u;
-    _0x606006C[var0]._0x2B = 1u;
-    _0x606006C[var0]._0x2C = 0xA030u;
-    _0x606006C[var0]._0x2E = 0u;
-    _0x606006C[var0]._0x30 = 0;
-    _0x606006C[var0]._0x32 = 0;
-    _0x606006C[var0]._0x34 = 0;
-    _0x606006C[var0].animFrame = 0;
-    _0x606006C[var0]._0x36 = 0;
-    _0x606006C[var0]._0x28 = 0;
-    return var0;
+int16_t AllocSpriteAdder() {
+	int16_t i = SpriteAdderNameTable[NumSpriteAdders];
+	NumSpriteAdders++;
+	SpriteAdders[i].flipXBgPri = 1u;
+    SpriteAdders[i].verticalHorizontal = 0u;
+    SpriteAdders[i].scaleX = UNSCALED;
+    SpriteAdders[i].scaleY = UNSCALED;
+    SpriteAdders[i].palNum = 0u;
+    SpriteAdders[i].bppAlphaTileTop = 0u;
+    SpriteAdders[i].layer = 16u;
+    SpriteAdders[i]._0x2B = 1u;
+    SpriteAdders[i]._0x2C = 0xA030u;
+    SpriteAdders[i]._0x2E = 0u;
+    SpriteAdders[i]._0x30 = 0;
+    SpriteAdders[i]._0x32 = 0;
+    SpriteAdders[i]._0x34 = 0;
+    SpriteAdders[i].animFrame = 0;
+    SpriteAdders[i]._0x36 = 0;
+    SpriteAdders[i]._0x28 = 0;
+    return i;
 }
 
 void _0x6024B78(int16_t arg0) {
 	if ((-1 < arg0) && (arg0 < 0x40)) {
-		_0x606006C[arg0]._0x2B = 0u;
-		_0x606006C[arg0]._0x2C = 0x8000u;
+		SpriteAdders[arg0]._0x2B = 0u;
+		SpriteAdders[arg0]._0x2C = 0x8000u;
 		int32_t var1 = 0;
-		int16_t var0 = _0x606106C[0];
+		int16_t var0 = SpriteAdderNameTable[0];
 		while (var0 != arg0) {
 			var1 += 1;
-			var0 = _0x606106C[var1];
+			var0 = SpriteAdderNameTable[var1];
 		}
-		_0x60AD224 += -1;
-		if (var1 != _0x60AD224) {
-			int16_t* var2 = &_0x606106C[var1];
-			// Swap *var2 and _0x606106C[_0x60AD224].
-			_0x606106C[_0x60AD224] ^= *var2;
-			*var2 ^= _0x606106C[_0x60AD224];
-			_0x606106C[_0x60AD224] ^= *var2;
+		NumSpriteAdders += -1;
+		if (var1 != NumSpriteAdders) {
+			int16_t* var2 = &SpriteAdderNameTable[var1];
+			// Swap *var2 and SpriteAdderNameTable[NumSpriteAdders].
+			SpriteAdderNameTable[NumSpriteAdders] ^= *var2;
+			*var2 ^= SpriteAdderNameTable[NumSpriteAdders];
+			SpriteAdderNameTable[NumSpriteAdders] ^= *var2;
 		}
 	}
 	return;
@@ -818,16 +818,16 @@ void _0x6024B78(int16_t arg0) {
 
 void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
 	if (i >= 0 && i < 64) {
-		_0x606006C[i].objectTable = objectTable;
-		_0x606006C[i].y = y;
-		_0x606006C[i].x = x;
-		if (_0x606006C[i]._0x2B == 2u) {
-			_0x606006C[i]._0x2B = 2u;
+		SpriteAdders[i].objectTable = objectTable;
+		SpriteAdders[i].y = y;
+		SpriteAdders[i].x = x;
+		if (SpriteAdders[i]._0x2B == 2u) {
+			SpriteAdders[i]._0x2B = 2u;
 		}
 		else {
-			_0x606006C[i]._0x2B = 9u;
+			SpriteAdders[i]._0x2B = 9u;
 		}
-		_0x606006C[i].animFrame = 0;
+		SpriteAdders[i].animFrame = 0;
 	}
 }
 
@@ -941,26 +941,26 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 #define _BGSET(bgIndex, tilemapBank, tilemapSettings) \
 	do { \
 		if (Bgs[bgIndex]._0x0 == 1 && Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] >= 0) { \
-			const int16_t var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6]; \
-			const int16_t var1 = _0x60AD228[var0]._0x54; \
+			const int16_t i = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6]; \
+			const int16_t var1 = _0x60AD228[i]._0x54; \
 			const int16_t var2 = Bgs[bgIndex]._0x8; \
 			uint16_t tilemapBankIndex; \
-			if (_0x60AD228[var0]._0x56 == 0) { \
+			if (_0x60AD228[i]._0x56 == 0) { \
 				tilemapBankIndex = (var1 + 1) % 2; \
 			} \
 			else { \
-				_0x60AD228[var0]._0x54 = (var1 + 1) % 2; \
-				_0x60AD228[var0]._0x56 = 0; \
+				_0x60AD228[i]._0x54 = (var1 + 1) % 2; \
+				_0x60AD228[i]._0x56 = 0; \
 				tilemapBankIndex = var1; \
 			} \
 			tilemapBank = (_0x60AD228[var2]._0xC[tilemapBankIndex] >> 8) & 0xFFu; \
 			if (Bgs[bgIndex]._0x10 == 0) { \
 				_0x60AD228[var2]._0x4[tilemapBankIndex][0xFCu + bgIndex] = \
-					(_0x60AD228[var0]._0x18[var1] << 16) | \
-					(_0x60AD228[var0]._0x20[var1] & 0x1FFu); \
+					(_0x60AD228[i]._0x18[var1] << 16) | \
+					(_0x60AD228[i]._0x20[var1] & 0x1FFu); \
 				_0x60AD228[var2]._0x4[tilemapBankIndex][0x1FCu + bgIndex] = \
 					((uint32_t)Bgs[bgIndex]._0xA << 24) | \
-					_0x60AD228[var0]._0xC[tilemapBankIndex] | \
+					_0x60AD228[i]._0xC[tilemapBankIndex] | \
 					(Bgs[bgIndex].darkness << 8) | \
 					(Bgs[bgIndex]._0xC << 15); \
 			} \
@@ -969,7 +969,7 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 				uint32_t* var3 = _0x60AD228[var2]._0x4[tilemapBankIndex]; \
 				_0x60251B8(1, var3, var3 + 0x100u); \
 			} \
-			if (!(_0x60AD228[var0]._0x10->_0x0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
+			if (!(_0x60AD228[i]._0x10->_0x0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
 				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
 			} \
 			if (Bgs[bgIndex]._0x2 != 0) { \

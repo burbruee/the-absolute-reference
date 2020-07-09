@@ -5,19 +5,19 @@
 #include <stdbool.h>
 
 typedef enum ChecksumFlag {
-	CHECKSUM_NORMAL = 0x0020,
+	CHECKSUM_VALUE = 0x0020,
 	CHECKSUM_LAST = 0x8000,
 	CHECKSUM_END = 0x0000
 } ChecksumFlag;
 
 typedef struct BuildChecksumData {
-	const uint16_t checksumFlags;
-	const uint16_t data[3];
+	uint16_t checksumFlags;
+	uint16_t data[3];
 } BuildChecksumData;
 
 typedef struct BuildChecksumData {
-	const char header[8];
-	const BuildChecksumData checksums[10];
+	char header[8];
+	BuildChecksumData checksums[10];
 } BuildChecksumData;
 
 extern const BuildChecksumData BuildChecksum;

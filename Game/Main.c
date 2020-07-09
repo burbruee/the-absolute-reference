@@ -214,9 +214,8 @@ int main() {
 
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
-	int16_t var_13C = _0x6024B0C();
-	int16_t var_128 = var_13C;
-	_0x6024C3C(var_13C, 60, 266, graphicData->objectTable);
+	int16_t spriteAdderName = AllocSpriteAdder();
+	_0x6024C3C(spriteAdderName, 60, 266, graphicData->objectTable);
 
 	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
 		switch (RegionWarning) {
@@ -302,7 +301,7 @@ int main() {
 
 					switch (EEPROM[0] & REGION_SETTING) {
 						case REGION_USACANADA:
-							_0x606006C[var_13C]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageUsaCanada;
@@ -312,7 +311,7 @@ int main() {
 							break;
 
 						case REGION_KOREA:
-							_0x606006C[var_13C]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageKorea;
@@ -322,7 +321,7 @@ int main() {
 							break;
 
 						case REGION_HONGKONG:
-							_0x606006C[var_13C]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageHongKong;
@@ -332,7 +331,7 @@ int main() {
 							break;
 
 						case REGION_TAIWAN:
-							_0x606006C[var_13C]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageTaiwan;
@@ -350,7 +349,7 @@ int main() {
 			default:
 				break;
 		}
-		_0x606006C[var_13C]._0x2C |= 0x8000;
+		SpriteAdders[spriteAdderName]._0x2C |= 0x8000;
 
 		SetScanlinesBank(0u);
 		_0x6029814(0x0000, 0x0000, 0, 0xFF);
@@ -367,7 +366,7 @@ int main() {
 				frames = 600u;
 			}
 		}
-		_0x6024B78(var_13C);
+		_0x6024B78(spriteAdderName);
 		UpdateFrame();
 	}
 
@@ -431,13 +430,13 @@ static void InitVideo() {
 		}
 	}
 
-	SetSprite(0u, NULL);
+	AddSprite(0u, NULL);
 	SpriteNames[0] = 0u;
 	SpriteNames[1] = SPRITENAME_TERMINATE;
 }
 
 static void SetSystemGraphicDataPtr() {
-	SystemGraphicDataPtr = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
+	SystemGraphicDataPtr = (SystemGraphicData*)SequenceDataTablePtr[7];
 }
 
 static void _0x6000AEC() {}
