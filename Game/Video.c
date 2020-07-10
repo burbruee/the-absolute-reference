@@ -501,7 +501,7 @@ void _0x60243E8(AddSpriteData* arg0) {
 	int16_t numSprites;
 	ObjectData* object;
 
-	object = arg0->objectTable;
+	object = arg0->data;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
@@ -629,7 +629,7 @@ void _0x60243E8(AddSpriteData* arg0) {
 }
 
 void _0x602471C(AddSpriteData* arg0) {
-	const ObjectData* object = arg0->objectTable;
+	const ObjectData* object = arg0->data;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
@@ -818,7 +818,7 @@ void _0x6024B78(int16_t arg0) {
 
 void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
 	if (i >= 0 && i < 64) {
-		SpriteAdders[i].objectTable = objectTable;
+		SpriteAdders[i].data = objectTable;
 		SpriteAdders[i].y = y;
 		SpriteAdders[i].x = x;
 		if (SpriteAdders[i]._0x2B == 2u) {

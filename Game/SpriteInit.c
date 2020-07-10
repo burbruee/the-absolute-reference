@@ -9,6 +9,7 @@
 // Case 5 appears similar to case 4, with some differences in its inputs.
 // TODO: Looks like a good name could be "AddSprite(SpriteSetType type, SpriteSetData* data)".
 void AddSprite(AddSpriteType type, AddSpriteData* data) {
+	const ObjectData* object = data->data;
 	switch (type) {
 	case ADDSPRITE_0:
 		NumSprites = SPRITE_FIRST;
@@ -65,13 +66,13 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		_0x6061932.tempSprite[0] = data->y;
 		_0x6061932.tempSprite[1] = data->x;
 		// Set sprite's vertical flip, sprite priority, height, and height scale.
-		_0x6061932.tempSprite[2] = (data->objectTable[0][2] & (OBJECT_SPRPRI | OBJECT_H)) | UNSCALED;
+		_0x6061932.tempSprite[2] = ((*object)[2] & (OBJECT_SPRPRI | OBJECT_H)) | UNSCALED;
 		// Set sprite's horizontal flip, background priority, width, and width scale.
-		_0x6061932.tempSprite[3] = (data->flipXBgPri << 12) | (data->objectTable[0][3] & ~OBJECT_SCALEX) | UNSCALED;
+		_0x6061932.tempSprite[3] = (data->flipXBgPri << 12) | ((*object)[3] & ~OBJECT_SCALEX) | UNSCALED;
 		// Set sprite's palette, BPP, alpha, and upper 3 tile number bits.
-		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(data->palNum) | (data->objectTable[0][4] & ~OBJECT_PALNUM);
+		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(data->palNum) | ((*object)[4] & ~OBJECT_PALNUM);
 		// Set sprite's lower 16 tile number bits.
-		_0x6061932.tempSprite[5] = data->objectTable[0][5];
+		_0x6061932.tempSprite[5] = (*object)[5];
 		// Add sprite.
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
@@ -85,7 +86,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		_0x6061932.tempSprite[1] = data->x1;
 		// Set sprite's vertical flip, unknown word 2 bit, sprite priority, height, and height scale.
 		_0x6061932.tempSprite[2] =
-			(data->objectTable[0][2] & (OBJECT_UNKNOWN0 | OBJECT_H)) |
+			((*object)[2] & (OBJECT_UNKNOWN0 | OBJECT_H)) |
 			(data->flipYSprPriH << 8) |
 			data->scaleY;
 		// Set sprite's horizontal flip, unknown word 3 bit, background
@@ -95,20 +96,20 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		// everything else in word 3 is set here.
 		_0x6061932.tempSprite[3] =
 			(data->flipXBgPriW << 9) |
-			(data->objectTable[0][3] & (OBJECT_UNKNOWN1 | OBJECT_W)) |
+			((*object)[3] & (OBJECT_UNKNOWN1 | OBJECT_W)) |
 			OBJECT_TOBGPRI(data->flipXBgPri) |
 			OBJECT_TOSCALEX(data->scaleX);
 		uint16_t palNum;
 		if (data->palNum == 0u) {
-			palNum = OBJECT_GETPALNUM(data->objectTable);
+			palNum = OBJECT_GETPALNUM(object);
 		}
 		else {
 			palNum = data->palNum;
 		}
 		// Set sprite's palette, BPP, alpha, and upper 3 tile number bits.
-		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(palNum) | (data->objectTable[0][4] & ~OBJECT_PALNUM);
+		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(palNum) | ((*object)[4] & ~OBJECT_PALNUM);
 		// Set sprite's lower 16 tile number bits.
-		_0x6061932.tempSprite[5] = data->objectTable[0][5];
+		_0x6061932.tempSprite[5] = (*object)[5];
 		// Add sprite.
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
@@ -125,14 +126,14 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		// Set sprite's palette, BPP, alpha, and upper 3 tile number bits.
 		_0x6061932.tempSprite[4] = OBJECT_TOPALNUM(data->palNum) | data->bppAlphaTileTop;
 		// Set sprite's lower 16 tile number bits.
-        _0x6061932.tempSprite[5] = data->objectTable[0][5];
+        _0x6061932.tempSprite[5] = (*object)[5];
 		// Add sprite.
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
 		return;
 
 	case ADDSPRITE_6: {
-		ObjectData* animFrameObject = &data->objectTable[data->animFrame];
+		ObjectData* animFrameObject = &object[data->animFrame];
 		uint8_t flipXBgPriW;
 		if (data->_0x20 < 4) {
 			_0x6061932.tempSprite[0] = OBJECT_TOY(data->y + (*animFrameObject)[0]);
@@ -170,23 +171,23 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 	}
 
 	case ADDSPRITE_7:
-		_0x6061932.tempSprite[0] = OBJECT_TOY(data->y + data->objectTable[0][0]);
-		_0x6061932.tempSprite[1] = OBJECT_TOX(data->x + data->objectTable[0][1]);
-		_0x6061932.tempSprite[2] |= (*data->objectTable)[2] & ~OBJECT_SCALEY;
-		_0x6061932.tempSprite[3] |= (data->objectTable[0][3] & ~OBJECT_SCALEX) | OBJECT_TOBGPRI(1);
-		_0x6061932.tempSprite[4] = data->objectTable[0][4];
-		_0x6061932.tempSprite[5] = data->objectTable[data->animFrame][5];
+		_0x6061932.tempSprite[0] = OBJECT_TOY(data->y + (*object)[0]);
+		_0x6061932.tempSprite[1] = OBJECT_TOX(data->x + (*object)[1]);
+		_0x6061932.tempSprite[2] |= (*object)[2] & ~OBJECT_SCALEY;
+		_0x6061932.tempSprite[3] |= ((*object)[3] & ~OBJECT_SCALEX) | OBJECT_TOBGPRI(1);
+		_0x6061932.tempSprite[4] = (*object)[4];
+		_0x6061932.tempSprite[5] = object[data->animFrame][5];
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
 		return;
 
 	case ADDSPRITE_8:
-		_0x6061932.tempSprite[0] = OBJECT_TOY(data->y + data->objectTable[0][0]);
-		_0x6061932.tempSprite[1] = OBJECT_TOX(data->x + data->objectTable[0][1]);
-		_0x6061932.tempSprite[2] = (data->objectTable[0][2] & ~OBJECT_SCALEY) | UNSCALED;
-		_0x6061932.tempSprite[3] = (data->objectTable[0][3] & ~OBJECT_SCALEX) | UNSCALED | OBJECT_TOBGPRI(2);
-		_0x6061932.tempSprite[4] = data->objectTable[0][4];
-        _0x6061932.tempSprite[5] = data->objectTable[0][5];
+		_0x6061932.tempSprite[0] = OBJECT_TOY(data->y + (*object)[0]);
+		_0x6061932.tempSprite[1] = OBJECT_TOX(data->x + (*object)[1]);
+		_0x6061932.tempSprite[2] = ((*object)[2] & ~OBJECT_SCALEY) | UNSCALED;
+		_0x6061932.tempSprite[3] = ((*object)[3] & ~OBJECT_SCALEX) | UNSCALED | OBJECT_TOBGPRI(2);
+		_0x6061932.tempSprite[4] = (*object)[4];
+        _0x6061932.tempSprite[5] = (*object)[5];
 		SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 		NumSprites++;
 		return;

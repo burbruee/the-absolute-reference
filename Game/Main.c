@@ -74,7 +74,7 @@ static const char* RegionMessageTaiwan[] = {
 // Also, for SDL2, it will be single-threaded, with
 // timing/input/rendering/audio done where the code waits on vsync.
 int main() {
-	SystemGraphicData* graphicData = (SystemGraphicData*)(*SequenceDataTablePtr)[7];
+	SystemGraphicData* graphicData = (SystemGraphicData*)SequenceDataTablePtr[7];
 
 	// System init.
 	_0x602ACB0();

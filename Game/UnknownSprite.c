@@ -5,7 +5,7 @@
 int16_t _0x602B7D8(ObjectData* objectTable, int16_t y, int16_t x) {
     int16_t i = SpriteAdderNameTable[_0x6061932.tempSprite[6]];
 	_0x6061932.tempSprite[6]--;
-    SpriteAdders[i].objectTable = objectTable;
+    SpriteAdders[i].data = objectTable;
     SpriteAdders[i]._0x2B = 5u;
     SpriteAdders[i].y = y;
     SpriteAdders[i].x = x;

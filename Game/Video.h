@@ -15,11 +15,11 @@ extern const int16_t _0x60356C8[4];
 // TODO: Could be data for setting sprites with AddSprite and other functions
 // (so name it SetSpriteData). Might only be for setting one sprite at a time,
 // unlike the object functions that write multiple sprites for a single object.
-// For AddSprite, objectTable either points to one ObjectData for a static
+// For AddSprite, data either points to one ObjectData for a static
 // sprite or an ObjectData array with one ObjectData per animation frame.
 // SH-2: sizeof(AddSpriteData) == 0x40
 typedef struct AddSpriteData {
-	const ObjectData* objectTable;
+	void* data;
 	int16_t y;
 	int16_t x;
 	uint16_t y1;
