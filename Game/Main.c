@@ -372,6 +372,9 @@ int main() {
 
 	Screen = SCREEN_COPYRIGHT;
 	RunMainLoop();
+	// NOTE: The original SH-2 code halts here, rather than returning. This
+	// returns 0 for standard C. So the original's signature for main is:
+	// void main();
 	return 0;
 }
 

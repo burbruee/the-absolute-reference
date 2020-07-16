@@ -142,7 +142,7 @@ static ScreenState StartCopyrightScreen() {
 
 			SpritePriority[0] = 0x13u;
 			SpritePriority[1] = 0x66u;
-			_0x6029498(6); // TODO
+			_0x6029498(6);
 			SetBackdropColor(COLOR(0u, 0u, 0u, 0u));
 			AlphaValues[4] = 0x1Fu;
 			_0x6029546(0, 0x14, 0, 6);
@@ -163,7 +163,7 @@ static ScreenState StartCopyrightScreen() {
 				if (_0x6064750 == NULL) {
 					UpdateFrame();
 					_0x602406E();
-					_0x6029546(2, 10, 0, 6); // TODO
+					_0x6029546(2, 10, 0, 6);
 					for (int16_t frames = 0; frames < 10; frames++) {
 						if (UpdateFrame()) {
 							_0x602406E();

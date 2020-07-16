@@ -29,12 +29,12 @@ struct_0x6061932 _0x6061932;
 //
 // Each element is both the name for the first sprite in a layer, and an index
 // into SpriteLayerNames where any remaining sprite names for that layer
-// bgStart.
+// start.
 static int16_t SpriteLayers[128];
 
 // Table of the sprite names in each layer that are after the first name.  Each
 // element is both a sprite name and the index in the layer name table of the
-// next sprite name in the layer. The bgEnd of a layer is marked with a zero
+// next sprite name in the layer. The end of a layer is marked with a zero
 // valued name.
 static int16_t SpriteLayerNames[MAXSPRITES];
 
@@ -373,20 +373,20 @@ PauseMode GetNextPauseMode() {
 
 void AllocSpriteLayerNames(int16_t layer, int16_t num) {
 	// Write sprite names beyond the first name to the data table.
-	// The new names will be appended onto the bgEnd of the table.
+	// The new names will be appended onto the end of the table.
 	int16_t numNames = num - 1;
 	int16_t i;
 	for (i = 0; i < numNames; i++) {
 		SpriteLayerNames[NumSprites + i] = NumSprites + i + 1;
 	}
 
-	// Modify the layer data so the bgEnd of the data newly written to the
+	// Modify the layer data so the end of the data newly written to the
 	// layer data table leads to the list of names that were previously in
 	// the layer.
 	SpriteLayerNames[NumSprites + i] = SpriteLayers[layer];
 
 	// Set the first sprite name of the selected layer in the layer table to
-	// the bgStart of the new names.
+	// the start of the new names.
 	SpriteLayers[layer] = NumSprites;
 }
 
@@ -1376,43 +1376,43 @@ void ResetVideoSetters() {
 }
 
 // TODO: Appears to fill background RAM.
-void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t bgStart, uint8_t bgEnd) {
+void _0x6029814(uint32_t subtractedData, uint32_t addedData, uint8_t start, uint8_t end) {
 	// Check if the start and size need to be swapped.
-	if (bgStart > bgEnd) {
-		// Swap bgStart and bgEnd.
-		bgEnd ^= bgStart;
-		bgStart ^= bgEnd;
-		bgEnd ^= bgStart;
+	if (start > end) {
+		// Swap start and end.
+		end ^= start;
+		start ^= end;
+		end ^= start;
 
-		// Swap arg0 and arg1.
-		arg1 ^= arg0;
-		arg0 ^= arg1;
-		arg1 ^= arg0;
+		// Swap subtractedData and addedData.
+		addedData ^= subtractedData;
+		subtractedData ^= addedData;
+		addedData ^= subtractedData;
 	}
-	uint32_t size = bgEnd - bgStart;
+	uint32_t size = end - start;
 
 	// Write background data.
 	uint32_t num3 = 0;
 	uint32_t num2 = 0;
 	uint32_t num1 = 0;
-	for (uint32_t* bgData = &BGRAM[bgStart]; bgStart < bgEnd; bgStart++, bgData++) {
+	for (RAMDATA uint32_t* bgData = &BGRAM[start]; start < end; start++, bgData++) {
 		// Bits [31, 24].
-		num3 += ((arg1 >> 24) & 0xFFu) - ((arg0 >> 24) & 0xFFu);
+		num3 += ((addedData >> 24) & 0xFFu) - ((subtractedData >> 24) & 0xFFu);
 		uint32_t offset3 = num3 / size;
 
 		// Bits [23, 16].
-		num1 += ((arg1 >> 16) & 0xFFu) - ((arg0 >> 16) & 0xFFu);
+		num1 += ((addedData >> 16) & 0xFFu) - ((subtractedData >> 16) & 0xFFu);
 		uint32_t offset2 = num1 / size;
 
 		// Bits [15, 8].
-		num1 += ((arg1 >>  8) & 0xFFu) - ((arg0 >>  8) & 0xFFu);
+		num1 += ((addedData >>  8) & 0xFFu) - ((subtractedData >>  8) & 0xFFu);
 		uint32_t offset1 = num1 / size;
 
 		// Bits [7, 0] are set to zero.
 		*bgData =
-			(((((arg0 >>  8) & 0xFFu) + offset1) <<  8) & 0x0000FF00u) |
-			(((((arg0 >> 16) & 0xFFu) + offset2) << 16) & 0x00FF0000u) |
-			(((((arg0 >> 24) & 0xFFu) + offset3) << 24) & 0xFF000000u);
+			(((((subtractedData >>  8) & 0xFFu) + offset1) <<  8) & 0x0000FF00u) |
+			(((((subtractedData >> 16) & 0xFFu) + offset2) << 16) & 0x00FF0000u) |
+			(((((subtractedData >> 24) & 0xFFu) + offset3) << 24) & 0xFF000000u);
 	}
 }
 
@@ -1548,7 +1548,7 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 	}
 
 	// BUG: There's no handling of the case where a free cycle wasn't found in
-	// the SH-2 code. So a safeguard has been added here. TAP only ever
+	// the SH-2 code. So a safeguard has been addedData here. TAP only ever
 	// allocates at most three palette cycles, so the bug never shows up.
 	if (heapIndex == MAXPALCYCLES) {
 		return;
@@ -1670,8 +1670,8 @@ void _0x602AB9E() {
 	}
 }
 
-// TODO: Consider changing arg0 to a struct type. Elements [1, 3] of the array
-// could be "int16_t argData[3]", and arg0[0] could be some sort of 16-bit type
+// TODO: Consider changing subtractedData to a struct type. Elements [1, 3] of the array
+// could be "int16_t argData[3]", and subtractedData[0] could be some sort of 16-bit type
 // value.
 void _0x602AC68(int16_t* arg0) {
 	int16_t var0 = arg0[0];
