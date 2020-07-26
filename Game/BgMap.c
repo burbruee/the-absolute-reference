@@ -1,15 +1,15 @@
 #include "BgMap.h"
 
 ROMDATA BgMap* BgMapTable[11] = {
-	(BgMap*)&BgMapSection2,
-	(BgMap*)&BgMapSection5,
-	(BgMap*)&BgMapSection8,
-	(BgMap*)&BgMapSection3,
-	(BgMap*)&BgMapSection1,
-	(BgMap*)&BgMapSection0,
-	(BgMap*)&BgMapSection4,
-	(BgMap*)&BgMapSection6,
-	(BgMap*)&BgMapSection7,
-	(BgMap*)&BgMapSection9,
-	(BgMap*)&BgMapVersus
+	(ROMDATA BgMap*)&BgMapSection2,
+	(ROMDATA BgMap*)&BgMapSection5,
+	(ROMDATA BgMap*)&BgMapSection8,
+	(ROMDATA BgMap*)&BgMapSection3,
+	(ROMDATA BgMap*)&BgMapSection1,
+	(ROMDATA BgMap*)&BgMapSection0,
+	(ROMDATA BgMap*)&BgMapSection4,
+	(ROMDATA BgMap*)&BgMapSection6,
+	(ROMDATA BgMap*)&BgMapSection7,
+	(ROMDATA BgMap*)&BgMapSection9,
+	(ROMDATA BgMap*)&BgMapVersus
 };

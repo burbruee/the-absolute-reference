@@ -2,7 +2,7 @@
 
 ROMDATA PalData Pal;
 
-ROMDATA PalTableData PalTable = {
+const PalTableData PalTable = {
 	{
 		'P', 'L', 'T', ' ', 'T', 'B', 'L', ' '
 	},

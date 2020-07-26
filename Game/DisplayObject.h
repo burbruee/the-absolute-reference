@@ -2,6 +2,7 @@
 
 #include "Object.h"
 #include "HwInput.h"
+#include "PlatformTypes.h"
 #include <stdbool.h>
 
 // Unscaled. Some objects have hard-coded alpha values.

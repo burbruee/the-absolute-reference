@@ -20,7 +20,7 @@ typedef struct PalTableData {
 // array of one or more palette pointers, terminated by a NULL pointer, each
 // list directly following the previous in the table. BuildData.h's NumPalLists
 // contains the number of palette lists in this table.
-extern ROMDATA PalTableData PalTable;
+extern const PalTableData PalTable;
 
 // TODO: Define all palettes here.
 

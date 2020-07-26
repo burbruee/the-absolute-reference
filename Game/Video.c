@@ -499,7 +499,7 @@ void _0x6024244() {
 
 void _0x60243E8(AddSpriteData* arg0) {
 	int16_t numSprites;
-	ObjectData* object;
+	const ObjectData* object;
 
 	object = arg0->data;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
@@ -816,7 +816,7 @@ void _0x6024B78(int16_t arg0) {
 	return;
 }
 
-void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable) {
+void _0x6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable) {
 	if (i >= 0 && i < 64) {
 		SpriteAdders[i].data = objectTable;
 		SpriteAdders[i].y = y;
@@ -1630,7 +1630,7 @@ void EnablePalCycles() {
 }
 
 static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal);
-void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal) {
+void SetPal(uint8_t palNum, uint8_t numPals, ROMDATA Color* pal) {
 	VideoSetters[NumVideoSetters].set = VideoSetPal;
 	VideoSetters[NumVideoSetters].args[0] = (uintptr_t)palNum;
 	VideoSetters[NumVideoSetters].args[1] = (uintptr_t)numPals;

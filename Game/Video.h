@@ -7,6 +7,7 @@
 #include "DisplayObject.h"
 #include "PlatformTypes.h"
 #include "Fixed.h"
+#include "PlatformTypes.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -19,7 +20,7 @@ extern const int16_t _0x60356C8[4];
 // sprite or an ObjectData array with one ObjectData per animation frame.
 // SH-2: sizeof(AddSpriteData) == 0x40
 typedef struct AddSpriteData {
-	void* data;
+	const void* data;
 	int16_t y;
 	int16_t x;
 	uint16_t y1;
@@ -232,7 +233,7 @@ void InitSpriteLayers();
 int16_t AllocSpriteAdder();
 void _0x6024B78(int16_t);
 void _0x6024C00(int16_t);
-void _0x6024C3C(int16_t i, int16_t y, int16_t x, ObjectData* objectTable);
+void _0x6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable);
 void _0x6024C82(int16_t, void*);
 void _0x6024CBC(int16_t, int16_t, int16_t, void*, int16_t);
 void _0x6024CF4(int16_t, int16_t, int16_t, void*, int16_t, int16_t, uint16_t);
@@ -303,7 +304,7 @@ void FreePalCycles(uint16_t palNum);
 void DisablePalCycles();
 void EnablePalCycles();
 // TODO
-void SetPal(uint8_t palNum, uint8_t numPals, const Color* pal);
+void SetPal(uint8_t palNum, uint8_t numPals, ROMDATA Color* pal);
 // TODO
 void _0x602AA16();
 void _0x602AA4C();

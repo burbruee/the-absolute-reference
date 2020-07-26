@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Video.h"
-#include "Object.h"
 #include <stdint.h>
 
-int16_t _0x602B7D8(ObjectData* objectTable, int16_t y, int16_t x);
+int16_t _0x602B7D8(const void* data, int16_t y, int16_t x);
 // _0x602B84A
 // _0x602B8BC
 // _0x602B8C2

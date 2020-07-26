@@ -10,7 +10,7 @@
 #include "Loop.h"
 #include "Sound.h"
 #include "UnknownSprite.h"
-#include "Vblank.h"
+#include "PlatformUpdate.h"
 
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
@@ -57,10 +57,10 @@ bool UpdateFrame() {
 	UpdateGameBg();
 	_0x602C5C2();
 	WriteSpriteLayers();
-	_0x602DAD4(); // TODO
+	_0x602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
-	ADVANCE_FRAME();
+	PLATFORM_FRAME();
 
 	bool startTestMode;
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -86,10 +86,10 @@ bool _0x602AECA() {
 	_0x602523C();
 	_0x602C5C2();
 	WriteSpriteLayers();
-	_0x602DAD4();
+	_0x602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
-	ADVANCE_FRAME();
+	PLATFORM_FRAME();
 
 	bool startTestMode;
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -125,9 +125,9 @@ bool UpdateGame() {
 	Uptime++;
 	DemoWaitTime++;
 	_0x602523C();
-	_0x602DAD4();
+	_0x602DAD4(); // TODO: Sound function.
 
-	ADVANCE_FRAME();
+	PLATFORM_FRAME();
 
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
@@ -173,9 +173,9 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	Uptime++;
 	DemoWaitTime++;
 	_0x602523C();
-	_0x602DAD4();
+	_0x602DAD4(); // TODO: Sound function.
 
-	ADVANCE_FRAME();
+	PLATFORM_FRAME();
 
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
