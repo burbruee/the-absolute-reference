@@ -22,4 +22,3 @@ typedef enum MainLoopState {
 extern MainLoopState MainLoop;
 void RunMainLoop();
 // TODO
-uint8_t NumVersusRoundsSetting();

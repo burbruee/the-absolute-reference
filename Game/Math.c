@@ -15,6 +15,79 @@ static const Fixed32 TrigTable[65] = {
 	F32(1, 0x0000)
 };
 
+uint8_t _0x602B4E4(int32_t arg0, int32_t arg1) {
+	uint8_t retval;
+	
+	if (arg0 == 0) {
+		if (arg1 < 0) {
+			retval = 0x80;
+		}
+		else {
+			retval = 0x00;
+		}
+	}
+	else {
+		if (arg1 == 0) {
+			if (arg0 < 0) {
+				retval = 0xC0;
+			}
+			else {
+				retval = 0x40;
+			}
+		}
+		else {
+			int32_t var2 = arg0 * 0x20;
+			int32_t var3 = arg1 * 0x20;
+			if (arg0 <= 0) {
+				int8_t var0;
+				int8_t var1;
+				if (arg1 < 0) {
+					if (arg0 <= arg1) {
+						var2 = var3 / arg0;
+						return 0xBE - (int8_t)var2;
+					}
+					var2 /= arg1;
+					var1 = (int8_t)var2;
+					var0 = -0x7E;
+				}
+				else {
+					if (-arg0 <= arg1) {
+						var2 = (arg0 * -0x20) / arg1;
+						return -(int8_t)var2 - 2;
+					}
+					var2 = var3 / -arg0;
+					var1 = (int8_t)var2;
+					var0 = -0x3E;
+				}
+				retval = var0 + var1;
+			}
+			else {
+				if (arg1 <= 0) {
+					if (-arg1 < arg0) {
+						var2 = (arg1 * -0x20) / arg0;
+						retval = (int8_t)var2 + 0x42;
+					}
+					else {
+						var2 /= -arg1;
+						retval = 0x7E - (int8_t)var2;
+					}
+				}
+				else {
+					if (arg0 < arg1) {
+						var2 /= arg1;
+						retval = (int8_t)var2 + 2;
+					}
+					else {
+						var2 = var3 / arg0;
+						retval = 0x3E - (int8_t)var2;
+					}
+				}
+			}
+		}
+	}
+	return retval;
+}
+
 Fixed32 Sin(Angle angle) {
 	if (angle < 64u) {
 		return TrigTable[angle];

@@ -1,20 +1,18 @@
-#include "Loop.h"
-#include "DemoLoop.h"
-#include "Screen.h"
+#include "GameLoop.h"
 #include "Player.h"
-#include "Item.h"
-#include "ShowText.h"
-#include "Frame.h"
-#include "Entity.h"
-#include "Math.h"
 #include "Save.h"
-#include "Video.h"
+#include "Screen.h"
+#include "Frame.h"
 #include "Pal.h"
 #include "PalNum.h"
-#include "Sound.h"
-#include "Setting.h"
-#include "Config.h"
-#include "PlatformTypes.h"
+#include "Video.h"
+
+// TODO: Some/all of these uint8_t's are probably actually GameMusic type.
+static uint8_t _0x6079296;
+static uint8_t _0x6079297;
+static GameMusic CurrentGameMusic;
+static uint8_t _0x6079299;
+static uint8_t _0x607929A;
 
 typedef enum GameLoopState {
 	GAMELOOP_CONTINUE = 0,
@@ -24,13 +22,6 @@ typedef enum GameLoopState {
 	GAMELOOP_START = 8
 } GameLoopState;
 static GameLoopState GameLoop;
-
-// TODO: Some/all of these uint8_t's are probably actually GameMusic type.
-static uint8_t _0x6079296;
-static uint8_t _0x6079297;
-static GameMusic CurrentGameMusic;
-static uint8_t _0x6079299;
-static uint8_t _0x607929A;
 
 static const Color _0x6032884[NUMPALCOLORS_4BPP] = {
 	0x01010100u,
@@ -388,37 +379,4 @@ int16_t _0x6008EEC(int16_t level) {
 
 static void UpdateGameMusic() {
 	// TODO
-}
-
-MainLoopState MainLoop;
-void RunMainLoop() {
-	// TODO: Change "while (true)" here to something like "while (!QUIT)", so
-	// ports to OS's can exit the game. Usage of QUIT will have to be put
-	// throughout the code, so a quit event can cause the program to quit. For
-	// platforms that shouldn't have a quit condition, just define QUIT to
-	// "false".
-	while (true) {
-		UpdateFrame();
-
-		InitSeed += Rand(1192u) + 1u;
-
-		switch (MainLoop) {
-			case MAINLOOP_DEMO:
-				MainLoop = RunDemoLoop();
-				continue;
-
-			case MAINLOOP_GAME:
-				MainLoop = RunGameLoop();
-				continue;
-
-			case MAINLOOP_TEST:
-				MainLoop = RunTestLoop();
-				break;
-
-			default:
-				break;
-		}
-
-		MainLoop = MAINLOOP_DEMO;
-	}
 }

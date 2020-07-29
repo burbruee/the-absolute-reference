@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Loop.h"
+#include "MainLoop.h"
 #include "Screen.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -14,7 +14,7 @@ typedef enum DemoScreenState {
 	DEMOSCREEN_VERSUS2,
 	DEMOSCREEN_DOUBLES2,
 	DEMOSCREEN_DOUBLES3,
-	NUMDEMOSCREENS = DEMOSCREEN_DOUBLES3
+	NUMDEMOSCREENS
 } DemoScreenState;
 
 DemoScreenState DemoScreen;

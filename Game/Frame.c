@@ -7,7 +7,7 @@
 #include "Button.h"
 #include "Input.h"
 #include "Video.h"
-#include "Loop.h"
+#include "MainLoop.h"
 #include "Sound.h"
 #include "UnknownSprite.h"
 #include "PlatformUpdate.h"

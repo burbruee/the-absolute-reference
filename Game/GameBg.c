@@ -2,7 +2,7 @@
 #include "BgMap.h"
 #include "Video.h"
 #include "Pal.h"
-#include "Loop.h"
+#include "MainLoop.h"
 #include "Math.h"
 #include "Player.h"
 #include "Screen.h"

@@ -1,7 +1,6 @@
 #include "ShowGameStatus.h"
 #include "Player.h"
 #include "Frame.h"
-#include "Loop.h"
 #include "Object.h"
 #include "Setting.h"
 #include "Layer.h"

@@ -21,7 +21,6 @@
 #include "Fixed.h"
 #include "Macros.h"
 #include "Button.h"
-#include "Loop.h"
 #include "Setting.h"
 #include "Grade.h"
 #include "GravityTable.h"

@@ -1,6 +1,5 @@
 #include "ShowEffect.h"
 #include "Entity.h"
-#include "Loop.h"
 #include "DisplayObject.h"
 #include "Video.h"
 #include "Block.h"

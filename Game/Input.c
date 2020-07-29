@@ -1,6 +1,5 @@
 #include "Input.h"
 #include "Debug.h"
-#include "Loop.h"
 #include "SoundEffect.h"
 #include "Setting.h"
 #include "Button.h"
