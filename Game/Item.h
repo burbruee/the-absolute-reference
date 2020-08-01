@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+struct Player;
+typedef struct Player Player;
+
 typedef enum ItemType {
 	ITEMTYPE_NULL,
 	ITEMTYPE_DEATHBLOCK,
@@ -97,9 +100,6 @@ typedef enum ItemCategory {
 	ITEMCAT_BAD,
 	ITEMCAT_NEUTRAL
 } ItemCategory;
-
-struct Player;
-typedef struct Player Player;
 
 void RemoveItems(Player* player);
 bool CheckDeactivateItem(Item* item);

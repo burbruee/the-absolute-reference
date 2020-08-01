@@ -64,6 +64,30 @@ typedef struct EntryData {
 } EntryData;
 
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
+bool UpdateModeCodes(Player* player);
+void BackupMatrix(Player* player);
+void CheckDisableItemDescription(Player* player);
+void CheckSetItemMode(Player* player);
+uint16_t GenNextInt(uint32_t* seed, bool update);
+void GenNextItem(Player* player);
+void NextPlayStart(Player* player);
+uint8_t NumSecretGradeRows(Player* player);
+void RestoreMatrix(Player* player);
+void SetFieldVisible(Player* player);
+void ThrowOutActiveBlock(Player* player);
+void UpdatePlayActive(Player* player);
+void UpdatePlayBlockedEntry(Player* player);
+void UpdatePlayClear(Player* player);
+void UpdatePlayEntry(Player* player);
+void UpdatePlayGameOver(Player* player);
+void UpdatePlayGarbageCheck(Player* player);
+void UpdatePlayGarbageEntry(Player* player);
+void UpdatePlayLock(Player* player);
+void UpdatePlayNext(Player* player);
+void UpdatePlayStaffTransition(Player* player);
+void UpdatePlayStart(Player* player);
+void UpdatePlayVersusOver(Player* player);
+void UpdateSiren(Player* player);
 
 static MatrixBlock MatrixBlocks[NUMMATRIXBLOCKS_SHARED];
 

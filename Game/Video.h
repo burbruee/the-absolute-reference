@@ -5,7 +5,6 @@
 #include "HwData.h"
 #include "HwSprite.h"
 #include "DisplayObject.h"
-#include "PlatformTypes.h"
 #include "Fixed.h"
 #include "PlatformTypes.h"
 #include <stdint.h>
@@ -61,7 +60,8 @@ typedef struct struct_0x607D218_0x300 {
 	void (*_0x0[4])();
 } struct_0x607D218_0x300;
 
-typedef struct struct_0x607D218 {
+typedef struct struct_0x607D218 struct_0x607D218;
+struct struct_0x607D218 {
 	struct_0x607D218* _0x0;
 	struct_0x607D218* _0x4;
 	struct_0x607D218* _0x8;
@@ -77,11 +77,11 @@ typedef struct struct_0x607D218 {
 	Fixed32 _0x2C;
 	uint16_t _0x30; // TODO: Might be bool.
 	struct_0x607D218_0x300 _0x300[16];
-} struct_0x607D218;
+};
 
 #define STRUCT_607D218_300_END(s) (&(s)->_0x300[15])
 
-extern struct_0x607D218* _0x606005C = NULL;
+extern struct_0x607D218* _0x606005C;
 
 extern AddSpriteData SpriteAdders[64];
 
@@ -103,6 +103,9 @@ extern struct_0x6061932 _0x6061932;
 #define MAXVIDEOSETTERS 32
 uint16_t NumVideoSetters;
 typedef struct VideoSetter {
+	// NOTE: Video set functions must have three arguments, each of which is either
+	// a pointer or intptr_t/uintptr_t.
+
 	void (* set)(void*, void*, void*);
 	void* args[3];
 } VideoSetter;

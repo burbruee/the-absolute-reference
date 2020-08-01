@@ -6,6 +6,8 @@
 #define laserFrames values[0]
 #define laserAnimIndex values[1]
 
+static void UpdateEntityLaser(Entity* entity);
+
 void ShowLaser(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
@@ -21,7 +23,7 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 	}
 }
 
-void UpdateEntityLaser(Entity* entity) {
+static void UpdateEntityLaser(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->laserAnimIndex], data->y, data->x, data->palNum, 124u);
 

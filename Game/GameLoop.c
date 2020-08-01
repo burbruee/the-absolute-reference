@@ -7,7 +7,10 @@
 #include "PalNum.h"
 #include "Video.h"
 
+ROMDATA Color PalCycleTextPal0[NUMPALCOLORS_4BPP];
+
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
+static uint16_t _0x6079294;
 static uint8_t _0x6079296;
 static uint8_t _0x6079297;
 static GameMusic CurrentGameMusic;
@@ -164,6 +167,9 @@ uint8_t NumVersusRoundsSetting() {
 
 // TODO: ...
 
+// TODO: Init from ROM data.
+ROMDATA Color _0x60328C4[NUMPALCOLORS_4BPP];
+
 uint16_t GameStartPlayer;
 GameLoopState StartGameLoop() {
 	_0x602AA4C();
@@ -207,9 +213,9 @@ GameLoopState StartGameLoop() {
 	}
 
 	_0x60169DC();
-	_0x6026FCA(_0x6066188._0x1E, 1);
+	_0x6026FCA(CurrentGameBg._0x1E, 1);
 	SetPal(202u, 1u, _0x60328C4);
-	NewPalCycle(159u, _0x6033748, _0x67910, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
+	NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
 	bool downNextPalCycle = false;
 	uint32_t numPalCycleFrames = 0u;
 	_0x6029546(0u, 10, 0, 6);
@@ -227,10 +233,10 @@ GameLoopState StartGameLoop() {
 		ShowPalCycleText(218 + 67, 218, VERSION_NAME, true);
 		if ((++numPalCycleFrames % 64u) == 0u) {
 			if (downNextPalCycle = !downNextPalCycle) {
-				NewPalCycle(PALNUM_PALCYCLETEXT, _0x6033748, _0x67910, 1, PALCYCLETYPE_DOWNSTOP, 1u, 63u);
+				NewPalCycle(PALNUM_PALCYCLETEXT, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_DOWNSTOP, 1u, 63u);
 			}
 			else {
-				NewPalCycle(PALNUM_PALCYCLETEXT, _0x6033748, _0x67910, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
+				NewPalCycle(PALNUM_PALCYCLETEXT, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
 			}
 		}
 

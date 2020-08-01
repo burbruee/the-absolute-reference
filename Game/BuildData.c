@@ -3,7 +3,6 @@
 #include "BuildData.h"
 #include "Pal.h"
 #include "BgMap.h"
-#include "Checksum.h"
 
 // TODO: Replace "NA" with the full year (2020, etc.). This is the build date
 // as defined in the original TAP ROM. _0x40048 can be removed to make room for
@@ -34,12 +33,12 @@ const BgMap*** BgMapTablePtr = &BgMapTable;
 const BgMap** BgMapsPtr = &BgMapSection2;
 
 const void** SequenceDataTablePtr = SequenceDataTable;
-const ObjectData* ObjectDataTablePtr = Objects.data;
+//const ObjectData* ObjectDataTablePtr = (const ObjectData*)Objects.data;
 // TODO
 //const MidiData* MidiPtr = &Midi;
 // TODO
 //const RectData* RectDataTablePtr = RectDataTable;
 const Color** PalTableDataPtr = PalTable.data;
-const BuildChecksumData* BuildChecksumDataPtr = BuildChecksum.checksums;
+const Checksum* BuildChecksumDataPtr;// = (const Checksum*)BuildChecksum.checksums;
 const uint32_t _0x40044 = 8u;
 const Color** _0x40048 = PalTable.data;

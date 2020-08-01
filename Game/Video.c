@@ -1,5 +1,4 @@
 #include "Video.h"
-#include "GameBg.h"
 #include "SpriteInit.h"
 #include "Fixed.h"
 #include "HwSprite.h"
@@ -39,13 +38,6 @@ static int16_t SpriteLayers[128];
 static int16_t SpriteLayerNames[MAXSPRITES];
 
 int16_t NumSprites;
-
-// NOTE: Video set functions must have three arguments, each of which is either
-// a pointer or intptr_t/uintptr_t.
-typedef struct VideoSetter {
-	void (*set)(void*, void*, void*);
-	void* args[3];
-} VideoSetter;
 
 uint16_t NumVideoSetters;
 VideoSetter VideoSetters[MAXVIDEOSETTERS];
@@ -277,8 +269,6 @@ void _0x6023E5A(struct_0x607D218* arg0) {
 }
 
 struct_0x607D218* _0x6023EFE(void (**arg0)(), struct_0x607D218* arg1) {
-    struct_0x607D218* var1;
-    
     struct_0x607D218* var0 = _0x606005C;
     if (arg1 == (struct_0x607D218 *)(intptr_t)~0) {
         arg1 = _0x606005C;

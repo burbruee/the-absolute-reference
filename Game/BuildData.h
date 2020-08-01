@@ -4,6 +4,7 @@
 #include "BgMap.h"
 #include "Sequence.h"
 #include "Macros.h"
+#include "Checksum.h"
 #include <stdint.h>
 
 // TODO: Maybe arrange this into a struct, that gets stored into ROM at
@@ -31,7 +32,7 @@ extern const Color* PalDataPtr;
 extern const BgMap*** BgMapTablePtr;
 extern const BgMap** BgMapsPtr;
 
-extern const void** SequenceDataTablePtr = SequenceDataTable;
+extern const void** SequenceDataTablePtr;
 
 extern const ObjectData** ObjectDataTablePtr;
 
@@ -41,9 +42,9 @@ extern const ObjectData** ObjectDataTablePtr;
 // TODO
 //extern const RectData** RectDataTablePtr;
 
-extern const Color*** PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
+extern const Color** PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 
-extern const uint16_t* BuildChecksumDataPtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0.
+extern const Checksum* BuildChecksumDataPtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0.
 extern const uint32_t _0x40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
-extern const Color*** _0x40048;
+extern const Color** _0x40048;

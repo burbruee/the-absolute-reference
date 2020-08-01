@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Loop.h"
+#include "Game/MainLoop.h"
 #include <stdlib.h>
 #include <stdint.h>
 

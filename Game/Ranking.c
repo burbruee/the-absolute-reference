@@ -91,6 +91,12 @@ static RankingPlace DoublesRankingPlace(uint16_t levelSum, uint32_t time, Rankin
 
 static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking);
 
+typedef enum RankingMode {
+	RANKINGMODE_MASTER,
+	RANKINGMODE_NORMAL,
+	RANKINGMODE_DOUBLES
+} RankingMode;
+
 static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode);
 static void AddNewRanking(NewRankingData* newRanking);
 
@@ -548,12 +554,6 @@ void NextPlayRanking(Player* player) {
 	newRanking->player = player;
 	newRanking->flags = newRankingFlags;
 }
-
-typedef enum RankingMode {
-	RANKINGMODE_MASTER,
-	RANKINGMODE_NORMAL,
-	RANKINGMODE_DOUBLES
-} RankingMode;
 
 static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode) {
 	uint16_t* masterMedalRankings = (uint16_t*)rankingExtras;

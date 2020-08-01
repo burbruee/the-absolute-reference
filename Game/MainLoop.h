@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HwInput.h"
 #include <stdint.h>
 
 // TODO: Move these?
@@ -11,7 +12,7 @@ typedef enum StartPlayerNum {
 	STARTPLAYER_NONE = 0,
 	STARTPLAYER_1P = 1 << PLAYER1,
 	STARTPLAYER_2P = 1 << PLAYER2
-};
+} StartPlayerNum;
 extern uint16_t GameStartPlayer;
 
 typedef enum MainLoopState {

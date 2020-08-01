@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object.h"
+#include "HwSprite.h"
 #include "HwInput.h"
 #include "PlatformTypes.h"
 #include <stdbool.h>

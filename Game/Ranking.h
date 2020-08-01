@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Player.h"
+#include "Object.h"
 #include "HwInput.h"
 #include "HwSprite.h"
 #include <stdint.h>

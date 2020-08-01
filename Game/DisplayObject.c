@@ -1,6 +1,5 @@
 #include "DisplayObject.h"
 #include "Video.h"
-#include "HwSprite.h"
 #include "HwData.h"
 #include "Macros.h"
 #include <stdbool.h>

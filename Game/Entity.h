@@ -32,6 +32,10 @@ typedef struct BasicEntityInstanceData {
 	const ObjectData* objectTable;
 	uint16_t palNum;
 	int16_t y, x;
+	uint16_t layer;
+	uint16_t scaleY;
+	uint16_t scaleX;
+	bool alpha;
 } BasicEntityInstanceData;
 
 typedef struct Entity Entity;

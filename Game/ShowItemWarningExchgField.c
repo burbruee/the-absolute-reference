@@ -5,6 +5,8 @@
 
 #define warningFrames values[0]
 
+static void UpdateEntityItemWarningExchgField(Entity* entity);
+
 void ShowItemWarningExchgField(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
@@ -20,7 +22,7 @@ void ShowItemWarningExchgField(Player* player) {
 	}
 }
 
-void UpdateEntityItemWarningExchgField(Entity* entity) {
+static void UpdateEntityItemWarningExchgField(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 

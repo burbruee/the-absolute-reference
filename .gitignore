@@ -1,8 +1,2 @@
 ﻿/.vs
-/x64
-/Debug
-/Release
-/TheAbsoluteReference.vcxproj.user
-/TheAbsoluteReference.vcxproj.filters
-/TheAbsoluteReference.vcxproj
-/TheAbsoluteReference.sln
+/build*

@@ -258,7 +258,7 @@ void _0x601886C() {
 #include "UpdateItemExchgField.h"
 #include "UpdateItemMirrorBlock.h"
 #include "UpdateItemDarkBlock.h"
-static void (const* ItemUpdaters[NUMITEMTYPES])(Item*) = {
+static void (* const ItemUpdaters[NUMITEMTYPES])(Item*) = {
 	UpdateItemDeathBlock,
 	UpdateItemNegaField,
 	UpdateItemColorBlock,
@@ -277,7 +277,7 @@ static void (const* ItemUpdaters[NUMITEMTYPES])(Item*) = {
 	UpdateItemXRay,
 	UpdateItemExchgField,
 	UpdateItemMirrorBlock,
-	UpdateItemDarkBlock
+	UpdateItemHardBlock
 };
 
 #if 0

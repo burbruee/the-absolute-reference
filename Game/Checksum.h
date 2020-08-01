@@ -10,14 +10,14 @@ typedef enum ChecksumFlag {
 	CHECKSUM_END = 0x0000
 } ChecksumFlag;
 
-typedef struct BuildChecksumData {
+typedef struct Checksum {
 	uint16_t checksumFlags;
 	uint16_t data[3];
-} BuildChecksumData;
+} Checksum;
 
 typedef struct BuildChecksumData {
 	char header[8];
-	BuildChecksumData checksums[10];
+	Checksum checksums[10];
 } BuildChecksumData;
 
 extern const BuildChecksumData BuildChecksum;

@@ -7,6 +7,7 @@
 #include "PalNum.h"
 #include "Credit.h"
 #include "ShowObject.h"
+#include "MainLoop.h"
 #include "HwSprite.h"
 
 void ShowNextLabel(Player* player, int16_t x) {
