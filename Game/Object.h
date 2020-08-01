@@ -48,10 +48,10 @@ typedef uint16_t ObjectData[6];
 
 enum ObjectBits {
 	// object[0]
-	OBJECT_NUMSPRITES = 0xFC00u,
 	OBJECT_Y = 0x03FFu,
 
 	// object[1]
+	OBJECT_NUMSPRITES = 0xFC00u,
 	OBJECT_X = 0x03FFu,
 
 	// object[2]

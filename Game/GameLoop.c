@@ -1,15 +1,23 @@
 #include "GameLoop.h"
 #include "Player.h"
+#include "Ranking.h"
+#include "Versus.h"
 #include "Save.h"
+#include "Button.h"
 #include "Screen.h"
+#include "Entity.h"
 #include "Frame.h"
 #include "Pal.h"
 #include "PalNum.h"
 #include "Video.h"
+#include "Sound.h"
+#include "Math.h"
 
 ROMDATA Color PalCycleTextPal0[NUMPALCOLORS_4BPP];
 
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
+static uint16_t _0x6079290;
+static uint16_t _0x6079292;
 static uint16_t _0x6079294;
 static uint8_t _0x6079296;
 static uint8_t _0x6079297;
@@ -157,6 +165,84 @@ GameLoopState InitGameLoop() {
 	return GAMELOOP_START;
 }
 
+void CheckSetNewChallenger(Player *player) {
+	GameFlags &= ~(GAME_STARTWAITINGPLAYER | GAME_NEWCHALLENGER);
+	if (player->otherPlayer->nowFlags & NOW_STARTED) {
+		if (player->otherPlayer->nowFlags & (NOW_STAFF | NOW_STOPPED)) {
+			GameFlags |= GAME_STARTWAITINGPLAYER;
+		}
+		else {
+			GameFlags |= GAME_NEWCHALLENGER;
+		}
+	}
+	else {
+		GameFlags |= GAME_STARTWAITINGPLAYER;
+	}
+
+	_0x6079290 = 0;
+	_0x6079292 = 0;
+}
+
+GameLoopState GameStartVersus() {
+	ModeFlag modeFlags;
+	
+	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[PLAYER2].nowFlags & NOW_WAITING)) {
+		if (GameFlags & GAME_CHALLENGEDELAY) {
+			_0x6079299 = 2u;
+			Players[PLAYER1].nowFlags |= NOW_NOUPDATE;
+			Players[PLAYER2].nowFlags |= NOW_NOUPDATE;
+			if (GameButtonsDown[PLAYER1] == BUTTON_START && GameButtonsDown[PLAYER2] == BUTTON_START) {
+				_0x6079290++;
+			}
+			if (
+				GameButtonsDown[PLAYER1] == (BUTTON_START | BUTTON_2 | BUTTON_1) &&
+				GameButtonsDown[PLAYER2] == (BUTTON_START | BUTTON_2 | BUTTON_1)) {
+				_0x6079292++;
+			}
+		}
+		else {
+			SetPal(PALNUM_15, 1u, PALPTR(0xF9));
+			SetPal(PALNUM_14, 1u, PALPTR(0xF8));
+			_0x6079299 = 10u;
+			Game.state = 0u;
+			GameFlags &= ~(GAME_TWIN | GAME_NEWCHALLENGER | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10) | GAME_VERSUS | GAME_BIT11;
+			Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
+			Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
+			modeFlags = Game.modeFlags[Game.versusWinner] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE | MODE_ITEM);
+			Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT;
+			Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT;
+			Players[PLAYER1].modeFlags = (Players[PLAYER1].modeFlags & (MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE)) | modeFlags | MODE_VERSUS;
+			Players[PLAYER2].modeFlags = (Players[PLAYER2].modeFlags & (MODE_NORMAL|MODE_MASTER|MODE_DOUBLES|MODE_VERSUS|MODE_INVISIBLE)) | modeFlags | MODE_VERSUS;
+			// TODO: These could be signalling to start a fading background
+			// transition (|= 1u) and transition to the versus background (=
+			// 10u).
+			CurrentGameBg._0x12 = 10u;
+			CurrentGameBg._0x10 |= 1u;
+			Game.numVersusRoundWins[PLAYER2] = 0u;
+			Game.numVersusRoundWins[PLAYER1] = 0u;
+			Game.numVersusRounds = 0u;
+			InitItems();
+			_0x601FAD0(); // TODO
+			if (_0x6079292 >= TIME(0, 1, 0)) {
+				Players[PLAYER1].modeFlags |= MODE_CEMENT;
+				Players[PLAYER2].modeFlags |= MODE_CEMENT;
+			}
+			else if (_0x6079290 >= TIME(0, 1, 0)) {
+				Players[PLAYER1].modeFlags |= MODE_NOITEM;
+				Players[PLAYER2].modeFlags |= MODE_NOITEM;
+			}
+
+			while (_0x6064750 != NULL) {
+				if (UpdateFrame()) {
+					return GAMELOOP_TEST;
+				}
+			}
+			_0x6029546(0, 20, 0, 6);
+		}
+	}
+	return GAMELOOP_CONTINUE;
+}
+
 // TODO
 
 static uint8_t NumVersusRounds[3] = { 1u, 2u, 3u };
@@ -166,6 +252,39 @@ uint8_t NumVersusRoundsSetting() {
 }
 
 // TODO: ...
+
+static GameLoopState GameStartDoubles() {
+	switch (Game.state) {
+	case 0u:
+		Game.state = 1u;
+		_0x6029546(2, 20, 0, 6);
+		break;
+
+	case 1u:
+		while (_0x6064750 != NULL) {
+			if (UpdateGame()) {
+				return GAMELOOP_TEST;
+			}
+		}
+		Game.state++;
+		_0x6029546(0, 10, 0, 6);
+		break;
+
+	case 2u:
+		break;
+
+	default:
+		return GAMELOOP_CONTINUE;
+	}
+
+	Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT;
+	Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT;
+	GameFlags = GAME_DOUBLES;
+	Game.state = 0u;
+	Players[PLAYER1].modeFlags = MODE_DOUBLES;
+	Players[PLAYER2].modeFlags = MODE_DOUBLES;
+	return GAMELOOP_CONTINUE;
+}
 
 // TODO: Init from ROM data.
 ROMDATA Color _0x60328C4[NUMPALCOLORS_4BPP];
@@ -182,7 +301,7 @@ GameLoopState StartGameLoop() {
 		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
-	ResetVideoSetters();
+	InitVideoSetters();
 	_0x602406E();
 
 	// Sound.
@@ -209,7 +328,7 @@ GameLoopState StartGameLoop() {
 	Game.versusWinner = (Players[PLAYER1].nowFlags & NOW_STARTED) ? PLAYER1 : PLAYER2;
 
 	while (_0x6064750 != NULL) {
-		if (UpdateFrame()) return 7;
+		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
 	_0x60169DC();
@@ -223,13 +342,13 @@ GameLoopState StartGameLoop() {
 	Player *player2 = &Players[PLAYER2];
 
 	GameLoopState state = GAMELOOP_CONTINUE;
-	while (state == 0) {
+	while (state == GAMELOOP_CONTINUE) {
 		if (UpdateGame()) {
 			_0x602406E();
 			return GAMELOOP_TEST;
 		}
 
-		_0x6008F2C();
+		UpdateGameMusic();
 		ShowPalCycleText(218 + 67, 218, VERSION_NAME, true);
 		if ((++numPalCycleFrames % 64u) == 0u) {
 			if (downNextPalCycle = !downNextPalCycle) {
@@ -242,50 +361,50 @@ GameLoopState StartGameLoop() {
 
 		InitSeed = Rand(894u);
 
-		if (GameFlags & GAME_DOUBLESSTART) {
-			state = _0x6008918();
+		if (GameFlags & GAME_STARTDOUBLES) {
+			state = GameStartDoubles();
 		}
 		else {
 			if (GameFlags & GAME_CHALLENGER1P) {
-				_0x6008134(player1);
+				CheckSetNewChallenger(player1);
 			}
-			else {
-				_0x6008134(player2);
+			else if (GameFlags & GAME_CHALLENGER2P) {
+				CheckSetNewChallenger(player2);
 			}
 
 			GameFlags &= ~(GAME_CHALLENGER1P | GAME_CHALLENGER2P);
 			if (GameFlags & GAME_NEWCHALLENGER) {
-				state = _0x600817E();
+				state = GameStartVersus();
 			}
 
 			if (GameFlags & GAME_NEWVERSUSROUND) {
-				_0x60083A0();
+				_0x60083A0(); // TODO
 			}
 
 			if ((GameFlags & GAME_VERSUS) && !(GameFlags & GAME_BIT11)) {
-				state = _0x6008516();
+				state = _0x6008516(); // TODO
 			}
 
 			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_BIT13)) {
-				_0x60088FC();
+				_0x60088FC(); // TODO
 			}
 
 			if (!(GameFlags & GAME_VERSUS) && (GameFlags & GAME_DOUBLES) && (!(player1->nowFlags & NOW_STARTED) || !(player2->nowFlags & NOW_STARTED))) {
 				// BUG: The SH-2 code calculates this expression, but never assigns it to anything.
 				// There's probably an oversight here, where the "&" was supposed to be "&=".
 				// There's no problem though, because the following line resets GameFlags.
-				GameFlags & ~(GAME_VERSUS | GAME_DOUBLES | GAME_BIT6 | GAME_NEWCHALLENGER);
+				GameFlags & ~(GAME_VERSUS | GAME_DOUBLES | GAME_STARTWAITINGPLAYER | GAME_NEWCHALLENGER);
 
 				GameFlags = GAME_TWIN;
 				player1->nowFlags |= NOW_INIT;
 				player2->nowFlags |= NOW_INIT;
-				_0x6029546(0u, 10, 0, 6);
+				_0x6029546(0, 10, 0, 6);
 			}
 
 			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
 				_0x6079299 = 2;
 				if (++_0x6079294 < 180u) {
-					state = 2;
+					state = GAMELOOP_STOP;
 				}
 
 				if (NextScreenVersionTitle()) {
@@ -298,33 +417,23 @@ GameLoopState StartGameLoop() {
 		}
 	}
 
-	InitSeed = Rand(1192u) + 1u;
+	InitSeed += Rand(1192u) + 1u;
 
-	if (state == 2) {
+	if (state == GAMELOOP_STOP) {
 		_0x6029546(2, 30, 72, 6);
 	}
 
-	while (_0x6064750) {
-		if (UpdateFrame()) {
+	do {
+		if (_0x6064750 == NULL) {
+			CheckSaveRankings();
 			_0x602406E();
-			return GAMELOOP_TEST;
+			_0x602E586();
+			return GAMELOOP_STOP;
 		}
-	}
-
-	BackupRankings();
+	} while (!UpdateFrame());
 	_0x602406E();
-	_0x602E586();
 
-	// BUG: This is very odd, but correct, code.
-	//
-	// The SH-2 code checks if state is not equal to GAMELOOP_STOP, but in both
-	// cases the function returns GAMELOOP_STOP.
-	if (state != GAMELOOP_STOP) {
-		return GAMELOOP_STOP;
-	}
-	else {
-		return GAMELOOP_STOP;
-	}
+	return GAMELOOP_TEST;
 }
 
 // TODO: ...

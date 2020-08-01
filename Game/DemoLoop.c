@@ -128,7 +128,7 @@ static ScreenState StartCopyrightScreen() {
 
 	for (bool nextScreenVersionTitle = false; !nextScreenVersionTitle; nextScreenVersionTitle = NextScreenVersionTitle()) {
 		if (_0x6064750 == NULL) {
-			ResetVideoSetters();
+			InitVideoSetters();
 			_0x602406E();
 			InitEntities();
 			_0x6026FCA(CurrentGameBg._0x1E, 0u);

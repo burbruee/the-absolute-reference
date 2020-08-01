@@ -1361,7 +1361,7 @@ void SetVideo() {
 	NumVideoSetters = 0u;
 }
 
-void ResetVideoSetters() {
+void InitVideoSetters() {
 	NumVideoSetters = 0u;
 }
 

@@ -284,7 +284,7 @@ void _0x602975E();
 // Runs all the video setters.
 void SetVideo();
 // Disables all video setters.
-void ResetVideoSetters();
+void InitVideoSetters();
 void _0x6029814(uint32_t arg0, uint32_t arg1, uint8_t bgStart, uint8_t bgEnd);
 // The current palette is stepped every frame between the pal* arrays: N -> M
 // (starting with palN, stepping towards palM). Palette cycles that stop free

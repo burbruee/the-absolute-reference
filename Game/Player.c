@@ -565,7 +565,7 @@ void UpdatePlayerAbsent(Player* player) {
 }
 
 void UpdatePlayerWaiting(Player* player) {
-	if (++player->values[0] > TIME(1, 0, 0) || (GameFlags & GAME_BIT6) || (player->otherPlayer->nowFlags & NOW_STOPPED)) {
+	if (++player->values[0] > TIME(1, 0, 0) || (GameFlags & GAME_STARTWAITINGPLAYER) || (player->otherPlayer->nowFlags & NOW_STOPPED)) {
 		player->nowFlags = NOW_PLAYING | NOW_STARTED;
 		InitPlayer(player->num);
 		NextPlayStart(player);
@@ -619,7 +619,7 @@ void SetMode(Player* player, ModeSelection modeSelection) {
 
 void StartDoubles(Player* player) {
 	Game.state = 0u;
-	GameFlags |= GAME_DOUBLESSTART;
+	GameFlags |= GAME_STARTDOUBLES;
 
 	Player* player1 = &Players[PLAYER1];
 	Player* player2 = &Players[PLAYER2];

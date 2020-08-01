@@ -1,5 +1,6 @@
 #include "DisplayObject.h"
 #include "Video.h"
+#include "PalNum.h"
 #include "HwData.h"
 #include "Macros.h"
 #include <stdbool.h>
@@ -30,18 +31,21 @@ static void AddObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint
 	NumSprites++;
 }
 
+#define ALPHA_TRANSPARENT 0x40
+#define ALPHA_GRAYSCALE 0x10
+
 void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer) {
 	uint8_t etc;
-	if (palNum == 148u) {
+	if (palNum == PALNUM_ALPHA) {
 		// Field or item bar background; use alpha.
-		etc = 0x40 | ((*object)[4] & 0x8F);
+		etc = ALPHA_TRANSPARENT | ((*object)[4] & ~OBJECT_ALPHA);
 	}
 	else {
 		// Opaque; no alpha.
-		etc = (*object)[4] & 0x8F;
+		etc = (*object)[4] & ~OBJECT_ALPHA;
 	}
 
-	AddSpriteNames(layer, OBJECT_GETNUMSPRITES(object)); // TODO
+	AllocSpriteLayerNames(layer, OBJECT_GETNUMSPRITES(object));;
 
 	int16_t numSprites = OBJECT_GETNUMSPRITES(object);
 	const ObjectData* curData = object;
@@ -63,18 +67,18 @@ void DisplayObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t pal
 	}
 
 	uint8_t etc;
-	if (alpha || palNum == 148u) {
+	if (alpha || palNum == PALNUM_ALPHA) {
 		// Alpha requested, field background, or item bar background; use alpha.
-		etc = 0x40 | ((*object)[4] & 0x8F);
+		etc = ALPHA_TRANSPARENT | ((*object)[4] & ~OBJECT_ALPHA);
 	}
 	else {
 		// Some other type of object. Default to opaque, if the object isn't a next block background.
-		etc = (*object)[4] & 0x8F;
+		etc = (*object)[4] & ~OBJECT_ALPHA;
 	}
 
 	if (object == OBJECT_SINGLENEXTBLOCKBG || object == OBJECT_DOUBLESNEXTBLOCKBG) {
 		// Use grayscale alpha.
-		etc = 0x10 | ((*object)[4] & 0x8F);
+		etc = ALPHA_GRAYSCALE | ((*object)[4] & ~OBJECT_ALPHA);
 	}
 
 	AllocSpriteLayerNames(layer, OBJECT_GETNUMSPRITES(object));

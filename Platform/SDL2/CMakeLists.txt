@@ -88,6 +88,7 @@ set(EXECUTABLE_SOURCES
 	"../../Game/UpdateItemTopDelField.c"
 	"../../Game/UpdateItemTransform.c"
 	"../../Game/UpdateItemXRay.c"
+	"../../Game/Versus.c"
 	"../../Game/Video.c"
 
 	"../Util/HwData.c"
@@ -190,6 +191,7 @@ set(EXECUTABLE_HEADERS
 	"../../Game/UpdateItemTopDelField.h"
 	"../../Game/UpdateItemTransform.h"
 	"../../Game/UpdateItemXRay.h"
+	"../../Game/Versus.h"
 	"../../Game/Video.h"
 	"../../Game/VideoDefs.h"
 

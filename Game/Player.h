@@ -309,7 +309,7 @@ typedef enum GameFlag {
 	GAME_BIT3 = 1 << 3,
 	GAME_CHALLENGER1P = 1 << 4,
 	GAME_CHALLENGER2P = 1 << 5,
-	GAME_BIT6 = 1 << 6,
+	GAME_STARTWAITINGPLAYER = 1 << 6,
 	GAME_NEWCHALLENGER = 1 << 7,
 	GAME_WINNER1P = 1 << 8,
 	GAME_WINNER2P = 1 << 9,
@@ -320,7 +320,7 @@ typedef enum GameFlag {
 	GAME_NEWVERSUSROUND = 1 << 14,
 	GAME_VERSUSREADYGO = 1 << 15,
 	GAME_CHALLENGEDELAY = 1 << 16, // TODO: GAME_NEWCHALLENGER? And rename the other one?
-	GAME_DOUBLESSTART = 1 << 17, // TODO: Set when starting doubles. GAME_STARTDOUBLES?
+	GAME_STARTDOUBLES = 1 << 17,
 	GAME_BIT18 = 1 << 18,
 	GAME_BIT19 = 1 << 19,
 	// ...
