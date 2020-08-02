@@ -12,7 +12,7 @@ void ShowRowDel(Player* player, int16_t delRow) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityRowDel;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 		entity->frames = 0;
 		entity->animFrame = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);

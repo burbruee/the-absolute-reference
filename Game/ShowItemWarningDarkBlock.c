@@ -11,7 +11,7 @@ void ShowItemWarningDarkBlock(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningDarkBlock;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		entity->warningFrames = 0;
 		data->x = 4;

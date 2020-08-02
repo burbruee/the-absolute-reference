@@ -8,6 +8,8 @@
 #include "Save.h"
 #include "HwData.h"
 
+bool PauseAllowed;
+
 void InitCredits() {
 	_0x6064765 = 20u;
 	_0x6064766 = 10u;

@@ -16,6 +16,7 @@
 #include "ShowGameOverFade.h"
 #include "DisplayObject.h"
 #include "Debug.h"
+#include "Input.h"
 #include "HwInput.h"
 #include "HwSprite.h"
 #include "Fixed.h"
@@ -36,6 +37,8 @@
 #include "PlatformTypes.h"
 
 const uint16_t NextSectionLevels[10] = {100u, 200u, 300u, 400u, 500u, 600u, 700u, 800u, 900u, 999u};
+
+ItemType ItemDescriptions[NUMPLAYERS];
 
 bool Demo;
 
@@ -544,7 +547,7 @@ void UpdatePlayerAbsent(Player* player) {
 		}
 
 		if ((GameButtonsNew[player->num] & BUTTON_START) && CanStart(player->num, false)) {
-			CreditStartPlayer(player->num, false);
+			CheckBuyGame(player->num, false);
 			player->nowFlags = NOW_SELECTING | NOW_STARTED;
 			player->modeFlags &= ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS);
 			player->modeFlags |= MODE_NORMAL;

@@ -11,7 +11,7 @@ void ShowItemWarningDeathBlock(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity())) {
 		entity->update = UpdateEntityItemWarningDeathBlock;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 		entity->warningFrames = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = 4;

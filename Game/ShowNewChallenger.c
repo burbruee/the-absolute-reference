@@ -44,7 +44,7 @@ void ShowNewChallenger(Player* player) {
 
 
 static void UpdateEntityNewChallenger(Entity* entity) {
-	ENTITY_CUSTOM_DATA_PTR(NewChallengerData, data, entity);
+	ENTITY_BUFFER_PTR(NewChallengerData, data, entity);
 	if (CurrentPauseMode < PAUSEMODE_GAME) {
 		switch (entity->states[0]) {
 		case STATE_SCROLLRIGHTSTART:

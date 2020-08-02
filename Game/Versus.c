@@ -1,9 +1,9 @@
 #include "Versus.h"
 #include "Entity.h"
 
-typedef struct EntityData {
+typedef struct InstanceData {
 	uint16_t palNum;
-} EntityData;
+} InstanceData;
 static void _0x601FB30(Entity* entity);
 
 void _0x601FAD0() {

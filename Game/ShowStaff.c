@@ -134,9 +134,9 @@ void ShowStaff(Player* player) {
 	}
 
 	Entity* staffEntity;
-	if ((staffEntity = AllocEntity()) != NULL) {
+	if (staffEntity = AllocEntity()) {
 		staffEntity->update = UpdateEntityStaff;
-		ENTITY_DATA(staffEntity).player = player;
+		staffEntity->data.info.player = player;
 		StaffFireworkFrames[player->num] = 15u;
 		staffEntity->scrollY = 0;
 		staffEntity->values[1] = 0;
@@ -168,7 +168,7 @@ void _0x6021E64() {
 }
 
 static void UpdateEntityStaff(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 		player->nowFlags |= NOW_SHOWRANKINGCODE;
@@ -347,13 +347,13 @@ static void ShowGrandMasterCongratulations(Player* player) {
 		entity->update = UpdateEntityGrandMasterCongratulations;
 		entity->frames = 600;
 		entity->values[1] = 1;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 		player->scale = 123;
 	}
 }
 
 static void UpdateEntityGrandMasterCongratulations(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 		player->nowFlags |= NOW_SHOWRANKINGCODE;
@@ -401,12 +401,12 @@ static void ShowRetryForGrandMaster(Player* player) {
 		entity->update = UpdateEntityRetryForGrandMaster;
 		entity->frames = 600;
 		entity->values[1] = 1;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 	}
 }
 
 static void UpdateEntityRetryForGrandMaster(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 		player->nowFlags |= NOW_SHOWRANKINGCODE;
@@ -426,7 +426,7 @@ static void UpdateEntityRetryForGrandMaster(Entity* entity) {
 }
 
 static void UpdateEntityNormalComplete(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	player->nowFlags |= NOW_NOUPDATE;
 
@@ -437,7 +437,7 @@ static void UpdateEntityNormalComplete(Entity* entity) {
 }
 
 static void UpdateEntityTgmPlusComplete(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	player->nowFlags |= NOW_NOUPDATE;
 
@@ -447,7 +447,7 @@ static void UpdateEntityTgmPlusComplete(Entity* entity) {
 }
 
 static void UpdateEntityDoublesComplete(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	player->nowFlags |= NOW_NOUPDATE;
 	player->otherPlayer->nowFlags |= NOW_NOUPDATE;
@@ -474,7 +474,7 @@ static void UpdateStaffFireworks(Entity* entity, Player* player, uint16_t delay)
 }
 
 static void UpdateEntityDeathComplete(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	DisplayObjectEx(OBJECT_RETRYFORGRANDMASTER, 100, player->screenPos[0], 179u, 125u, 0x3F, 0x3F, false);
 
@@ -482,7 +482,7 @@ static void UpdateEntityDeathComplete(Entity* entity) {
 }
 
 static void UpdateEntityDeathIncomplete(Entity* entity) {
-	Player* player = ENTITY_DATA(entity).player;
+	Player* player = entity->data.info.player;
 
 	player->nowFlags |= NOW_NOUPDATE;
 

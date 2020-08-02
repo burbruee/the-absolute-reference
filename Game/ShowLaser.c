@@ -12,7 +12,7 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityLaser;
-		ENTITY_DATA(entity).player = player;
+		entity->data.info.player = player;
 		entity->laserFrames = 0;
 		entity->laserAnimIndex = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);

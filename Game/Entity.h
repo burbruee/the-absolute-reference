@@ -12,18 +12,22 @@
 //
 // Updating of all entities occurs after updating the players' gameplay.
 
+#define ENTITY_BUFFERSIZE (0x40 * sizeof(void*))
+
 // Use if the union applies, otherwise use a custom type in Entity::data.
-typedef struct EntityData {
-	union {
-		Player* player;
-		const ObjectData* objectTable;
-		struct {
-			uint8_t minutes, seconds, centiseconds;
-		};
-		Fixed32 scale;
-		// TODO: Remaining fields.
+typedef union EntityInfo {
+	Player* player;
+	const ObjectData* objectTable;
+	struct {
+		uint8_t minutes, seconds, centiseconds;
 	};
-	DATA(instanceData, 1);
+	Fixed32 scale;
+	// TODO: Remaining fields.
+} EntityInfo;
+
+typedef struct EntityData {
+	EntityInfo info;
+	DATA(instanceData, ENTITY_BUFFERSIZE - sizeof(EntityInfo));
 } EntityData;
 
 // Common type useful for most basic types of entities, that don't need
@@ -44,10 +48,13 @@ struct Entity {
 	uint8_t states[4];
 	int16_t values[4];
 	void (*update)(Entity* entity);
-	DATA(data, 0x100);
+	union {
+		EntityData data;
+		DATA(buffer, ENTITY_BUFFERSIZE);
+	};
 };
 
-// Use ENTITY_CUSTOM_DATA_PTR when storing a non-EntityData struct in
+// Use ENTITY_BUFFER_PTR when storing a non-EntityData struct in
 // Entity::data.
 //
 // Use ENTITY_DATA or ENTITY_DATA_PTR when accessing a union field in an
@@ -55,10 +62,9 @@ struct Entity {
 //
 // For extra data not in the EntityData union, declare a struct for your
 // entity, and access the struct using ENTITY_INST_DATA_PTR.
-#define ENTITY_CUSTOM_DATA_PTR(type, ptr, entity) type* ptr = (type*)(entity)->data
-#define ENTITY_DATA(entity) (*(EntityData*)entity->data)
-#define ENTITY_DATA_PTR(ptr, entity) ENTITY_CUSTOM_DATA_PTR(EntityData, ptr, entity)
-#define ENTITY_INST_DATA_PTR(type, ptr, entity) type* ptr = (type*)((EntityData*)(entity)->data)->instanceData
+#define ENTITY_BUFFER_PTR(type, ptr, entity) type* ptr = (type*)(entity)->buffer
+#define ENTITY_DATA(entity) (entity->data.info)
+#define ENTITY_INST_DATA_PTR(type, ptr, entity) type* ptr = (type*)(entity)->data.instanceData
 
 void InitEntities();
 Entity* AllocEntity();
