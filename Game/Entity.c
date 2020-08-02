@@ -18,8 +18,8 @@ static inline void InitEntity(Entity* entity) {
 
 	entity->update = NULL;
 
-	for (size_t i = 0; i < lengthof(entity->data); i++) {
-		entity->data[i] = 0u;
+	for (size_t i = 0; i < lengthof(entity->buffer); i++) {
+		entity->buffer[i] = 0u;
 	}
 }
 
