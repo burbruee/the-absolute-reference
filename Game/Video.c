@@ -59,6 +59,8 @@ static uint16_t _0x60AD21E = 0u;
 static int16_t _0x60AD220;
 static int16_t NumSpriteAdders;
 
+struct_0x60AD228 _0x60AD228[11];
+
 Bg Bgs[4];
 
 typedef struct struct_0x60B0FE0 {
@@ -1049,7 +1051,7 @@ int32_t _0x6025918() {
 int32_t _0x6025AE4(int16_t bgIndex, GameBg* gameBg) {
 	int16_t var0;
 	if (Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] < 0) {
-		var0 = _0x6026918();
+		var0 = _0x6025918();
 		Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] = var0;
 	}
 	else {
@@ -1634,6 +1636,17 @@ static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
 			PALRAM[palNum * NUMPALCOLORS_4BPP + j] = pal[j];
 		}
 	}
+}
+
+static void _0x602A99E(void* arg0, void* arg1, void* arg2);
+void _0x602A96A(uint8_t arg0, void* arg1) {
+	VideoSetters[NumVideoSetters].set = _0x602A99E;
+	VideoSetters[NumVideoSetters].args[0] = arg0;
+	VideoSetters[NumVideoSetters++].args[1] = arg1;
+}
+
+static void _0x602A99E(void* arg0, void* arg1, void* arg2) {
+	// TODO
 }
 
 void _0x602AA16() {

@@ -26,7 +26,7 @@ static uint8_t _0x6079299;
 static uint8_t _0x607929A;
 
 typedef enum GameLoopState {
-	GAMELOOP_CONTINUE = 0,
+	GAMELOOP_RESTART = 0,
 	GAMELOOP_STOP = 2,
 	GAMELOOP_INIT = 5,
 	GAMELOOP_TEST = 7,
@@ -240,10 +240,21 @@ GameLoopState GameStartVersus() {
 			_0x6029546(0, 20, 0, 6);
 		}
 	}
-	return GAMELOOP_CONTINUE;
+	return GAMELOOP_RESTART;
 }
 
-// TODO
+void GameStartVersusRound() {
+	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[1].nowFlags & NOW_WAITING)) {
+		Game.state = 0u;
+		GameFlags =
+			(GameFlags | GAME_VERSUS | GAME_BIT11) &
+			~(GAME_CHALLENGER1P | GAME_CHALLENGER2P | GAME_STARTWAITINGPLAYER);
+		Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
+		Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
+		InitItems();
+		_0x601FAD0(); // TODO
+	}
+}
 
 static uint8_t NumVersusRounds[3] = { 1u, 2u, 3u };
 
@@ -251,7 +262,49 @@ uint8_t NumVersusRoundsSetting() {
 	return NumVersusRounds[Settings[SETTING_NUMVERSUSROUNDS]];
 }
 
-// TODO: ...
+GameLoopState _0x6008406(PlayerNum playerNum) {
+	bool startTestMode;
+	
+	NextPlayGameOver(&Players[playerNum]);
+
+	Players[playerNum].modeFlags &= 0x1083;
+	Players[PLAYER1].modeFlags &= ~MODE_VERSUS;
+	Players[PLAYER2].modeFlags &= ~MODE_VERSUS;
+
+	if (!(Players[PLAYER1].nowFlags & NOW_STOPPED)) {
+		Players[PLAYER1].nowFlags |= NOW_INIT;
+	}
+	if (!(Players[PLAYER2].nowFlags & NOW_STOPPED)) {
+		Players[PLAYER2].nowFlags |= NOW_INIT;
+	}
+
+	GameFlags =
+		(GameFlags | GAME_TWIN) &
+		~(GAME_VERSUS | GAME_DOUBLES | GAME_STARTWAITINGPLAYER | GAME_NEWCHALLENGER);
+	Game.numVersusRounds = 0u;
+
+	SetPal(PALNUM_15,1, PAL_MODESELECTED);
+	SetPal(PALNUM_14,1, PAL_MODENOTSELECTED);
+
+	do {
+		if (_0x6064750 == NULL) {
+			return GAMELOOP_RESTART;
+		}
+	} while (!UpdateFrame());
+
+	return GAMELOOP_TEST;
+}
+
+GameLoopState _0x6008516() {
+	GameLoopState state = GAMELOOP_RESTART;
+	// TODO
+	return state;
+}
+
+void _0x60088FC() {
+	GameFlags = (GameFlags & ~GAME_BIT13) | GAME_NEWVERSUSROUND;
+	Game.numVersusRounds++;
+}
 
 static GameLoopState GameStartDoubles() {
 	switch (Game.state) {
@@ -274,7 +327,7 @@ static GameLoopState GameStartDoubles() {
 		break;
 
 	default:
-		return GAMELOOP_CONTINUE;
+		return GAMELOOP_RESTART;
 	}
 
 	Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT;
@@ -283,7 +336,7 @@ static GameLoopState GameStartDoubles() {
 	Game.state = 0u;
 	Players[PLAYER1].modeFlags = MODE_DOUBLES;
 	Players[PLAYER2].modeFlags = MODE_DOUBLES;
-	return GAMELOOP_CONTINUE;
+	return GAMELOOP_RESTART;
 }
 
 // TODO: Init from ROM data.
@@ -341,8 +394,8 @@ GameLoopState StartGameLoop() {
 	Player *player1 = &Players[PLAYER1];
 	Player *player2 = &Players[PLAYER2];
 
-	GameLoopState state = GAMELOOP_CONTINUE;
-	while (state == GAMELOOP_CONTINUE) {
+	GameLoopState state = GAMELOOP_RESTART;
+	while (state == GAMELOOP_RESTART) {
 		if (UpdateGame()) {
 			_0x602406E();
 			return GAMELOOP_TEST;
@@ -378,7 +431,7 @@ GameLoopState StartGameLoop() {
 			}
 
 			if (GameFlags & GAME_NEWVERSUSROUND) {
-				_0x60083A0(); // TODO
+				GameStartVersusRound();
 			}
 
 			if ((GameFlags & GAME_VERSUS) && !(GameFlags & GAME_BIT11)) {
@@ -386,7 +439,7 @@ GameLoopState StartGameLoop() {
 			}
 
 			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_BIT13)) {
-				_0x60088FC(); // TODO
+				_0x60088FC();
 			}
 
 			if (!(GameFlags & GAME_VERSUS) && (GameFlags & GAME_DOUBLES) && (!(player1->nowFlags & NOW_STARTED) || !(player2->nowFlags & NOW_STARTED))) {

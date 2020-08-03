@@ -1,3 +1,4 @@
+// TODO: Change how EEP-ROM access is done in the code and move this to the PsikyoSH platform.
 #include "Eeprom.h"
 #include "Setting.h"
 #include "HwData.h"
@@ -7,18 +8,70 @@
 // PsikyoSH hardware probably requires some wait cycles between EEP-ROM
 // accesses for the hardware to update.
 
-void _0x602F658(uint8_t arg0) {
-	EEPROM[0] = (arg0 << 5) | 0x82u;
+void PushEepromBit(bool bit) {
+	EEPROM[0] = (bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM[0] = (arg0 << 5) | 0xC2u;
+	EEPROM[0] = (bit << 5) | 0xC2u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM[0] = (arg0 << 5) | 0x82u;
+	EEPROM[0] = (bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM[0] = (arg0 << 5) | 0x82u;
+	EEPROM[0] = (bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
+}
+
+void _0x602F704() {
+	EEPROM[0] = 0xA2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0xE2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0x82;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	PushEepromBit(false);
+	PushEepromBit(false);
+	PushEepromBit(true);
+	PushEepromBit(true);
+
+	for (uint32_t i = 0u; i < 6u; i++) {
+		PushEepromBit(false);
+	}
+
+	EEPROM[0] = 0xC2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0x02;
+	for (uint32_t i = 0u; i < 3u; i++);
+}
+
+void _0x602F7DC() {
+	EEPROM[0] = 0xA2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0xE2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0x82;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	PushEepromBit(false);
+	PushEepromBit(false);
+	PushEepromBit(false);
+	PushEepromBit(false);
+
+	for (uint32_t i = 0u; i < 6u; i++) {
+		PushEepromBit(false);
+	}
+
+	EEPROM[0] = 0xC2;
+	for (uint32_t i = 0u; i < 3u; i++);
+
+	EEPROM[0] = 0x02;
+	for (uint32_t i = 0u; i < 3u; i++);
 }
 
 void _0x602F8BC() {
@@ -30,15 +83,15 @@ void _0x602F8BC() {
 		EEPROM[0] = 0x82u;
 		for (uint8_t j = 0u; j < 3u; j++);
 
-		_0x602F658(1u);
-		_0x602F658(0u);
-		_0x602F658(0u);
+		PushEepromBit(1u);
+		PushEepromBit(0u);
+		PushEepromBit(0u);
 		for (uint8_t j = 0u; j < 8u; j++) {
 			if ((i >> (7u - j)) & 1u) {
-				_0x602F658(1u);
+				PushEepromBit(1u);
 			}
 			else {
-				_0x602F658(0u);
+				PushEepromBit(0u);
 			}
 		}
 		Settings[i] = 0u;
@@ -60,4 +113,29 @@ void _0x602F8BC() {
 		}
 		EEPROM[0] = 0x42u;
 	}
+}
+
+void _0x602FA7E() {
+	// TODO
+}
+
+void WriteSettings() {
+	// TODO
+}
+
+void ReadEepromByte(uint8_t offset) {
+	// TODO
+}
+
+uint8_t ReadEeprom(uint8_t offset, void* destination, size_t size) {
+	// TODO
+	return 0u;
+}
+
+void WriteEepromByte(uint8_t offset, uint8_t data) {
+	// TODO
+}
+
+void WriteEeprom(uint8_t offset, void* source, size_t size) {
+	// TODO
 }

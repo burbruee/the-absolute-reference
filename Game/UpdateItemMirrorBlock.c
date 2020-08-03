@@ -95,7 +95,7 @@ void UpdateItemMirrorBlock(Item* item) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
 					}
-					ShowMirrorMarker(itemPlayer, item->mirrorColumn);
+					ShowColumnMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;
 				}
 				item->frames--;
@@ -155,7 +155,7 @@ void UpdateItemMirrorBlock(Item* item) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
 					}
-					ShowMirrorMarker(itemPlayer, item->mirrorColumn);
+					ShowColumnMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;
 				}
 				item->frames--;

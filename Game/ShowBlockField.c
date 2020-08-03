@@ -139,7 +139,7 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 
 		int16_t palOffset;
 		if (block & BLOCK_ITEM) {
-			uint8_t itemNum = showBlockType == SHOWBLOCKTYPE_NEXT ? TOPALNUM(player->nextBlockItemType) : TOPALNUM(player->activeBlockItemType);
+			uint8_t itemNum = showBlockType == SHOWBLOCKTYPE_NEXT ? TOITEMNUM(player->nextBlockItemType) : TOITEMNUM(player->activeBlockItemType);
 			palOffset = PalNumTableItemBlocks[itemNum];
 		}
 		else if (block & BLOCK_ROLLROLL) {

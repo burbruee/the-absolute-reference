@@ -45,7 +45,7 @@ typedef struct Ranking {
 #define RANKINGDATA_GETGREENLINE(rankingData) ((rankingData) & 0x04000000)
 #define RANKINGDATA_GET1PLEVEL(rankingData) (((rankingData) >> 16) & 0xFFFF)
 #define RANKINGDATA_GET2PLEVEL(rankingData) ((rankingData) & 0xFFFF)
-#define RANKINGDATA_GETLEVELSUM(rankingData) (RANKINGDATA_GET1PLEVEL(rankingData) + RANKINGLEVEL_GETP2LEVEL(rankingData))
+#define RANKINGDATA_GETLEVELSUM(rankingData) (RANKINGDATA_GET1PLEVEL(rankingData) + RANKINGDATA_GET2PLEVEL(rankingData))
 
 #define RANKINGDATA_SETVALUE(rankingData, value) ((rankingData) = ((rankingData) & ~0xFFFFF) | ((value) & 0xFFFFF))
 #define RANKINGDATA_SETGRADE(rankingData, grade) ((rankingData) = ((rankingData) & 0xF8000000) | (((grade) & 0x1F) << 27))

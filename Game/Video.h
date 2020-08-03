@@ -309,6 +309,7 @@ void EnablePalCycles();
 // TODO
 void SetPal(uint8_t palNum, uint8_t numPals, ROMDATA Color* pal);
 // TODO
+void _0x602A96A(uint8_t arg0, void* arg1);
 void _0x602AA16();
 void _0x602AA4C();
 void _0x602AA64();

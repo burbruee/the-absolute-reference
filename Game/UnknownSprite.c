@@ -48,6 +48,14 @@ void _0x602BC58(uint8_t arg0) {
 	_0x6061932._0x12 = arg0;
 }
 
+void _0x602C0F8(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
+	// TODO
+}
+
+void _0x602C224(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
+	// TODO
+}
+
 void _0x602C3EE(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }

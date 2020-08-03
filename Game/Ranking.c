@@ -934,7 +934,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 			DisplayObject(ObjectTableRankingPlaces[newRanking->place], 62, rankingPlaceX, 0u, 110u);
 			DisplayObject(ObjectTableRankingPlaces[newRanking->todaysBestPlace], 105, rankingPlaceX, 0u, 110u);
 			if (player->modeFlags & MODE_MASTER) {
-				ShowTime(player->masteringTime, 148, labelX);
+				ShowClearTime(player->masteringTime, 148, labelX);
 			}
 			else if (player->modeFlags & MODE_NORMAL) {
 				ShowRankingScore(player->score, 148, rankingX + 24);
@@ -989,9 +989,9 @@ static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash
 
 	ShowRankingName(newRanking->nameEntries[PLAYER1].name, 167, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER1].numChars > 3 ? flashPal : 0u, 110u);
 	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124, flashPal, 110u);
-	ShowStatusNumberEx(newRanking->nameEntries[PLAYER1].player->level, 169, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+	ShowStatusNumEx(newRanking->nameEntries[PLAYER1].player->level, 169, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 
 	ShowRankingName(newRanking->nameEntries[PLAYER2].name, 185, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER2].numChars > 3 ? flashPal : 0u, 110u);
 	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER2].charIndex] - ' '], 185, 124 + newRanking->nameEntries[PLAYER2].charIndex * 16, flashPal, 110u);
-	ShowStatusNumberEx(newRanking->nameEntries[PLAYER2].player->level, 187, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
+	ShowStatusNumEx(newRanking->nameEntries[PLAYER2].player->level, 187, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 }

@@ -11,6 +11,7 @@
 // could be omitted.
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum Region {
 	REGION_JAPAN = 0,
@@ -21,7 +22,7 @@ typedef enum Region {
 	REGION_SETTING = 0xF
 } Region;
 
-void _0x602F658(uint8_t);
+void PushEepromBit(bool bit);
 void _0x602F704();
 void _0x602F7DC();
 void _0x602F8BC();
