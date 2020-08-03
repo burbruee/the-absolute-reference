@@ -32,7 +32,7 @@ extern const Color* PalDataPtr;
 extern const BgMap*** BgMapTablePtr;
 extern const BgMap** BgMapsPtr;
 
-extern const void** SequenceDataTablePtr;
+extern const void** const SequenceDataTablePtr;
 
 extern const ObjectData** ObjectDataTablePtr;
 

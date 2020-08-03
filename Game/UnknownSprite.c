@@ -48,20 +48,20 @@ void _0x602BC58(uint8_t arg0) {
 	_0x6061932._0x12 = arg0;
 }
 
-void _0x602C0F8(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
+void _0x602C0F8(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
-void _0x602C224(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
+void _0x602C224(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
-void _0x602C3EE(AddSpriteData* data, void* sequence, int16_t x, int16_t y, uint16_t type) {
+void _0x602C3EE(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
 void _0x602C5C2() {
-	void *sequenceData = SequenceDataTablePtr[1];
+	const void* const sequenceData = SequenceDataTablePtr[1];
 
 	for (int16_t i = _0x6061932.tempSprite[6] + 1, * adderIndex = &SpriteAdderNameTable[i]; i < lengthof(SpriteAdders); i++, adderIndex++) {
 		int16_t j = *adderIndex;

@@ -32,7 +32,7 @@ const BgMap*** BgMapTablePtr = &BgMapTable;
 // then getting pointers from that array for the background map table.
 const BgMap** BgMapsPtr = &BgMapSection2;
 
-const void** SequenceDataTablePtr = SequenceDataTable;
+const void** const SequenceDataTablePtr = SequenceDataTable;
 //const ObjectData* ObjectDataTablePtr = (const ObjectData*)Objects.data;
 // TODO
 //const MidiData* MidiPtr = &Midi;
