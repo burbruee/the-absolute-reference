@@ -11,6 +11,7 @@
 #include "HwData.h"
 #include "PlatformTypes.h"
 #include "Macros.h"
+#include <assert.h>
 
 #define SPRITELAYER_FREE 0x0000
 
@@ -498,6 +499,7 @@ void _0x60243E8(AddSpriteData* arg0) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
 	numSprites = OBJECT_GETNUMSPRITES(object);
+	assert(numSprites > 0);
 	AllocSpriteLayerNames(arg0->layer, numSprites);
 
 	if (arg0->_0x30 != 0) {
@@ -612,9 +614,7 @@ void _0x60243E8(AddSpriteData* arg0) {
 			}
 			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaTileTop & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
-			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
-				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
-			}
+			SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 			NumSprites++;
 		}
 	}
@@ -734,9 +734,7 @@ void _0x602471C(AddSpriteData* arg0) {
 			}
 			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaTileTop & 0x70u);
 			_0x6061932.tempSprite[5] = (*object)[5];
-			for (int16_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
-				Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
-			}
+			SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 			NumSprites++;
 		}
 	}
@@ -1083,7 +1081,7 @@ void _0x60267E4(int16_t bgIndex) {
 		return;
 	}
 
-	const int16_t var2 = _0x60AD228[var2]._0x54;
+	const int16_t var2 = _0x60AD228[Bgs[bgIndex]._0x18[var0]]._0x54;
 
 	int16_t var4;
 	int16_t var5;

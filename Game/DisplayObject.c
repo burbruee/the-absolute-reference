@@ -25,9 +25,7 @@ static void AddObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint
 	// Bottom 16 bits of tile.
 	_0x6061932.tempSprite[5] = (*object)[5];
 
-	for (size_t i = 0; i < lengthof(_0x6061932.tempSprite); i++) {
-		Sprites[NumSprites][i] = _0x6061932.tempSprite[i];
-	}
+	SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
 	NumSprites++;
 }
 
