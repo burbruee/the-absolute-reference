@@ -3244,7 +3244,7 @@ void ThrowOutActiveBlock(Player* player) {
 // FIELD_HEIGHT constants here with player->fieldHeight. You'd need to change
 // the secret grade ranking code too, though.
 uint8_t NumSecretGradeRows(Player* player) {
-	uint8_t numSecretGradeRows = 0u;
+	uint8_t matchedRows = 0u;
 	for (int16_t row = 0; row < player->matrixHeight - 1; row++) {
 		int16_t emptyBlocks = 0;
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
@@ -3258,7 +3258,7 @@ uint8_t NumSecretGradeRows(Player* player) {
 				if (MATRIX(player, row, row).block == NULLBLOCK) {
 					if (MATRIX(player, row + 1, row).block != NULLBLOCK) {
 						// Row matches the pattern plus there's a square above the hole in the current row.
-						numSecretGradeRows++;
+						matchedRows++;
 					}
 				}
 				else {
@@ -3270,7 +3270,7 @@ uint8_t NumSecretGradeRows(Player* player) {
 				if (MATRIX(player, row, FIELD_HEIGHT - row).block == NULLBLOCK) {
 					if (MATRIX(player, row + 1, FIELD_HEIGHT - row).block != NULLBLOCK) {
 						// Row matches the pattern plus there's a square above the hole in the current row.
-						numSecretGradeRows++;
+						matchedRows++;
 					}
 				}
 				else {
@@ -3282,10 +3282,10 @@ uint8_t NumSecretGradeRows(Player* player) {
 			row = player->matrixHeight;
 		}
 	}
-	if (numSecretGradeRows >= FIELD_HEIGHT - 1) {
-		numSecretGradeRows = FIELD_HEIGHT;
+	if (matchedRows >= FIELD_HEIGHT - 1) {
+		matchedRows = FIELD_HEIGHT;
 	}
-	return numSecretGradeRows;
+	return matchedRows;
 }
 
 void SetFieldVisible(Player* player) {
