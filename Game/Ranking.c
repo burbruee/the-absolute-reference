@@ -548,7 +548,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 void NextPlayRanking(Player* player) {
 	RankingFlag newRankingFlags = NewRankingFlags(player, &NewRankings[player->num]);
 	NextPlay(player, (PlayData){.flags = PLAYFLAG_NONE, .state = PLAYSTATE_RANKING});
-	
+
 	NewRankingData* newRanking = &NewRankings[player->num];
 	newRanking->state = NEWRANKING_INIT;
 	newRanking->player = player;

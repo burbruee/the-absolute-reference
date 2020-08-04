@@ -388,6 +388,8 @@ extern BlockDefSquare BlockDefs[9 * 4 * 4 * 4];
 #define DEFBLOCKBIG(type, rotation, row, col) BLOCKDEFCOL(BLOCKDEFROW(BLOCKDEF((type)), (rotation), (row) / 2), (col) / 2)
 #define DEFBLOCK_EMPTY 0u
 
+void NextPlay(Player* player, PlayData play);
+
 void NextPlayLock(Player* player);
 
 void NextPlayGameOver(Player* player);
