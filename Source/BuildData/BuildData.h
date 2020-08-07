@@ -43,7 +43,7 @@ extern ROMDATA ObjectData* const ObjectDataTablePtr;
 
 extern ROMDATA Color** const PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 
-extern const Checksum* const BuildChecksumDataPtr; // TODO: Analyze function _0x60302C4; it checks against this table, and appears that sound ROM checksum is in index 0.
+extern const Checksum* const BuildChecksumDataPtr;
 extern const uint32_t _0x40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
 extern ROMDATA Color** const _0x40048;

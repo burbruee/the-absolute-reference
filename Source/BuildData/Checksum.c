@@ -1,5 +1,6 @@
 #include "BuildData/Checksum.h"
 #include "BuildData/BuildData.h"
+#include "Game/Graphics/ShowText.h"
 #include "Video/UnknownSprite.h"
 #include "Game/PalNum.h"
 #include "Sound/Sound.h"
@@ -9,7 +10,7 @@
 
 // TODO: Implement a way for the build system to calculate the checksums and
 // put them here, if possible.
-const BuildChecksumData BuildChecksum = {
+const ChecksumData BuildChecksum = {
 	{ 'C', 'H', 'E', 'C', 'K', 'S', 'U', 'M' },
 	{
 		{ CHECKSUM_VALUE, { 0x5EBDu, 0x643Au, 0xC2F7u } },
@@ -20,203 +21,194 @@ const BuildChecksumData BuildChecksum = {
 		{ CHECKSUM_VALUE, { 0xBFDDu, 0xA8F8u, 0x68D5u } },
 		{ CHECKSUM_VALUE, { 0xC132u, 0x4EF4u, 0x1026u } },
 		{ CHECKSUM_VALUE, { 0x001Bu, 0x18D5u, 0x18F0u } },
-
-		{ CHECKSUM_VALUE | CHECKSUM_LAST, { 0x0000u, 0x0000u, 0x2888u } },
-		{ CHECKSUM_END, { 0x0000u, 0x0000u, 0x0000 } },
+		{ CHECKSUM_VALUE | CHECKSUM_LAST,
+	                      { 0x0000u, 0x0000u, 0x2888u } },
+		{   CHECKSUM_END, { 0x0000u, 0x0000u, 0x0000u } },
 	}
 };
 
-static uint16_t ChecksumDataDst[8 * 5];
-static const uint16_t* ChecksumDataSrcPtr;
-static uint16_t* ChecksumDataDstPtr;
+static Checksum ChecksumDataDst[10];
+static const Checksum* ChecksumDataSrcPtr;
+static Checksum* ChecksumDataDstPtr;
 static uint32_t GraphicsCheckBank;
-static uint32_t _0x60B19AC;
+static uint32_t NumChecksumFrames;
 
-bool _0x6030100() {
+static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha);
+
+bool ChecksumPass() {
 	bool success;
-	const uint16_t* checksumSrc;
-	uint16_t* checksumDst;
-	if (ChecksumDataSrcPtr[0] == CHECKSUM_END) {
+	if (ChecksumDataSrcPtr == NULL) {
 		success = true;
-		checksumSrc = BuildChecksumDataPtr;
-		checksumDst = ChecksumDataDst;
-		while (checksumSrc[0] != CHECKSUM_END) {
-			if (checksumSrc[0] & CHECKSUM_LAST) {
-				if (checksumSrc[3] != checksumDst[3]) {
+		for (
+			const Checksum* checksumSrc = BuildChecksumDataPtr, * checksumDst = ChecksumDataDst;
+			checksumSrc->checksumFlags != CHECKSUM_END;
+			checksumSrc++, checksumDst++) {
+			if (checksumSrc->checksumFlags & CHECKSUM_LAST) {
+				if (checksumSrc->data[2] != checksumDst->data[2]) {
 					success = false;
 				}
 			}
 			else {
 				if (
-					checksumSrc[1] != checksumDst[1] ||
-					checksumSrc[2] != checksumDst[2] ||
-					checksumSrc[3] != checksumDst[3]) {
+					checksumSrc->data[0] != checksumDst->data[0] ||
+					checksumSrc->data[1] != checksumDst->data[1] ||
+					checksumSrc->data[2] != checksumDst->data[2]) {
 					success = false;
 				}
 			}
-
-			checksumSrc += 4u;
-			checksumDst += 4u;
 		}
 	}
 	else {
 		// Sound ROM checksum calculation.
-		if (ChecksumDataSrcPtr[0] & CHECKSUM_LAST) {
+		if (ChecksumDataSrcPtr->checksumFlags & CHECKSUM_LAST) {
 			_0x602EC6C();
-			SOUNDCTRL[4] = 2u;
+			SOUNDCTRL_WRITE(4, 2u);
 			_0x602EC6C();
-			SOUNDCTRL[5] = 1u;
+			SOUNDCTRL_WRITE(5, 1u);
 
 			_0x602EC6C();
-			SOUNDCTRL[4] = 3u;
+			SOUNDCTRL_WRITE(4, 3u);
 			_0x602EC6C();
-			SOUNDCTRL[5] = 0u;
+			SOUNDCTRL_WRITE(5, 0u);
 
 			_0x602EC6C();
-			SOUNDCTRL[4] = 4u;
+			SOUNDCTRL_WRITE(4, 4u);
 			_0x602EC6C();
-			SOUNDCTRL[5] = 0u;
+			SOUNDCTRL_WRITE(5, 0u);
 
 			_0x602EC6C();
-			SOUNDCTRL[4] = 5u;
+			SOUNDCTRL_WRITE(4, 5u);
 			_0x602EC6C();
-			SOUNDCTRL[5] = 0u;
+			SOUNDCTRL_WRITE(5, 0u);
 
 			_0x602EC6C();
-			SOUNDCTRL[4] = 6u;
+			SOUNDCTRL_WRITE(4, 6u);
 			for (size_t i = 0x400000u; i != 0u; i--) {
-				while (SOUNDCTRL[0] & 1);
-				ChecksumDataDstPtr[3] += SOUNDCTRL[5];
+				while (SOUNDCTRL_READ(0) & 1);
+				ChecksumDataDstPtr->data[2] += SOUNDCTRL_READ(5);
 			}
 			_0x602EC6C();
-			SOUNDCTRL[4] = 2u;
+			SOUNDCTRL_WRITE(4, 2u);
 			_0x602EC6C();
-			SOUNDCTRL[5] = 0u;
+			SOUNDCTRL_WRITE(5, 0u);
 		}
 		else {
 			// Graphics ROM checksum calculation.
-			uint16_t checksum0 = 0u, checksum1 = 0u;
-			for (size_t i = 0u; i < (*ChecksumDataSrcPtr & 0xFFFu); i++) {
+			uint32_t checksum0 = 0u, checksum1 = 0u;
+			for (size_t i = 0u; i < (ChecksumDataSrcPtr->checksumFlags & 0x0FFFu); i++) {
 				uint32_t* graphicsCheck = GRAPHICSCHECK;
 				if (GraphicsCheckBank & 0x100u) {
 					GRAPHICSCHECK_SETBANK(0, (GraphicsCheckBank >> 8) & 3 | 0x30u);
 				}
 				uint8_t nextBank = GraphicsCheckBank + 1u;
 				GRAPHICSCHECK_SETBANK(1, GraphicsCheckBank);
-				for (size_t i = 0x8000u; i != 0u; i -= 2u, graphicsCheck += 2u) {
+				for (size_t j = 0x8000u; j != 0u; j -= 2u, graphicsCheck += 2u) {
 					uint32_t seed0 = graphicsCheck[0], seed1 = graphicsCheck[1];
 					checksum1 += (seed0 >> 16) + (seed1 >> 16);
 					checksum0 += seed0 + seed1;
 				}
 			}
-			ChecksumDataDstPtr[3] = checksum0 + checksum1;
-			ChecksumDataDstPtr[1] = checksum0;
-			ChecksumDataDstPtr[2] = checksum1;
+			ChecksumDataDstPtr->data[2] = checksum0 + checksum1;
+			ChecksumDataDstPtr->data[0] = checksum0;
+			ChecksumDataDstPtr->data[1] = checksum1;
 		}
 
-		ChecksumDataDstPtr += 4u;
-		ChecksumDataSrcPtr += 4u;
+		ChecksumDataDstPtr++;
+		ChecksumDataSrcPtr++;
 		success = true;
 	}
-
+	return success;
 }
 
-bool _0x60302C4() {
-	static const int16_t _0x6035B28[] = {
-		0, 1, 2, 3,
-		4, 5, 6, 7,
-		8, 9, 10, 11,
-		12, 13, 14, 15,
+bool ShowChecksumPass() {
+	static const int16_t hexDigits[] = {
+		0x0, 0x1, 0x2, 0x3,
+		0x4, 0x5, 0x6, 0x7,
+		0x8, 0x9, 0xA, 0xB,
+		0xC, 0xD, 0xE, 0xF,
 	};
 	if (ChecksumDataSrcPtr == NULL) {
 		ChecksumDataSrcPtr = BuildChecksumDataPtr;
 		ChecksumDataDstPtr = ChecksumDataDst;
-		_0x60B19AC = 0x78u;
+		NumChecksumFrames = TIME(0, 2, 0);
 		GraphicsCheckBank = 0x60u;
 		_0x602BC50(0u);
 	}
 
-	_0x6030100();
+	ChecksumPass();
 	_0x602BC58(0x7Du);
 
-	size_t i = 0u;
-	const uint16_t* checksumSrc = BuildChecksumDataPtr;
-	uint16_t* checksumDst = ChecksumDataDst;
+	size_t romNum = 0u;
 	int16_t offsetY = 0;
-	while (checksumSrc[0] != CHECKSUM_END) {
+	for (const Checksum* checksumSrc = BuildChecksumDataPtr, * checksumDst = ChecksumDataDst; checksumSrc->checksumFlags != CHECKSUM_END; romNum++, offsetY += 12, checksumSrc++, checksumDst++) {
 		const int16_t nameX = 56;
 		const int16_t statusX = 130;
 		const int16_t y = 96 + offsetY;
-		if (checksumSrc[0] & CHECKSUM_LAST) {
+		if (checksumSrc->checksumFlags & CHECKSUM_LAST) {
 			ShowText(nameX, y, "SOUND", PALNUM_SYSTEMTEXT, false);
 
-			if (checksumSrc[3] == checksumDst[3]) {
+			if (checksumSrc->data[2] == checksumDst->data[2]) {
 				ShowText(statusX, y, "OK", PALNUM_SYSTEMTEXT, false);
 			}
 			else {
 				const char* text;
 				uint8_t palNum;
-				if (checksumDst[3] == 0u) {
+				if (checksumDst->data[2] == 0u) {
 					text = "--";
 					palNum = PALNUM_SYSTEMTEXT;
 				}
 				else {
 					text = "NG";
-					palNum = PALNUM_10;
+					palNum = PALNUM_CHECKSUMNG;
 				}
 				ShowText(statusX, y, text, palNum, false);
 			}
 		}
 		else {
 			ShowText(nameX, y, "CHAR", PALNUM_SYSTEMTEXT, false);
-			ShowHexNum(_0x6035B28[i], y, 92, 4, 1, 2, PALNUM_SYSTEMTEXT, false);
-			if (checksumSrc[1] == checksumDst[1]) {
+			ShowHexNum(hexDigits[romNum], y, 92, 4, 1, 2, PALNUM_SYSTEMTEXT, false);
+			if (checksumSrc->data[0] == checksumDst->data[0]) {
 				ShowText(statusX, y, "OK", PALNUM_SYSTEMTEXT, false);
 			}
 			else {
 				const char* text;
 				uint8_t palNum;
-				if (checksumDst[3] == 0u) {
+				if (checksumDst->data[2] == 0u) {
 					text = "--";
 					palNum = PALNUM_SYSTEMTEXT;
 				}
 				else {
 					text = "NG";
-					palNum = PALNUM_10;
+					palNum = PALNUM_CHECKSUMNG;
 				}
 				ShowText(statusX, y, text, palNum, false);
 			}
 
-			if (checksumSrc[2] == checksumDst[2]) {
+			if (checksumSrc->data[1] == checksumDst->data[1]) {
 				ShowText(statusX, y, "OK", PALNUM_SYSTEMTEXT, false);
 			}
 			else {
 				const char* text;
 				uint8_t palNum;
-				if (checksumDst[3] == 0u) {
+				if (checksumDst->data[2] == 0u) {
 					text = "--";
 					palNum = PALNUM_SYSTEMTEXT;
 				}
 				else {
 					text = "NG";
-					palNum = PALNUM_10;
+					palNum = PALNUM_CHECKSUMNG;
 				}
 				ShowText(162, y, text, palNum, false);
 			}
 		}
-
-		i++;
-		offsetY += 12;
-		checksumSrc += 4u;
-		checksumDst += 4u;
 	}
 
 	_0x602BC58(0x7Fu);
-	if (ChecksumDataSrcPtr[0] == CHECKSUM_END) {
-		if (_0x60B19AC == 0u) {
+	if (ChecksumDataSrcPtr->checksumFlags == CHECKSUM_END) {
+		if (NumChecksumFrames == 0u) {
 			return false;
 		}
-		_0x60B19AC--;
+		NumChecksumFrames--;
 	}
 	return true;
 }
@@ -240,7 +232,7 @@ static const ObjectData* ObjectTableHexDigits[0x10] = {
 	&OBJECTTABLE_HEXDIGITS[15],
 };
 
-void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha) {
+static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha) {
 	int32_t i = numDigits--;
 	int32_t base16Place = 1;
 	while (numDigits != 0) {

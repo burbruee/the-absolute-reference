@@ -5,7 +5,7 @@
 // TODO: Define constants for all palette numbers here.
 #define PALNUM_SMALLTEXT UINT8_C(0) // TODO: PALNUM_STATUSTEXT?
 #define PALNUM_ITEMDESCRIPTION UINT8_C(4)
-#define PALNUM_10 UINT8_C(10)
+#define PALNUM_CHECKSUMNG UINT8_C(10)
 #define PALNUM_15 UINT8_C(15)
 #define PALNUM_14 UINT8_C(14)
 #define PALNUM_ALPHA UINT8_C(148)

@@ -96,6 +96,7 @@ set(EXECUTABLE_SOURCES
 
 	"../../Video/BgMap.c"
 	"../../Video/GameBg.c"
+	"../../Video/InitScaleRam.c"
 	"../../Video/Pal.c"
 	"../../Video/SpriteInit.c"
 	"../../Video/UnknownSprite.c"
@@ -197,6 +198,7 @@ set(EXECUTABLE_HEADERS
 	"../../Sound/Sound.h"
 
 	"../../Video/BgMap.h"
+	"../../Video/InitScaleRam.h"
 	"../../Video/GameBg.h"
 	"../../Video/Pal.h"
 	"../../Video/SpriteInit.h"

@@ -91,8 +91,8 @@ static inline void NormalCoinMode(uint16_t price, uint8_t* credits, uint8_t* coi
 }
 
 void UpdateInputs() {
-	_0x6064756 = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
-	_0x6064757 = ~INPUTS[INPUT_UNUSED] & 0xF;
+	_0x6064756[0] = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
+	_0x6064756[1] = ~INPUTS[INPUT_UNUSED] & 0xF;
 
 	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
 	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];

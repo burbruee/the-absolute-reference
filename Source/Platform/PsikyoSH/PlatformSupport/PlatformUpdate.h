@@ -1,32 +1,30 @@
-// TODO: Fix these includes.
-#include "Game/Main.h"
 #include "Game/Screen.h"
-#include "Game/Player.h"
-#include "Game/Save.h"
-#include "Game/Ranking.h"
-#include "Game/Entity.h"
-#include "Game/Input.h"
-#include "Game/ShowText.h"
-#include "Game/Debug.h"
-#include "Game/BuildData.h"
-#include "Game/RegionWarning.h"
-#include "Game/Fixed.h"
-#include "Game/Setting.h"
-#include "Game/Sound.h"
-#include "Game/Frame.h"
-#include "Game/Button.h"
-#include "Game/ShowText.h"
-#include "Game/ShowObject.h"
-#include "Game/SpriteInit.h"
-#include "Game/UnknownSprite.h"
-#include "Game/Pal.h"
 #include "Game/PalNum.h"
-#include "Game/Loop.h"
-#include "Game/Checksum.h"
-#include "Game/HwData.h"
-#include "Game/MemCheck.h"
-#include "Game/Macros.h"
-#include "Platform/Util/Macros.h"
+#include "Game/Save.h"
+#include "Game/Graphics/Entity.h"
+#include "Game/Graphics/ShowText.h"
+#include "Game/Graphics/ShowText.h"
+#include "Game/Graphics/ShowObject.h"
+#include "Game/Play/Player.h"
+#include "Game/Play/Ranking.h"
+#include "Game/Play/Debug.h"
+#include "Game/RegionWarning.h"
+#include "Video/SpriteInit.h"
+#include "Video/UnknownSprite.h"
+#include "Video/Pal.h"
+#include "Main/Main.h"
+#include "Main/Frame.h"
+#include "Sound/Sound.h"
+#include "Input/Input.h"
+#include "Input/Button.h"
+#include "Eeprom/Setting.h"
+#include "BuildData/BuildData.h"
+#include "BuildData/Checksum.h"
+#include "Lib/Macros.h"
+#include "Lib/Fixed.h"
+#include "HwData.h"
+#include "MemCheck.h"
+#include "PlatformTypes.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -103,7 +101,7 @@ static inline void PlatformInit() {
 	}
 
 	if (Settings[SETTING_SCREENMODE] == SCREENMODE_FLIP) {
-		VideoSettings[0] |= 0xC0u; // Set horizontal/vertical screen flip.
+		VideoSetting[0] |= 0xC0u; // Set horizontal/vertical screen flip.
 	}
 
 	if (!LoadProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
