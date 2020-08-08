@@ -22,7 +22,7 @@ extern uint32_t Uptime;
 // spent in-game, but is copied into Save->demoWaitTime.
 extern uint32_t DemoWaitTime;
 
-extern uint16_t _0x606564C;
+extern uint16_t UNK_606564C;
 
 // Platforms have to update RandScale by adding a value proportional to the
 // amount of time remaining until the next vblank after the code has finished
@@ -38,18 +38,18 @@ extern uint32_t RandScale;
 
 extern bool TestModeDisabled;
 
-extern uint16_t _0x6060024;
-extern uint32_t _0x6060028;
+extern uint16_t UNK_6060024;
+extern uint32_t UNK_6060028;
 
 extern uint32_t NumVblanks;
 extern bool VblankFinished;
 
-void _0x602ACB0();
-void _0x602ACE0(uint16_t);
+void UNK_602ACB0();
+void UNK_602ACE0(uint16_t);
 
 // TODO: Could be Hblank. Is an interrupt handler. Have to define it for each
 // platform.
-void _0x602AD0E();
+void UNK_602AD0E();
 
 // Must be implemented by frontends.
 //
@@ -66,6 +66,6 @@ void Vblank();
 // When any of these frame-update functions return true, the program must be
 // transitioned to the test mode screen.
 bool UpdateFrame();
-bool _0x602AECA();
+bool UNK_602AECA();
 bool UpdateGame();
 bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p);

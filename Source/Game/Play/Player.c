@@ -861,7 +861,7 @@ void UpdatePlayerSelecting(Player* player) {
 			}
 			StartPlayer(player);
 			NextPlayStart(player);
-			//_0x6066188._0x10 |= (player->num == PLAYER1) ? 0x02 : 0x04; // TODO: Background setting of some sort.
+			//UNK_6066188.UNK_10 |= (player->num == PLAYER1) ? 0x02 : 0x04; // TODO: Background setting of some sort.
 		}
 	}
 }
@@ -2802,7 +2802,7 @@ void UpdatePlayGameOver(Player* player) {
 	}
 
 	if (player->showGameOver) {
-		DisplayObject(_0xA6F14, 100, player->screenPos[0], 0u, 125u);
+		DisplayObject(OBJECT_A6F14, 100, player->screenPos[0], 0u, 125u);
 		if (player->otherPlayer->refusingChallenges) {
 			ShowText(player->screenPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
 			ShowText(player->screenPos[0] - TextWidth("CHALLENGER"), 77, "CHALLENGER", 15u, false);
@@ -2817,7 +2817,7 @@ void UpdatePlayGameOver(Player* player) {
 			player->values[0] = 10;
 		}
 		if ((GameFlags & GAME_DOUBLES) && player->values[0] == 10) {
-			_0x6029546(2u, 10, 0, 7); // TODO
+			UNK_6029546(2u, 10, 0, 7); // TODO
 		}
 
 		player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
@@ -2957,7 +2957,7 @@ uint32_t PointsBaseValue(Player* player, uint8_t numLines) {
 	return pointsBaseValue;
 }
 
-static const ObjectData* _0x3A8C0[3] = {
+static const ObjectData* UNK_3A8C0[3] = {
 	OBJECTPTR(0x170),
 	OBJECTPTR(0x16E),
 	OBJECTPTR(0x16F)
@@ -3004,7 +3004,7 @@ void UpdatePlayVersusOver(Player* player) {
 		if (GameButtonsNew[player->num] & BUTTON_START) {
 			player->values[0]++;
 		}
-		if (Game._0x2 > 10 && (player->values[3]-- == 0 || player->values[0] % 5 == 0)) {
+		if (Game.UNK_2 > 10 && (player->values[3]-- == 0 || player->values[0] % 5 == 0)) {
 			player->values[3] = 20;
 			player->values[0] = 1;
 			player->showGameOver = (player->showGameOver + 1) % 2;
@@ -3022,11 +3022,11 @@ void UpdatePlayVersusOver(Player* player) {
 			ShowFireworks(player, Rand(13) + 5, arg2, arg3);
 		}
 		if (GameFlags & GAME_BIT19) {
-			DisplayObject(_0xAAEB0, 140, player->screenPos[0], 0u, 110u);
+			DisplayObject(OBJECT_AAEB0, 140, player->screenPos[0], 0u, 110u);
 		}
 		else if (GameFlags & GAME_BIT18) {
-			DisplayObject(_0xAAEBC, 140, player->screenPos[0] - 35, 0u, 110u);
-			DisplayObject(_0xAAEC8, 153, player->screenPos[0] - 8, 0u, 110u);
+			DisplayObject(OBJECT_AAEBC, 140, player->screenPos[0] - 35, 0u, 110u);
+			DisplayObject(OBJECT_AAEC8, 153, player->screenPos[0] - 8, 0u, 110u);
 			ShowStatusNumEx(player->level, 150, player->screenPos[0] - 36, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 			ShowStatusNumEx(player->otherPlayer->level, 150, player->screenPos[0] + 10, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 		}
@@ -3046,7 +3046,7 @@ void UpdatePlayVersusOver(Player* player) {
 	// here relates to the scale value. I believe it adjusts the position of
 	// the object to be centered as it scales at a screen position.
 	int32_t var0 = ((player->values[1] - UNSCALED) << 10) / UNSCALED;
-	DisplayObjectEx(&_0x3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->screenPos[0] + (-(var1 * var0) >> 10), palNum, 125u, player->values[1], player->values[1], false);
+	DisplayObjectEx(&UNK_3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->screenPos[0] + (-(var1 * var0) >> 10), palNum, 125u, player->values[1], player->values[1], false);
 }
 
 #undef showGameOver

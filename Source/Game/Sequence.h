@@ -18,9 +18,9 @@ typedef struct SequenceData {
 
 typedef struct SystemGraphicData {
 	ObjectData* objectTable;
-	void* _0x4[69];
-	int16_t* _0x118;
-	uint8_t _0x11C[92];
+	void* UNK_4[69];
+	int16_t* UNK_118;
+	uint8_t UNK_11C[92];
 } SystemGraphicData;
 typedef struct SequenceSystemGraphic {
 	uint32_t header;

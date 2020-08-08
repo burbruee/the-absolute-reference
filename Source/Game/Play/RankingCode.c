@@ -48,7 +48,7 @@ static const char RankingCodeChars[RANKINGCODEBASE] = {
 // code[arg0 - 1], code[14]
 // code[arg0], code[15]
 // Unused. Not sure what it was intended for.
-void _0x6023128(size_t arg0) {
+void UNK_6023128(size_t arg0) {
 	RankingCodeNode *code = Temp;
 
 	arg0--;

@@ -97,17 +97,17 @@ extern const ObjectData* ObjectTableRankingDigits[10];
 // intended to display section times to the player at the new ranking screen.
 
 void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x);
-void _0x6011840();
+void UNK_6011840();
 // Set this to the section times you want displayed by ShowSectionTimes().
 extern uint32_t SectionTimes[10];
 void ShowSectionTimes();
-void _0x6011854(); // TODO: Check TGM2 to see if this contains any code. Just calls ShowSectionTimes() in TAP.
-void _0x6011858(); // TODO: Check TGM2 to see if this contains any code. Does nothing in TAP.
+void UNK_6011854(); // TODO: Check TGM2 to see if this contains any code. Just calls ShowSectionTimes() in TAP.
+void UNK_6011858(); // TODO: Check TGM2 to see if this contains any code. Does nothing in TAP.
 
 void InitRankings();
 void InitTodaysBestRankings();
 
-// TODO: Functions from _0x6011D28 to _0x6012828. I think they handle the
+// TODO: Functions from UNK_6011D28 to UNK_6012828. I think they handle the
 // rankings shown in the demo screen.
 uint32_t RankingsChecksum();
 void CheckSaveRankings();

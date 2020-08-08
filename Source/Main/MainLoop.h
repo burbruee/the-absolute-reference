@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 // TODO: Move these?
-int16_t _0x6008E38(int16_t level);
-int16_t _0x6008EC8(int16_t level);
-int16_t _0x6008EEC(int16_t level);
+int16_t UNK_6008E38(int16_t level);
+int16_t UNK_6008EC8(int16_t level);
+int16_t UNK_6008EEC(int16_t level);
 
 typedef enum StartPlayerNum {
 	STARTPLAYER_NONE = 0,

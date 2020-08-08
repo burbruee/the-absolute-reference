@@ -76,7 +76,7 @@ bool FreeFall(Player* player) {
 }
 
 // Could be a leftover used for some unfinished item.
-bool _0x6018584(Player* player) {
+bool UNK_6018584(Player* player) {
 	int16_t row;
 	for (row = 0; row < MATRIX_HEIGHT; row++) {
 		if (MATRIX(player, row, 0).block != BLOCKTYPE_WALL && MATRIX(player, row, MATRIX_SINGLEWIDTH - 1).block != BLOCKTYPE_WALL) {
@@ -234,7 +234,7 @@ bool ItemConfusing(Player* player) {
 	return false;
 }
 
-void _0x601886C() {
+void UNK_601886C() {
 	SetPal(180u, 16u, PALPTR(0x1E3));
 	SetPal(196u, 1u, PALPTR(0x1F3));
 }

@@ -11,8 +11,8 @@
 bool PauseAllowed;
 
 void InitCredits() {
-	_0x6064765 = 20u;
-	_0x6064766 = 10u;
+	UNK_6064765 = 20u;
+	UNK_6064766 = 10u;
 	PayCoins[PLAYER2] = 0u;
 	PayCoins[PLAYER1] = 0u;
 	Credits[PLAYER2] = 0u;
@@ -91,8 +91,8 @@ static inline void NormalCoinMode(uint16_t price, uint8_t* credits, uint8_t* coi
 }
 
 void UpdateInputs() {
-	_0x6064756[0] = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
-	_0x6064756[1] = ~INPUTS[INPUT_UNUSED] & 0xF;
+	UNK_6064756[0] = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
+	UNK_6064756[1] = ~INPUTS[INPUT_UNUSED] & 0xF;
 
 	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
 	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];

@@ -13,14 +13,14 @@
 
 #define SPRITELAYER_FREE 0x0000
 
-const int16_t _0x60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
-struct_0x607D218* _0x606005C = NULL;
-static void (**_0x6060060)() = NULL;
-static uint16_t* _0x6060064 = NULL;
-static int16_t _0x6060068 = 0;
+const int16_t UNK_60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
+struct_607D218* UNK_606005C = NULL;
+static void (**UNK_6060060)() = NULL;
+static uint16_t* UNK_6060064 = NULL;
+static int16_t UNK_6060068 = 0;
 AddSpriteData SpriteAdders[64];
 int16_t SpriteAdderNameTable[64];
-struct_0x6061932 _0x6061932;
+struct_6061932 UNK_6061932;
 
 // Each index into this table is a sprite layer number. An element value of
 // zero indicates the layer is free.
@@ -43,241 +43,241 @@ VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 // NOTE: Looks like this points to data that controls screen brightness during
 // transitions; might also be used for darkening the attract mode ranking
-// backgrounds. Also, _0x602970C is used with this, which might be where the
+// backgrounds. Also, UNK_602970C is used with this, which might be where the
 // darkening is handled.
-struct_0x607D218* _0x6064750 = NULL;
+struct_607D218* UNK_6064750 = NULL;
 
-static struct_0x607D218* _0x607CF10[192];
-static struct_0x607D218* _0x607D210 = NULL;
-static struct_0x607D218* _0x607D214 = NULL;
-static struct_0x607D218 _0x607D218[192];
+static struct_607D218* UNK_607CF10[192];
+static struct_607D218* UNK_607D210 = NULL;
+static struct_607D218* UNK_607D214 = NULL;
+static struct_607D218 UNK_607D218[192];
 
-static struct_0x607D218* _0x60AD218 = NULL;
+static struct_607D218* UNK_60AD218 = NULL;
 static PauseMode NextPauseMode;
-static uint16_t _0x60AD21E = 0u;
-static int16_t _0x60AD220;
+static uint16_t UNK_60AD21E = 0u;
+static int16_t UNK_60AD220;
 static int16_t NumSpriteAdders;
 
-struct_0x60AD228 _0x60AD228[11];
+struct_60AD228 UNK_60AD228[11];
 
 Bg Bgs[4];
 
-typedef struct struct_0x60B0FE0 {
+typedef struct structUNK_60B0FE0 {
 	void (*update)(void*, void*, void*, void*, void*);
 	void* args[5];
-} struct_0x60B0FE0;
+} structUNK_60B0FE0;
 
-static struct_0x60B0FE0 _0x60B0FE0[2][20];
-static int16_t _0x60B13A0[2];
-static bool _0x60B13A4;
+static structUNK_60B0FE0 UNK_60B0FE0[2][20];
+static int16_t UNK_60B13A0[2];
+static bool UNK_60B13A4;
 
-void _0x6023788() {
+void UNK_6023788() {
 	// Empty.
 }
 
-void _0x602378C() {
+void UNK_602378C() {
 	// Empty.
 }
 
-void _0x6023790() {
+void UNK_6023790() {
 	NextPauseMode = PAUSEMODE_NOPAUSE;
 
-	MemSet(_0x607D218, 0, sizeof(_0x607D218));
+	MemSet(UNK_607D218, 0, sizeof(UNK_607D218));
 
-	struct_0x607D218** var0 = _0x607CF10;
-	struct_0x607D218* var1 = _0x607D218;
-	for (size_t i = 0u; i < lengthof(_0x607CF10); i++) {
+	struct_607D218** var0 = UNK_607CF10;
+	struct_607D218* var1 = UNK_607D218;
+	for (size_t i = 0u; i < lengthof(UNK_607CF10); i++) {
 		*var0++ = var1++;
 	}
 
-	_0x6060068 = 0u;
+	UNK_6060068 = 0u;
 
-	_0x607D210 = NULL;
-	_0x607D214 = NULL;
+	UNK_607D210 = NULL;
+	UNK_607D214 = NULL;
 }
 
-void _0x60237DE() {
+void UNK_60237DE() {
 	CurrentPauseMode = NextPauseMode;
-	if (_0x6060068 != 0) {
+	if (UNK_6060068 != 0) {
 		do {
-			_0x60AD21E = 0u;
-			_0x606005C = _0x60AD218;
+			UNK_60AD21E = 0u;
+			UNK_606005C = UNK_60AD218;
 			if (CurrentPauseMode < PAUSEMODE_GAME) {
-				int16_t var0 = _0x60AD218->_0x18;
-				void** var1 = &_0x60AD218->_0x300[(1 - var0 + 14) * 4 + 3];
+				int16_t var0 = UNK_60AD218->UNK_18;
+				void** var1 = &UNK_60AD218->UNK_300[(1 - var0 + 14) * 4 + 3];
 				while (var0 > 0) {
-					_0x6060064 = var1 - 3;
-					_0x6060060 = var1;
+					UNK_6060064 = var1 - 3;
+					UNK_6060060 = var1;
 					((void(*)())*var1)();
-					if (_0x60AD21E != 0) {
+					if (UNK_60AD21E != 0) {
 						break;
 					}
 					var0--;
 					var1 += 4;
 				}
 			}
-			else if (_0x60AD218->_0x300[15]._0x0[2] != _0x6023788) {
-				int16_t i = _0x60AD218->_0x18;
-				void (**var1)() = &_0x60AD218->_0x300[1 - i + 14]._0x0[3];
-				for (int16_t i = _0x60AD218->_0x18; i > 1; i--, var1 += 4u) {
-					_0x6060064 = (uint16_t*)(var1 - 3); // TODO: struct_0x607D218_0x300::_0x0 might be a struct that has eight bytes of data, then two function pointers.
-					_0x6060060 = var1;
+			else if (UNK_60AD218->UNK_300[15].UNK_0[2] != UNK_6023788) {
+				int16_t i = UNK_60AD218->UNK_18;
+				void (**var1)() = &UNK_60AD218->UNK_300[1 - i + 14].UNK_0[3];
+				for (int16_t i = UNK_60AD218->UNK_18; i > 1; i--, var1 += 4u) {
+					UNK_6060064 = (uint16_t*)(var1 - 3); // TODO: struct_607D218_300::UNK_0 might be a struct that has eight bytes of data, then two function pointers.
+					UNK_6060060 = var1;
 					(*var1)();
-					if (_0x60AD21E != 0u) {
+					if (UNK_60AD21E != 0u) {
 						break;
 					}
 				}
-				if (_0x60AD21E == 0) {
-					_0x6060060 = &_0x60AD218->_0x300[15]._0x0[2];
-					_0x60AD218->_0x300[15]._0x0[2]();
+				if (UNK_60AD21E == 0) {
+					UNK_6060060 = &UNK_60AD218->UNK_300[15].UNK_0[2];
+					UNK_60AD218->UNK_300[15].UNK_0[2]();
 				}
 			}
-			_0x606005C = _0x60AD218->_0x14;
-			_0x60AD218 = _0x606005C;
-		} while (_0x606005C != NULL);
+			UNK_606005C = UNK_60AD218->UNK_14;
+			UNK_60AD218 = UNK_606005C;
+		} while (UNK_606005C != NULL);
 	}
 }
 
-void _0x602392E(int32_t arg0, void (*arg1)()) {
+void UNK_602392E(int32_t arg0, void (*arg1)()) {
 	// TODO
 }
 
-void _0x60239B8(int32_t arg0, int32_t arg1) {
+void UNK_60239B8(int32_t arg0, int32_t arg1) {
 	// TODO
 }
 
-void _0x6023A0E(struct_0x607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
+void UNK_6023A0E(struct_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
 	// TODO
 }
 
-void* _0x6023A98(struct_0x607D218* arg0, void* arg1, void* arg2, void* arg3) {
-	// TODO
-	return NULL;
-}
-
-void _0x6023B76(struct_0x607D218* arg0) {
-	// TODO
-}
-
-void _0x6023BC4(struct_0x607D218* arg0, void (*arg1)()) {
-	// TODO
-}
-
-void _0x6023C3E(struct_0x607D218* arg0, void* arg1) {
-	// TODO
-}
-
-void* _0x6023C8A(struct_0x607D218* arg0, void* arg1) {
+void* UNK_6023A98(struct_607D218* arg0, void* arg1, void* arg2, void* arg3) {
 	// TODO
 	return NULL;
 }
 
-int32_t _0x6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, int16_t arg4, int16_t arg5, int16_t arg6, int16_t arg7) {
+void UNK_6023B76(struct_607D218* arg0) {
+	// TODO
+}
+
+void UNK_6023BC4(struct_607D218* arg0, void (*arg1)()) {
+	// TODO
+}
+
+void UNK_6023C3E(struct_607D218* arg0, void* arg1) {
+	// TODO
+}
+
+void* UNK_6023C8A(struct_607D218* arg0, void* arg1) {
+	// TODO
+	return NULL;
+}
+
+int32_t UNK_6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, int16_t arg4, int16_t arg5, int16_t arg6, int16_t arg7) {
 	// TODO
 	return 0u;
 }
 
-struct_0x607D218* _0x6023DAE(struct_0x607D218* arg0) {
-	if (_0x6060068 >= lengthof(_0x607CF10) - 1) {
+struct_607D218* UNK_6023DAE(struct_607D218* arg0) {
+	if (UNK_6060068 >= lengthof(UNK_607CF10) - 1) {
 		return NULL;
 	}
 
-	struct_0x607D218* var0 = _0x607CF10[_0x6060068];
-	MemSet(var0, sizeof(struct_0x607D218), 0u);
+	struct_607D218* var0 = UNK_607CF10[UNK_6060068];
+	MemSet(var0, sizeof(struct_607D218), 0u);
 
 	if (arg0 != NULL) {
-		var0->_0x0 = arg0;
-		var0->_0xC = arg0->_0x4;
-		if (arg0->_0x4 != NULL) {
-			arg0->_0x4->_0x8 = var0;
+		var0->UNK_0 = arg0;
+		var0->UNK_C = arg0->UNK_4;
+		if (arg0->UNK_4 != NULL) {
+			arg0->UNK_4->UNK_8 = var0;
 		}
-		arg0->_0x4 = var0;
+		arg0->UNK_4 = var0;
 	}
 
-	if (_0x6060068 == 0) {
-		var0->_0x10 = NULL;
-		var0->_0x14 = NULL;
-		_0x607D210 = var0;
+	if (UNK_6060068 == 0) {
+		var0->UNK_10 = NULL;
+		var0->UNK_14 = NULL;
+		UNK_607D210 = var0;
 	}
 	else {
-		var0->_0x10 = _0x607D214;
-		var0->_0x14 = NULL;
-		_0x607D214->_0x14 = var0;
+		var0->UNK_10 = UNK_607D214;
+		var0->UNK_14 = NULL;
+		UNK_607D214->UNK_14 = var0;
 	}
 
-	if (_0x60AD220 == 0) {
-		_0x60AD220 = 1;
+	if (UNK_60AD220 == 0) {
+		UNK_60AD220 = 1;
 	}
 
-	_0x607D214 = var0;
-	var0->_0x1A = _0x60AD220++;
+	UNK_607D214 = var0;
+	var0->UNK_1A = UNK_60AD220++;
 
-	_0x6060068++;
+	UNK_6060068++;
 
 	return var0;
 }
 
-void _0x6023E5A(struct_0x607D218* arg0) {
-	struct_0x607D218* var0 = arg0->_0x0;
-	struct_0x607D218* var1 = arg0->_0x4;
-	struct_0x607D218* var2 = arg0->_0x8;
-	struct_0x607D218* var3 = arg0->_0xC;
+void UNK_6023E5A(struct_607D218* arg0) {
+	struct_607D218* var0 = arg0->UNK_0;
+	struct_607D218* var1 = arg0->UNK_4;
+	struct_607D218* var2 = arg0->UNK_8;
+	struct_607D218* var3 = arg0->UNK_C;
 
 	if (var1 == NULL) {
 		if (var2 == NULL) {
 			if (var0 != NULL) {
-				var0->_0x4 = var3;
+				var0->UNK_4 = var3;
 			}
 		}
 		else {
-			var2->_0xC = var3;
+			var2->UNK_C = var3;
 		}
 		if (var3 != NULL) {
-			var3->_0x8 = var2;
+			var3->UNK_8 = var2;
 		}
 	}
 	else {
 		if (var2 == NULL) {
 			if (var0 != NULL) {
-				var0->_0x4 = var1;
+				var0->UNK_4 = var1;
 			}
 		}
 		else {
-			var2->_0xC = var1;
+			var2->UNK_C = var1;
 		}
-		var1->_0x8 = var2;
-		for (var1->_0x0 = var0; var1->_0xC != NULL; var1->_0x0 = var0, var1 = var1->_0xC);
+		var1->UNK_8 = var2;
+		for (var1->UNK_0 = var0; var1->UNK_C != NULL; var1->UNK_0 = var0, var1 = var1->UNK_C);
 		if (var3 != NULL) {
-			var1->_0xC = var3;
-			var3->_0x8 = var1;
+			var1->UNK_C = var3;
+			var3->UNK_8 = var1;
 		}
 	}
-	if (arg0 == _0x607D210) {
-		_0x607D210 = arg0->_0x14;
+	if (arg0 == UNK_607D210) {
+		UNK_607D210 = arg0->UNK_14;
 	}
-	if (arg0 == _0x607D214) {
-		_0x607D214 = arg0->_0x10;
+	if (arg0 == UNK_607D214) {
+		UNK_607D214 = arg0->UNK_10;
 	}
-	arg0->_0x1A = 0u;
-	if (arg0->_0x10 != NULL) {
-		arg0->_0x10->_0x14 = arg0->_0x14;
+	arg0->UNK_1A = 0u;
+	if (arg0->UNK_10 != NULL) {
+		arg0->UNK_10->UNK_14 = arg0->UNK_14;
 	}
-	if (arg0->_0x14 != NULL) {
-		arg0->_0x14->_0x10 = arg0->_0x10;
+	if (arg0->UNK_14 != NULL) {
+		arg0->UNK_14->UNK_10 = arg0->UNK_10;
 	}
-	_0x6060068--;
-	_0x607CF10[_0x6060068] = arg0;
+	UNK_6060068--;
+	UNK_607CF10[UNK_6060068] = arg0;
 }
 
-struct_0x607D218* _0x6023EFE(void (**arg0)(), struct_0x607D218* arg1) {
-    struct_0x607D218* var0 = _0x606005C;
-    if (arg1 == (struct_0x607D218 *)(intptr_t)~0) {
-        arg1 = _0x606005C;
+struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
+    struct_607D218* var0 = UNK_606005C;
+    if (arg1 == (struct_607D218 *)(intptr_t)~0) {
+        arg1 = UNK_606005C;
     }
-    struct_0x607D218* var1 = _0x6023DAE(arg1);
+    struct_607D218* var1 = UNK_6023DAE(arg1);
     if (var1 == NULL) {
         var1 = NULL;
-        var0 = _0x606005C;
+        var0 = UNK_606005C;
     }
     else {
 		void (*fun0)();
@@ -285,68 +285,68 @@ struct_0x607D218* _0x6023EFE(void (**arg0)(), struct_0x607D218* arg1) {
 		void (*fun2)();
 
         if (arg0[3] == NULL) {
-            fun0 = _0x6023788;
+            fun0 = UNK_6023788;
         }
         else {
             fun0 = arg0[3];
         }
 
-        _0x606005C = var1;
-        var1->_0x300[15]._0x0[3] = fun0;
+        UNK_606005C = var1;
+        var1->UNK_300[15].UNK_0[3] = fun0;
 
         if (arg0[1] == NULL) {
-            fun1 = _0x6023788;
+            fun1 = UNK_6023788;
         }
         else {
             fun1 = arg0[1];
         }
 
-        var1->_0x300[15]._0x0[2] = fun1;
+        var1->UNK_300[15].UNK_0[2] = fun1;
 
         if (arg0[0] == NULL) {
-            fun2 = _0x6023788;
+            fun2 = UNK_6023788;
         }
         else {
             fun2 = arg0[0];
         }
 
-        var1->_0x300[14]._0x0[3] = fun2;
-        var1->_0x18 = 1;
+        var1->UNK_300[14].UNK_0[3] = fun2;
+        var1->UNK_18 = 1;
 
         if (arg0[2] != NULL) {
             arg0[2]();
         }
     }
-    _0x606005C = var0;
+    UNK_606005C = var0;
     return var1;
 }
 
-void* _0x6023FA4(void (**arg0)(), struct_0x607D218* arg1) {
+void* UNK_6023FA4(void (**arg0)(), struct_607D218* arg1) {
 	// TODO
 	return NULL;
 }
 
-void _0x6024030(struct_0x607D218* arg0) {
-	struct_0x607D218* var0 = _0x606005C;
-	_0x606005C = arg0;
-	arg0->_0x300[15]._0x0[3]();
-	_0x6023E5A(arg0);
+void UNK_6024030(struct_607D218* arg0) {
+	struct_607D218* var0 = UNK_606005C;
+	UNK_606005C = arg0;
+	arg0->UNK_300[15].UNK_0[3]();
+	UNK_6023E5A(arg0);
 	if (arg0 == var0) {
-		_0x60AD21E = 1u;
+		UNK_60AD21E = 1u;
 	}
-	_0x606005C = var0;
+	UNK_606005C = var0;
 }
 
-void _0x602406E() {
-	if (_0x6060068 != 0u) {
-		for (struct_0x607D218* var0 = _0x607D210, * var1; var0 != NULL; var0 = var1) {
-			var1 = var0->_0x14;
-			_0x6024030(var0);
+void UNK_602406E() {
+	if (UNK_6060068 != 0u) {
+		for (struct_607D218* var0 = UNK_607D210, * var1; var0 != NULL; var0 = var1) {
+			var1 = var0->UNK_14;
+			UNK_6024030(var0);
 		}
 	}
 }
 
-void _0x60240A8(void* arg0) {
+void UNK_60240A8(void* arg0) {
 	// TODO
 }
 
@@ -391,69 +391,69 @@ void InitSpriteAlpha() {
 	}
 }
 
-void _0x602419C() {
+void UNK_602419C() {
 	AddSprite(1, NULL);
 	InitSpriteAlpha();
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x67u;
 	for (int16_t i = 0; i < lengthof(SpriteAdders); i++) {
-		SpriteAdders[i]._0x2B = 0u;
-		SpriteAdders[i]._0x2C = 0x8000u;
+		SpriteAdders[i].UNK_2B = 0u;
+		SpriteAdders[i].UNK_2C = 0x8000u;
 		SpriteAdderNameTable[i] = i;
 	}
 
-	_0x6061932.tempSprite[6] = 0x003Fu;
-	_0x6061932._0x12 = 0x7Du;
-	_0x6061932._0x14 = 0x7Fu;
+	UNK_6061932.tempSprite[6] = 0x003Fu;
+	UNK_6061932.UNK_12 = 0x7Du;
+	UNK_6061932.UNK_14 = 0x7Fu;
 	NumSpriteAdders = 0;
 }
 
-void _0x6024244() {
+void UNK_6024244() {
 	int16_t* var0 = SpriteAdderNameTable;
 	for (int16_t i = 0u; i < NumSpriteAdders; i++, var0++) {
 		int32_t var1 = *var0;
 		AddSpriteData* var2 = &SpriteAdders[var1];
-		switch (var2->_0x2B) {
+		switch (var2->UNK_2B) {
 		case 1u:
-			while (CurrentPauseMode < PAUSEMODE_BG && --var2->_0x34 <= 0) {
+			while (CurrentPauseMode < PAUSEMODE_BG && --var2->UNK_34 <= 0) {
 				int16_t var3;
-				var2->_0x34 = var2->_0x36;
-				if (!(var2->_0x2C & 0x800)) {
-					if (var2->animFrame < var2->_0x28 - 1) {
+				var2->UNK_34 = var2->UNK_36;
+				if (!(var2->UNK_2C & 0x800)) {
+					if (var2->animFrame < var2->UNK_28 - 1) {
 						var3 = var2->animFrame + 1;
 					}
 					else {
-						if (!(var2->_0x2C & 0x200)) {
-							if (!(var2->_0x2C & 0x400)) {
-								var2->animFrame = var2->_0x28 - 1;
-								var2->_0x2B = 2u;
+						if (!(var2->UNK_2C & 0x200)) {
+							if (!(var2->UNK_2C & 0x400)) {
+								var2->animFrame = var2->UNK_28 - 1;
+								var2->UNK_2B = 2u;
 							}
 							else {
 								var2->animFrame--;
-								var2->_0x2C |= 0x800;
+								var2->UNK_2C |= 0x800;
 							}
 							break;
 						}
-						var3 = var2->_0x38;
+						var3 = var2->UNK_38;
 					}
 				}
 				else {
-					if (var2->_0x38 < var2->animFrame) {
+					if (var2->UNK_38 < var2->animFrame) {
 						var3 = var2->animFrame;
 					}
 					else {
-						if (!(var2->_0x2C & 0x200)) {
-							if (!(var2->_0x2C & 0x400)) {
-								var2->animFrame = var2->_0x38;
-								var2->_0x2B = 2u;
+						if (!(var2->UNK_2C & 0x200)) {
+							if (!(var2->UNK_2C & 0x400)) {
+								var2->animFrame = var2->UNK_38;
+								var2->UNK_2B = 2u;
 							}
 							else {
 								var2->animFrame++;
-								var2->_0x2C &= ~0x0800;
+								var2->UNK_2C &= ~0x0800;
 							}
 							break;
 						}
-						var3 = var2->_0x28;
+						var3 = var2->UNK_28;
 					}
 					var3--;
 				}
@@ -462,23 +462,23 @@ void _0x6024244() {
 			}
 
 		case 2u:
-			if (!(var2->_0x2C & 0x8000)) {
+			if (!(var2->UNK_2C & 0x8000)) {
 				if (ScreenTimeOdd) {
-					if ((var2->_0x2C & 0x20) || CurrentPauseMode >= PAUSEMODE_GAME) {
-						_0x60243E8(var2);
+					if ((var2->UNK_2C & 0x20) || CurrentPauseMode >= PAUSEMODE_GAME) {
+						UNK_60243E8(var2);
 					}
 				}
 				else {
-					if ((var2->_0x2C & 0x10) || CurrentPauseMode >= PAUSEMODE_GAME) {
-						_0x60243E8(var2);
+					if ((var2->UNK_2C & 0x10) || CurrentPauseMode >= PAUSEMODE_GAME) {
+						UNK_60243E8(var2);
 					}
 				}
 			}
 			break;
 
 		case 9u:
-			if (!(var2->_0x2C & 0x8000)) {
-				_0x602471C(var2);
+			if (!(var2->UNK_2C & 0x8000)) {
+				UNK_602471C(var2);
 			}
 			break;
 
@@ -488,7 +488,7 @@ void _0x6024244() {
 	}
 }
 
-void _0x60243E8(AddSpriteData* arg0) {
+void UNK_60243E8(AddSpriteData* arg0) {
 	int16_t numSprites;
 	const ObjectData* object;
 
@@ -500,42 +500,42 @@ void _0x60243E8(AddSpriteData* arg0) {
 	assert(numSprites > 0);
 	AllocSpriteLayerNames(arg0->layer, numSprites);
 
-	if (arg0->_0x30 != 0) {
-		arg0->_0x30--;
+	if (arg0->UNK_30 != 0) {
+		arg0->UNK_30--;
 	}
 
-	if (arg0->_0x32 < 1) {
-		if (arg0->_0x32 < 0) {
-			arg0->_0x32++;
+	if (arg0->UNK_32 < 1) {
+		if (arg0->UNK_32 < 0) {
+			arg0->UNK_32++;
 		}
 	}
 	else {
-		arg0->_0x32--;
+		arg0->UNK_32--;
 	}
 
 	bool var0 = false;
 	bool var1 = false;
-	if (!(arg0->_0x2C & 0x2000u)) {
-		if (arg0->_0x2C & 0x1000u) {
-			var0 = arg0->_0x32 == 0;
+	if (!(arg0->UNK_2C & 0x2000u)) {
+		if (arg0->UNK_2C & 0x1000u) {
+			var0 = arg0->UNK_32 == 0;
 			if (var0) {
-				arg0->_0x32 = 8;
+				arg0->UNK_32 = 8;
 			}
-			arg0->_0x2C &= ~0x1000u;
+			arg0->UNK_2C &= ~0x1000u;
 		}
-		else if (arg0->_0x32 < 0) {
-			if (arg0->_0x32 % 2 != 0) {
+		else if (arg0->UNK_32 < 0) {
+			if (arg0->UNK_32 % 2 != 0) {
 				var0 = true;
 			}
 		}
-		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->_0x2C & 3u) != 0 && arg0->_0x30 == 0) {
+		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->UNK_2C & 3u) != 0 && arg0->UNK_30 == 0) {
 			var1 = true;
-			arg0->_0x30 = _0x60356C8[arg0->_0x2C & 3];
+			arg0->UNK_30 = UNK_60356C8[arg0->UNK_2C & 3];
 		}
 	}
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
-		if (((*object)[0] & 0x8000u) == 0 || ((ScreenTimeOdd + 1) & arg0->_0x2F) == 0 ) {
+		if (((*object)[0] & 0x8000u) == 0 || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0 ) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 
@@ -554,8 +554,8 @@ void _0x60243E8(AddSpriteData* arg0) {
 				// sprite, that'd result in a 0-tile flipping offset applied.
 				offsetX = (OBJECT_GETW(object) + 1) * -16 - offsetX;
 			}
-			OBJECT_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
-			OBJECT_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+			OBJECT_SETY(&UNK_6061932.tempSprite, arg0->y + offsetY);
+			OBJECT_SETX(&UNK_6061932.tempSprite, arg0->x + offsetX);
 
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
@@ -570,7 +570,7 @@ void _0x60243E8(AddSpriteData* arg0) {
 					sprPriVertical |= 0x80;
 				}
 			}
-			_0x6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->scaleY;
+			UNK_6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->scaleY;
 			if (arg0->verticalHorizontal & 0x80) {
 				if (horizontal & 0x80) {
 					bgPriHorizontal &= 0x4Fu;
@@ -579,46 +579,46 @@ void _0x60243E8(AddSpriteData* arg0) {
 					bgPriHorizontal |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->scaleX;
+			UNK_6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->scaleX;
 			if (var0) {
 				if (OBJECT_GETSPRPRI(object) & 2) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 16u);
 				}
 				else if (arg0->palNum == 0) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 				}
 				else {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 				}
 			}
 			else if (var1) {
 				if (OBJECT_GETSPRPRI(object) & 2) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 32u);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 32u);
 				}
 				else {
 					if (arg0->palNum == 0) {
-						OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+						OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 					}
 					else {
-						OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+						OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 					}
 				}
 			}
 			else if (arg0->palNum == 0) {
-				OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+				OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 			}
 			else {
-				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = (_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaTileTop & 0x70u);
-			_0x6061932.tempSprite[5] = (*object)[5];
-			SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
+			UNK_6061932.tempSprite[4] = (UNK_6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x8Fu) | (arg0->bppAlphaTileTop & 0x70u);
+			UNK_6061932.tempSprite[5] = (*object)[5];
+			SPRITE_COPY(Sprites[NumSprites], UNK_6061932.tempSprite);
 			NumSprites++;
 		}
 	}
 }
 
-void _0x602471C(AddSpriteData* arg0) {
+void UNK_602471C(AddSpriteData* arg0) {
 	const ObjectData* object = arg0->data;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
@@ -626,42 +626,42 @@ void _0x602471C(AddSpriteData* arg0) {
 	int16_t numSprites = OBJECT_GETNUMSPRITES(object);
 	AllocSpriteLayerNames(arg0->layer, numSprites);
 
-	if (arg0->_0x30 != 0) {
-		arg0->_0x30--;
+	if (arg0->UNK_30 != 0) {
+		arg0->UNK_30--;
 	}
-	if (arg0->_0x32 < 1) {
-		if (arg0->_0x32 < 0) {
-			arg0->_0x32++;
+	if (arg0->UNK_32 < 1) {
+		if (arg0->UNK_32 < 0) {
+			arg0->UNK_32++;
 		}
 	}
 	else {
-		arg0->_0x32--;
+		arg0->UNK_32--;
 	}
 
 	bool var0 = false;
 	bool var1 = false;
-	if (!(arg0->_0x2C & 0x2000u)) {
-		if (arg0->_0x2C & 0x1000u) {
-			var0 = arg0->_0x32 == 0;
+	if (!(arg0->UNK_2C & 0x2000u)) {
+		if (arg0->UNK_2C & 0x1000u) {
+			var0 = arg0->UNK_32 == 0;
 			if (var0) {
-				arg0->_0x32 = 8;
+				arg0->UNK_32 = 8;
 			}
-			arg0->_0x2C &= ~0x1000u;
+			arg0->UNK_2C &= ~0x1000u;
 		}
-		else if (arg0->_0x32 < 0) {
-			if (arg0->_0x32 % 2) {
+		else if (arg0->UNK_32 < 0) {
+			if (arg0->UNK_32 % 2) {
 				var0 = true;
 			}
 		}
-		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->_0x2C & 3) && arg0->_0x30 == 0) {
+		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->UNK_2C & 3) && arg0->UNK_30 == 0) {
 			var1 = true;
-			arg0->_0x30 = _0x60356C8[arg0->_0x2C & 3];
+			arg0->UNK_30 = UNK_60356C8[arg0->UNK_2C & 3];
 		}
 	}
 
 	object += numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
-		if (((*object)[0] & 0x8000u) == 0u || ((ScreenTimeOdd + 1) & arg0->_0x2F) == 0u) {
+		if (((*object)[0] & 0x8000u) == 0u || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0u) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 			if (arg0->verticalHorizontal & 0x8000u) {
@@ -676,8 +676,8 @@ void _0x602471C(AddSpriteData* arg0) {
 				// sprite, that'd result in a 0-tile flipping offset applied.
 				offsetX = (OBJECT_GETW(object) + 1) * -16 - offsetX;
 			}
-			OBJECT_SETY(&_0x6061932.tempSprite, arg0->y + offsetY);
-			OBJECT_SETX(&_0x6061932.tempSprite, arg0->x + offsetX);
+			OBJECT_SETY(&UNK_6061932.tempSprite, arg0->y + offsetY);
+			OBJECT_SETX(&UNK_6061932.tempSprite, arg0->x + offsetX);
 			uint8_t sprPriVertical = (*object)[2] >> 8;
 			uint8_t horizontal = (*object)[3] >> 8;
 			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
@@ -690,7 +690,7 @@ void _0x602471C(AddSpriteData* arg0) {
 					sprPriVertical |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->scaleY;
+			UNK_6061932.tempSprite[2] = ((uint16_t)sprPriVertical << 8) | arg0->scaleY;
 			if (arg0->verticalHorizontal & 0x0080u) {
 				if (horizontal & 0x80u) {
 					bgPriHorizontal &= 0x4Fu;
@@ -699,40 +699,40 @@ void _0x602471C(AddSpriteData* arg0) {
 					bgPriHorizontal |= 0x80u;
 				}
 			}
-			_0x6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->scaleX;
+			UNK_6061932.tempSprite[3] = ((uint16_t)bgPriHorizontal << 8) | arg0->scaleX;
 			if (var0) {
 				if (OBJECT_GETSPRPRI(object) & 0x2u) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 16u);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 16u);
 				}
 				else if (arg0->palNum == 0) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 				}
 				else {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 				}
 			}
 			else if (var1) {
 				if (OBJECT_GETSPRPRI(object) & 2u) {
-					OBJECT_SETPALNUM(&_0x6061932.tempSprite, 32u);
+					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 32u);
 				}
 				else {
 					if (arg0->palNum == 0u) {
-						OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+						OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 					}
 					else {
-						OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+						OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 					}
 				}
 			}
 			else if (arg0->palNum == 0) {
-				OBJECT_SETPALNUM(&_0x6061932.tempSprite, OBJECT_GETPALNUM(object));
+				OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 			}
 			else {
-				OBJECT_SETPALNUM(&_0x6061932.tempSprite, arg0->palNum);
+				OBJECT_SETPALNUM(&UNK_6061932.tempSprite, arg0->palNum);
 			}
-			_0x6061932.tempSprite[4] = ((uint16_t)_0x6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaTileTop & 0x70u);
-			_0x6061932.tempSprite[5] = (*object)[5];
-			SPRITE_COPY(Sprites[NumSprites], _0x6061932.tempSprite);
+			UNK_6061932.tempSprite[4] = ((uint16_t)UNK_6061932.tempSprite[4] & 0xFF00u) | ((*object)[4] & 0x008Fu) | (arg0->bppAlphaTileTop & 0x70u);
+			UNK_6061932.tempSprite[5] = (*object)[5];
+			SPRITE_COPY(Sprites[NumSprites], UNK_6061932.tempSprite);
 			NumSprites++;
 		}
 	}
@@ -770,22 +770,22 @@ int16_t AllocSpriteAdder() {
     SpriteAdders[i].palNum = 0u;
     SpriteAdders[i].bppAlphaTileTop = 0u;
     SpriteAdders[i].layer = 16u;
-    SpriteAdders[i]._0x2B = 1u;
-    SpriteAdders[i]._0x2C = 0xA030u;
-    SpriteAdders[i]._0x2E = 0u;
-    SpriteAdders[i]._0x30 = 0;
-    SpriteAdders[i]._0x32 = 0;
-    SpriteAdders[i]._0x34 = 0;
+    SpriteAdders[i].UNK_2B = 1u;
+    SpriteAdders[i].UNK_2C = 0xA030u;
+    SpriteAdders[i].UNK_2E = 0u;
+    SpriteAdders[i].UNK_30 = 0;
+    SpriteAdders[i].UNK_32 = 0;
+    SpriteAdders[i].UNK_34 = 0;
     SpriteAdders[i].animFrame = 0;
-    SpriteAdders[i]._0x36 = 0;
-    SpriteAdders[i]._0x28 = 0;
+    SpriteAdders[i].UNK_36 = 0;
+    SpriteAdders[i].UNK_28 = 0;
     return i;
 }
 
-void _0x6024B78(int16_t arg0) {
+void UNK_6024B78(int16_t arg0) {
 	if ((-1 < arg0) && (arg0 < 0x40)) {
-		SpriteAdders[arg0]._0x2B = 0u;
-		SpriteAdders[arg0]._0x2C = 0x8000u;
+		SpriteAdders[arg0].UNK_2B = 0u;
+		SpriteAdders[arg0].UNK_2C = 0x8000u;
 		int32_t var1 = 0;
 		int16_t var0 = SpriteAdderNameTable[0];
 		while (var0 != arg0) {
@@ -804,49 +804,49 @@ void _0x6024B78(int16_t arg0) {
 	return;
 }
 
-void _0x6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable) {
+void UNK_6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable) {
 	if (i >= 0 && i < 64) {
 		SpriteAdders[i].data = objectTable;
 		SpriteAdders[i].y = y;
 		SpriteAdders[i].x = x;
-		if (SpriteAdders[i]._0x2B == 2u) {
-			SpriteAdders[i]._0x2B = 2u;
+		if (SpriteAdders[i].UNK_2B == 2u) {
+			SpriteAdders[i].UNK_2B = 2u;
 		}
 		else {
-			SpriteAdders[i]._0x2B = 9u;
+			SpriteAdders[i].UNK_2B = 9u;
 		}
 		SpriteAdders[i].animFrame = 0;
 	}
 }
 
 // TODO: Could be InitBgIndex().
-void _0x6024E5C(int16_t i) {
-	Bgs[i]._0x2 = 0;
-	Bgs[i]._0x4 = 1;
-	Bgs[i]._0x6 = 0;
-	Bgs[i]._0xA = 3;
-	Bgs[i]._0xC = 0;
+void UNK_6024E5C(int16_t i) {
+	Bgs[i].UNK_2 = 0;
+	Bgs[i].UNK_4 = 1;
+	Bgs[i].UNK_6 = 0;
+	Bgs[i].UNK_A = 3;
+	Bgs[i].UNK_C = 0;
 	Bgs[i].darkness = 0;
-	Bgs[i]._0x10 = 0;
-	Bgs[i]._0x14 = 0;
-	Bgs[i]._0x30 = 0;
-	Bgs[i]._0x34 = 0;
-	Bgs[i]._0x8 = 0;
-	Bgs[i]._0x40 = 0;
-	Bgs[i]._0x44 = 0;
-	Bgs[i]._0x4C = 0;
+	Bgs[i].UNK_10 = 0;
+	Bgs[i].UNK_14 = 0;
+	Bgs[i].UNK_30 = 0;
+	Bgs[i].UNK_34 = 0;
+	Bgs[i].UNK_8 = 0;
+	Bgs[i].UNK_40 = 0;
+	Bgs[i].UNK_44 = 0;
+	Bgs[i].UNK_4C = 0;
 
-	for (size_t k = 0u; k < lengthoffield(Bg, _0x18); k++) {
-		Bgs[i]._0x18[k] = -1;
+	for (size_t k = 0u; k < lengthoffield(Bg, UNK_18); k++) {
+		Bgs[i].UNK_18[k] = -1;
 	}
 
-	for (size_t k = 0u; k < lengthoffield(Bg, _0x38); k++) {
-		Bgs[i]._0x38[k] = 0;
+	for (size_t k = 0u; k < lengthoffield(Bg, UNK_38); k++) {
+		Bgs[i].UNK_38[k] = 0;
 	}
 }
 
 // TODO: Could be InitBg().
-void _0x6024ED8() {
+void UNK_6024ED8() {
 	BgMapBank[0] = 10u;
 	BgMapBank[1] = 12u;
 	BgMapBank[2] = 14u;
@@ -855,42 +855,42 @@ void _0x6024ED8() {
 	BgMapSetting[0] = 0u;
 	BgMapSetting[1] = 0u;
 
-	_0x2405FFEB |= 0x40u;
+	UNK_2405FFEB |= 0x40u;
 
-	_0x60B13A4 = false;
+	UNK_60B13A4 = false;
 
 	for (size_t i = 0u; i < lengthof(Bgs); i++) {
-		Bgs[i]._0x0 = 0;
-		_0x6024E5C(i);
+		Bgs[i].UNK_0 = 0;
+		UNK_6024E5C(i);
 	}
 
-	for (size_t i = 0u; i < lengthof(_0x60AD228); i++) {
-		_0x60AD228[i]._0x0 = 0u;
+	for (size_t i = 0u; i < lengthof(UNK_60AD228); i++) {
+		UNK_60AD228[i].UNK_0 = 0u;
 		for (size_t bank = 0u; bank < 2u; bank++) {
 			// TODO: Create a RAM macro here, once this is better understood.
-			_0x60AD228[i]._0x4[bank] = &GRAPHICSRAM[(0x5000u + i * 0x1000u + bank * 0x800u) / sizeof(uint32_t)];
-			_0x60AD228[i]._0xC[bank] = bank + i * 2 + 10u;
+			UNK_60AD228[i].UNK_4[bank] = &GRAPHICSRAM[(0x5000u + i * 0x1000u + bank * 0x800u) / sizeof(uint32_t)];
+			UNK_60AD228[i].UNK_C[bank] = bank + i * 2 + 10u;
 		}
-		_0x60AD228[i]._0x10 = NULL;
-		_0x60AD228[i]._0x14 = 0;
-		_0x60AD228[i]._0x60 = NULL;
-		_0x60AD228[i]._0x64 = 0;
+		UNK_60AD228[i].UNK_10 = NULL;
+		UNK_60AD228[i].UNK_14 = 0;
+		UNK_60AD228[i].UNK_60 = NULL;
+		UNK_60AD228[i].UNK_64 = 0;
 	}
 
-	for (size_t i = 0u; i < lengthof(_0x60B0FE0); i++) {
-		for (size_t k = 0u; k < lengthof(*_0x60B0FE0); k++) {
-			MemSet(&_0x60B0FE0[i][k], 0, sizeof(struct_0x60B0FE0));
+	for (size_t i = 0u; i < lengthof(UNK_60B0FE0); i++) {
+		for (size_t k = 0u; k < lengthof(*UNK_60B0FE0); k++) {
+			MemSet(&UNK_60B0FE0[i][k], 0, sizeof(structUNK_60B0FE0));
 		}
 	}
 }
 
-void _0x6025078() {
+void UNK_6025078() {
 	if (CurrentPauseMode != PAUSEMODE_NOPAUSE) {
 		return;
 	}
 
-	struct_0x60B0FE0* var0 = _0x60B0FE0[!_0x60B13A4];
-	for (size_t i = 0u; i < lengthof(*_0x60B0FE0); i++) {
+	structUNK_60B0FE0* var0 = UNK_60B0FE0[!UNK_60B13A4];
+	for (size_t i = 0u; i < lengthof(*UNK_60B0FE0); i++) {
 		if (var0[i].update != NULL) {
 			var0[i].update(
 				var0[i].args[0],
@@ -901,66 +901,66 @@ void _0x6025078() {
 			var0[i].update = NULL;
 		}
 	}
-	_0x60B13A0[!_0x60B13A4] = 0;
+	UNK_60B13A0[!UNK_60B13A4] = 0;
 }
 
-void _0x60251B8(int16_t bgIndex, uint32_t* arg1, uint32_t* arg2) {
+void UNK_60251B8(int16_t bgIndex, uint32_t* arg1, uint32_t* arg2) {
 	for (size_t i = 0; i < 0xE0u; i += 8u) {
 		for (size_t j = 0; j < 8u; j++) {
-			arg1[i + j] = Bgs[bgIndex]._0x50[i + j + 0x00u];
+			arg1[i + j] = Bgs[bgIndex].UNK_50[i + j + 0x00u];
 		}
 		for (size_t j = 0; j < 8u; j++) {
-			arg2[i + j] = Bgs[bgIndex]._0x50[i + j + 0xE0u];
+			arg2[i + j] = Bgs[bgIndex].UNK_50[i + j + 0xE0u];
 		}
 	}
 }
 
-void _0x602523C() {
+void UNK_602523C() {
 	if (CurrentPauseMode == PAUSEMODE_NOPAUSE) {
-		_0x60B13A4 = !_0x60B13A4;
-		VideoSetters[NumVideoSetters++].set = _0x602526A;
+		UNK_60B13A4 = !UNK_60B13A4;
+		VideoSetters[NumVideoSetters++].set = UNK_602526A;
 	}
 }
 
-void _0x602526A(void* unused0, void* unused1, void* unused2) {
+void UNK_602526A(void* unused0, void* unused1, void* unused2) {
 	uint8_t bgMapBank0, bgMapBank1, bgMapBank2, bgMapBank3;
 	uint8_t bgMapSettings01, bgMapSettings23;
 
 #define _BGSET(bgIndex, tilemapBank, tilemapSettings) \
 	do { \
-		if (Bgs[bgIndex]._0x0 == 1 && Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] >= 0) { \
-			const int16_t i = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6]; \
-			const int16_t var1 = _0x60AD228[i]._0x54; \
-			const int16_t var2 = Bgs[bgIndex]._0x8; \
+		if (Bgs[bgIndex].UNK_0 == 1 && Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] >= 0) { \
+			const int16_t i = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6]; \
+			const int16_t var1 = UNK_60AD228[i].UNK_54; \
+			const int16_t var2 = Bgs[bgIndex].UNK_8; \
 			uint16_t tilemapBankIndex; \
-			if (_0x60AD228[i]._0x56 == 0) { \
+			if (UNK_60AD228[i].UNK_56 == 0) { \
 				tilemapBankIndex = (var1 + 1) % 2; \
 			} \
 			else { \
-				_0x60AD228[i]._0x54 = (var1 + 1) % 2; \
-				_0x60AD228[i]._0x56 = 0; \
+				UNK_60AD228[i].UNK_54 = (var1 + 1) % 2; \
+				UNK_60AD228[i].UNK_56 = 0; \
 				tilemapBankIndex = var1; \
 			} \
-			tilemapBank = (_0x60AD228[var2]._0xC[tilemapBankIndex] >> 8) & 0xFFu; \
-			if (Bgs[bgIndex]._0x10 == 0) { \
-				_0x60AD228[var2]._0x4[tilemapBankIndex][0xFCu + bgIndex] = \
-					(_0x60AD228[i]._0x18[var1] << 16) | \
-					(_0x60AD228[i]._0x20[var1] & 0x1FFu); \
-				_0x60AD228[var2]._0x4[tilemapBankIndex][0x1FCu + bgIndex] = \
-					((uint32_t)Bgs[bgIndex]._0xA << 24) | \
-					_0x60AD228[i]._0xC[tilemapBankIndex] | \
+			tilemapBank = (UNK_60AD228[var2].UNK_C[tilemapBankIndex] >> 8) & 0xFFu; \
+			if (Bgs[bgIndex].UNK_10 == 0) { \
+				UNK_60AD228[var2].UNK_4[tilemapBankIndex][0xFCu + bgIndex] = \
+					(UNK_60AD228[i].UNK_18[var1] << 16) | \
+					(UNK_60AD228[i].UNK_20[var1] & 0x1FFu); \
+				UNK_60AD228[var2].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] = \
+					((uint32_t)Bgs[bgIndex].UNK_A << 24) | \
+					UNK_60AD228[i].UNK_C[tilemapBankIndex] | \
 					(Bgs[bgIndex].darkness << 8) | \
-					(Bgs[bgIndex]._0xC << 15); \
+					(Bgs[bgIndex].UNK_C << 15); \
 			} \
 			else { \
 				tilemapBank |= 0x80u; \
-				uint32_t* var3 = _0x60AD228[var2]._0x4[tilemapBankIndex]; \
-				_0x60251B8(1, var3, var3 + 0x100u); \
+				uint32_t* var3 = UNK_60AD228[var2].UNK_4[tilemapBankIndex]; \
+				UNK_60251B8(1, var3, var3 + 0x100u); \
 			} \
-			if (!(_0x60AD228[i]._0x10->_0x0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
+			if (!(UNK_60AD228[i].UNK_10->UNK_0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
 				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
 			} \
-			if (Bgs[bgIndex]._0x2 != 0) { \
+			if (Bgs[bgIndex].UNK_2 != 0) { \
 				tilemapSettings |= 0x80u >> ((bgIndex % 2u) * 4u); \
 			} \
 		} \
@@ -986,18 +986,18 @@ void _0x602526A(void* unused0, void* unused1, void* unused2) {
 
 // TODO: Could be AllocBg(); returns the background index allocated or -1 on
 // failure.
-int32_t _0x60257EE() {
+int32_t UNK_60257EE() {
 	int32_t i;
 
 	for (i = 0; i < lengthof(Bgs); i++) {
-		if (Bgs[i]._0x0 == 0) {
+		if (Bgs[i].UNK_0 == 0) {
 			break;
 		}
 	}
 
 	if (i < 4) {
-		_0x6024E5C(i);
-		Bgs[i]._0x0 = 1;
+		UNK_6024E5C(i);
+		Bgs[i].UNK_0 = 1;
 	}
 	else {
 		i = -1;
@@ -1006,35 +1006,35 @@ int32_t _0x60257EE() {
 	return i;
 }
 
-int32_t _0x6025918() {
+int32_t UNK_6025918() {
 	int bgIndex;
 
 	for (bgIndex = 1; bgIndex < 11; bgIndex++) {
-		if (_0x60AD228[bgIndex]._0x0 == 0u) {
+		if (UNK_60AD228[bgIndex].UNK_0 == 0u) {
 			break;
 		}
 	}
 
 	if (bgIndex < 11) {
-		_0x60AD228[bgIndex]._0x0 = 1;
-		_0x60AD228[bgIndex]._0x10 = NULL;
-		_0x60AD228[bgIndex]._0x60 = NULL;
-		_0x60AD228[bgIndex]._0x54 = NULL;
-		_0x60AD228[bgIndex]._0x56 = NULL;
-		_0x60AD228[bgIndex]._0x4C = NULL;
-		_0x60AD228[bgIndex]._0x50 = NULL;
-		_0x60AD228[bgIndex]._0x58 = NULL;
+		UNK_60AD228[bgIndex].UNK_0 = 1;
+		UNK_60AD228[bgIndex].UNK_10 = NULL;
+		UNK_60AD228[bgIndex].UNK_60 = NULL;
+		UNK_60AD228[bgIndex].UNK_54 = NULL;
+		UNK_60AD228[bgIndex].UNK_56 = NULL;
+		UNK_60AD228[bgIndex].UNK_4C = NULL;
+		UNK_60AD228[bgIndex].UNK_50 = NULL;
+		UNK_60AD228[bgIndex].UNK_58 = NULL;
 
 		for (int16_t i = 0; i < 2; i++) {
-			_0x60AD228[bgIndex]._0x18[i] = 0;
-			_0x60AD228[bgIndex]._0x20[i] = 0;
-			_0x60AD228[bgIndex]._0x28[i] = 0;
-			_0x60AD228[bgIndex]._0x30[i] = 0;
-			_0x60AD228[bgIndex]._0x34[i] = 0;
-			_0x60AD228[bgIndex]._0x38[i] = 0;
-			_0x60AD228[bgIndex]._0x3C[i] = 0;
-			_0x60AD228[bgIndex]._0x40[i] = 0;
-			_0x60AD228[bgIndex]._0x46[i] = 0;
+			UNK_60AD228[bgIndex].UNK_18[i] = 0;
+			UNK_60AD228[bgIndex].UNK_20[i] = 0;
+			UNK_60AD228[bgIndex].UNK_28[i] = 0;
+			UNK_60AD228[bgIndex].UNK_30[i] = 0;
+			UNK_60AD228[bgIndex].UNK_34[i] = 0;
+			UNK_60AD228[bgIndex].UNK_38[i] = 0;
+			UNK_60AD228[bgIndex].UNK_3C[i] = 0;
+			UNK_60AD228[bgIndex].UNK_40[i] = 0;
+			UNK_60AD228[bgIndex].UNK_46[i] = 0;
 		}
 	}
 	else {
@@ -1044,138 +1044,138 @@ int32_t _0x6025918() {
 	return bgIndex;
 }
 
-int32_t _0x6025AE4(int16_t bgIndex, GameBg* gameBg) {
+int32_t UNK_6025AE4(int16_t bgIndex, GameBg* gameBg) {
 	int16_t var0;
-	if (Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] < 0) {
-		var0 = _0x6025918();
-		Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6] = var0;
+	if (Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] < 0) {
+		var0 = UNK_6025918();
+		Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] = var0;
 	}
 	else {
-		var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6];
+		var0 = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
 	}
-	_0x60AD228[var0]._0x10 = gameBg;
-	_0x60AD228[bgIndex]._0x14 = 0;
+	UNK_60AD228[var0].UNK_10 = gameBg;
+	UNK_60AD228[bgIndex].UNK_14 = 0;
 	
-	for (BgMap* bgMap = gameBg->_0x0; bgMap != NULL; bgMap = gameBg->_0x0) {
-		_0x60AD228[var0]._0x14 += gameBg->_0x0->header._0x6 * gameBg->_0x4;
+	for (BgMap* bgMap = gameBg->UNK_0; bgMap != NULL; bgMap = gameBg->UNK_0) {
+		UNK_60AD228[var0].UNK_14 += gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
 	}
 
-	_0x60AD228[var0]._0x4C = 0;
-	_0x60AD228[var0]._0x50 = 0;
+	UNK_60AD228[var0].UNK_4C = 0;
+	UNK_60AD228[var0].UNK_50 = 0;
 
 	return var0;
 }
 
-void _0x6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
-	int32_t var0 = _0x6025AE4(bgIndex, gameBg);
-	_0x60AD228[var0]._0x4C += arg2;
-	_0x60AD228[var0]._0x50 += arg3;
+void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
+	int32_t var0 = UNK_6025AE4(bgIndex, gameBg);
+	UNK_60AD228[var0].UNK_4C += arg2;
+	UNK_60AD228[var0].UNK_50 += arg3;
 }
 
-void _0x60267E4(int16_t bgIndex) {
-	const int16_t var0 = Bgs[bgIndex]._0x6;
+void UNK_60267E4(int16_t bgIndex) {
+	const int16_t var0 = Bgs[bgIndex].UNK_6;
 
-	if (Bgs[bgIndex]._0x18[var0] < 0) {
+	if (Bgs[bgIndex].UNK_18[var0] < 0) {
 		return;
 	}
 
-	const int16_t var2 = _0x60AD228[Bgs[bgIndex]._0x18[var0]]._0x54;
+	const int16_t var2 = UNK_60AD228[Bgs[bgIndex].UNK_18[var0]].UNK_54;
 
 	int16_t var4;
 	int16_t var5;
 	var4 = 0;
-	if (Bgs[bgIndex]._0x18[var0] != -1) {
-		const int16_t var1 = _0x60AD228[Bgs[bgIndex]._0x18[bgIndex]]._0x0;
-		const int16_t var3 = Bgs[bgIndex]._0x0;
-		const int32_t var13 = -(16 + _0x60AD228[var1]._0x18[var2] / 16);
-		const int16_t var7 = -(16 + _0x60AD228[var1]._0x18[var0] / 16 + _0x60AD228[var1]._0x4C / 16);
-		int16_t var16 = -(16 + _0x60AD228[var1]._0x28[var3] / 16 + _0x60AD228[var1]._0x50 / 16);
+	if (Bgs[bgIndex].UNK_18[var0] != -1) {
+		const int16_t var1 = UNK_60AD228[Bgs[bgIndex].UNK_18[bgIndex]].UNK_0;
+		const int16_t var3 = Bgs[bgIndex].UNK_0;
+		const int32_t var13 = -(16 + UNK_60AD228[var1].UNK_18[var2] / 16);
+		const int16_t var7 = -(16 + UNK_60AD228[var1].UNK_18[var0] / 16 + UNK_60AD228[var1].UNK_4C / 16);
+		int16_t var16 = -(16 + UNK_60AD228[var1].UNK_28[var3] / 16 + UNK_60AD228[var1].UNK_50 / 16);
 		var4 = 0;
 		for (size_t i = 0u; i < 32u; i++, var16++) {
-			uint32_t* const var10 = _0x60AD228[var1]._0x4[var2];
-			GameBg* const var6 = _0x6026AAC(
+			uint32_t* const var10 = UNK_60AD228[var1].UNK_4[var2];
+			GameBg* const var6 = UNK_6026AAC(
 				bgIndex,
 				var16,
 				&var4,
 				&var5);
-			if (var6->_0x0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
-				ROMDATA BgMap* const bgMap = var6->_0x0;
+			if (var6->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+				ROMDATA BgMap* const bgMap = var6->UNK_0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
-					int32_t var9 = var8 % var6->_0x0->header._0x4;
+					int32_t var9 = var8 % var6->UNK_0->header.UNK_4;
 					if (var9 < 0) {
-						var9 += var6->_0x0->header._0x4;
+						var9 += var6->UNK_0->header.UNK_4;
 					}
-					var10[(var14 % 16) * 32] = bgMap->names[var4 * bgMap->header._0x4 + var9];
+					var10[(var14 % 16) * 32] = bgMap->names[var4 * bgMap->header.UNK_4 + var9];
 				}
 			}
 			else {
-				ROMDATA BgMap* const bgMap = var6->_0x0;
+				ROMDATA BgMap* const bgMap = var6->UNK_0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
-					int32_t var9 = var8 % var6->_0x0->header._0x4;
+					int32_t var9 = var8 % var6->UNK_0->header.UNK_4;
 					if (var9 < 0) {
-						var9 += var6->_0x0->header._0x4;
+						var9 += var6->UNK_0->header.UNK_4;
 					}
-					var10[(var14 % 16) * 32] = (bgMap->names[var4 * bgMap->header._0x4 * 2 + var9] & 0xFFFFu) | var6->_0x0->header.tileInfo;
+					var10[(var14 % 16) * 32] = (bgMap->names[var4 * bgMap->header.UNK_4 * 2 + var9] & 0xFFFFu) | var6->UNK_0->header.tileInfo;
 				}
 			}
 		}
 
-		_0x60AD228[var2]._0x38[var1] %= 16;
-		_0x60AD228[var2]._0x3C[var1] %= 16;
+		UNK_60AD228[var2].UNK_38[var1] %= 16;
+		UNK_60AD228[var2].UNK_3C[var1] %= 16;
 	}
 }
 
-GameBg* _0x6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) {
-	const int16_t var0 = Bgs[bgIndex]._0x18[Bgs[bgIndex]._0x6];
+GameBg* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) {
+	const int16_t var0 = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
 	GameBg* gameBg;
 	if (var0 < 0) {
 		gameBg = NULL;
 	}
 	else {
-		gameBg = _0x60AD228[var0]._0x10;
-		if (gameBg->_0x0 != NULL) {
+		gameBg = UNK_60AD228[var0].UNK_10;
+		if (gameBg->UNK_0 != NULL) {
 			*arg2 = arg1;
 			const int16_t var3 = *arg2;
 			GameBg* var1 = gameBg;
 			while (*arg2 < 0) {
-				if (_0x60AD228[var3]._0x60 == NULL) {
-					*arg2 += _0x60AD228[var3]._0x14;
+				if (UNK_60AD228[var3].UNK_60 == NULL) {
+					*arg2 += UNK_60AD228[var3].UNK_14;
 				}
 				else {
-					*arg2 += _0x60AD228[var3]._0x64;
-					gameBg = _0x60AD228[var3]._0x60;
+					*arg2 += UNK_60AD228[var3].UNK_64;
+					gameBg = UNK_60AD228[var3].UNK_60;
 					var1 = gameBg;
 				}
 			}
-			while (*arg2 >= (int16_t)gameBg->_0x0->header._0x6 * gameBg->_0x4) {
-				ROMDATA BgMap* var2 = gameBg->_0x8;
-				*arg2 -= gameBg->_0x0->header._0x6 * gameBg->_0x4;
+			while (*arg2 >= (int16_t)gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4) {
+				ROMDATA BgMap* var2 = gameBg->UNK_8;
+				*arg2 -= gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
 				if (var2->header.tileInfo == 0) {
-					if (_0x60AD228[var3]._0x60 != NULL) {
-						gameBg = _0x60AD228[var3]._0x60;
+					if (UNK_60AD228[var3].UNK_60 != NULL) {
+						gameBg = UNK_60AD228[var3].UNK_60;
 					}
 					else {
 						gameBg = var1;
 					}
 				}
 			}
-			*arg3 = gameBg->_0x0->header._0x6 - *arg2 - 1;
-			*arg2 %= gameBg->_0x0->header._0x6;
+			*arg3 = gameBg->UNK_0->header.UNK_6 - *arg2 - 1;
+			*arg2 %= gameBg->UNK_0->header.UNK_6;
 		}
 	}
 	return gameBg;
 }
 
-void _0x6026FCA(int16_t bgIndex, int16_t arg1) {
-	Bgs[bgIndex]._0x2 = arg1;
+void UNK_6026FCA(int16_t bgIndex, int16_t arg1) {
+	Bgs[bgIndex].UNK_2 = arg1;
 }
 
-void _0x6026FDC(int16_t arg0, int16_t arg1) {
-	Bgs[arg0]._0xA = arg1;
+void UNK_6026FDC(int16_t arg0, int16_t arg1) {
+	Bgs[arg0].UNK_A = arg1;
 }
 
 void SetBgDarkness(int16_t bgIndex, int16_t darkness) {
@@ -1190,12 +1190,12 @@ void VideoSetScanlinesBank(void* unused0, void* unused1, void* unused2) {
 	ScanlinesBank[0] = 8u;
 }
 
-void _0x6029498(int16_t arg0) {
-	VideoSetters[NumVideoSetters].set = _0x60294C0;
+void UNK_6029498(int16_t arg0) {
+	VideoSetters[NumVideoSetters].set = UNK_60294C0;
 	VideoSetters[NumVideoSetters++].args[0] = (void*)(uintptr_t)arg0;
 }
 
-void _0x60294C0(uintptr_t arg0, void* unused1, void* unused2) {
+void UNK_60294C0(uintptr_t arg0, void* unused1, void* unused2) {
 	// TODO: Make a define for register 0x0B.
 	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | (arg0 & 0x07u);
 }
@@ -1227,125 +1227,125 @@ void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2) {
 	}
 }
 
-static void _0x602970C();
-static void _0x602975E();
-static const void (*_0x60356D0[4])() = {
-	_0x602970C,
-	_0x602970C,
+static void UNK_602970C();
+static void UNK_602975E();
+static const void (*UNK_60356D0[4])() = {
+	UNK_602970C,
+	UNK_602970C,
 	NULL,
-	_0x602975E
+	UNK_602975E
 };
 
-void _0x6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
-	struct_0x607D218 *var0;
+void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
+	struct_607D218 *var0;
 	uint32_t numVideoSetters;
 	
 	if (arg0 != 4) {
-		if (_0x6064750 == NULL) {
-			_0x6064750 = _0x6023EFE(_0x60356D0, NULL);
+		if (UNK_6064750 == NULL) {
+			UNK_6064750 = UNK_6023EFE(UNK_60356D0, NULL);
 		}
 		if (arg3 & 0x8000) {
-			_0x6064750->_0x30 = 1u;
+			UNK_6064750->UNK_30 = 1u;
 		}
 		else {
-			_0x6064750->_0x30 = 0u;
+			UNK_6064750->UNK_30 = 0u;
 		}
-		_0x6064750->_0x2C = F32(0, 0x0000u);
-		F32I(_0x6064750->_0x2C) = 0x80;
-		_0x6064750->_0x2C /= arg1;
+		UNK_6064750->UNK_2C = F32(0, 0x0000u);
+		F32I(UNK_6064750->UNK_2C) = 0x80;
+		UNK_6064750->UNK_2C /= arg1;
 		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
 		if ((arg3 & 7) != 0) {
-			_0x6029498(arg3 & 7);
+			UNK_6029498(arg3 & 7);
 		}
-		_0x6064750->_0x1A = arg0;
+		UNK_6064750->UNK_1A = arg0;
 		if (arg0 == 0) {
-			_0x6064750->backdropColor = 0xFFu;
+			UNK_6064750->backdropColor = 0xFFu;
 			if (arg2 == 0) {
-				_0x6064750->_0x24 = 0x80;
+				UNK_6064750->UNK_24 = 0x80;
 			}
 			else {
-				_0x6064750->_0x24 = arg2;
+				UNK_6064750->UNK_24 = arg2;
 			}
-			_0x6064750->_0x2C = -_0x6064750->_0x2C;
+			UNK_6064750->UNK_2C = -UNK_6064750->UNK_2C;
 		}
 		else {
 			if (arg0 == 1) {
-				_0x6064750->backdropColor = ~0u;
+				UNK_6064750->backdropColor = ~0u;
 				if (arg2 == 0) {
-					_0x6064750->_0x24 = 0x80;
+					UNK_6064750->UNK_24 = 0x80;
 				}
 				else {
-					_0x6064750->_0x24 = arg2;
+					UNK_6064750->UNK_24 = arg2;
 				}
-				_0x6064750->_0x2C = -_0x6064750->_0x2C;
+				UNK_6064750->UNK_2C = -UNK_6064750->UNK_2C;
 			}
 			else {
 				if (arg0 == 2) {
-					_0x6064750->backdropColor = COLOR(0, 0, 0, 0);
+					UNK_6064750->backdropColor = COLOR(0, 0, 0, 0);
 					if (arg2 == 0) {
-						_0x6064750->_0x24 = 0;
+						UNK_6064750->UNK_24 = 0;
 					}
 					else {
-						_0x6064750->_0x24 = arg2;
+						UNK_6064750->UNK_24 = arg2;
 					}
 				}
 				else {
 					if (arg0 == 3) {
-						_0x6064750->backdropColor = COLOR(0xFF, 0xFF, 0xFF, 0x00);
+						UNK_6064750->backdropColor = COLOR(0xFF, 0xFF, 0xFF, 0x00);
 						if (arg2 == 0) {
-							_0x6064750->_0x24 = 0;
+							UNK_6064750->UNK_24 = 0;
 						}
 						else {
-							_0x6064750->_0x24 = arg2;
+							UNK_6064750->UNK_24 = arg2;
 						}
 					}
 				}
 			}
 		}
-		_0x6064750->_0x28 = F32(0, 0x0000u);
-		F32I(_0x6064750->_0x28) = _0x6064750->_0x24;
-		SetBackdropColor(_0x6064750->backdropColor);
+		UNK_6064750->UNK_28 = F32(0, 0x0000u);
+		F32I(UNK_6064750->UNK_28) = UNK_6064750->UNK_24;
+		SetBackdropColor(UNK_6064750->backdropColor);
 	}
-	else if (_0x6064750 != NULL) {
-		_0x6024030(_0x6064750);
-		_0x6064750 = NULL;
+	else if (UNK_6064750 != NULL) {
+		UNK_6024030(UNK_6064750);
+		UNK_6064750 = NULL;
 	}
 }
 
-static void _0x602970C() {
-	_0x6064750->_0x28 += _0x6064750->_0x2C;
-	if (_0x6064750->_0x2C <= F32(0, 0x0000u)) {
-		if (F32I(_0x6064750->_0x28) <= 0) {
-			_0x6024030(_0x606005C);
+static void UNK_602970C() {
+	UNK_6064750->UNK_28 += UNK_6064750->UNK_2C;
+	if (UNK_6064750->UNK_2C <= F32(0, 0x0000u)) {
+		if (F32I(UNK_6064750->UNK_28) <= 0) {
+			UNK_6024030(UNK_606005C);
 			return;
 		}
 	}
-	else if (F32I(_0x6064750->_0x28) >= 128) {
-		_0x6024030(_0x606005C);
+	else if (F32I(UNK_6064750->UNK_28) >= 128) {
+		UNK_6024030(UNK_606005C);
 		return;
 	}
 	else {
-		_0x6064750->backdropColor = (_0x6064750->backdropColor & ~0xFF) | F32I(_0x6064750->_0x28);
-		SetBackdropColor(_0x6064750->backdropColor);
+		UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | F32I(UNK_6064750->UNK_28);
+		SetBackdropColor(UNK_6064750->backdropColor);
 		return;
 	}
 }
 
-static void _0x602975E() {
-	if (F32I(_0x6064750->_0x2C) <= 0) {
-		if (_0x6064750->_0x30 == 0u) {
-			_0x6029498(0);
-			_0x6064750->backdropColor = COLOR(0x11, 0x11, 0x11, 0xFF);
+static void UNK_602975E() {
+	if (F32I(UNK_6064750->UNK_2C) <= 0) {
+		if (UNK_6064750->UNK_30 == 0u) {
+			UNK_6029498(0);
+			UNK_6064750->backdropColor = COLOR(0x11, 0x11, 0x11, 0xFF);
 		}
 		else {
-			_0x6064750->backdropColor &= COLOR(0xFF, 0xFF, 0xFF, 0x00);
+			UNK_6064750->backdropColor &= COLOR(0xFF, 0xFF, 0xFF, 0x00);
 		}
 	}
 	else {
-		_0x6064750->backdropColor |= COLOR(0x00, 0x00, 0x00, 0xFF);
+		UNK_6064750->backdropColor |= COLOR(0x00, 0x00, 0x00, 0xFF);
 	}
-	SetBackdropColor(_0x6064750->backdropColor);
-	_0x6064750 = NULL;
+	SetBackdropColor(UNK_6064750->backdropColor);
+	UNK_6064750 = NULL;
 }
 
 void SetVideo() {
@@ -1364,7 +1364,7 @@ void InitVideoSetters() {
 }
 
 // TODO: Appears to fill background RAM.
-void _0x6029814(uint32_t subtractedData, uint32_t addedData, uint8_t start, uint8_t end) {
+void UNK_6029814(uint32_t subtractedData, uint32_t addedData, uint8_t start, uint8_t end) {
 	// Check if the start and size need to be swapped.
 	if (start > end) {
 		// Swap start and end.
@@ -1634,24 +1634,24 @@ static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
 	}
 }
 
-static void _0x602A99E(void* arg0, void* arg1, void* arg2);
-void _0x602A96A(uint8_t arg0, void* arg1) {
-	VideoSetters[NumVideoSetters].set = _0x602A99E;
+static void UNK_602A99E(void* arg0, void* arg1, void* arg2);
+void UNK_602A96A(uint8_t arg0, void* arg1) {
+	VideoSetters[NumVideoSetters].set = UNK_602A99E;
 	VideoSetters[NumVideoSetters].args[0] = arg0;
 	VideoSetters[NumVideoSetters++].args[1] = arg1;
 }
 
-static void _0x602A99E(void* arg0, void* arg1, void* arg2) {
+static void UNK_602A99E(void* arg0, void* arg1, void* arg2) {
 	// TODO
 }
 
-void _0x602AA16() {
-	_0x60294C0(7u, NULL, NULL);
+void UNK_602AA16() {
+	UNK_60294C0(7u, NULL, NULL);
 	VideoSetBackdropColor(0u, NULL, NULL);
 }
 
-void _0x602AA4C() {
-	_0x60294C0(0x07u, NULL, NULL);
+void UNK_602AA4C() {
+	UNK_60294C0(0x07u, NULL, NULL);
 	VideoSetBackdropColor(0x000000FFu, NULL, NULL);
 }
 
@@ -1661,20 +1661,20 @@ struct {
 	int16_t offset_8;
 	int16_t offset_A;
 	int16_t offset_C;
-} _0x6064550[32];
+} UNK_6064550[32];
 
-void _0x602AB9E() {
-	for (size_t i = 0; i < lengthof(_0x6064550); i++) {
-		_0x6064550[i].offset_0 = 0x00000000u;
+void UNK_602AB9E() {
+	for (size_t i = 0; i < lengthof(UNK_6064550); i++) {
+		UNK_6064550[i].offset_0 = 0x00000000u;
 	}
 }
 
 // TODO: Consider changing subtractedData to a struct type. Elements [1, 3] of the array
 // could be "int16_t argData[3]", and subtractedData[0] could be some sort of 16-bit type
 // value.
-void _0x602AC68(int16_t* arg0) {
+void UNK_602AC68(int16_t* arg0) {
 	int16_t var0 = arg0[0];
 	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {
-		_0x602A96A(var1[1], ((int32_t)var1[2] << 16) | var1[3]);
+		UNK_602A96A(var1[1], ((int32_t)var1[2] << 16) | var1[3]);
 	}
 }

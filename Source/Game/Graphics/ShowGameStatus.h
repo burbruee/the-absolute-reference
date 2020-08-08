@@ -35,7 +35,7 @@ typedef enum Started {
 	STARTED_PLAYER2 = 1 << PLAYER2
 } Started;
 #define STARTED_ALL (STARTED_PLAYER1 | STARTED_PLAYER2)
-void _0x600FC50();
+void UNK_600FC50();
 void ShowStartRequirement(Player* player);
 void ShowFree(Started started, int16_t y);
 void ShowNumServices(uint8_t numServices, int16_t x, int16_t y);

@@ -18,7 +18,7 @@ bool ScreenTimeOdd;
 uint32_t ScreenTime;
 uint32_t Uptime;
 uint32_t DemoWaitTime;
-uint16_t _0x606564C;
+uint16_t UNK_606564C;
 
 uint32_t RandScale;
 
@@ -28,36 +28,36 @@ uint32_t RandScale;
 
 bool TestModeDisabled;
 
-uint16_t _0x6060024;
-uint32_t _0x6060028;
+uint16_t UNK_6060024;
+uint32_t UNK_6060028;
 uint32_t NumVblanks;
 bool VblankFinished;
 
-void _0x602ACB0() {
-	_0x6060024 = 0xFFFFu;
-	_0x6060028 = 0u;
-	_0xFFFFFE10 = 1u;
-	_0xFFFFFE11 = 1u;
-	_0xFFFFFE12 = 0u;
-	_0xFFFFFE13 = 0u;
-	_0xFFFFFE14 = 0xFFu;
-	_0xFFFFFE15 = 0xFFu;
-	_0xFFFFFE16 = 2u;
+void UNK_602ACB0() {
+	UNK_6060024 = 0xFFFFu;
+	UNK_6060028 = 0u;
+	UNK_FFFFFE10 = 1u;
+	UNK_FFFFFE11 = 1u;
+	UNK_FFFFFE12 = 0u;
+	UNK_FFFFFE13 = 0u;
+	UNK_FFFFFE14 = 0xFFu;
+	UNK_FFFFFE15 = 0xFFu;
+	UNK_FFFFFE16 = 2u;
 }
 
 bool UpdateFrame() {
 	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
-	_0x60237DE();
-	_0x6024244();
+	UNK_60237DE();
+	UNK_6024244();
 	UpdateEntities();
-	_0x6025078();
-	_0x602523C();
+	UNK_6025078();
+	UNK_602523C();
 	UpdateGameBg();
-	_0x602C5C2();
+	UNK_602C5C2();
 	WriteSpriteLayers();
-	_0x602DAD4(); // TODO: Sound function.
+	UNK_602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
 	PLATFORM_FRAME();
@@ -77,16 +77,16 @@ bool UpdateFrame() {
 	return startTestMode;
 }
 
-bool _0x602AECA() {
+bool UNK_602AECA() {
 	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
 	UpdatePlayers();
-	_0x6025078();
-	_0x602523C();
-	_0x602C5C2();
+	UNK_6025078();
+	UNK_602523C();
+	UNK_602C5C2();
 	WriteSpriteLayers();
-	_0x602DAD4(); // TODO: Sound function.
+	UNK_602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
 	PLATFORM_FRAME();
@@ -113,19 +113,19 @@ bool UpdateGame() {
 	UpdateEntities();
 	UpdatePlayers();
 	ShowPlayers();
-	_0x60237DE();
-	_0x6024244();
+	UNK_60237DE();
+	UNK_6024244();
 	ShowPlayersStatus();
 	UpdateGameBg();
-	_0x602C5C2();
+	UNK_602C5C2();
 	WriteSpriteLayers();
-	_0x6025078();
+	UNK_6025078();
 	NumSprites = SPRITE_FIRST;
 	ScreenTime++;
 	Uptime++;
 	DemoWaitTime++;
-	_0x602523C();
-	_0x602DAD4(); // TODO: Sound function.
+	UNK_602523C();
+	UNK_602DAD4(); // TODO: Sound function.
 
 	PLATFORM_FRAME();
 
@@ -154,7 +154,7 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	DemoButtonsOld[PLAYER2] = GameButtonsDown[PLAYER2];
 
 	InitSpriteLayers();
-	_0x60237DE();
+	UNK_60237DE();
 	UpdatePlayers();
 	GameButtonsDown[PLAYER1] = systemButtons1p;
 	GameButtonsDown[PLAYER2] = systemButtons2p;
@@ -162,18 +162,18 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	SystemButtonsDown[PLAYER2] = systemButtons2p;
 	UpdateEntities();
 	ShowPlayers();
-	_0x6024244();
+	UNK_6024244();
 	ShowPlayersStatus();
 	UpdateGameBg();
-	_0x602C5C2();
+	UNK_602C5C2();
 	WriteSpriteLayers();
-	_0x6025078();
+	UNK_6025078();
 	NumSprites = SPRITE_FIRST;
 	ScreenTime++;
 	Uptime++;
 	DemoWaitTime++;
-	_0x602523C();
-	_0x602DAD4(); // TODO: Sound function.
+	UNK_602523C();
+	UNK_602DAD4(); // TODO: Sound function.
 
 	PLATFORM_FRAME();
 

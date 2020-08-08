@@ -35,7 +35,7 @@
 // SpriteData.
 // NOTE: Bit 15 of word 0 appears to be used as a flag that, when true,
 // indicates if an object should be skipped when displaying with functions
-// _0x60243E8 or _0x602471C, at least.
+// UNK_60243E8 or UNK_602471C, at least.
 
 
 typedef uint16_t ObjectData[6];
@@ -171,7 +171,7 @@ extern ROMDATA ObjectDataTable Objects;
 #define OBJECT_PUSH1PSTARTBUTTON OBJECTPTR(0x17B)
 #define OBJECT_PUSH2PSTARTBUTTON OBJECTPTR(0x17C)
 #define OBJECT_INSERTCOIN OBJECTPTR(0x17F)
-#define _0xA6F14 OBJECTPTR(0x181)
+#define OBJECT_A6F14 OBJECTPTR(0x181)
 #define OBJECT_ADDCOIN OBJECTPTR(0x182)
 
 #define OBJECT_SELECTMODE OBJECTPTR(0x198)
@@ -260,8 +260,8 @@ extern ROMDATA ObjectDataTable Objects;
 
 #define OBJECT_BRAVO OBJECTPTR(0x6CD)
 
-#define _0xAAEB0 OBJECTPTR(0x6CE)
-#define _0xAAEBC OBJECTPTR(0x6CF)
-#define _0xAAEC8 OBJECTPTR(0x6D0)
+#define OBJECT_AAEB0 OBJECTPTR(0x6CE)
+#define OBJECT_AAEBC OBJECTPTR(0x6CF)
+#define OBJECT_AAEC8 OBJECTPTR(0x6D0)
 
 #define OBJECT_RETRYFORGRANDMASTER OBJECTPTR(0x6DB)

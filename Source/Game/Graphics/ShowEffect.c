@@ -141,20 +141,20 @@ typedef struct {
 	const ObjectData* objectTables[2];
 	uint16_t palNum;
 	int16_t screenPositions[2][2];
-} struct_0x60174F8;
+} structUNK_60174F8;
 
 #define frames values[0]
 
-static void _0x60174F8(Entity* entity);
+static void UNK_60174F8(Entity* entity);
 
-void _0x60173B4(Player* player, int16_t row, int16_t col) {
+void UNK_60173B4(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
-		entity->update = _0x60174F8;
+		entity->update = UNK_60174F8;
 		entity->data.info.player = player;
 		entity->frames = 0;
 
-		ENTITY_INST_DATA_PTR(struct_0x60174F8, data, entity);
+		ENTITY_INST_DATA_PTR(structUNK_60174F8, data, entity);
 
 		data->screenPositions[1][0] = player->screenPos[0] + 8 * (col + 2) - 8 * (player->matrixWidth / 2);
 		data->screenPositions[0][0] = player->screenPos[1] - 8 * row + 10;
@@ -170,8 +170,8 @@ void _0x60173B4(Player* player, int16_t row, int16_t col) {
 	}
 }
 
-static void _0x60174F8(Entity* entity) {
-	ENTITY_INST_DATA_PTR(struct_0x60174F8, data, entity);
+static void UNK_60174F8(Entity* entity) {
+	ENTITY_INST_DATA_PTR(structUNK_60174F8, data, entity);
 
 	const ObjectData** objectTable = data->objectTables;
 	for (size_t i = 0; i < 2; i++, objectTable++) {

@@ -6,7 +6,7 @@
 
 extern uint32_t CoinCount;
 
-// TODO: _0x6065644 ... _0x606564C. Might be save-related.
+// TODO: UNK_6065644 ... UNK_606564C. Might be save-related.
 
 // This save data code isn't directly equivalent to TAP's code, because this
 // code is guaranteed to place the save data at the end of the struct. Since

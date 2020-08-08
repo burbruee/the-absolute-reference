@@ -16,14 +16,14 @@
 ROMDATA Color PalCycleTextPal0[NUMPALCOLORS_4BPP];
 
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
-static uint16_t _0x6079290;
-static uint16_t _0x6079292;
-static uint16_t _0x6079294;
-static uint8_t _0x6079296;
-static uint8_t _0x6079297;
+static uint16_t UNK_6079290;
+static uint16_t UNK_6079292;
+static uint16_t UNK_6079294;
+static uint8_t UNK_6079296;
+static uint8_t UNK_6079297;
 static GameMusic CurrentGameMusic;
-static uint8_t _0x6079299;
-static uint8_t _0x607929A;
+static uint8_t UNK_6079299;
+static uint8_t UNK_607929A;
 
 typedef enum GameLoopState {
 	GAMELOOP_RESTART = 0,
@@ -34,7 +34,7 @@ typedef enum GameLoopState {
 } GameLoopState;
 static GameLoopState GameLoop;
 
-static const Color _0x6032884[NUMPALCOLORS_4BPP] = {
+static const Color UNK_6032884[NUMPALCOLORS_4BPP] = {
 	0x01010100u,
 	0x01010100u,
 	0x01010100u,
@@ -56,15 +56,15 @@ static const Color _0x6032884[NUMPALCOLORS_4BPP] = {
 static void UpdateGameMusic();
 
 void InitGame() {
-	_0x602AA4C();
-	_0x6029814(0u, 0u, 0u, 0xFFu);
+	UNK_602AA4C();
+	UNK_6029814(0u, 0u, 0u, 0xFFu);
 	
-	if (_0x6064750 != NULL) {
-		_0x6024030(_0x6064750);
+	if (UNK_6064750 != NULL) {
+		UNK_6024030(UNK_6064750);
 	}
 
-	_0x602419C();
-	_0x602AB9E();
+	UNK_602419C();
+	UNK_602AB9E();
 	FreePalCycles(FREEALLPALCYCLES);
 
 	Game.numVersusRounds = 0u;
@@ -74,11 +74,11 @@ void InitGame() {
 	StopMusic();
 
 	// TODO: These all control game music. Check UpdateGameMusic to figure out their names.
-	_0x6079296 = 0u;
-	_0x6079297 = 0u;
-	_0x607929A = 0u;
+	UNK_6079296 = 0u;
+	UNK_6079297 = 0u;
+	UNK_607929A = 0u;
 	CurrentGameMusic = GAMEMUSIC_0;
-	_0x6079299 = 0u;
+	UNK_6079299 = 0u;
 
 	GameLoop = GAMELOOP_INIT;
 
@@ -88,7 +88,7 @@ void InitGame() {
 	// Probably all sets of block palettes here.
 	SetPal(148u, 1u, PALPTR(0x15A));
 	SetPal(176u, 1u, PALPTR(0x15B));
-	_0x601886C();
+	UNK_601886C();
 	SetPal(48u, 10u, PALTABLE_PALNUM48BLOCK);
 	SetPal(58u, 10u, PALTABLE_IBLOCK);
 	SetPal(68u, 10u, PALTABLE_ZBLOCK);
@@ -100,10 +100,10 @@ void InitGame() {
 	SetPal(128u, 10u, PALTABLE_GARBAGEBLOCK);
 	SetPal(138u, 10u, PALTABLE_PALNUM138BLOCK);
 
-	SetPal(220u, 1u, _0x6032884);
-	SetPal(221u, 1u, _0x6032884);
-	SetPal(222u, 1u, _0x6032884);
-	SetPal(223u, 1u, _0x6032884);
+	SetPal(220u, 1u, UNK_6032884);
+	SetPal(221u, 1u, UNK_6032884);
+	SetPal(222u, 1u, UNK_6032884);
+	SetPal(223u, 1u, UNK_6032884);
 
 	SetPal(203u, 5u, PALPTR(0x224));
 
@@ -160,7 +160,7 @@ GameLoopState InitGameLoop() {
 	SetPal(226u, 10u, PALPTR(0x1C2));
 	SetPal(236u, 10u, PALPTR(0x1CC));
 	SetPal(246u, 10u, PALPTR(0x1D6));
-	_0x602E56A();
+	UNK_602E56A();
 	SettingsValid();
 	return GAMELOOP_START;
 }
@@ -179,8 +179,8 @@ void CheckSetNewChallenger(Player *player) {
 		GameFlags |= GAME_STARTWAITINGPLAYER;
 	}
 
-	_0x6079290 = 0;
-	_0x6079292 = 0;
+	UNK_6079290 = 0;
+	UNK_6079292 = 0;
 }
 
 GameLoopState GameStartVersus() {
@@ -188,22 +188,22 @@ GameLoopState GameStartVersus() {
 	
 	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[PLAYER2].nowFlags & NOW_WAITING)) {
 		if (GameFlags & GAME_CHALLENGEDELAY) {
-			_0x6079299 = 2u;
+			UNK_6079299 = 2u;
 			Players[PLAYER1].nowFlags |= NOW_NOUPDATE;
 			Players[PLAYER2].nowFlags |= NOW_NOUPDATE;
 			if (GameButtonsDown[PLAYER1] == BUTTON_START && GameButtonsDown[PLAYER2] == BUTTON_START) {
-				_0x6079290++;
+				UNK_6079290++;
 			}
 			if (
 				GameButtonsDown[PLAYER1] == (BUTTON_START | BUTTON_2 | BUTTON_1) &&
 				GameButtonsDown[PLAYER2] == (BUTTON_START | BUTTON_2 | BUTTON_1)) {
-				_0x6079292++;
+				UNK_6079292++;
 			}
 		}
 		else {
 			SetPal(PALNUM_15, 1u, PALPTR(0xF9));
 			SetPal(PALNUM_14, 1u, PALPTR(0xF8));
-			_0x6079299 = 10u;
+			UNK_6079299 = 10u;
 			Game.state = 0u;
 			GameFlags &= ~(GAME_TWIN | GAME_NEWCHALLENGER | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10) | GAME_VERSUS | GAME_BIT11;
 			Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
@@ -216,28 +216,28 @@ GameLoopState GameStartVersus() {
 			// TODO: These could be signalling to start a fading background
 			// transition (|= 1u) and transition to the versus background (=
 			// 10u).
-			CurrentGameBg._0x12 = 10u;
-			CurrentGameBg._0x10 |= 1u;
+			CurrentGameBg.UNK_12 = 10u;
+			CurrentGameBg.UNK_10 |= 1u;
 			Game.numVersusRoundWins[PLAYER2] = 0u;
 			Game.numVersusRoundWins[PLAYER1] = 0u;
 			Game.numVersusRounds = 0u;
 			InitItems();
-			_0x601FAD0(); // TODO
-			if (_0x6079292 >= TIME(0, 1, 0)) {
+			UNK_601FAD0(); // TODO
+			if (UNK_6079292 >= TIME(0, 1, 0)) {
 				Players[PLAYER1].modeFlags |= MODE_CEMENT;
 				Players[PLAYER2].modeFlags |= MODE_CEMENT;
 			}
-			else if (_0x6079290 >= TIME(0, 1, 0)) {
+			else if (UNK_6079290 >= TIME(0, 1, 0)) {
 				Players[PLAYER1].modeFlags |= MODE_NOITEM;
 				Players[PLAYER2].modeFlags |= MODE_NOITEM;
 			}
 
-			while (_0x6064750 != NULL) {
+			while (UNK_6064750 != NULL) {
 				if (UpdateFrame()) {
 					return GAMELOOP_TEST;
 				}
 			}
-			_0x6029546(0, 20, 0, 6);
+			UNK_6029546(0, 20, 0, 6);
 		}
 	}
 	return GAMELOOP_RESTART;
@@ -252,7 +252,7 @@ void GameStartVersusRound() {
 		Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
 		Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
 		InitItems();
-		_0x601FAD0(); // TODO
+		UNK_601FAD0(); // TODO
 	}
 }
 
@@ -262,7 +262,7 @@ uint8_t NumVersusRoundsSetting() {
 	return NumVersusRounds[Settings[SETTING_NUMVERSUSROUNDS]];
 }
 
-GameLoopState _0x6008406(PlayerNum playerNum) {
+GameLoopState UNK_6008406(PlayerNum playerNum) {
 	bool startTestMode;
 	
 	NextPlayGameOver(&Players[playerNum]);
@@ -287,7 +287,7 @@ GameLoopState _0x6008406(PlayerNum playerNum) {
 	SetPal(PALNUM_14,1, PAL_MODENOTSELECTED);
 
 	do {
-		if (_0x6064750 == NULL) {
+		if (UNK_6064750 == NULL) {
 			return GAMELOOP_RESTART;
 		}
 	} while (!UpdateFrame());
@@ -295,13 +295,13 @@ GameLoopState _0x6008406(PlayerNum playerNum) {
 	return GAMELOOP_TEST;
 }
 
-GameLoopState _0x6008516() {
+GameLoopState UNK_6008516() {
 	GameLoopState state = GAMELOOP_RESTART;
 	// TODO
 	return state;
 }
 
-void _0x60088FC() {
+void UNK_60088FC() {
 	GameFlags = (GameFlags & ~GAME_BIT13) | GAME_NEWVERSUSROUND;
 	Game.numVersusRounds++;
 }
@@ -310,17 +310,17 @@ static GameLoopState GameStartDoubles() {
 	switch (Game.state) {
 	case 0u:
 		Game.state = 1u;
-		_0x6029546(2, 20, 0, 6);
+		UNK_6029546(2, 20, 0, 6);
 		break;
 
 	case 1u:
-		while (_0x6064750 != NULL) {
+		while (UNK_6064750 != NULL) {
 			if (UpdateGame()) {
 				return GAMELOOP_TEST;
 			}
 		}
 		Game.state++;
-		_0x6029546(0, 10, 0, 6);
+		UNK_6029546(0, 10, 0, 6);
 		break;
 
 	case 2u:
@@ -340,30 +340,30 @@ static GameLoopState GameStartDoubles() {
 }
 
 // TODO: Init from ROM data.
-ROMDATA Color _0x60328C4[NUMPALCOLORS_4BPP];
+ROMDATA Color UNK_60328C4[NUMPALCOLORS_4BPP];
 
 uint16_t GameStartPlayer;
 GameLoopState StartGameLoop() {
-	_0x602AA4C();
+	UNK_602AA4C();
 
 	if (UpdateFrame()) return GAMELOOP_TEST;
 
-	_0x6029546(4, 0, 0, 0);
+	UNK_6029546(4, 0, 0, 0);
 
-	while (_0x6064750) {
+	while (UNK_6064750) {
 		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
 	InitVideoSetters();
-	_0x602406E();
+	UNK_602406E();
 
 	// Sound.
-	_0x602EB4C();
-	_0x602EC5C();
-	_0x602E6B8();
-	_0x602E586();
+	UNK_602EB4C();
+	UNK_602EC5C();
+	UNK_602E6B8();
+	UNK_602E586();
 	StopMusic();
-	_0x602E72A(5);
+	UNK_602E72A(5);
 	Game.music = -1;
 
 	InitEntities();
@@ -380,24 +380,24 @@ GameLoopState StartGameLoop() {
 
 	Game.versusWinner = (Players[PLAYER1].nowFlags & NOW_STARTED) ? PLAYER1 : PLAYER2;
 
-	while (_0x6064750 != NULL) {
+	while (UNK_6064750 != NULL) {
 		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
-	_0x60169DC();
-	_0x6026FCA(CurrentGameBg._0x1E, 1);
-	SetPal(202u, 1u, _0x60328C4);
+	UNK_60169DC();
+	UNK_6026FCA(CurrentGameBg.UNK_1E, 1);
+	SetPal(202u, 1u, UNK_60328C4);
 	NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
 	bool downNextPalCycle = false;
 	uint32_t numPalCycleFrames = 0u;
-	_0x6029546(0u, 10, 0, 6);
+	UNK_6029546(0u, 10, 0, 6);
 	Player *player1 = &Players[PLAYER1];
 	Player *player2 = &Players[PLAYER2];
 
 	GameLoopState state = GAMELOOP_RESTART;
 	while (state == GAMELOOP_RESTART) {
 		if (UpdateGame()) {
-			_0x602406E();
+			UNK_602406E();
 			return GAMELOOP_TEST;
 		}
 
@@ -435,11 +435,11 @@ GameLoopState StartGameLoop() {
 			}
 
 			if ((GameFlags & GAME_VERSUS) && !(GameFlags & GAME_BIT11)) {
-				state = _0x6008516(); // TODO
+				state = UNK_6008516(); // TODO
 			}
 
 			if ((GameFlags & GAME_VERSUS) && (GameFlags & GAME_BIT13)) {
-				_0x60088FC();
+				UNK_60088FC();
 			}
 
 			if (!(GameFlags & GAME_VERSUS) && (GameFlags & GAME_DOUBLES) && (!(player1->nowFlags & NOW_STARTED) || !(player2->nowFlags & NOW_STARTED))) {
@@ -451,21 +451,21 @@ GameLoopState StartGameLoop() {
 				GameFlags = GAME_TWIN;
 				player1->nowFlags |= NOW_INIT;
 				player2->nowFlags |= NOW_INIT;
-				_0x6029546(0, 10, 0, 6);
+				UNK_6029546(0, 10, 0, 6);
 			}
 
 			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
-				_0x6079299 = 2;
-				if (++_0x6079294 < 180u) {
+				UNK_6079299 = 2;
+				if (++UNK_6079294 < 180u) {
 					state = GAMELOOP_STOP;
 				}
 
 				if (NextScreenVersionTitle()) {
-					_0x6079294 = 0;
+					UNK_6079294 = 0;
 				}
 			}
 			else {
-				_0x6079294 = 0;
+				UNK_6079294 = 0;
 			}
 		}
 	}
@@ -473,25 +473,25 @@ GameLoopState StartGameLoop() {
 	InitSeed += Rand(1192u) + 1u;
 
 	if (state == GAMELOOP_STOP) {
-		_0x6029546(2, 30, 72, 6);
+		UNK_6029546(2, 30, 72, 6);
 	}
 
 	do {
-		if (_0x6064750 == NULL) {
+		if (UNK_6064750 == NULL) {
 			CheckSaveRankings();
-			_0x602406E();
-			_0x602E586();
+			UNK_602406E();
+			UNK_602E586();
 			return GAMELOOP_STOP;
 		}
 	} while (!UpdateFrame());
-	_0x602406E();
+	UNK_602406E();
 
 	return GAMELOOP_TEST;
 }
 
 // TODO: ...
 
-int16_t _0x6008E38(int16_t level) {
+int16_t UNK_6008E38(int16_t level) {
 	if (level < 495) {
 		return 1;
 	}
@@ -515,7 +515,7 @@ int16_t _0x6008E38(int16_t level) {
 	}
 }
 
-int16_t _0x6008EC8(int16_t level) {
+int16_t UNK_6008EC8(int16_t level) {
 	if (level < 280) {
 		return 1;
 	}
@@ -527,7 +527,7 @@ int16_t _0x6008EC8(int16_t level) {
 	}
 }
 
-int16_t _0x6008EEC(int16_t level) {
+int16_t UNK_6008EEC(int16_t level) {
 	if (level < 280) {
 		return 3;
 	}

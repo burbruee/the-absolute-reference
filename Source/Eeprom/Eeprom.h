@@ -23,10 +23,10 @@ typedef enum Region {
 } Region;
 
 void PushEepromBit(bool bit);
-void _0x602F704();
-void _0x602F7DC();
-void _0x602F8BC();
-void _0x602FA7E();
+void UNK_602F704();
+void UNK_602F7DC();
+void UNK_602F8BC();
+void UNK_602FA7E();
 void WriteSettings();
 void ReadEepromByte(uint8_t offset);
 uint8_t ReadEeprom(uint8_t offset, void* destination, size_t size);

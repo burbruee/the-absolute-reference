@@ -19,30 +19,30 @@ bool NextScreenVersionTitle() {
 }
 
 static void InitDemoLoop() {
-	_0x6029814(0u, 0u, 0u, 0xFFu);
+	UNK_6029814(0u, 0u, 0u, 0xFFu);
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x66u;
-	_0x602AA4C();
-	if (_0x6064750 != NULL) {
-		_0x6024030(_0x6064750);
+	UNK_602AA4C();
+	if (UNK_6064750 != NULL) {
+		UNK_6024030(UNK_6064750);
 	}
-	_0x6023790();
-	_0x602AB9E();
+	UNK_6023790();
+	UNK_602AB9E();
 	FreePalCycles(FREEALLPALCYCLES);
-	_0x602419C();
-	_0x60169DC();
-	_0x602E72A(0u);
+	UNK_602419C();
+	UNK_60169DC();
+	UNK_602E72A(0u);
 	InitPlayers();
 	InitModeCodes(&Players[PLAYER1]);
 	InitModeCodes(&Players[PLAYER2]);
-	_0x6064750 = NULL;
+	UNK_6064750 = NULL;
 	Demo = false;
 	ScreenTime = 0u;
 	DemoScreen = DEMOSCREEN_START;
 	DemoWaitTime = 0u;
 	GameStartPlayer = STARTPLAYER_NONE;
 	UpdateFrame();
-	_0x602AA16();
+	UNK_602AA16();
 }
 
 static ScreenState StartRankingScreen();
@@ -117,21 +117,21 @@ static ScreenState StartRankingScreen() {
 }
 
 static ScreenState StartCopyrightScreen() {
-	_0x602AA4C();
+	UNK_602AA4C();
 	if (UpdateFrame()) {
 		return SCREEN_TESTMODE;
 	}
 
-	_0x602AB9E();
+	UNK_602AB9E();
 	FreePalCycles(FREEALLPALCYCLES);
-	_0x6029814(0u, 0u, 0x00u, 0xFFu);
+	UNK_6029814(0u, 0u, 0x00u, 0xFFu);
 
 	for (bool nextScreenVersionTitle = false; !nextScreenVersionTitle; nextScreenVersionTitle = NextScreenVersionTitle()) {
-		if (_0x6064750 == NULL) {
+		if (UNK_6064750 == NULL) {
 			InitVideoSetters();
-			_0x602406E();
+			UNK_602406E();
 			InitEntities();
-			_0x6026FCA(CurrentGameBg._0x1E, 0u);
+			UNK_6026FCA(CurrentGameBg.UNK_1E, 0u);
 			SetPal(160u, NUMPALCOLORS_4BPP, PALPTR(0x205));
 
 			for (int16_t frames = 0; frames < 3; frames++) {
@@ -142,31 +142,31 @@ static ScreenState StartCopyrightScreen() {
 
 			SpritePriority[0] = 0x13u;
 			SpritePriority[1] = 0x66u;
-			_0x6029498(6);
+			UNK_6029498(6);
 			SetBackdropColor(COLOR(0u, 0u, 0u, 0u));
 			Alpha[4] = 0x1Fu;
-			_0x6029546(0, 0x14, 0, 6);
+			UNK_6029546(0, 0x14, 0, 6);
 
 			for (int16_t frames = 300; frames != 0; frames--) {
 				if (UpdateFrame()) {
-					_0x602406E();
+					UNK_602406E();
 					return SCREEN_TESTMODE;
 				}
 				if (NextScreenVersionTitle()) {
-					_0x602406E();
+					UNK_602406E();
 					return SCREEN_VERSIONTITLE;
 				}
 				ShowObject(OBJECTPTR(0x658), 0, 0, 160u, 40u); // TODO: Define a constant for the object pointer.
 			}
 
 			for (bool stopDemoLoop = false; !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
-				if (_0x6064750 == NULL) {
+				if (UNK_6064750 == NULL) {
 					UpdateFrame();
-					_0x602406E();
-					_0x6029546(2, 10, 0, 6);
+					UNK_602406E();
+					UNK_6029546(2, 10, 0, 6);
 					for (int16_t frames = 0; frames < 10; frames++) {
 						if (UpdateFrame()) {
-							_0x602406E();
+							UNK_602406E();
 							return SCREEN_TESTMODE;
 						}
 					}

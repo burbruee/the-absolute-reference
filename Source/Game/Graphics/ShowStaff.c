@@ -161,10 +161,10 @@ void ShowStaff(Player* player) {
 	}
 }
 
-static uint16_t _0x6035670[NUMSTAFFOBJECTS];
-void _0x6021E64() {
+static uint16_t UNK_6035670[NUMSTAFFOBJECTS];
+void UNK_6021E64() {
 	uint16_t var0[NUMSTAFFOBJECTS];
-	MemCopy(sizeof(var0), var0, _0x6035670);
+	MemCopy(sizeof(var0), var0, UNK_6035670);
 }
 
 static void UpdateEntityStaff(Entity* entity) {

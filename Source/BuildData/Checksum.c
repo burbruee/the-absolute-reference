@@ -61,35 +61,35 @@ bool ChecksumPass() {
 	else {
 		// Sound ROM checksum calculation.
 		if (ChecksumDataSrcPtr->checksumFlags & CHECKSUM_LAST) {
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 2u);
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(5, 1u);
 
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 3u);
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(5, 0u);
 
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 4u);
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(5, 0u);
 
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 5u);
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(5, 0u);
 
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 6u);
 			for (size_t i = 0x400000u; i != 0u; i--) {
 				while (SOUNDCTRL_READ(0) & 1);
 				ChecksumDataDstPtr->data[2] += SOUNDCTRL_READ(5);
 			}
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 2u);
-			_0x602EC6C();
+			UNK_602EC6C();
 			SOUNDCTRL_WRITE(5, 0u);
 		}
 		else {
@@ -132,11 +132,11 @@ bool ShowChecksumPass() {
 		ChecksumDataDstPtr = ChecksumDataDst;
 		NumChecksumFrames = TIME(0, 2, 0);
 		GraphicsCheckBank = 0x60u;
-		_0x602BC50(0u);
+		UNK_602BC50(0u);
 	}
 
 	ChecksumPass();
-	_0x602BC58(0x7Du);
+	UNK_602BC58(0x7Du);
 
 	size_t romNum = 0u;
 	int16_t offsetY = 0;
@@ -203,7 +203,7 @@ bool ShowChecksumPass() {
 		}
 	}
 
-	_0x602BC58(0x7Fu);
+	UNK_602BC58(0x7Fu);
 	if (ChecksumDataSrcPtr->checksumFlags == CHECKSUM_END) {
 		if (NumChecksumFrames == 0u) {
 			return false;

@@ -23,7 +23,7 @@ void PushEepromBit(bool bit) {
 	for (uint8_t i = 0u; i < 3u; i++);
 }
 
-void _0x602F704() {
+void UNK_602F704() {
 	EEPROM[0] = 0xA2;
 	for (uint32_t i = 0u; i < 3u; i++);
 
@@ -49,7 +49,7 @@ void _0x602F704() {
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
-void _0x602F7DC() {
+void UNK_602F7DC() {
 	EEPROM[0] = 0xA2;
 	for (uint32_t i = 0u; i < 3u; i++);
 
@@ -75,7 +75,7 @@ void _0x602F7DC() {
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
-void _0x602F8BC() {
+void UNK_602F8BC() {
 	for (uint8_t i = 0u; i < lengthof(Settings); i++) {
 		EEPROM[0] = 0xA2u;
 		for (uint8_t j = 0u; j < 3u; j++);
@@ -116,7 +116,7 @@ void _0x602F8BC() {
 	}
 }
 
-void _0x602FA7E() {
+void UNK_602FA7E() {
 	// TODO
 }
 

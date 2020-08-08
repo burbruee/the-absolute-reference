@@ -17,13 +17,13 @@ extern const char* const BuildDate; // TODO: "NA (Month-three-character) (24-hou
 extern const uint16_t PalDataLength;
 extern const uint16_t NumBgMaps;
 
-extern const uint32_t _0x40014;
+extern const uint32_t UNK_40014;
 extern const uint16_t NumPalLists;
 
 extern const int16_t NumObjectData;
 extern const int16_t NumObjects;
 
-extern const int16_t _0x4001E; // TODO: Could be the number of palettes (with 256-color palettes maybe counting as one).
+extern const int16_t UNK_4001E; // TODO: Could be the number of palettes (with 256-color palettes maybe counting as one).
 // TODO: Fix the pointers here.
 // BuildChecksumDataPtr and SequenceDataTablePtr are correct.
 extern ROMDATA Color* const PalDataPtr;
@@ -44,6 +44,6 @@ extern ROMDATA ObjectData* const ObjectDataTablePtr;
 extern ROMDATA Color** const PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 
 extern const Checksum* const BuildChecksumDataPtr;
-extern const uint32_t _0x40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
+extern const uint32_t UNK_40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
-extern ROMDATA Color** const _0x40048;
+extern ROMDATA Color** const UNK_40048;

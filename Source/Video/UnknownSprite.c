@@ -3,17 +3,17 @@
 #include "Lib/Macros.h"
 #include "BuildData/BuildData.h"
 
-int16_t _0x602B7D8(const void* data, int16_t y, int16_t x) {
-    int16_t i = SpriteAdderNameTable[_0x6061932.tempSprite[6]];
-	_0x6061932.tempSprite[6]--;
+int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
+    int16_t i = SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+	UNK_6061932.tempSprite[6]--;
     SpriteAdders[i].data = data;
-    SpriteAdders[i]._0x2B = 5u;
+    SpriteAdders[i].UNK_2B = 5u;
     SpriteAdders[i].y = y;
     SpriteAdders[i].x = x;
-    SpriteAdders[i]._0x34 = _0x6061932._0x10;
-    SpriteAdders[i]._0x36 = 1;
-    SpriteAdders[i].layer = _0x6061932._0x12;
-    SpriteAdders[i]._0x2C &= ~0x8000u;
+    SpriteAdders[i].UNK_34 = UNK_6061932.UNK_10;
+    SpriteAdders[i].UNK_36 = 1;
+    SpriteAdders[i].layer = UNK_6061932.UNK_12;
+    SpriteAdders[i].UNK_2C &= ~0x8000u;
     SpriteAdders[i].bppAlphaTileTop = 0u;
     SpriteAdders[i].palNum = 0u;
     SpriteAdders[i].flipXBgPri = 3u;
@@ -23,72 +23,72 @@ int16_t _0x602B7D8(const void* data, int16_t y, int16_t x) {
     return i;
 }
 
-void _0x602BB0C() {
-	for (size_t i = _0x6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
-		if (SpriteAdders[SpriteAdderNameTable[i]]._0x2B == 5u) {
-			SpriteAdders[SpriteAdderNameTable[i]]._0x2B = 0u;
-			SpriteAdders[SpriteAdderNameTable[i]]._0x2C = 0x8000u;
-			_0x6061932.tempSprite[6]++;
-			if (_0x6061932.tempSprite[6] != i) {
+void UNK_602BB0C() {
+	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
+		if (SpriteAdders[SpriteAdderNameTable[i]].UNK_2B == 5u) {
+			SpriteAdders[SpriteAdderNameTable[i]].UNK_2B = 0u;
+			SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
+			UNK_6061932.tempSprite[6]++;
+			if (UNK_6061932.tempSprite[6] != i) {
 				uint16_t* var0 = &SpriteAdderNameTable[i];
 
-				// Swap *adderIndex and SpriteAdderNameTable[_0x6061932.tempSprite[6]].
-				*var0 ^= SpriteAdderNameTable[_0x6061932.tempSprite[6]];
-				SpriteAdderNameTable[_0x6061932.tempSprite[6]] ^= *var0;
-				*var0 ^= SpriteAdderNameTable[_0x6061932.tempSprite[6]];
+				// Swap *adderIndex and SpriteAdderNameTable[UNK_6061932.tempSprite[6]].
+				*var0 ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+				SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= *var0;
+				*var0 ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 			}
 		}
 	}
 }
 
-void _0x602BC50(uint8_t arg0) {
-	_0x6061932.tempSprite[7] = arg0;
+void UNK_602BC50(uint8_t arg0) {
+	UNK_6061932.tempSprite[7] = arg0;
 }
 
-void _0x602BC58(uint8_t arg0) {
-	_0x6061932._0x12 = arg0;
+void UNK_602BC58(uint8_t arg0) {
+	UNK_6061932.UNK_12 = arg0;
 }
 
-void _0x602C0F8(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
+void UNK_602C0F8(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
-void _0x602C224(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
+void UNK_602C224(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
-void _0x602C3EE(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
+void UNK_602C3EE(AddSpriteData* data, const void* sequence, int16_t x, int16_t y, uint16_t type) {
 	// TODO
 }
 
-void _0x602C5C2() {
+void UNK_602C5C2() {
 	const void* const sequenceData = SequenceDataTablePtr[1];
 
-	for (int16_t i = _0x6061932.tempSprite[6] + 1, * adderIndex = &SpriteAdderNameTable[i]; i < lengthof(SpriteAdders); i++, adderIndex++) {
+	for (int16_t i = UNK_6061932.tempSprite[6] + 1, * adderIndex = &SpriteAdderNameTable[i]; i < lengthof(SpriteAdders); i++, adderIndex++) {
 		int16_t j = *adderIndex;
 		AddSpriteData* adderData = &SpriteAdders[j];
 
 		SpriteAdders[j].flipYSprPriH = 0u;
 		SpriteAdders[j].flipXBgPriW = 0u;
 
-		uint16_t type = SpriteAdders[j]._0x36;
+		uint16_t type = SpriteAdders[j].UNK_36;
 		int16_t y = SpriteAdders[j].y, x = SpriteAdders[j].x;
 		if (y <= VIDEO_HEIGHT && x <= VIDEO_WIDTH) {
-			SpriteAdders[j].palNum = (SpriteAdders[j].palNum == 0u) ? _0x6061932.tempSprite[7] : SpriteAdders[j].palNum;
+			SpriteAdders[j].palNum = (SpriteAdders[j].palNum == 0u) ? UNK_6061932.tempSprite[7] : SpriteAdders[j].palNum;
 			SpriteAdders[j].flipXBgPriW = (SpriteAdders[j].flipXBgPri & 3u) << 4;
 
-			switch (SpriteAdders[j]._0x2B) {
+			switch (SpriteAdders[j].UNK_2B) {
 			case 5u:
-				_0x602C3EE(adderData, sequenceData, x, y, type); // TODO
+				UNK_602C3EE(adderData, sequenceData, x, y, type); // TODO
 				break;
 
 			case 6u:
 				type &= ~0x8000;
 				if (type == 4u || type == 5u || type == 6u) {
-					_0x602C0F8(adderData, sequenceData, x, y, type); // TODO
+					UNK_602C0F8(adderData, sequenceData, x, y, type); // TODO
 				}
 				else {
-					_0x602C224(adderData, sequenceData, x, y, type); // TODO
+					UNK_602C224(adderData, sequenceData, x, y, type); // TODO
 				}
 				break;
 

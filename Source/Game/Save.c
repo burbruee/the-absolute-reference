@@ -4,7 +4,7 @@
 
 uint32_t CoinCount;
 
-// TODO: _0x6065644 ... _0x606564C
+// TODO: UNK_6065644 ... UNK_606564C
 
 static DATA(SaveMemory, 0x100);
 // Place save data at the end of save memory, while guaranteeing alignment for

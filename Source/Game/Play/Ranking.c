@@ -71,17 +71,17 @@ static const ObjectData* ObjectTableRankingPlaces[NUMRANKINGPLACES + 1] = {
 };
 
 static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palNum, uint16_t layer);
-static void _0x6011AD2(uint32_t score, int16_t y, int16_t x);
+static void UNK_6011AD2(uint32_t score, int16_t y, int16_t x);
 static void ShowRankingScore(uint32_t score, int16_t y, int16_t x);
 static void ShowRankingTime(uint32_t time, int16_t y, int16_t x);
-static void _0x6011D28(int16_t y, int16_t x);
-static void _0x6011DB0(int16_t y, int16_t x);
-static void _0x6011DF0(int16_t y, int16_t x);
-static void _0x6011E48(int16_t y, int16_t x);
-static void _0x6011E88(Entity* entity);
-// _0x60122D8
-// _0x6012354
-// _0x6012828
+static void UNK_6011D28(int16_t y, int16_t x);
+static void UNK_6011DB0(int16_t y, int16_t x);
+static void UNK_6011DF0(int16_t y, int16_t x);
+static void UNK_6011E48(int16_t y, int16_t x);
+static void UNK_6011E88(Entity* entity);
+// UNK_60122D8
+// UNK_6012354
+// UNK_6012828
 
 static uint32_t RankingsChecksum();
 
@@ -120,7 +120,7 @@ void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x) {
 	ShowClearTime(clearTime, y + 32, x);
 }
 
-void _0x6011840() {
+void UNK_6011840() {
 	// TODO: Empty. Check TGM2 to see if there's code there.
 }
 
@@ -129,11 +129,11 @@ void ShowSectionTimes() {
 	ShowSectionTimesEx(SectionTimes, 40, 170);
 }
 
-void _0x6011854() {
+void UNK_6011854() {
 	// TODO: Check TGM2 to see if this contains any code. Just calls ShowSectionTimes() in TAP.
 	ShowSectionTimes();
 }
-void _0x6011858() {
+void UNK_6011858() {
 	// TODO: Check TGM2 to see if this contains any code. Does nothing in TAP.
 }
 
@@ -235,7 +235,7 @@ static void ShowRankingName(const char* name, int16_t y, int16_t x, uint8_t palN
 	}
 }
 
-static void _0x6011AD2(uint32_t score, int16_t y, int16_t x) {
+static void UNK_6011AD2(uint32_t score, int16_t y, int16_t x) {
 	if (score > 999999u) {
 		score = 999999u;
 	}
@@ -300,7 +300,7 @@ static void ShowRankingTime(uint32_t time, int16_t y, int16_t x) {
 	DisplayObject(ObjectTableRankingDigits[centiseconds % 10], y, x + 65, 0u, 110u);
 }
 
-static void _0x6011D28(int16_t y, int16_t x) {
+static void UNK_6011D28(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x221), y, x + 31, 0u, 110u);
 	ShowObject(OBJECTPTR(0x222), y, x + 85, 0u, 110u);
 	ShowObject(OBJECTPTR(0x223), y, x + 126, 0u, 110u);
@@ -308,32 +308,32 @@ static void _0x6011D28(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x226), y, x + 215, 0u, 110u);
 }
 
-static void _0x6011DB0(int16_t y, int16_t x) {
+static void UNK_6011DB0(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x221), y, x + 42, 0u, 110u);
 	ShowObject(OBJECTPTR(0x227), y, x + 214, 0u, 110u);
 }
 
-static void _0x6011DF0(int16_t y, int16_t x) {
+static void UNK_6011DF0(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x225), y, x + 10, 0, 110u);
 	ShowObject(OBJECTPTR(0x221), y, x + 97, 0u, 110u);
 	ShowObject(OBJECTPTR(0x222), y, x + 166, 0u, 110u);
 	ShowObject(OBJECTPTR(0x223), y, x + 229, 0u, 110u);
 }
 
-static void _0x6011E48(int16_t y, int16_t x) {
+static void UNK_6011E48(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x224), y, x + 35, 0u, 110u);
 	ShowObject(OBJECTPTR(0x223), y, x + 230, 0u, 110u);
 }
 
 // TODO: Entity updater.
-// _0x6011E88
+// UNK_6011E88
 
-// TODO: Instantiates an entity updated by _0x6011E88
-// _0x60122D8
+// TODO: Instantiates an entity updated by UNK_6011E88
+// UNK_60122D8
 
-// _0x6012354
+// UNK_6012354
 
-// _0x6012828
+// UNK_6012828
 
 static uint32_t RankingsChecksum() {
 	uint32_t checksum = 0u;

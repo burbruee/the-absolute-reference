@@ -15,7 +15,7 @@ static const Fixed32 TrigTable[65] = {
 	F32(1, 0x0000)
 };
 
-uint8_t _0x602B4E4(int32_t arg0, int32_t arg1) {
+uint8_t UNK_602B4E4(int32_t arg0, int32_t arg1) {
 	uint8_t retval;
 	
 	if (arg0 == 0) {

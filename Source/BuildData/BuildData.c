@@ -6,7 +6,7 @@
 #include "Video/BgMap.h"
 
 // TODO: Replace "NA" with the full year (2020, etc.). This is the build date
-// as defined in the original TAP ROM. _0x40048 can be removed to make room for
+// as defined in the original TAP ROM. UNK_40048 can be removed to make room for
 // the two additional characters in BuildDate, to keep the build data under
 // 0x80 bytes, as it's unused and redundant. And keep a comment saying this was
 // the original BuildDate in TAP, alongside the BuildDate in TGM2.
@@ -16,13 +16,13 @@ const uint16_t PalDataLength = lengthoffield(PalData, data);
 
 const uint16_t NumBgMaps = lengthof(BgMapTable);
 
-const uint32_t _0x40014 = 0u;
+const uint32_t UNK_40014 = 0u;
 const uint16_t NumPalLists = 19u;
 
 const int16_t NumObjectData = lengthoffield(ObjectDataTable, data);
 const int16_t NumObjects = 1682;
 
-const int16_t _0x4001E = 516;
+const int16_t UNK_4001E = 516;
 
 ROMDATA Color* const PalDataPtr = Pal.data;
 
@@ -42,5 +42,5 @@ ROMDATA ObjectData* const ObjectDataTablePtr = Objects.data;
 //ROMDATA RectData* const RectDataTablePtr = RectDataTable;
 ROMDATA Color** const PalTableDataPtr = PalTable.data;
 const Checksum* const BuildChecksumDataPtr = BuildChecksum.checksums;
-const uint32_t _0x40044 = 8u;
-ROMDATA Color** const _0x40048 = PalTable.data;
+const uint32_t UNK_40044 = 8u;
+ROMDATA Color** const UNK_40048 = PalTable.data;

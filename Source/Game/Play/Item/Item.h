@@ -104,7 +104,7 @@ typedef enum ItemCategory {
 void RemoveItems(Player* player);
 bool CheckDeactivateItem(Item* item);
 bool FreeFall(Player* player);
-bool _0x6018584(Player* player); // Unused.
+bool UNK_6018584(Player* player); // Unused.
 ItemCategory NoDisableGarbage(Item* item);
 
 bool ItemGood(Player* player);
@@ -112,7 +112,7 @@ bool ItemBad(Player* player);
 ItemCategory GetItemCategory(ItemType itemType);
 bool ItemConfusing(Player* player);
 
-void _0x601886C();
+void UNK_601886C();
 // NOTE: Unused. Not suggested to be used, since it doesn't work the same as
 // UpdateItems(), and the rest of the code depends on how UpdateItems() works.
 // Only included for the sake of completeness and preservation.

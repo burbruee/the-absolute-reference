@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 // TODO: Could be returning an Angle.
-uint8_t _0x602B4E4(int32_t, int32_t);
+uint8_t UNK_602B4E4(int32_t, int32_t);
 
-uint32_t _0x602B5C8(int32_t, int32_t);
+uint32_t UNK_602B5C8(int32_t, int32_t);
 
 // Angles range 0 to 255.
 // Convert radians angles: (radians_angle * 256) / 2pi

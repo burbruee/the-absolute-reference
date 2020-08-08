@@ -120,13 +120,13 @@ void ShowMedals(Player* player) {
 	}
 }
 
-void _0x6020ECE() {
+void UNK_6020ECE() {
 	NewPalCycle(211u, PALPTR(0xF5), PALPTR(0x20B), 2, PALCYCLETYPE_BOUNCE, 1u, 32u);  // Gold.
 	NewPalCycle(213u, PALPTR(0x20A), PALPTR(0x20D), 2, PALCYCLETYPE_BOUNCE, 1u, 32u); // Silver.
 	NewPalCycle(212u, PALPTR(0x208), PALPTR(0x20C), 2, PALCYCLETYPE_BOUNCE, 1u, 32u); // Bronze.
 }
 
-void _0x6020F50(uint16_t medals, int16_t y, int16_t x) {
+void UNK_6020F50(uint16_t medals, int16_t y, int16_t x) {
 	int32_t medalColorBit = 0;
 	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++, medalColorBit += 2, x += 48) {
 		MedalColor medalColor = (medals >> medalColorBit) & 3;

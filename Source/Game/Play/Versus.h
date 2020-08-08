@@ -1,3 +1,3 @@
 #pragma once
 
-void _0x601FAD0();
+void UNK_601FAD0();

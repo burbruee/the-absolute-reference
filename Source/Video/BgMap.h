@@ -12,9 +12,9 @@ typedef enum BgMapTileInfo {
 
 typedef struct BgMapHeader {
 	uint32_t tileInfo;
-	// TODO: I believe _0x4 and _0x6 are map dimensions in terms of VRAM rows/columns; verify this, after analyzing how the code writes VRAM for background maps.
-	uint16_t _0x4;
-	uint16_t _0x6;
+	// TODO: I believe UNK_4 and UNK_6 are map dimensions in terms of VRAM rows/columns; verify this, after analyzing how the code writes VRAM for background maps.
+	uint16_t UNK_4;
+	uint16_t UNK_6;
 } BgMapHeader;
 
 typedef struct BgMap16{

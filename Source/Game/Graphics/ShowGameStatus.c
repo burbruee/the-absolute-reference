@@ -364,7 +364,7 @@ void ShowOtherItemDescriptions(Item* item) {
 }
 
 // TODO: Name the objects used here.
-void _0x600FC50() {
+void UNK_600FC50() {
 	if (ScreenTime & 0x60) {
 		int16_t y, x;
 		if (Demo) {

@@ -62,19 +62,19 @@ extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define NUMALPHAS 8u
 #define Alpha (&VIDEOREGS[0x0])
 #define SpritePriority (&VIDEOREGS[0x08])
-#define _0x2405FFEA (VIDEOREGS[0x0A])
-#define _0x2405FFEB (VIDEOREGS[0x0B])
-#define _0x2405FFEC (VIDEOREGS[0x0C])
-#define _0x2405FFED (VIDEOREGS[0x0D])
+#define UNK_2405FFEA (VIDEOREGS[0x0A])
+#define UNK_2405FFEB (VIDEOREGS[0x0B])
+#define UNK_2405FFEC (VIDEOREGS[0x0C])
+#define UNK_2405FFED (VIDEOREGS[0x0D])
 #define VideoSetting (&VIDEOREGS[0x0E])
-#define _0x2405FFF0 (VIDEOREGS[0x10])
-#define _0x2405FFF1 (VIDEOREGS[0x11])
+#define UNK_2405FFF0 (VIDEOREGS[0x10])
+#define UNK_2405FFF1 (VIDEOREGS[0x11])
 void GraphicsCheckSetBank(size_t i, uint8_t value);
 #define GRAPHICSCHECK_SETBANK(i, value) GraphicsCheckSetBank((i), (value))
-#define _0x2405FFF4 (VIDEOREGS[0x14])
-#define _0x2405FFF5 (VIDEOREGS[0x15])
-#define _0x2405FFF6 (VIDEOREGS[0x16])
-#define _0x2405FFF7 (VIDEOREGS[0x17])
+#define UNK_2405FFF4 (VIDEOREGS[0x14])
+#define UNK_2405FFF5 (VIDEOREGS[0x15])
+#define UNK_2405FFF6 (VIDEOREGS[0x16])
+#define UNK_2405FFF7 (VIDEOREGS[0x17])
 #define BgMapBank (&VIDEOREGS[0x18])
 #define ScanlinesBank (&VIDEOREGS[0x1C])
 #define BgMapSetting (&VIDEOREGS[0x1E])
@@ -89,23 +89,23 @@ uint32_t GraphicsCheckRead(size_t i);
 void GraphicsCheckWrite(size_t i, uint32_t value);
 #define GRAPHICSCHECK_WRITE(i, value) GraphicsCheckWrite((i), (value));
 
-extern RAMDATA uint8_t _0xFFFFFE10;
-extern RAMDATA uint8_t _0xFFFFFE11;
-extern RAMDATA uint8_t _0xFFFFFE12;
-extern RAMDATA uint8_t _0xFFFFFE12;
-extern RAMDATA uint8_t _0xFFFFFE13;
-extern RAMDATA uint8_t _0xFFFFFE14;
-extern RAMDATA uint8_t _0xFFFFFE15;
-extern RAMDATA uint8_t _0xFFFFFE16;
+extern RAMDATA uint8_t UNK_FFFFFE10;
+extern RAMDATA uint8_t UNK_FFFFFE11;
+extern RAMDATA uint8_t UNK_FFFFFE12;
+extern RAMDATA uint8_t UNK_FFFFFE12;
+extern RAMDATA uint8_t UNK_FFFFFE13;
+extern RAMDATA uint8_t UNK_FFFFFE14;
+extern RAMDATA uint8_t UNK_FFFFFE15;
+extern RAMDATA uint8_t UNK_FFFFFE16;
 
-extern RAMDATA uint16_t _0xFFFFFE60;
-extern RAMDATA uint16_t _0xFFFFFE66;
+extern RAMDATA uint16_t UNK_FFFFFE60;
+extern RAMDATA uint16_t UNK_FFFFFE66;
 
-extern RAMDATA uint8_t _0xFFFFFE92;
+extern RAMDATA uint8_t UNK_FFFFFE92;
 
-extern RAMDATA uint32_t _0xFFFFFFE0;
-extern RAMDATA uint32_t _0xFFFFFFE4;
-extern RAMDATA uint32_t _0xFFFFFFE8;
-extern RAMDATA uint32_t _0xFFFFFFEC;
-extern RAMDATA uint32_t _0xFFFFFFF0;
-extern RAMDATA uint32_t _0xFFFFFFF8;
+extern RAMDATA uint32_t UNK_FFFFFFE0;
+extern RAMDATA uint32_t UNK_FFFFFFE4;
+extern RAMDATA uint32_t UNK_FFFFFFE8;
+extern RAMDATA uint32_t UNK_FFFFFFEC;
+extern RAMDATA uint32_t UNK_FFFFFFF0;
+extern RAMDATA uint32_t UNK_FFFFFFF8;
