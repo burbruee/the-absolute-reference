@@ -49,7 +49,7 @@ static const char RankingCodeChars[RANKINGCODEBASE] = {
 // code[arg0], code[15]
 // Unused. Not sure what it was intended for.
 void UNK_6023128(size_t arg0) {
-	RankingCodeNode *code = Temp;
+	TEMPPTR(RankingCodeNode, code);
 
 	arg0--;
 
@@ -64,7 +64,7 @@ void UNK_6023128(size_t arg0) {
 
 void NewRankingCode(Player *player) {
 	// Init digit nodes.
-	RankingCodeNode *code = (RankingCodeNode*)Temp;
+	TEMPPTR(RankingCodeNode, code);
 	code[0].previous = &code[NUMRANKINGCODEDIGITS - 1];
 	for (size_t i = 0; i < NUMRANKINGCODEDIGITS - 1; i++) {
 		code[i].digit = 0u;
@@ -163,7 +163,10 @@ void NewRankingCode(Player *player) {
 	code[1].digit |= (player->grade & 7) << 1;
 	code[0].digit  = (player->grade >> 3) & 3;
 
-	ModeSelection selection;
+	// BUG: This was uninitialized originally, but is initialized here to
+	// silence compiler warnings. The behavior of the code guarantees a mode
+	// will be selected, though.
+	ModeSelection selection = MODESELECTION_NORMAL;
 	if (player->modeFlags & MODE_TADEATH) {
 		selection = MODESELECTION_TADEATH;
 	}

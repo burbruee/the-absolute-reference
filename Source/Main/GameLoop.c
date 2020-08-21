@@ -63,7 +63,7 @@ void InitGame() {
 		UNK_6024030(UNK_6064750);
 	}
 
-	UNK_602419C();
+	InitSpriteAdders();
 	UNK_602AB9E();
 	FreePalCycles(FREEALLPALCYCLES);
 

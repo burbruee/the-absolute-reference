@@ -1,3 +1,3 @@
 #include "Game/Temp.h"
 
-DATA(Temp, 0x1000);
+void* Temp[0x400];

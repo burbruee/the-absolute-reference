@@ -8,6 +8,7 @@
 #include "Video/HwSprite.h"
 #include "Main/Frame.h"
 #include "Lib/Math.h"
+#include <assert.h>
 
 typedef struct BlockExplosionData {
 	ObjectData* objectTable;
@@ -45,7 +46,9 @@ void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 		data->x = player->screenPos[0] + 8 * col - 8 * (player->matrixWidth / 2);
 		data->y = player->screenPos[1] - 8 * row - 6;
 		data->objectTable = ObjectTablesBlockExplosions[Rand(8u) % 8];
-		data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+		const uint8_t blockNum = TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE);
+		assert(blockNum < lengthof(PalNumTableNormalBlocks));
+		data->palNum = PalNumTableNormalBlocks[blockNum];
 	}
 }
 
@@ -106,7 +109,7 @@ static void UpdateEntityFireworks(Entity* entity) {
 
 static void UpdateEntityAllClear(Entity* entity);
 
-void ShowAllClear(Player* player, int16_t row, int16_t col) {
+void ShowAllClear(Player* player, int16_t row, int16_t col, bool unused) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityAllClear;
@@ -165,7 +168,9 @@ void UNK_60173B4(Player* player, int16_t row, int16_t col) {
 		const ObjectData** objectTable = data->objectTables;
 		for (size_t i = 0; i < 2; i++) {
 			*objectTable = ObjectTablesBlockExplosions[Rand(8u) % 8];
-			data->palNum = PalNumTableNormalBlocks[TOBLOCKNUM(player->activeBlock & BLOCK_TYPE)];
+			const uint8_t blockNum = TOBLOCKNUM(player->activeBlock & BLOCK_TYPE);
+			assert(blockNum < lengthof(PalNumTableNormalBlocks));
+			data->palNum = PalNumTableNormalBlocks[blockNum];
 		}
 	}
 }
@@ -213,7 +218,9 @@ void ShowLineClear(Player* player, int16_t row) {
 			if (player->modeFlags & MODE_BIG) {
 				if (row % 3 == col % 3) {
 					data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
-					data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+					const uint8_t blockNum = TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE);
+					assert(blockNum < lengthof(PalNumTableNormalBlocks));
+					data->palNums[col - 1] = PalNumTableNormalBlocks[blockNum];
 				}
 				else {
 					data->objectTables[col - 1] = NULL;
@@ -222,7 +229,9 @@ void ShowLineClear(Player* player, int16_t row) {
 			else {
 				if (row % 2 == col % 2) {
 					data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
-					data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+					const uint8_t blockNum = TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE);
+					assert(blockNum < lengthof(PalNumTableNormalBlocks));
+					data->palNums[col - 1] = PalNumTableNormalBlocks[blockNum];
 				}
 				else {
 					data->objectTables[col - 1] = NULL;
@@ -400,7 +409,9 @@ static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, in
 		startPalNum = PalNumTableNormalBlocks[Rand(7u)];
 	}
 	else {
-		startPalNum = PalNumTableNormalBlocks[(activeBlock & BLOCK_TYPE) - BLOCKTYPE_I];
+		const uint8_t blockNum = TOBLOCKNUM(activeBlock & BLOCK_TYPE);
+		assert(blockNum < lengthof(PalNumTableNormalBlocks));
+		startPalNum = PalNumTableNormalBlocks[blockNum];
 	}
 	palNum += startPalNum;
 

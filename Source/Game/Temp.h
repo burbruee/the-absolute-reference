@@ -3,4 +3,6 @@
 #include "Lib/Macros.h"
 
 // Temporary data available for any use.
-extern DATA(Temp, 0x1000);
+extern void* Temp[0x400];
+
+#define TEMPPTR(type, name) type* name = (type*)Temp

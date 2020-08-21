@@ -30,28 +30,28 @@ const char* RegionMessageTaiwan[1] = {
 };
 
 void InitVideo() {
-	_0x2405FFEA = 0x20u;
-	_0x2405FFEC = 0x0Au;
-	_0x2405FFED = 0x17u;
+	UNK_2405FFEA = 0x20u;
+	UNK_2405FFEC = 0x0Au;
+	UNK_2405FFED = 0x17u;
 	VideoSettings[0] = 0x28u;
 	VideoSettings[1] = 0xB8u;
-	_0x2405FFF0 = 0x00u;
-	_0x2405FFF1 = 0xAAu;
+	UNK_2405FFF0 = 0x00u;
+	UNK_2405FFF1 = 0xAAu;
 	VideoGraphicsCheckBank[0] = 0x30u;
 	IRQCTRL[0] = 0u;
 	IRQCTRL[0] |= 0x84u;
 	IRQCTRL[1] |= 0x80u;
-	_0x2405FFF4 = 0x83u;
-	_0x2405FFF5 = 0xFFu;
-	_0x2405FFF7 = 0x0Eu;
+	UNK_2405FFF4 = 0x83u;
+	UNK_2405FFF5 = 0xFFu;
+	UNK_2405FFF7 = 0x0Eu;
 	BgMapSettings[0] = 0x00u;
 	BgMapSettings[1] = 0x00u;
 	SpritePriority[0] = 0x35u;
 	SpritePriority[1] = 0x67u;
-	_0x2405FFEB = 0x87u;
+	UNK_2405FFEB = 0x87u;
 	ScanlinesBank[0] = 0x08u;
 
-	for (size_t i = 0u; i < NUMALPHAVALUES; i++) {
+	for (size_t i = 0u; i < NUMALPHAS; i++) {
 		AlphaValues[i] = 0x0u;
 	}
 
@@ -75,4 +75,4 @@ void SetSystemGraphicDataPtr() {
 }
 
 // NOTE: Unused.
-void _0x6000AEC() {}
+void UNK_6000AEC() {}

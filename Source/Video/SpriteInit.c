@@ -7,7 +7,6 @@
 // Case 3 does nothing.
 // Case 4 appears to be like DisplayObjectEx, as it supports scaling inputs.
 // Case 5 appears similar to case 4, with some differences in its inputs.
-// TODO: Looks like a good name could be "AddSprite(SpriteSetType type, SpriteSetData* data)".
 void AddSprite(AddSpriteType type, AddSpriteData* data) {
 	const ObjectData* object = data->data;
 	switch (type) {
@@ -66,7 +65,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		UNK_6061932.tempSprite[0] = data->y;
 		UNK_6061932.tempSprite[1] = data->x;
 		// Set sprite's vertical flip, sprite priority, height, and height scale.
-		UNK_6061932.tempSprite[2] = ((*object)[2] & (OBJECT_SPRPRI | OBJECT_H)) | UNSCALED;
+		UNK_6061932.tempSprite[2] = ((*object)[2] & ~OBJECT_SCALEY) | UNSCALED;
 		// Set sprite's horizontal flip, background priority, width, and width scale.
 		UNK_6061932.tempSprite[3] = (data->flipXBgPri << 12) | ((*object)[3] & ~OBJECT_SCALEX) | UNSCALED;
 		// Set sprite's palette, BPP, alpha, and upper 3 tile number bits.
@@ -117,8 +116,8 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 
 	case ADDSPRITE_5:
 		// Set X and Y position of the sprite, but clear all other bits in words 0 and 1.
-        UNK_6061932.tempSprite[0] = data->y1 & OBJECT_Y;
-        UNK_6061932.tempSprite[1] = data->x1 & OBJECT_X;
+		UNK_6061932.tempSprite[0] = OBJECT_TOY(data->y1);
+		UNK_6061932.tempSprite[1] = OBJECT_TOX(data->x1);
 		// Set sprite's vertical flip, unknown word 2 bit, sprite priority, height, and height scale.
         UNK_6061932.tempSprite[2] = (data->flipYSprPriH << 8) | data->scaleY;
 		// Set sprite's horizontal flip, unknown word 3 bit, background priority, width, and width scale.
@@ -132,7 +131,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		NumSprites++;
 		return;
 
-	case ADDSPRITE_6: {
+	case ADDSPRITE_ANIM: {
 		ObjectData* animFrameObject = &object[data->animFrame];
 		uint8_t flipXBgPriW;
 		if (data->UNK_20 < 4) {
@@ -158,7 +157,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 			else {
 				UNK_6061932.tempSprite[1] = OBJECT_TOX(data->x + (*animFrameObject)[1]);
 			}
-			UNK_6061932.tempSprite[2] |= data->verticalHorizontal & 0xFF00u;
+			UNK_6061932.tempSprite[2] |= data->verticalHorizontal & ~OBJECT_SCALEY;
 			flipXBgPriW = (uint8_t)data->verticalHorizontal | 0x10u;
 		}
 
@@ -197,7 +196,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		UNK_6061932.tempSprite[1] = OBJECT_TOX(10);
 		UNK_6061932.tempSprite[2] = UNSCALED;
 		UNK_6061932.tempSprite[3] = OBJECT_TOBGPRI(3u) | UNSCALED;
-		UNK_6061932.tempSprite[4] = OBJECT_TOTILETOP(0x1Fu);
+		UNK_6061932.tempSprite[4] = OBJECT_TOTILETOP(0x00);
 		UNK_6061932.tempSprite[5] = OBJECT_TOTILEBOTTOM(0x1Fu);
 		SPRITE_COPY(Sprites[NumSprites], UNK_6061932.tempSprite);
 		NumSprites++;
@@ -208,7 +207,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		UNK_6061932.tempSprite[1] = data->x1;
 		UNK_6061932.tempSprite[2] = (data->flipYSprPriH << 8) | UNSCALED;
 		UNK_6061932.tempSprite[3] = (data->flipXBgPriW << 8) | UNSCALED;
-		UNK_6061932.tempSprite[4] = OBJECT_TOPALNUM(data->palNum) | OBJECT_TOTILETOP(0xFu);
+		UNK_6061932.tempSprite[4] = OBJECT_TOPALNUM(data->palNum);
 		UNK_6061932.tempSprite[5] = OBJECT_TOTILEBOTTOM(0xFu);
 		SPRITE_COPY(Sprites[NumSprites], UNK_6061932.tempSprite);
 		NumSprites++;

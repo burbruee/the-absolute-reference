@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 
+// Must be defined as some scalar type castable to uintptr_t.
 typedef uint32_t Color;
 #define COLOR(r, g, b, a) ( \
 	( \

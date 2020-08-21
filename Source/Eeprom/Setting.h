@@ -3,7 +3,8 @@
 #include <stdint.h>
 
 typedef enum ScreenMode {
-	SCREENMODE_FLIP = 1
+	SCREENMODE_NORMAL,
+	SCREENMODE_FLIP
 } ScreenMode;
 
 typedef enum CoinSlot {
@@ -25,7 +26,7 @@ typedef enum Setting {
 	SETTING_SCREENMODE,
 	SETTING_NUMVERSUSROUNDS,
 	SETTING_MAXVERSUSSECTION,
-	SETTING_INDEX3,
+	SETTING_ENABLESOUND,
 	SETTING_INDEX4,
 	SETTING_COINSLOT,
 	SETTING_COINMODE,
@@ -39,4 +40,8 @@ typedef enum Setting {
 	// used by the code in some spots.
 	NUMSETTINGS
 } Setting;
+
+// Although this is an array of uint16_t, WriteSettings() only writes the low
+// eight bits of each index to EEP-ROM. But feel free to use the extra eight
+// high bits for settings data that aren't saved.
 extern uint16_t Settings[20];

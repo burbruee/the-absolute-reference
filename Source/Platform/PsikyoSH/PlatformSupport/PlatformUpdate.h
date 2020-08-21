@@ -38,7 +38,7 @@ static RegionWarningState RegionWarning = REGIONWARNING_JAPAN;
 
 void InitVideo();
 void SetSystemGraphicDataPtr();
-void _0x6000AEC();
+void UNK_6000AEC();
 
 extern const char* RegionMessageJapan[1];
 extern const char* RegionMessageUsaCanada[1];
@@ -50,28 +50,28 @@ static inline void PlatformInit() {
 	SystemGraphicData* graphicData = (SystemGraphicData*)SequenceDataTablePtr[7];
 
 	// System init.
-	_0x602ACB0();
+	UNK_602ACB0();
 	ScreenTime = 0u;
 	NumVideoSetters = 0u;
 	InitSound();
 	PlaySoundEffect(SOUNDEFFECT_READY);
-	_0x6023790();
+	UNK_6023790();
 	InitCredits();
 	InitVideo();
-	_0x6024ED8();
-	_0x60169DC();
+	UNK_6024ED8();
+	UNK_60169DC();
 	InitEntities();
 	InitPalCycles();
-	_0x602419C();
+	InitSpriteAdders();
 	SetSystemGraphicDataPtr();
 	InitTodaysBestRankings();
 	Uptime = 0u;
-	_0x606564C = 0u; // Set, but never used.
+	UNK_606564C = 0u; // Set, but never used.
 	DisablePause();
 	MainLoop = MAINLOOP_DEMO;
-	_0x602AC68(SystemGraphicDataPtr->_0x118);
+	UNK_602AC68(SystemGraphicDataPtr->UNK_118);
 	SetPal(1u, 1u, Pal1);
-	_0x602BC50(0u);
+	UNK_602BC50(0u);
 	SetPal(1u, 15u, PALPTR(0xEB));
 	SetPal(158u, 1u, PALPTR(0x20F));
 	SetPal(149u, 7u, PALPTR(0x207));
@@ -91,7 +91,7 @@ static inline void PlatformInit() {
 		SaveProgramChecksum(MemCheckData[MEMCHECK_PROGRAMCHECKSUM]);
 	}
 
-	_0x602F8BC();
+	UNK_602F8BC();
 	MemCheckData[MEMCHECK_EEPROM] = SettingsValid();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadPlayStatus();
 	MemCheckData[MEMCHECK_EEPROM] &= LoadRankings();
@@ -155,14 +155,14 @@ static inline void PlatformInit() {
 	// normally after the memory check screen, though.
 	// TODO: The character ROM pairs are named "char0000" to "char0007". Sound
 	// ROM is just "sound".
-	while (charSoundMemCheck ? _0x60302C4() : memCheckDuration != 0) {
+	while (charSoundMemCheck ? UNK_60302C4() : memCheckDuration != 0) {
 		if ((SystemButtonsDown[PLAYER1] & BUTTON_START) && (~INPUTS[INPUT_SERVICE] & SERVICE_TILT)) {
 			charSoundMemCheck = true;
 		}
 
 		UpdateFrame();
 
-		_0x602BB0C();
+		UNK_602BB0C();
 		InitSystemTextPal();
 		if (memCheckDuration != 0u) memCheckDuration--;
 
@@ -188,12 +188,12 @@ static inline void PlatformInit() {
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
 	int16_t spriteAdderName = AllocSpriteAdder();
-	_0x6024C3C(spriteAdderName, 60, 266, graphicData->objectTable);
+	UNK_6024C3C(spriteAdderName, 60, 266, graphicData->objectTable);
 
 	if (INPUTS[INPUT_SERVICE] & SERVICE_TEST) {
 		switch (RegionWarning) {
 			case REGIONWARNING_JAPAN:
-				_0x6029814(0x7F00u, 0x7F00u, 0u, 0xFFu);
+				UNK_6029814(0x7F00u, 0x7F00u, 0u, 0xFFu);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
@@ -224,7 +224,7 @@ static inline void PlatformInit() {
 				if ((EEPROM[0] & REGION_SETTING) == REGION_JAPAN) {
 					RegionWarning = REGIONWARNING_JAPAN;
 
-					_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
+					UNK_6029814(0x7F00, 0x7F00, 0, 0xFF);
 
 					for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 						UpdateFrame();
@@ -244,7 +244,7 @@ static inline void PlatformInit() {
 				break;
 
 			case REGIONWARNING_KOREA:
-				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
+				UNK_6029814(0x7F00, 0x7F00, 0, 0xFF);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
@@ -263,7 +263,7 @@ static inline void PlatformInit() {
 				break;
 
 			case REGIONWARNING_REGIONSETTING:
-				_0x6029814(0x7F00, 0x7F00, 0, 0xFF);
+				UNK_6029814(0x7F00, 0x7F00, 0, 0xFF);
 
 				for (uint32_t numWarningFrames = 0u; numWarningFrames < 500u; numWarningFrames++) {
 					UpdateFrame();
@@ -274,42 +274,42 @@ static inline void PlatformInit() {
 
 					switch (EEPROM[0] & REGION_SETTING) {
 						case REGION_USACANADA:
-							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName].UNK_2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageUsaCanada;
 							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageUsaCanada); lineNum++, y += 24, line++) {
-								_0x602B7D8(*line, y, 40);
+								UNK_602B7D8(*line, y, 40);
 							}
 							break;
 
 						case REGION_KOREA:
-							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName].UNK_2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageKorea;
 							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageKorea); lineNum++, y += 24, line++) {
-								_0x602B7D8(*line, y, 40);
+								UNK_602B7D8(*line, y, 40);
 							}
 							break;
 
 						case REGION_HONGKONG:
-							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName].UNK_2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageHongKong;
 							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageHongKong); lineNum++, y += 24, line++) {
-								_0x602B7D8(*line, y, 40);
+								UNK_602B7D8(*line, y, 40);
 							}
 							break;
 
 						case REGION_TAIWAN:
-							SpriteAdders[spriteAdderName]._0x2C &= 0x7FFF;
+							SpriteAdders[spriteAdderName].UNK_2C &= 0x7FFF;
 
 							int16_t y = 46;
 							const char **line = RegionMessageTaiwan;
 							for (size_t lineNum = 0; lineNum < lengthof(RegionMessageTaiwan); lineNum++, y += 24, line++) {
-								_0x602B7D8(*line, y, 40);
+								UNK_602B7D8(*line, y, 40);
 							}
 							break;
 
@@ -322,10 +322,10 @@ static inline void PlatformInit() {
 			default:
 				break;
 		}
-		SpriteAdders[spriteAdderName]._0x2C |= 0x8000;
+		SpriteAdders[spriteAdderName].UNK_2C |= 0x8000;
 
 		SetScanlinesBank(0u);
-		_0x6029814(0x0000, 0x0000, 0, 0xFF);
+		UNK_6029814(0x0000, 0x0000, 0, 0xFF);
 		SetPal(80u, 1u, PALPTR(0x1E1));
 
 		// TODO: Rename "frames" once it's understood what this is showing.
@@ -339,7 +339,7 @@ static inline void PlatformInit() {
 				frames = 600u;
 			}
 		}
-		_0x6024B78(spriteAdderName);
+		FreeSpriteAdder(spriteAdderName);
 		UpdateFrame();
 	}
 }
@@ -363,7 +363,7 @@ static inline void PlatformFrame() {
 			break;
 		}
 	}
-	_0x602BA70();
+	UNK_602BA70();
 	RandScale = 0u;
 	while (IRQCTRL[1] & 1) {
 		RandScale++;
@@ -373,7 +373,7 @@ static inline void PlatformFrame() {
 		RandScale++;
 	}
 	SetVideo();
-	_0x602AA64();
+	UNK_602AA64();
 	UpdatePalCycles();
 	VblankFinished = false;
 	IRQCTRL[1] |= 1;

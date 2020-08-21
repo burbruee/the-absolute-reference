@@ -13,6 +13,7 @@
 #include "Video/HwSprite.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Eeprom.h"
+#include "Lib/LibC.h"
 
 static Ranking MasterTodaysBestRankings[NUMRANKINGPLACES];
 static uint16_t MasterTodaysBestMedalRankings[NUMRANKINGPLACES];

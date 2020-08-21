@@ -79,14 +79,14 @@ void ShowStaff(Player* player) {
 	ObjectData* objectTableEndStaff[lengthof(ObjectTableEndStaff)];
 	int8_t staffSections[lengthof(StaffSections)];
 	int16_t endStaffRows[lengthof(EndStaffRows)];
-	memcpy(objectTableBgDesignStaff, ObjectTableBgDesignStaff, sizeof(ObjectTableBgDesignStaff));
-	memcpy(objectTableEffectDesignStaff, ObjectTableEffectDesignStaff, sizeof(ObjectTableEffectDesignStaff));
-	memcpy(objectTableVisualDesignStaff, ObjectTableVisualDesignStaff, sizeof(ObjectTableVisualDesignStaff));
-	memcpy(objectTableProgrammerStaff, ObjectTableProgrammerStaff, sizeof(ObjectTableProgrammerStaff));
-	memcpy(objectTableSoundStaff, ObjectTableSoundStaff, sizeof(ObjectTableSoundStaff));
-	memcpy(objectTableEndStaff, ObjectTableEndStaff, sizeof(ObjectTableEndStaff));
-	memcpy(staffSections, StaffSections, sizeof(StaffSections));
-	memcpy(endStaffRows, EndStaffRows, sizeof(EndStaffRows));
+	MemCopy(sizeof(ObjectTableBgDesignStaff), objectTableBgDesignStaff, ObjectTableBgDesignStaff);
+	MemCopy(sizeof(ObjectTableEffectDesignStaff), objectTableEffectDesignStaff, ObjectTableEffectDesignStaff);
+	MemCopy(sizeof(ObjectTableVisualDesignStaff), objectTableVisualDesignStaff, ObjectTableVisualDesignStaff);
+	MemCopy(sizeof(ObjectTableProgrammerStaff), objectTableProgrammerStaff, ObjectTableProgrammerStaff);
+	MemCopy(sizeof(ObjectTableSoundStaff), objectTableSoundStaff, ObjectTableSoundStaff);
+	MemCopy(sizeof(ObjectTableEndStaff), objectTableEndStaff, ObjectTableEndStaff);
+	MemCopy(sizeof(StaffSections), staffSections, StaffSections);
+	MemCopy(sizeof(EndStaffRows), endStaffRows, EndStaffRows);
 
 	if ((player->modeFlags & MODE_DOUBLES) || ((player->modeFlags & (MODE_NORMAL | MODE_TGMPLUS | MODE_TADEATH)) && (GameFlags & GAME_TWIN))) {
 		PlaySoundEffect(SOUNDEFFECT_GRANDMASTER);

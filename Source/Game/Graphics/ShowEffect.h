@@ -7,7 +7,7 @@ void ShowFieldBlockExplosion(Player *player, int16_t row, int16_t col);
 
 void ShowFireworks(Player *player, int16_t row, int16_t col, uint32_t seed);
 
-void ShowAllClear(Player *player, int16_t row, int16_t col);
+void ShowAllClear(Player* player, int16_t row, int16_t col, bool unused);
 
 void UNK_60173B4(Player* player, int16_t row, int16_t col);
 

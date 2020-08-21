@@ -1,5 +1,9 @@
 #include "Sound/Sound.h"
 
+static uint8_t UNK_60B1818;
+
+bool NoSound;
+
 void UNK_602DA38(uint32_t arg0) {
 	// TODO
 }
@@ -47,8 +51,6 @@ void UNK_602E560() {
 	//TODO
 }
 
-uint8_t UNK_60B1818;
-
 void UNK_602E56A() {
 	UNK_60B1818 = 0u;
 }
@@ -65,12 +67,12 @@ void StopMusic() {
 	// TODO
 }
 
-void DisableSoundEffects() {
-	//TODO
+void DisableSound() {
+	NoSound = true;
 }
 
-void EnableSoundEffects() {
-	//TODO
+void EnableSound() {
+	NoSound = false;
 }
 
 void UNK_602E64C(uint8_t arg0, uint8_t arg1) {

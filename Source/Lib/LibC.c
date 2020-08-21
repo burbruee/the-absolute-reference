@@ -59,10 +59,8 @@ int32_t RightShift(int32_t value, int32_t shifts) {
 	return value >> shifts;
 }
 
+#ifndef USESTDC
 int8_t StringNCompare(const char *s1, const char *s2, size_t n) {
-#ifdef USESTDC
-	return strncmp(s1, s2, n);
-#else
 	if (n == 0) return 0;
 
 	const char *c1 = s1;
@@ -72,18 +70,16 @@ int8_t StringNCompare(const char *s1, const char *s2, size_t n) {
 	}
 
 	return c1[-1] - c2[-1];
-#endif
 }
+#endif
 
 int16_t Mod16s(int16_t denom, int16_t numer) {
 	if (denom == 0) return 0;
 	else return numer % denom;
 }
 
+#ifndef USESTDC
 void *MemSet(void *s, int c, size_t n) {
-#ifdef USESTDC
-	return memset(s, c, n);
-#else
 	if (n > 0) {
 		uint8_t *b = s;
 		for (size_t i = 0; i < n; i++, b++) {
@@ -92,5 +88,5 @@ void *MemSet(void *s, int c, size_t n) {
 	}
 
 	return s;
-#endif
 }
+#endif

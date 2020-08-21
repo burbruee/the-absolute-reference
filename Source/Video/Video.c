@@ -2,6 +2,7 @@
 #include "Video/SpriteInit.h"
 #include "Video/HwSprite.h"
 #include "Video/VideoDefs.h"
+#include "Video/GameBg.h"
 #include "Main/Frame.h"
 #include "Lib/LibC.h"
 #include "Lib/Fixed.h"
@@ -14,13 +15,13 @@
 #define SPRITELAYER_FREE 0x0000
 
 const int16_t UNK_60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
-struct_607D218* UNK_606005C = NULL;
+STRUCT_607D218* UNK_606005C = NULL;
 static void (**UNK_6060060)() = NULL;
 static uint16_t* UNK_6060064 = NULL;
 static int16_t UNK_6060068 = 0;
 AddSpriteData SpriteAdders[64];
 int16_t SpriteAdderNameTable[64];
-struct_6061932 UNK_6061932;
+STRUCT_6061932 UNK_6061932;
 
 // Each index into this table is a sprite layer number. An element value of
 // zero indicates the layer is free.
@@ -45,29 +46,32 @@ VideoSetter VideoSetters[MAXVIDEOSETTERS];
 // transitions; might also be used for darkening the attract mode ranking
 // backgrounds. Also, UNK_602970C is used with this, which might be where the
 // darkening is handled.
-struct_607D218* UNK_6064750 = NULL;
+STRUCT_607D218* UNK_6064750 = NULL;
 
-static struct_607D218* UNK_607CF10[192];
-static struct_607D218* UNK_607D210 = NULL;
-static struct_607D218* UNK_607D214 = NULL;
-static struct_607D218 UNK_607D218[192];
+static STRUCT_607D218* UNK_607CF10[192];
+static STRUCT_607D218* UNK_607D210 = NULL;
+static STRUCT_607D218* UNK_607D214 = NULL;
+static STRUCT_607D218 UNK_607D218[192];
 
-static struct_607D218* UNK_60AD218 = NULL;
+static STRUCT_607D218* UNK_60AD218 = NULL;
 static PauseMode NextPauseMode;
 static uint16_t UNK_60AD21E = 0u;
 static int16_t UNK_60AD220;
 static int16_t NumSpriteAdders;
 
-struct_60AD228 UNK_60AD228[11];
+STRUCT_60AD228 UNK_60AD228[11];
 
 Bg Bgs[4];
 
-typedef struct structUNK_60B0FE0 {
-	void (*update)(void*, void*, void*, void*, void*);
+// TODO: This could be BgSetter.
+typedef struct STRUCT_60B0FE0 {
+	void (*set)(void*, void*, void*, void*, void*);
 	void* args[5];
-} structUNK_60B0FE0;
+} STRUCT_60B0FE0;
 
-static structUNK_60B0FE0 UNK_60B0FE0[2][20];
+// TODO: This could be BgSetters.
+static STRUCT_60B0FE0 UNK_60B0FE0[2][20];
+
 static int16_t UNK_60B13A0[2];
 static bool UNK_60B13A4;
 
@@ -84,8 +88,8 @@ void UNK_6023790() {
 
 	MemSet(UNK_607D218, 0, sizeof(UNK_607D218));
 
-	struct_607D218** var0 = UNK_607CF10;
-	struct_607D218* var1 = UNK_607D218;
+	STRUCT_607D218** var0 = UNK_607CF10;
+	STRUCT_607D218* var1 = UNK_607D218;
 	for (size_t i = 0u; i < lengthof(UNK_607CF10); i++) {
 		*var0++ = var1++;
 	}
@@ -98,6 +102,9 @@ void UNK_6023790() {
 
 void UNK_60237DE() {
 	CurrentPauseMode = NextPauseMode;
+	// TODO: Not sure of all the data types here. UNK_300 might be a
+	// 16-byte-size union.
+#if 0
 	if (UNK_6060068 != 0) {
 		do {
 			UNK_60AD21E = 0u;
@@ -119,8 +126,8 @@ void UNK_60237DE() {
 			else if (UNK_60AD218->UNK_300[15].UNK_0[2] != UNK_6023788) {
 				int16_t i = UNK_60AD218->UNK_18;
 				void (**var1)() = &UNK_60AD218->UNK_300[1 - i + 14].UNK_0[3];
-				for (int16_t i = UNK_60AD218->UNK_18; i > 1; i--, var1 += 4u) {
-					UNK_6060064 = (uint16_t*)(var1 - 3); // TODO: struct_607D218_300::UNK_0 might be a struct that has eight bytes of data, then two function pointers.
+				for (; i > 1; i--, var1 += 4u) {
+					UNK_6060064 = (uint16_t*)(var1 - 3); // TODO: STRUCT_607D218_300::UNK_0 might be a struct that has eight bytes of data, then two function pointers.
 					UNK_6060060 = var1;
 					(*var1)();
 					if (UNK_60AD21E != 0u) {
@@ -136,38 +143,69 @@ void UNK_60237DE() {
 			UNK_60AD218 = UNK_606005C;
 		} while (UNK_606005C != NULL);
 	}
+#endif
 }
 
-void UNK_602392E(int32_t arg0, void (*arg1)()) {
+void UNK_602392E(uintptr_t arg0, void (*arg1)()) {
+	STRUCT_607D218* temp0 = UNK_606005C;
+
+	if (UNK_6060068 != 0) {
+		UNK_606005C = UNK_607D210;
+		do {
+			uint16_t i = UNK_606005C->UNK_18;
+			for (void** var0 = &UNK_606005C->UNK_300[14 - (i - 1)][3]; i != 0; i--, var0 += 4) {
+				if ((uintptr_t)*var0 == arg0) {
+					arg1();
+					break;
+				}
+			}
+			UNK_606005C = UNK_606005C->UNK_14;
+		} while (UNK_606005C != NULL);
+	}
+
+	UNK_606005C = temp0;
+}
+
+void UNK_60239B8(uintptr_t arg0, uintptr_t arg1) {
+	STRUCT_607D218* temp0 = UNK_606005C;
+    
+    if (UNK_6060068 != 0) {
+        UNK_606005C = UNK_607D210;
+        do {
+            uint16_t i = UNK_606005C->UNK_18;
+			for (void** var0 = &UNK_606005C->UNK_300[14 - (i - 1)][3]; i != 0; i--, var0 += 4) {
+                if ((uintptr_t)*var0 == arg0) {
+                    *(uintptr_t*)var0 = arg1;
+                }
+            }
+        } while (UNK_606005C != NULL);
+    }
+
+    UNK_606005C = temp0;
+}
+
+void UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
 	// TODO
 }
 
-void UNK_60239B8(int32_t arg0, int32_t arg1) {
-	// TODO
-}
-
-void UNK_6023A0E(struct_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
-	// TODO
-}
-
-void* UNK_6023A98(struct_607D218* arg0, void* arg1, void* arg2, void* arg3) {
+void* UNK_6023A98(STRUCT_607D218* arg0, void* arg1, void* arg2, void* arg3) {
 	// TODO
 	return NULL;
 }
 
-void UNK_6023B76(struct_607D218* arg0) {
+void UNK_6023B76(STRUCT_607D218* arg0) {
 	// TODO
 }
 
-void UNK_6023BC4(struct_607D218* arg0, void (*arg1)()) {
+void UNK_6023BC4(STRUCT_607D218* arg0, void (*arg1)()) {
 	// TODO
 }
 
-void UNK_6023C3E(struct_607D218* arg0, void* arg1) {
+void UNK_6023C3E(STRUCT_607D218* arg0, void* arg1) {
 	// TODO
 }
 
-void* UNK_6023C8A(struct_607D218* arg0, void* arg1) {
+void* UNK_6023C8A(STRUCT_607D218* arg0, void* arg1) {
 	// TODO
 	return NULL;
 }
@@ -177,13 +215,13 @@ int32_t UNK_6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, i
 	return 0u;
 }
 
-struct_607D218* UNK_6023DAE(struct_607D218* arg0) {
+STRUCT_607D218* UNK_6023DAE(STRUCT_607D218* arg0) {
 	if (UNK_6060068 >= lengthof(UNK_607CF10) - 1) {
 		return NULL;
 	}
 
-	struct_607D218* var0 = UNK_607CF10[UNK_6060068];
-	MemSet(var0, sizeof(struct_607D218), 0u);
+	STRUCT_607D218* var0 = UNK_607CF10[UNK_6060068];
+	MemSet(var0, sizeof(STRUCT_607D218), 0u);
 
 	if (arg0 != NULL) {
 		var0->UNK_0 = arg0;
@@ -217,11 +255,11 @@ struct_607D218* UNK_6023DAE(struct_607D218* arg0) {
 	return var0;
 }
 
-void UNK_6023E5A(struct_607D218* arg0) {
-	struct_607D218* var0 = arg0->UNK_0;
-	struct_607D218* var1 = arg0->UNK_4;
-	struct_607D218* var2 = arg0->UNK_8;
-	struct_607D218* var3 = arg0->UNK_C;
+void UNK_6023E5A(STRUCT_607D218* arg0) {
+	STRUCT_607D218* var0 = arg0->UNK_0;
+	STRUCT_607D218* var1 = arg0->UNK_4;
+	STRUCT_607D218* var2 = arg0->UNK_8;
+	STRUCT_607D218* var3 = arg0->UNK_C;
 
 	if (var1 == NULL) {
 		if (var2 == NULL) {
@@ -269,20 +307,20 @@ void UNK_6023E5A(struct_607D218* arg0) {
 	UNK_607CF10[UNK_6060068] = arg0;
 }
 
-struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
-    struct_607D218* var0 = UNK_606005C;
-    if (arg1 == (struct_607D218 *)(intptr_t)~0) {
+STRUCT_607D218* UNK_6023EFE(const void (**arg0)(), STRUCT_607D218* arg1) {
+    STRUCT_607D218* var0 = UNK_606005C;
+    if (arg1 == (STRUCT_607D218 *)~(intptr_t)0) {
         arg1 = UNK_606005C;
     }
-    struct_607D218* var1 = UNK_6023DAE(arg1);
+    STRUCT_607D218* var1 = UNK_6023DAE(arg1);
     if (var1 == NULL) {
         var1 = NULL;
         var0 = UNK_606005C;
     }
     else {
-		void (*fun0)();
-		void (*fun1)();
-		void (*fun2)();
+		const void (*fun0)();
+		const void (*fun1)();
+		const void (*fun2)();
 
         if (arg0[3] == NULL) {
             fun0 = UNK_6023788;
@@ -292,7 +330,7 @@ struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
         }
 
         UNK_606005C = var1;
-        var1->UNK_300[15].UNK_0[3] = fun0;
+        var1->UNK_300[15][3] = (void*)fun0;
 
         if (arg0[1] == NULL) {
             fun1 = UNK_6023788;
@@ -301,7 +339,7 @@ struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
             fun1 = arg0[1];
         }
 
-        var1->UNK_300[15].UNK_0[2] = fun1;
+        var1->UNK_300[15][2] = (void*)fun1;
 
         if (arg0[0] == NULL) {
             fun2 = UNK_6023788;
@@ -310,7 +348,7 @@ struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
             fun2 = arg0[0];
         }
 
-        var1->UNK_300[14].UNK_0[3] = fun2;
+        var1->UNK_300[14][3] = (void*)fun2;
         var1->UNK_18 = 1;
 
         if (arg0[2] != NULL) {
@@ -321,15 +359,15 @@ struct_607D218* UNK_6023EFE(void (**arg0)(), struct_607D218* arg1) {
     return var1;
 }
 
-void* UNK_6023FA4(void (**arg0)(), struct_607D218* arg1) {
+void* UNK_6023FA4(void (**arg0)(), STRUCT_607D218* arg1) {
 	// TODO
 	return NULL;
 }
 
-void UNK_6024030(struct_607D218* arg0) {
-	struct_607D218* var0 = UNK_606005C;
+void UNK_6024030(STRUCT_607D218* arg0) {
+	STRUCT_607D218* var0 = UNK_606005C;
 	UNK_606005C = arg0;
-	arg0->UNK_300[15].UNK_0[3]();
+	((void (*)())arg0->UNK_300[15][3])();
 	UNK_6023E5A(arg0);
 	if (arg0 == var0) {
 		UNK_60AD21E = 1u;
@@ -339,7 +377,7 @@ void UNK_6024030(struct_607D218* arg0) {
 
 void UNK_602406E() {
 	if (UNK_6060068 != 0u) {
-		for (struct_607D218* var0 = UNK_607D210, * var1; var0 != NULL; var0 = var1) {
+		for (STRUCT_607D218* var0 = UNK_607D210, * var1; var0 != NULL; var0 = var1) {
 			var1 = var0->UNK_14;
 			UNK_6024030(var0);
 		}
@@ -391,13 +429,13 @@ void InitSpriteAlpha() {
 	}
 }
 
-void UNK_602419C() {
+void InitSpriteAdders() {
 	AddSprite(1, NULL);
 	InitSpriteAlpha();
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x67u;
 	for (int16_t i = 0; i < lengthof(SpriteAdders); i++) {
-		SpriteAdders[i].UNK_2B = 0u;
+		SpriteAdders[i].type = 0u;
 		SpriteAdders[i].UNK_2C = 0x8000u;
 		SpriteAdderNameTable[i] = i;
 	}
@@ -413,8 +451,8 @@ void UNK_6024244() {
 	for (int16_t i = 0u; i < NumSpriteAdders; i++, var0++) {
 		int32_t var1 = *var0;
 		AddSpriteData* var2 = &SpriteAdders[var1];
-		switch (var2->UNK_2B) {
-		case 1u:
+		switch (var2->type) {
+		case ADDSPRITE_1:
 			while (CurrentPauseMode < PAUSEMODE_BG && --var2->UNK_34 <= 0) {
 				int16_t var3;
 				var2->UNK_34 = var2->UNK_36;
@@ -426,7 +464,7 @@ void UNK_6024244() {
 						if (!(var2->UNK_2C & 0x200)) {
 							if (!(var2->UNK_2C & 0x400)) {
 								var2->animFrame = var2->UNK_28 - 1;
-								var2->UNK_2B = 2u;
+								var2->type = 2u;
 							}
 							else {
 								var2->animFrame--;
@@ -445,7 +483,7 @@ void UNK_6024244() {
 						if (!(var2->UNK_2C & 0x200)) {
 							if (!(var2->UNK_2C & 0x400)) {
 								var2->animFrame = var2->UNK_38;
-								var2->UNK_2B = 2u;
+								var2->type = 2u;
 							}
 							else {
 								var2->animFrame++;
@@ -461,7 +499,7 @@ void UNK_6024244() {
 				break;
 			}
 
-		case 2u:
+		case ADDSPRITE_2:
 			if (!(var2->UNK_2C & 0x8000)) {
 				if (ScreenTimeOdd) {
 					if ((var2->UNK_2C & 0x20) || CurrentPauseMode >= PAUSEMODE_GAME) {
@@ -476,7 +514,7 @@ void UNK_6024244() {
 			}
 			break;
 
-		case 9u:
+		case ADDSPRITE_9:
 			if (!(var2->UNK_2C & 0x8000)) {
 				UNK_602471C(var2);
 			}
@@ -533,7 +571,7 @@ void UNK_60243E8(AddSpriteData* arg0) {
 			arg0->UNK_30 = UNK_60356C8[arg0->UNK_2C & 3];
 		}
 	}
-	object += numSprites - 1;
+	object += (size_t)numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
 		if (((*object)[0] & 0x8000u) == 0 || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0 ) {
 			int16_t offsetY = OBJECT_GETY(object);
@@ -659,7 +697,7 @@ void UNK_602471C(AddSpriteData* arg0) {
 		}
 	}
 
-	object += numSprites - 1;
+	object += (size_t)numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
 		if (((*object)[0] & 0x8000u) == 0u || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0u) {
 			int16_t offsetY = OBJECT_GETY(object);
@@ -770,7 +808,7 @@ int16_t AllocSpriteAdder() {
     SpriteAdders[i].palNum = 0u;
     SpriteAdders[i].bppAlphaTileTop = 0u;
     SpriteAdders[i].layer = 16u;
-    SpriteAdders[i].UNK_2B = 1u;
+    SpriteAdders[i].type = 1u;
     SpriteAdders[i].UNK_2C = 0xA030u;
     SpriteAdders[i].UNK_2E = 0u;
     SpriteAdders[i].UNK_30 = 0;
@@ -782,9 +820,9 @@ int16_t AllocSpriteAdder() {
     return i;
 }
 
-void UNK_6024B78(int16_t arg0) {
+void FreeSpriteAdder(int16_t arg0) {
 	if ((-1 < arg0) && (arg0 < 0x40)) {
-		SpriteAdders[arg0].UNK_2B = 0u;
+		SpriteAdders[arg0].type = ADDSPRITE_0;
 		SpriteAdders[arg0].UNK_2C = 0x8000u;
 		int32_t var1 = 0;
 		int16_t var0 = SpriteAdderNameTable[0];
@@ -795,7 +833,7 @@ void UNK_6024B78(int16_t arg0) {
 		NumSpriteAdders += -1;
 		if (var1 != NumSpriteAdders) {
 			int16_t* var2 = &SpriteAdderNameTable[var1];
-			// Swap *var2 and SpriteAdderNameTable[NumSpriteAdders].
+			// Swap *i and SpriteAdderNameTable[NumSpriteAdders].
 			SpriteAdderNameTable[NumSpriteAdders] ^= *var2;
 			*var2 ^= SpriteAdderNameTable[NumSpriteAdders];
 			SpriteAdderNameTable[NumSpriteAdders] ^= *var2;
@@ -804,18 +842,18 @@ void UNK_6024B78(int16_t arg0) {
 	return;
 }
 
-void UNK_6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable) {
-	if (i >= 0 && i < 64) {
-		SpriteAdders[i].data = objectTable;
-		SpriteAdders[i].y = y;
-		SpriteAdders[i].x = x;
-		if (SpriteAdders[i].UNK_2B == 2u) {
-			SpriteAdders[i].UNK_2B = 2u;
+void UNK_6024C3C(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData* objectTable) {
+	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
+		SpriteAdders[spriteAdderName].data = objectTable;
+		SpriteAdders[spriteAdderName].y = y;
+		SpriteAdders[spriteAdderName].x = x;
+		if (SpriteAdders[spriteAdderName].type == ADDSPRITE_2) {
+			SpriteAdders[spriteAdderName].type = ADDSPRITE_2;
 		}
 		else {
-			SpriteAdders[i].UNK_2B = 9u;
+			SpriteAdders[spriteAdderName].type = ADDSPRITE_9;
 		}
-		SpriteAdders[i].animFrame = 0;
+		SpriteAdders[spriteAdderName].animFrame = 0;
 	}
 }
 
@@ -845,7 +883,6 @@ void UNK_6024E5C(int16_t i) {
 	}
 }
 
-// TODO: Could be InitBg().
 void UNK_6024ED8() {
 	BgMapBank[0] = 10u;
 	BgMapBank[1] = 12u;
@@ -861,7 +898,7 @@ void UNK_6024ED8() {
 
 	for (size_t i = 0u; i < lengthof(Bgs); i++) {
 		Bgs[i].UNK_0 = 0;
-		UNK_6024E5C(i);
+		UNK_6024E5C((int16_t)i);
 	}
 
 	for (size_t i = 0u; i < lengthof(UNK_60AD228); i++) {
@@ -869,7 +906,7 @@ void UNK_6024ED8() {
 		for (size_t bank = 0u; bank < 2u; bank++) {
 			// TODO: Create a RAM macro here, once this is better understood.
 			UNK_60AD228[i].UNK_4[bank] = &GRAPHICSRAM[(0x5000u + i * 0x1000u + bank * 0x800u) / sizeof(uint32_t)];
-			UNK_60AD228[i].UNK_C[bank] = bank + i * 2 + 10u;
+			UNK_60AD228[i].UNK_C[bank] = (uint16_t)(bank + i * 2 + 10u);
 		}
 		UNK_60AD228[i].UNK_10 = NULL;
 		UNK_60AD228[i].UNK_14 = 0;
@@ -879,7 +916,7 @@ void UNK_6024ED8() {
 
 	for (size_t i = 0u; i < lengthof(UNK_60B0FE0); i++) {
 		for (size_t k = 0u; k < lengthof(*UNK_60B0FE0); k++) {
-			MemSet(&UNK_60B0FE0[i][k], 0, sizeof(structUNK_60B0FE0));
+			MemSet(&UNK_60B0FE0[i][k], 0, sizeof(STRUCT_60B0FE0));
 		}
 	}
 }
@@ -889,16 +926,16 @@ void UNK_6025078() {
 		return;
 	}
 
-	structUNK_60B0FE0* var0 = UNK_60B0FE0[!UNK_60B13A4];
+	STRUCT_60B0FE0* var0 = UNK_60B0FE0[!UNK_60B13A4];
 	for (size_t i = 0u; i < lengthof(*UNK_60B0FE0); i++) {
-		if (var0[i].update != NULL) {
-			var0[i].update(
+		if (var0[i].set != NULL) {
+			var0[i].set(
 				var0[i].args[0],
 				var0[i].args[1],
 				var0[i].args[2],
 				var0[i].args[3],
 				var0[i].args[4]);
-			var0[i].update = NULL;
+			var0[i].set = NULL;
 		}
 	}
 	UNK_60B13A0[!UNK_60B13A4] = 0;
@@ -924,40 +961,40 @@ void UNK_602523C() {
 
 void UNK_602526A(void* unused0, void* unused1, void* unused2) {
 	uint8_t bgMapBank0, bgMapBank1, bgMapBank2, bgMapBank3;
-	uint8_t bgMapSettings01, bgMapSettings23;
+	uint8_t bgMapSettings01 = 0u, bgMapSettings23 = 0u;
 
-#define _BGSET(bgIndex, tilemapBank, tilemapSettings) \
+#define BGSET(bgIndex, tilemapBank, tilemapSettings) \
 	do { \
 		if (Bgs[bgIndex].UNK_0 == 1 && Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] >= 0) { \
-			const int16_t i = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6]; \
-			const int16_t var1 = UNK_60AD228[i].UNK_54; \
-			const int16_t var2 = Bgs[bgIndex].UNK_8; \
+			const int16_t spriteAdderName = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6]; \
+			const int16_t palNum = UNK_60AD228[spriteAdderName].UNK_54; \
+			const int16_t i = Bgs[bgIndex].UNK_8; \
 			uint16_t tilemapBankIndex; \
-			if (UNK_60AD228[i].UNK_56 == 0) { \
-				tilemapBankIndex = (var1 + 1) % 2; \
+			if (UNK_60AD228[spriteAdderName].UNK_56 == 0) { \
+				tilemapBankIndex = (palNum + 1) % 2; \
 			} \
 			else { \
-				UNK_60AD228[i].UNK_54 = (var1 + 1) % 2; \
-				UNK_60AD228[i].UNK_56 = 0; \
-				tilemapBankIndex = var1; \
+				UNK_60AD228[spriteAdderName].UNK_54 = (palNum + 1) % 2; \
+				UNK_60AD228[spriteAdderName].UNK_56 = 0; \
+				tilemapBankIndex = palNum; \
 			} \
-			tilemapBank = (UNK_60AD228[var2].UNK_C[tilemapBankIndex] >> 8) & 0xFFu; \
+			tilemapBank = (UNK_60AD228[i].UNK_C[tilemapBankIndex] >> 8) & 0xFFu; \
 			if (Bgs[bgIndex].UNK_10 == 0) { \
-				UNK_60AD228[var2].UNK_4[tilemapBankIndex][0xFCu + bgIndex] = \
-					(UNK_60AD228[i].UNK_18[var1] << 16) | \
-					(UNK_60AD228[i].UNK_20[var1] & 0x1FFu); \
-				UNK_60AD228[var2].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] = \
+				UNK_60AD228[i].UNK_4[tilemapBankIndex][0xFCu + bgIndex] = \
+					(UNK_60AD228[spriteAdderName].UNK_18[palNum] << 16) | \
+					(UNK_60AD228[spriteAdderName].UNK_20[palNum] & 0x1FFu); \
+				UNK_60AD228[i].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] = \
 					((uint32_t)Bgs[bgIndex].UNK_A << 24) | \
-					UNK_60AD228[i].UNK_C[tilemapBankIndex] | \
+					UNK_60AD228[spriteAdderName].UNK_C[tilemapBankIndex] | \
 					(Bgs[bgIndex].darkness << 8) | \
 					(Bgs[bgIndex].UNK_C << 15); \
 			} \
 			else { \
 				tilemapBank |= 0x80u; \
-				uint32_t* var3 = UNK_60AD228[var2].UNK_4[tilemapBankIndex]; \
+				uint32_t* var3 = UNK_60AD228[i].UNK_4[tilemapBankIndex]; \
 				UNK_60251B8(1, var3, var3 + 0x100u); \
 			} \
-			if (!(UNK_60AD228[i].UNK_10->UNK_0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
+			if (!(UNK_60AD228[spriteAdderName].UNK_10->UNK_0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
 				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
 			} \
 			if (Bgs[bgIndex].UNK_2 != 0) { \
@@ -969,12 +1006,12 @@ void UNK_602526A(void* unused0, void* unused1, void* unused2) {
 		} \
 	} while (false)
 
-	_BGSET(0u, bgMapBank0, bgMapSettings01);
-	_BGSET(1u, bgMapBank1, bgMapSettings01);
-	_BGSET(2u, bgMapBank2, bgMapSettings23);
-	_BGSET(3u, bgMapBank3, bgMapSettings23);
+	BGSET(0u, bgMapBank0, bgMapSettings01);
+	BGSET(1u, bgMapBank1, bgMapSettings01);
+	BGSET(2u, bgMapBank2, bgMapSettings23);
+	BGSET(3u, bgMapBank3, bgMapSettings23);
 
-#undef _BGSET
+#undef BGSET
 
 	BgMapBank[0] = bgMapBank0;
 	BgMapBank[1] = bgMapBank1;
@@ -1007,7 +1044,7 @@ int32_t UNK_60257EE() {
 }
 
 int32_t UNK_6025918() {
-	int bgIndex;
+	int32_t bgIndex;
 
 	for (bgIndex = 1; bgIndex < 11; bgIndex++) {
 		if (UNK_60AD228[bgIndex].UNK_0 == 0u) {
@@ -1016,14 +1053,14 @@ int32_t UNK_6025918() {
 	}
 
 	if (bgIndex < 11) {
-		UNK_60AD228[bgIndex].UNK_0 = 1;
+		UNK_60AD228[bgIndex].UNK_0 = 1u;
 		UNK_60AD228[bgIndex].UNK_10 = NULL;
 		UNK_60AD228[bgIndex].UNK_60 = NULL;
-		UNK_60AD228[bgIndex].UNK_54 = NULL;
-		UNK_60AD228[bgIndex].UNK_56 = NULL;
-		UNK_60AD228[bgIndex].UNK_4C = NULL;
-		UNK_60AD228[bgIndex].UNK_50 = NULL;
-		UNK_60AD228[bgIndex].UNK_58 = NULL;
+		UNK_60AD228[bgIndex].UNK_54 = 0;
+		UNK_60AD228[bgIndex].UNK_56 = 0;
+		UNK_60AD228[bgIndex].UNK_4C = 0u;
+		UNK_60AD228[bgIndex].UNK_50 = 0;
+		UNK_60AD228[bgIndex].UNK_58 = 0;
 
 		for (int16_t i = 0; i < 2; i++) {
 			UNK_60AD228[bgIndex].UNK_18[i] = 0;
@@ -1087,8 +1124,8 @@ void UNK_60267E4(int16_t bgIndex) {
 	if (Bgs[bgIndex].UNK_18[var0] != -1) {
 		const int16_t var1 = UNK_60AD228[Bgs[bgIndex].UNK_18[bgIndex]].UNK_0;
 		const int16_t var3 = Bgs[bgIndex].UNK_0;
-		const int32_t var13 = -(16 + UNK_60AD228[var1].UNK_18[var2] / 16);
-		const int16_t var7 = -(16 + UNK_60AD228[var1].UNK_18[var0] / 16 + UNK_60AD228[var1].UNK_4C / 16);
+		const int32_t var13 = -(16 + (int32_t)UNK_60AD228[var1].UNK_18[var2] / 16);
+		const int16_t var7 = -(16 + (int32_t)UNK_60AD228[var1].UNK_18[var0] / 16 + UNK_60AD228[var1].UNK_4C / 16);
 		int16_t var16 = -(16 + UNK_60AD228[var1].UNK_28[var3] / 16 + UNK_60AD228[var1].UNK_50 / 16);
 		var4 = 0;
 		for (size_t i = 0u; i < 32u; i++, var16++) {
@@ -1140,6 +1177,7 @@ GameBg* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3)
 		if (gameBg->UNK_0 != NULL) {
 			*arg2 = arg1;
 			const int16_t var3 = *arg2;
+			assert(var3 >= 0 && var3 < lengthof(UNK_60AD228));
 			GameBg* var1 = gameBg;
 			while (*arg2 < 0) {
 				if (UNK_60AD228[var3].UNK_60 == NULL) {
@@ -1195,35 +1233,36 @@ void UNK_6029498(int16_t arg0) {
 	VideoSetters[NumVideoSetters++].args[0] = (void*)(uintptr_t)arg0;
 }
 
-void UNK_60294C0(uintptr_t arg0, void* unused1, void* unused2) {
+void UNK_60294C0(void* arg0, void* unused1, void* unused2) {
 	// TODO: Make a define for register 0x0B.
-	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | (arg0 & 0x07u);
+	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | ((uintptr_t)arg0 & 0x07u);
 }
 
 void SetBackdropColor(Color color) {
 	VideoSetters[NumVideoSetters].set = VideoSetBackdropColor;
-	VideoSetters[NumVideoSetters].args[0] = color;
+	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)color;
 }
 
-void VideoSetBackdropColor(uintptr_t color, void* unused1, void* unused2) {
+void VideoSetBackdropColor(void* color, void* unused1, void* unused2) {
 	RAMDATA Color* backdropLineColor = BACKDROPRAM;
+	const Color colorLocal = (Color)(uintptr_t)color;
 	for (size_t i = 0; i < NUMBACKDROPLINES; i += 16u, backdropLineColor += 16u) {
-		backdropLineColor[0] = (Color)color;
-		backdropLineColor[1] = (Color)color;
-		backdropLineColor[2] = (Color)color;
-		backdropLineColor[3] = (Color)color;
-		backdropLineColor[4] = (Color)color;
-		backdropLineColor[5] = (Color)color;
-		backdropLineColor[6] = (Color)color;
-		backdropLineColor[7] = (Color)color;
-		backdropLineColor[8] = (Color)color;
-		backdropLineColor[9] = (Color)color;
-		backdropLineColor[10] = (Color)color;
-		backdropLineColor[11] = (Color)color;
-		backdropLineColor[12] = (Color)color;
-		backdropLineColor[13] = (Color)color;
-		backdropLineColor[14] = (Color)color;
-		backdropLineColor[15] = (Color)color;
+		backdropLineColor[0] = colorLocal;
+		backdropLineColor[1] = colorLocal;
+		backdropLineColor[2] = colorLocal;
+		backdropLineColor[3] = colorLocal;
+		backdropLineColor[4] = colorLocal;
+		backdropLineColor[5] = colorLocal;
+		backdropLineColor[6] = colorLocal;
+		backdropLineColor[7] = colorLocal;
+		backdropLineColor[8] = colorLocal;
+		backdropLineColor[9] = colorLocal;
+		backdropLineColor[10] = colorLocal;
+		backdropLineColor[11] = colorLocal;
+		backdropLineColor[12] = colorLocal;
+		backdropLineColor[13] = colorLocal;
+		backdropLineColor[14] = colorLocal;
+		backdropLineColor[15] = colorLocal;
 	}
 }
 
@@ -1237,9 +1276,6 @@ static const void (*UNK_60356D0[4])() = {
 };
 
 void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
-	struct_607D218 *var0;
-	uint32_t numVideoSetters;
-	
 	if (arg0 != 4) {
 		if (UNK_6064750 == NULL) {
 			UNK_6064750 = UNK_6023EFE(UNK_60356D0, NULL);
@@ -1446,9 +1482,25 @@ void UpdatePalCycles() {
 		for (uint16_t i = 0u; i < MAXPALCYCLES; i++, cycle++) {
 			if (cycle->palNum >= 0 && --cycle->palFrames <= 0) {
 				cycle->palFrames = cycle->perPalDelay;
-				if (cycle->stride > 0) {
+				if (cycle->stride >= 0) {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						Color color;
+						Color color = COLOR(0, 0, 0, 0);
+
+						cycle->palFixed[j].r -= cycle->palFixedV[j].r;
+						COLOR_SETR(color, F16I(cycle->palFixed[j].r) & 0xFC);
+
+						cycle->palFixed[j].g -= cycle->palFixedV[j].g;
+						COLOR_SETG(color, F16I(cycle->palFixed[j].g) & 0xFC);
+
+						cycle->palFixed[j].b -= cycle->palFixedV[j].b;
+						COLOR_SETB(color, F16I(cycle->palFixed[j].b) & 0xFC);
+
+						tempPal[j] = color;
+					}
+				}
+				else {
+					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+						Color color = COLOR(0, 0, 0, 0);
 
 						cycle->palFixed[j].r += cycle->palFixedV[j].r;
 						COLOR_SETR(color, F16I(cycle->palFixed[j].r) & 0xFC);
@@ -1461,53 +1513,53 @@ void UpdatePalCycles() {
 
 						tempPal[j] = color;
 					}
+				}
 
-					for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						PALRAM[cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
-					}
+				for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+					PALRAM[(size_t)cycle->palNum * NUMPALCOLORS_4BPP + j] = tempPal[j];
+				}
 
-					cycle->step += cycle->stride;
-					if (cycle->step > cycle->endStep || cycle->step < 0) {
-						switch (cycle->type) {
-						case PALCYCLETYPE_UPSTOP:
-							cycle->type = PALCYCLETYPE_FREE;
-							cycle->palNum = -1;
-							cycle->step = cycle->endStep;
-							break;
+				cycle->step += cycle->stride;
+				if (cycle->step > cycle->endStep || cycle->step < 0) {
+					switch (cycle->type) {
+					case PALCYCLETYPE_UPSTOP:
+						cycle->type = PALCYCLETYPE_FREE;
+						cycle->palNum = -1;
+						cycle->step = cycle->endStep;
+						break;
 
-						case PALCYCLETYPE_UPRESTART:
-							cycle->step = 0;
-							cycle->palFrames = cycle->perPalDelay;
-							for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-								cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal0[j]) & 0xFC, 0x00);
-								cycle->palFixed[j].g = F16(COLOR_GETG(cycle->pal0[j]) & 0xFC, 0x00);
-								cycle->palFixed[j].b = F16(COLOR_GETB(cycle->pal0[j]) & 0xFC, 0x00);
-							}
-							break;
-
-						case PALCYCLETYPE_BOUNCE:
-							cycle->palFrames = cycle->perPalDelay;
-							cycle->stride *= -1;
-							cycle->step = cycle->step >= 0 ? cycle->endStep : 0;
-							break;
-
-						case PALCYCLETYPE_DOWNRESTART:
-							cycle->palFrames = cycle->perPalDelay;
-							cycle->step = cycle->endStep;
-							for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-								cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal1[j]) & 0xFC, 0x00);
-								cycle->palFixed[j].g = F16(COLOR_GETG(cycle->pal1[j]) & 0xFC, 0x00);
-								cycle->palFixed[j].b = F16(COLOR_GETB(cycle->pal1[j]) & 0xFC, 0x00);
-							}
-							break;
-
-						case PALCYCLETYPE_DOWNSTOP:
-							cycle->type = PALCYCLETYPE_FREE;
-							break;
-
-						default:
-							break;
+					case PALCYCLETYPE_UPRESTART:
+						cycle->step = 0;
+						cycle->palFrames = cycle->perPalDelay;
+						for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+							cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal0[j]) & 0xFC, 0x00);
+							cycle->palFixed[j].g = F16(COLOR_GETG(cycle->pal0[j]) & 0xFC, 0x00);
+							cycle->palFixed[j].b = F16(COLOR_GETB(cycle->pal0[j]) & 0xFC, 0x00);
 						}
+						break;
+
+					case PALCYCLETYPE_BOUNCE:
+						cycle->palFrames = cycle->perPalDelay;
+						cycle->stride *= -1;
+						cycle->step = cycle->step >= 0 ? cycle->endStep : 0;
+						break;
+
+					case PALCYCLETYPE_DOWNRESTART:
+						cycle->palFrames = cycle->perPalDelay;
+						cycle->step = cycle->endStep;
+						for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+							cycle->palFixed[j].r = F16(COLOR_GETR(cycle->pal1[j]) & 0xFC, 0x00);
+							cycle->palFixed[j].g = F16(COLOR_GETG(cycle->pal1[j]) & 0xFC, 0x00);
+							cycle->palFixed[j].b = F16(COLOR_GETB(cycle->pal1[j]) & 0xFC, 0x00);
+						}
+						break;
+
+					case PALCYCLETYPE_DOWNSTOP:
+						cycle->type = PALCYCLETYPE_FREE;
+						break;
+
+					default:
+						break;
 					}
 				}
 			}
@@ -1579,12 +1631,12 @@ void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, 
 	for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
 		#define INITCOMPONENT(c, C) \
 		if (cycle->stride > 0) { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00); \
+			cycle->palFixed[i].c = F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00); \
 		} \
 		else { \
-			cycle->palFixed[i].##c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
+			cycle->palFixed[i].c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].##c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
+		cycle->palFixedV[i].c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);
@@ -1617,42 +1669,80 @@ void EnablePalCycles() {
 	NoPalCycles = false;
 }
 
-static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal);
-void SetPal(uint8_t palNum, uint8_t numPals, ROMDATA Color* pal) {
+static void VideoSetPal(void* palNumArg, void* numPalsArg, void* palArg);
+
+void SetPal(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
 	VideoSetters[NumVideoSetters].set = VideoSetPal;
-	VideoSetters[NumVideoSetters].args[0] = (uintptr_t)palNum;
-	VideoSetters[NumVideoSetters].args[1] = (uintptr_t)numPals;
-	VideoSetters[NumVideoSetters++].args[2] = pal;
+	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)palNum;
+	VideoSetters[NumVideoSetters].args[1] = (void*)(uintptr_t)numPals;
+	VideoSetters[NumVideoSetters++].args[2] = (void*)pal;
 }
-static void VideoSetPal(uintptr_t palNum, uintptr_t numPals, const Color* pal) {
-	palNum = (uint8_t)palNum;
-	numPals = (uint8_t)numPals;
-	for (int16_t i = 0; i < numPals; i++) {
-		for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-			PALRAM[palNum * NUMPALCOLORS_4BPP + j] = pal[j];
+static void VideoSetPal(void* palNumArg, void* numPalsArg, void* palArg) {
+	const uint8_t palNum = (uint8_t)(uintptr_t)palNumArg;
+	const uint8_t numPals = (uint8_t)(uintptr_t)numPalsArg;
+	const Color* const pal = (const Color*)palArg;
+	for (size_t i = 0u; i < numPals; i++) {
+		for (size_t c = 0u; c < NUMPALCOLORS_4BPP; c++) {
+			PALRAM[(palNum + i) * NUMPALCOLORS_4BPP + c] = pal[i * NUMPALCOLORS_4BPP + c];
 		}
 	}
 }
 
-static void UNK_602A99E(void* arg0, void* arg1, void* arg2);
-void UNK_602A96A(uint8_t arg0, void* arg1) {
-	VideoSetters[NumVideoSetters].set = UNK_602A99E;
-	VideoSetters[NumVideoSetters].args[0] = arg0;
-	VideoSetters[NumVideoSetters++].args[1] = arg1;
+static void VideoSetPalReverse(void*, void*, void*);
+
+void PalSetReverse(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
+	VideoSetters[NumVideoSetters].set = VideoSetPalReverse;
+	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)palNum;
+	VideoSetters[NumVideoSetters].args[1] = (void*)(uintptr_t)numPals;
+	VideoSetters[NumVideoSetters++].args[2] = (void*)pal;
 }
 
-static void UNK_602A99E(void* arg0, void* arg1, void* arg2) {
-	// TODO
+static void VideoSetPalReverse(void* palNumArg, void* numPalsArg, void* palArg) {
+	const uint8_t palNum = (uint8_t)(uintptr_t)palNumArg;
+	const uint8_t numPals = (uint8_t)(uintptr_t)numPalsArg;
+	const Color* pal = (const Color*)palArg;
+	for (int32_t i = 0; i < numPals; i++) {
+		for (int32_t c = 0; c < NUMPALCOLORS_4BPP; c++) {
+			PALRAM[(palNum + i) * NUMPALCOLORS_4BPP + c] = pal[i * -NUMPALCOLORS_4BPP + c];
+		}
+	}
+}
+
+static void VideoSetPalList(void* palNumArg, void* palListArg, void* unused2);
+
+void SetPalList(uint8_t palNum, const Color** palList) {
+	VideoSetters[NumVideoSetters].set = VideoSetPalList;
+	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)palNum;
+	VideoSetters[NumVideoSetters++].args[1] = (void*)palList;
+}
+
+static void VideoSetPalList(void* palNumArg, void* palListArg, void* unused2) {
+	uint8_t palNum = (uint8_t)(uintptr_t)palNumArg;
+	const Color** palList = (const Color**)palListArg;
+
+	int16_t i = 0;
+	for (bool notEnd = true; notEnd; i++, palNum++) {
+		if (palList[i] != (Color*)(intptr_t)-1) {
+			if (palList[i] == NULL) {
+				notEnd = false;
+			}
+			else {
+				for (int16_t c = 0; c < NUMPALCOLORS_4BPP; c++) {
+					PALRAM[(size_t)palNum * NUMPALCOLORS_4BPP + c] = palList[i][c];
+				}
+			}
+		}
+	}
 }
 
 void UNK_602AA16() {
-	UNK_60294C0(7u, NULL, NULL);
-	VideoSetBackdropColor(0u, NULL, NULL);
+	UNK_60294C0((void*)(uintptr_t)7u, NULL, NULL);
+	VideoSetBackdropColor((void*)(uintptr_t)0u, NULL, NULL);
 }
 
 void UNK_602AA4C() {
-	UNK_60294C0(0x07u, NULL, NULL);
-	VideoSetBackdropColor(0x000000FFu, NULL, NULL);
+	UNK_60294C0((void*)(uintptr_t)0x07u, NULL, NULL);
+	VideoSetBackdropColor((void*)(uintptr_t)0x000000FFu, NULL, NULL);
 }
 
 struct {
@@ -1675,6 +1765,6 @@ void UNK_602AB9E() {
 void UNK_602AC68(int16_t* arg0) {
 	int16_t var0 = arg0[0];
 	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {
-		UNK_602A96A(var1[1], ((int32_t)var1[2] << 16) | var1[3]);
+		SetPalList((uint8_t)var1[1], ((int32_t)var1[2] << 16) | var1[3]);
 	}
 }

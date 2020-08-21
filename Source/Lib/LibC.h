@@ -13,8 +13,8 @@ int16_t Div16s(int16_t denom, int32_t numer);
 int32_t Mod32s(int32_t denom, int32_t numer);
 uint32_t Mod32u(uint32_t denom, uint32_t numer);
 
-// Where used, it was originally used; where string.h's memcpy is used, this wasn't originally used in the SH-2 code.
 #ifdef USESTDC
+#include <string.h>
 #define MemCopy(n, dst, src) ((void)memcpy(dst, src, n))
 #else
 void MemCopy(size_t n, void* dst, void* src);
@@ -22,6 +22,17 @@ void MemCopy(size_t n, void* dst, void* src);
 
 int32_t LeftShift(int32_t value, int32_t shifts);
 int32_t RightShift(int32_t value, int32_t shifts);
+#ifdef USESTDC
+#include <string.h>
+#define StringNCompare(s1, s2, n) ((int8_t)strncmp((s1), (s2), (n)))
+#else
 int8_t StringNCompare(const char* s1, const char* s2, size_t n);
+#endif
 int16_t Mod16s(int16_t denom, int16_t numer);
+
+#ifdef USESTDC
+#include <string.h>
+#define MemSet(s, c, n) memset(s, c, n)
+#else
 void* MemSet(void* s, int c, size_t n);
+#endif

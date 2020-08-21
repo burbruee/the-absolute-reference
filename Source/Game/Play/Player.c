@@ -11,6 +11,7 @@
 #include "Game/Play/Ranking.h"
 #include "Game/Play/Debug.h"
 #include "Game/Play/Item/Item.h"
+#include "Game/Play/Item/ShowItemEffect.h"
 #include "Game/Graphics/ShowBlockField.h"
 #include "Game/Graphics/ShowEffect.h"
 #include "Game/Graphics/ShowGameStatus.h"
@@ -137,6 +138,9 @@ void UpdatePlayStaffTransition(Player* player);
 void UpdatePlayStart(Player* player);
 void UpdatePlayVersusOver(Player* player);
 void UpdateSiren(Player* player);
+ButtonInput Select(Player* player);
+Fixed32 CurrentGravity(Player* player);
+uint32_t PointsBaseValue(Player* player, uint8_t numLines);
 
 static MatrixBlock MatrixBlocks[NUMMATRIXBLOCKS_SHARED];
 
@@ -266,8 +270,8 @@ void InitPlayer(PlayerNum playerNum) {
 	}
 
 	// Items.
-	player->itemBagFlags = ITEMBAG_FULL;
-	player->normalItemBagFlags = ITEMBAG_FULL;
+	player->itemBag = ITEMBAG_FULL;
+	player->normalItemBag = ITEMBAG_FULL;
 	player->clearItemType = ITEMTYPE_NULL;
 	player->itemMiscFlags = ITEMMISC_NONE;
 	player->numItemBarBlocks = 0u;
@@ -311,7 +315,7 @@ void InitPlayer(PlayerNum playerNum) {
 		InitSeed += Rand(1192u) + 1u;
 	}
 	player->seed = InitSeed;
-	uint8_t nextBlockNum;
+	uint8_t nextBlockNum = 0u; // BUG: Uninitialized, though the code guarantees it won't be read uninitialized; initialization added just to silence compiler warning.
 	bool rejected = true;
 	while (rejected) {
 		uint8_t nextBlockNum = GenNextInt(&player->seed, true) % 7;
@@ -703,7 +707,7 @@ void UpdatePlayerSelecting(Player* player) {
 		}
 		player->values[0] = MODESELECTION_NORMAL;
 		SetMode(player, player->values[0]);
-		SetPal(fieldBorderPalNum, 16u, PAL_NORMALFIELDBORDER);
+		SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_NORMALFIELDBORDER);
 		SetPal(15, 1, PAL_MODESELECTED);
 		SetPal(14, 1, PAL_MODENOTSELECTED);
 		if (!player->otherPlayer->refusingChallenges && (player->otherPlayer->nowFlags & NOW_STARTED)) {
@@ -773,11 +777,11 @@ void UpdatePlayerSelecting(Player* player) {
 		SetMode(player, player->values[0]);
 
 		switch (player->values[0]) {
-		case MODESELECTION_NORMAL: SetPal(fieldBorderPalNum, 16u, PAL_NORMALFIELDBORDER); break;
-		case MODESELECTION_MASTER: SetPal(fieldBorderPalNum, 16u, PAL_WHITEFIELDBORDER); break;
-		case MODESELECTION_TGMPLUS: SetPal(fieldBorderPalNum, 16u, PAL_BLUEFIELDBORDER); break;
-		case MODESELECTION_TADEATH: SetPal(fieldBorderPalNum, 16u, PAL_REDFIELDBORDER); break;
-		case MODESELECTION_DOUBLES: SetPal(fieldBorderPalNum, 16u, PAL_WHITEFIELDBORDER); break;
+		case MODESELECTION_NORMAL: SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_NORMALFIELDBORDER); break;
+		case MODESELECTION_MASTER: SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_WHITEFIELDBORDER); break;
+		case MODESELECTION_TGMPLUS: SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_BLUEFIELDBORDER); break;
+		case MODESELECTION_TADEATH: SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_REDFIELDBORDER); break;
+		case MODESELECTION_DOUBLES: SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_WHITEFIELDBORDER); break;
 		default: break;
 		}
 
@@ -1155,7 +1159,7 @@ void NextPlayActive(Player* player) {
 
 	if (!(player->modeFlags & MODE_TGMPLUS)) {
 		if (player->modeFlags & MODE_TADEATH) {
-			player->lockDelay = LockDelayTaDeath[player->level > 500u ? 500u : player->level];
+			player->lockDelay = (int8_t)LockDelayTaDeath[player->level > 500u ? 500u : player->level];
 		}
 		else {
 			if (player->level > 999u) {
@@ -1163,13 +1167,13 @@ void NextPlayActive(Player* player) {
 			}
 
 			if (player->level >= 500u) {
-				player->lockDelay = LockDelay[player->level - 500u];
+				player->lockDelay = (int8_t)LockDelay[player->level - 500u];
 			}
 		}
 	}
 
 	if (player->modeFlags & MODE_TIMEOUT) {
-		player->lockDelay = LockDelay[499u];
+		player->lockDelay = (int8_t)LockDelay[499u];
 	}
 
 	player->lockFrames = player->lockDelay;
@@ -1402,7 +1406,7 @@ static inline void CountBlockings(const Player* player, const int16_t col, const
 // Use to check if the active block is blocked when not rotating. For checking
 // if a rotation is possible, use RotationBlockedCheckKick.
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 
 	entry->numPlayerBlockings = 0u;
 	entry->numMatrixBlockings = 0u;
@@ -1608,7 +1612,7 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 		F32I(player->activePos[1]) = landingRow;
 	}
  
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]) - 1, player->activeRotation)) {
 		if (!(player->modeFlags & MODE_DOUBLES) || entry->numMatrixBlockings != 0) {
 			if (player->lockFrames == player->lockDelay) {
@@ -1792,7 +1796,7 @@ void UpdatePlayActive(Player* player) {
 			droppedRows = 0;
 		}
 		if (droppedRows > NumInstantDropRows[player->num]) {
-			NumInstantDropRows[player->num] = droppedRows;
+			NumInstantDropRows[player->num] = (uint8_t)droppedRows;
 		}
 	}
 
@@ -1884,7 +1888,7 @@ void LockActiveBlock(Player* player, LockType lockType) {
 // behavior is well-defined, so it's not really a bug. Though it's marked as
 // bugged, because forks of the code might need to consider changing it.
 void BackupMatrix(Player* player) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			entry->squares[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] = MATRIX(player, row, col).block;
@@ -1894,7 +1898,7 @@ void BackupMatrix(Player* player) {
 }
 
 void RestoreMatrix(Player* player) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, row, col).block = entry->squares[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col];
@@ -1936,8 +1940,8 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 				else {
 					if (square->block & BLOCK_ITEM) {
 						player->clearItemType = square->itemType;
-						player->itemEffectPos[0] = col;
-						player->itemEffectPos[1] = row;
+						player->itemEffectPos[0] = (uint8_t)col;
+						player->itemEffectPos[1] = (uint8_t)row;
 					}
 					square->block = NULLBLOCK;
 					square->itemType = ITEMTYPE_NULL;
@@ -1949,14 +1953,14 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 }
 
 void SendGarbageRow(Player* player, int16_t fieldRow, int16_t garbageRow) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
 		player->garbage[(player->otherPlayer->numGarbageRows + garbageRow) * MATRIX_SINGLEWIDTH + col] = entry->squares[garbageRow * FIELD_SINGLEWIDTH * 2 + col + 1];
 	}
 }
 
 int8_t AllClearGarbage(Player* player, uint8_t numLines) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 
 	for (int16_t row = 0; row < numLines; row++) {
 		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
@@ -2027,7 +2031,7 @@ void UpdatePlayLock(Player* player) {
 		}
 	}
 
-	uint32_t pointsBaseValue; // BUG: Not initialized, though it never ends up being used uninitialized.
+	uint32_t pointsBaseValue = 0u; // BUG: Not initialized, though it never ends up being used uninitialized. Initialized to zero here, just in case.
 	if (GameFlags & (GAME_TWIN | GAME_VERSUS | GAME_DOUBLES)) {
 		if ((player->modeFlags & MODE_INVISIBLE) && (player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED) {
 			if (numLines > 3u) {
@@ -2285,7 +2289,7 @@ uint8_t GenNextBlockNum(Player* player) {
 }
 
 void NextBagItem(Player* player, uint8_t itemNum) {
-	player->itemBagFlags &= ~(1 << itemNum);
+	player->itemBag &= ~(1 << itemNum);
 	player->nextBlockItemType = TOITEMTYPE(itemNum);
 	player->nextBlock |= BLOCK_ITEM;
 }
@@ -2323,8 +2327,8 @@ void NextItem(Player* player) {
 		player->level >= ((player->normalItemIndex + 1) * 100)) {
 		const uint8_t itemNum = NormalItemNums[player->normalItemIndex];
 		const uint32_t itemBagFlag = 1 << itemNum;
-		if (player->normalItemBagFlags & itemBagFlag) {
-			player->normalItemBagFlags &= ~itemBagFlag;
+		if (player->normalItemBag & itemBagFlag) {
+			player->normalItemBag &= ~itemBagFlag;
 			NextBagItem(player, itemNum);
 			player->normalItemIndex++;
 		}
@@ -2332,7 +2336,7 @@ void NextItem(Player* player) {
 	else if (
 		(player->modeFlags & (MODE_VERSUS | MODE_ITEM)) &&
 		player->numItemBarBlocks >= MAXITEMBARBLOCKS &&
-		player->itemBagFlags != ITEMBAG_NONE) {
+		player->itemBag != ITEMBAG_NONE) {
 		GenNextItem(player);
 	}
 }
@@ -2348,7 +2352,7 @@ static const SoundEffect NextSoundEffects[7] = {
 };
 
 void UpdatePlayNext(Player* player) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 
 	// Level at most is 999.
 	if (player->level > NextSectionLevels[9]) {
@@ -2397,8 +2401,8 @@ void UpdatePlayNext(Player* player) {
 	if ((player->modeFlags & MODE_BIG) || (player->itemMiscFlags & ITEMMISC_DEATHBLOCK)) {
 		player->nextBlock |= BLOCK_BIG;
 	}
-	if ((player->modeFlags & MODE_ITEM) && player->itemBagFlags == ITEMBAG_NONE) {
-		player->itemBagFlags = ITEMBAG_FULL;
+	if ((player->modeFlags & MODE_ITEM) && player->itemBag == ITEMBAG_NONE) {
+		player->itemBag = ITEMBAG_FULL;
 	}
 	if (!(player->modeFlags & (MODE_NOITEM | MODE_CEMENT))) {
 		NextItem(player);
@@ -2541,7 +2545,7 @@ void UpdatePlayNext(Player* player) {
 }
 
 void UpdatePlayBlockedEntry(Player* player) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
 		if (entry->numMatrixBlockings == 0) {
 			// Blocked by other player's active block and no matrix squares.
@@ -2740,7 +2744,7 @@ void UpdateTgmPlusGarbage(Player* player) {
 			MATRIX(player, 1, col).brightness = 0u;
 		}
 
-		player->tgmPlusGarbageIndex = (player->tgmPlusGarbageIndex + 1u) % (sizeof(TgmPlusGarbage) / FIELD_SINGLEWIDTH);
+		player->tgmPlusGarbageIndex = ((size_t)player->tgmPlusGarbageIndex + 1u) % (sizeof(TgmPlusGarbage) / FIELD_SINGLEWIDTH);
 		PlaySoundEffect(SOUNDEFFECT_IRS);
 	}
 }
@@ -2786,9 +2790,9 @@ void UpdatePlayGameOver(Player* player) {
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->numSecretGradeRows >= 5) {
 		DisplayObject(OBJECT_SECRETGRADE, 158, player->screenPos[0] - 35, 2u, 110u);
-		int16_t y = -((SecretGradeScales[player->num] - UNSCALED) << 14) % UNSCALED;
-		int16_t x = -((SecretGradeScales[player->num] - UNSCALED) << 14) / UNSCALED;
-		DisplayObjectEx(ObjectTableGrades[player->numSecretGradeRows - 1], 170 + y, player->screenPos[0] + x, 1u, 110u, SecretGradeScales[player->num], SecretGradeScales[player->num], false);
+		int16_t y = -(int16_t)((SecretGradeScales[player->num] - UNSCALED) << 14) % UNSCALED;
+		int16_t x = -(int16_t)((SecretGradeScales[player->num] - UNSCALED) << 14) / UNSCALED;
+		DisplayObjectEx(ObjectTableGrades[player->numSecretGradeRows - 1], 170 + y, player->screenPos[0] + x, 1u, 110u, (SpriteScale)SecretGradeScales[player->num], (SpriteScale)SecretGradeScales[player->num], false);
 
 		SecretGradeScales[player->num] -= 2;
 		if (SecretGradeScales[player->num] < UNSCALED) {
@@ -3046,7 +3050,7 @@ void UpdatePlayVersusOver(Player* player) {
 	// here relates to the scale value. I believe it adjusts the position of
 	// the object to be centered as it scales at a screen position.
 	int32_t var0 = ((player->values[1] - UNSCALED) << 10) / UNSCALED;
-	DisplayObjectEx(&UNK_3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->screenPos[0] + (-(var1 * var0) >> 10), palNum, 125u, player->values[1], player->values[1], false);
+	DisplayObjectEx(UNK_3A8C0[objectIndex], 120 + (-(var0 << 3) >> 10), player->screenPos[0] + (-(int32_t)(var1 * var0) >> 10), palNum, 125u, (SpriteScale)player->values[1], (SpriteScale)player->values[1], false);
 }
 
 #undef showGameOver
@@ -3182,13 +3186,13 @@ void UpdatePlayGarbageCheck(Player* player) {
 static const uint8_t InitItemWeights[NUMITEMTYPES] = { 50u, 1u, 250u, 250u, 100u, 50u, 3u, 150u, 100u, 5u, 50u, 250u, 150u, 250u, 3u, 150u, 3u, 150u, 5u };
 
 void GenNextItem(Player* player) {
-	EntryData* entry = Temp;
+	TEMPPTR(EntryData, entry);
 	for (uint16_t itemNum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
 		entry->itemWeights[itemNum] = InitItemWeights[itemNum];
 	}
 
 	for (uint16_t itemNum = 0u; itemNum < NUMITEMTYPES; itemNum++) {
-		if (!(player->itemBagFlags & (1 << itemNum))) {
+		if (!(player->itemBag & (1 << itemNum))) {
 			entry->itemWeights[itemNum] = 0u;
 		}
 	}
@@ -3222,8 +3226,8 @@ void GenNextItem(Player* player) {
 			if (itemNum == NUMITEMTYPES) {
 				break;
 			}
-			if (player->itemBagFlags & (1 << itemNum)) {
-				NextBagItem(player, itemNum);
+			if (player->itemBag & (1 << itemNum)) {
+				NextBagItem(player, (uint8_t)itemNum);
 				retry = false;
 			}
 		}

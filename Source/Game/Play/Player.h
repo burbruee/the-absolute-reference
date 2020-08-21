@@ -269,8 +269,8 @@ struct Player {
 	Rotation activeRotation;
 	Fixed32 activePos[2];
 	uint8_t history[4];
-	ItemBagFlag itemBagFlags;
-	ItemBagFlag normalItemBagFlags;
+	ItemBagFlag itemBag;
+	ItemBagFlag normalItemBag;
 	ItemType clearItemType;
 	ItemType activeItemType;
 	uint8_t itemEffectPos[2];
@@ -345,7 +345,7 @@ typedef enum GameMusic {
 typedef struct GameData {
 	uint8_t state; // TODO: Change to enum?
 	int16_t UNK_2; // TODO: Used in versus, in the function at 0x60071D6.
-	uint8_t numVersusRoundWins[2];
+	uint8_t numVersusRoundWins[NUMPLAYERS];
 	uint8_t numVersusRounds;
 	uint8_t numVersusWins;
 	PlayerNum versusWinner;
@@ -366,7 +366,7 @@ void InitPlayers();
 extern const int16_t FieldPos[8];
 void SetFieldPos(Player *player, bool useVersusX);
 
-extern const int16_t NextSectionLevels[10];
+extern const uint16_t NextSectionLevels[10];
 extern ItemType ItemDescriptions[NUMPLAYERS];
 void InitPlayer(PlayerNum playerNum);
 

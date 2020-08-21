@@ -33,7 +33,7 @@ static Checksum* ChecksumDataDstPtr;
 static uint32_t GraphicsCheckBank;
 static uint32_t NumChecksumFrames;
 
-static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha);
+static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, uint16_t palNum, bool alpha);
 
 bool ChecksumPass() {
 	bool success;
@@ -232,7 +232,7 @@ static const ObjectData* ObjectTableHexDigits[0x10] = {
 	&OBJECTTABLE_HEXDIGITS[15],
 };
 
-static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, int16_t palNum, bool alpha) {
+static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool displayZeroes, NumAlign numAlign, uint16_t palNum, bool alpha) {
 	int32_t i = numDigits--;
 	int32_t base16Place = 1;
 	while (numDigits != 0) {
@@ -247,7 +247,7 @@ static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bo
 			digit %= 0x10;
 		}
 
-		ObjectData* digitObject;
+		const ObjectData* digitObject;
 		if (digit == 0) {
 			if (displayZeroes || i == 1) {
 				digitObject = ObjectTableHexDigits[0];
@@ -262,7 +262,7 @@ static void ShowHexNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bo
 		}
 
 		if (digitObject != NULL) {
-			ShowObjectEx(digitObject, y, x, palNum, 125u, UNSCALED, UNSCALED, alpha);
+			ShowObjectEx(digitObject, y, x, (uint8_t)palNum, 125u, UNSCALED, UNSCALED, alpha);
 			x += TEXT_DIGITWIDTH;
 		}
 		else if (numAlign == NUMALIGN_RIGHT) {

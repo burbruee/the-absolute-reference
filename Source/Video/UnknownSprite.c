@@ -7,7 +7,7 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
     int16_t i = SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 	UNK_6061932.tempSprite[6]--;
     SpriteAdders[i].data = data;
-    SpriteAdders[i].UNK_2B = 5u;
+    SpriteAdders[i].type = 5u;
     SpriteAdders[i].y = y;
     SpriteAdders[i].x = x;
     SpriteAdders[i].UNK_34 = UNK_6061932.UNK_10;
@@ -25,8 +25,8 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
 
 void UNK_602BB0C() {
 	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
-		if (SpriteAdders[SpriteAdderNameTable[i]].UNK_2B == 5u) {
-			SpriteAdders[SpriteAdderNameTable[i]].UNK_2B = 0u;
+		if (SpriteAdders[SpriteAdderNameTable[i]].type == 5u) {
+			SpriteAdders[SpriteAdderNameTable[i]].type = 0u;
 			SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
 			UNK_6061932.tempSprite[6]++;
 			if (UNK_6061932.tempSprite[6] != i) {
@@ -77,12 +77,12 @@ void UNK_602C5C2() {
 			SpriteAdders[j].palNum = (SpriteAdders[j].palNum == 0u) ? UNK_6061932.tempSprite[7] : SpriteAdders[j].palNum;
 			SpriteAdders[j].flipXBgPriW = (SpriteAdders[j].flipXBgPri & 3u) << 4;
 
-			switch (SpriteAdders[j].UNK_2B) {
-			case 5u:
+			switch (SpriteAdders[j].type) {
+			case ADDSPRITE_5:
 				UNK_602C3EE(adderData, sequenceData, x, y, type); // TODO
 				break;
 
-			case 6u:
+			case ADDSPRITE_ANIM:
 				type &= ~0x8000;
 				if (type == 4u || type == 5u || type == 6u) {
 					UNK_602C0F8(adderData, sequenceData, x, y, type); // TODO

@@ -29,7 +29,7 @@ static void InitDemoLoop() {
 	UNK_6023790();
 	UNK_602AB9E();
 	FreePalCycles(FREEALLPALCYCLES);
-	UNK_602419C();
+	InitSpriteAdders();
 	UNK_60169DC();
 	UNK_602E72A(0u);
 	InitPlayers();

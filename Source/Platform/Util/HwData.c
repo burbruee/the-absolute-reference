@@ -20,7 +20,16 @@ RAMDATA uint32_t GRAPHICSRAM[0x10000 / sizeof(uint32_t)];
 RAMDATA Color PALRAM[NUMPALS * NUMPALCOLORS_4BPP];
 RAMDATA uint16_t SCALERAM[0x100];
 RAMDATA uint8_t VIDEOCTRL;
+
 RAMDATA uint8_t IRQCTRL[4];
+uint8_t InterruptControlRead(size_t i) {
+	// TODO
+	return 0u;
+}
+void InterruptControlWrite(size_t i, uint8_t value) {
+	// TODO
+}
+
 RAMDATA uint8_t VIDEOREGS[0x20];
 
 RAMDATA uint32_t GRAPHICSCHECK[0x20000 / sizeof(uint32_t)];

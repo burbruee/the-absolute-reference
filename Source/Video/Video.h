@@ -12,6 +12,21 @@
 
 extern const int16_t UNK_60356C8[4];
 
+typedef enum AddSpriteType {
+	ADDSPRITE_0,
+	ADDSPRITE_1,
+	ADDSPRITE_2,
+	ADDSPRITE_3,
+	ADDSPRITE_4,
+	ADDSPRITE_5,
+	ADDSPRITE_ANIM,
+	ADDSPRITE_7,
+	ADDSPRITE_8,
+	ADDSPRITE_9,
+	ADDSPRITE_10,
+	ADDSPRITE_11
+} AddSpriteType;
+
 // TODO: Could be data for setting sprites with AddSprite and other functions
 // (so name it SetSpriteData). Might only be for setting one sprite at a time,
 // unlike the object functions that write multiple sprites for a single object.
@@ -42,7 +57,7 @@ typedef struct AddSpriteData {
 	uint16_t verticalHorizontal;
 	int16_t UNK_28;
 	uint8_t layer;
-	uint8_t UNK_2B;
+	AddSpriteType type;
 	uint16_t UNK_2C;
 	uint8_t UNK_2E;
 	uint8_t UNK_2F;
@@ -56,18 +71,23 @@ typedef struct AddSpriteData {
 // The number of sprites written to Sprites.
 extern int16_t NumSprites;
 
-typedef struct struct_607D218_300 {
+typedef struct STRUCT_607D218_300 {
 	void (*UNK_0[4])();
-} struct_607D218_300;
+} STRUCT_607D218_300;
 
-typedef struct struct_607D218 struct_607D218;
-struct struct_607D218 {
-	struct_607D218* UNK_0;
-	struct_607D218* UNK_4;
-	struct_607D218* UNK_8;
-	struct_607D218* UNK_C;
-	struct_607D218* UNK_10;
-	struct_607D218* UNK_14;
+typedef struct STRUCT_607D218_300_0 {
+	void (*UNK_0)();
+	uint16_t UNK_4[5];
+} STRUCT_607D218_300_0;
+
+typedef struct STRUCT_607D218 STRUCT_607D218;
+struct STRUCT_607D218 {
+	STRUCT_607D218* UNK_0;
+	STRUCT_607D218* UNK_4;
+	STRUCT_607D218* UNK_8;
+	STRUCT_607D218* UNK_C;
+	STRUCT_607D218* UNK_10;
+	STRUCT_607D218* UNK_14;
 	uint16_t UNK_18;
 	uint16_t UNK_1A;
 	uint8_t UNK_1C[4];
@@ -76,12 +96,12 @@ struct struct_607D218 {
 	Fixed32 UNK_28;
 	Fixed32 UNK_2C;
 	uint16_t UNK_30; // TODO: Might be bool.
-	struct_607D218_300 UNK_300[16];
+	void* UNK_300[16][4];
 };
 
 #define STRUCT_607D218_300_END(s) (&(s)->UNK_300[15])
 
-extern struct_607D218* UNK_606005C;
+extern STRUCT_607D218* UNK_606005C;
 
 extern AddSpriteData SpriteAdders[64];
 
@@ -89,16 +109,16 @@ extern int16_t SpriteAdderNameTable[64];
 
 extern uint32_t UNK_60618F0[16];
 
-typedef struct struct_6061932 {
+typedef struct STRUCT_6061932 {
 	SpriteData tempSprite;
 	uint16_t UNK_10;
 	uint16_t UNK_12;
 	uint16_t UNK_14;
 	uint16_t UNK_16;
 	uint16_t UNK_18;
-} struct_6061932;
+} STRUCT_6061932;
 
-extern struct_6061932 UNK_6061932;
+extern STRUCT_6061932 UNK_6061932;
 
 #define MAXVIDEOSETTERS 32
 uint16_t NumVideoSetters;
@@ -112,10 +132,10 @@ typedef struct VideoSetter {
 
 VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
-extern struct_607D218* UNK_6064750;
+extern STRUCT_607D218* UNK_6064750;
 
-// SH-2: sizeof(struct_60AD228) == 0x68
-typedef struct struct_60AD228 {
+// SH-2: sizeof(STRUCT_60AD228) == 0x68
+typedef struct STRUCT_60AD228 {
 	uint16_t UNK_0;
 	uint32_t* UNK_4[2];
 	uint16_t UNK_C[2];
@@ -137,9 +157,9 @@ typedef struct struct_60AD228 {
 	int16_t UNK_58;
 	GameBg* UNK_60;
 	int32_t UNK_64;
-} struct_60AD228;
+} STRUCT_60AD228;
 
-extern struct_60AD228 UNK_60AD228[11];
+extern STRUCT_60AD228 UNK_60AD228[11];
 
 typedef struct Bg {
 	int16_t UNK_0;
@@ -176,37 +196,38 @@ void UNK_6023788();
 
 void UNK_602378C();
 
+// Inits the STRUCT_607D218 data.
 void UNK_6023790();
 
 void UNK_60237DE();
 
-void UNK_602392E(int32_t, void (*)());
+void UNK_602392E(uintptr_t, void (*)());
 
-void UNK_60239B8(int32_t, int32_t);
+void UNK_60239B8(uintptr_t, uintptr_t);
 
-void UNK_6023A0E(struct_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
+void UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
 
-void* UNK_6023A98(struct_607D218*, void*, void*, void*);
+void* UNK_6023A98(STRUCT_607D218*, void*, void*, void*);
 
-void UNK_6023B76(struct_607D218*);
+void UNK_6023B76(STRUCT_607D218*);
 
-void UNK_6023BC4(struct_607D218*, void (*)());
+void UNK_6023BC4(STRUCT_607D218*, void (*)());
 
-void UNK_6023C3E(struct_607D218*, void*);
+void UNK_6023C3E(STRUCT_607D218*, void*);
 
-void* UNK_6023C8A(struct_607D218*, void*);
+void* UNK_6023C8A(STRUCT_607D218*, void*);
 
 int32_t UNK_6023CBC(void (*)(), uint32_t, int16_t, int16_t, int16_t, int16_t, int16_t, int16_t);
 
-struct_607D218* UNK_6023DAE(struct_607D218*);
+STRUCT_607D218* UNK_6023DAE(STRUCT_607D218*);
 
-void UNK_6023E5A(struct_607D218*);
+void UNK_6023E5A(STRUCT_607D218*);
 
-struct_607D218* UNK_6023EFE(void (**)(), struct_607D218*);
+STRUCT_607D218* UNK_6023EFE(void (**)(), STRUCT_607D218*);
 
-void* UNK_6023FA4(void (**)(), struct_607D218*);
+void* UNK_6023FA4(void (**)(), STRUCT_607D218*);
 
-void UNK_6024030(struct_607D218*);
+void UNK_6024030(STRUCT_607D218*);
 
 void UNK_602406E();
 
@@ -227,23 +248,26 @@ PauseMode GetNextPauseMode();
 void AllocSpriteLayerNames(int16_t layer, int16_t num);
 void FreeSpriteLayer(uint16_t layer);
 void InitSpriteAlpha();
-void UNK_602419C();
+void InitSpriteAdders();
 void UNK_6024244();
 void UNK_60243E8(AddSpriteData* arg0);
 void UNK_602471C(AddSpriteData* arg0);
 void WriteSpriteLayers();
 void InitSpriteLayers();
 int16_t AllocSpriteAdder();
-void UNK_6024B78(int16_t);
+void FreeSpriteAdder(int16_t i);
 void UNK_6024C00(int16_t);
-void UNK_6024C3C(int16_t i, int16_t y, int16_t x, const ObjectData* objectTable);
+void UNK_6024C3C(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData* objectTable);
 void UNK_6024C82(int16_t, void*);
 void UNK_6024CBC(int16_t, int16_t, int16_t, void*, int16_t);
 void UNK_6024CF4(int16_t, int16_t, int16_t, void*, int16_t, int16_t, uint16_t);
 void UNK_6024D74(int16_t, int16_t, int16_t, void*, int16_t, int16_t, uint16_t);
 void UNK_6024DF0(int16_t);
 void UNK_6024E5C(int16_t);
+
+// TODO: Could be InitBgs().
 void UNK_6024ED8();
+
 void UNK_6025078();
 void UNK_60251B8(int16_t, uint32_t*, uint32_t*);
 void UNK_602523C();
@@ -275,9 +299,9 @@ void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the b
 void VideoSetScanlinesBank(void*, void*, void*);
 void UNK_6029498(int16_t);
 // TODO
-void UNK_60294C0(uint8_t arg0);
+void UNK_60294C0(void* arg0, void* unused1, void* unused2);
 void SetBackdropColor(Color color);
-void VideoSetBackdropColor(uintptr_t color, void*, void*);
+void VideoSetBackdropColor(void* color, void*, void*);
 void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
 void UNK_602970C();
 void UNK_602975E();
@@ -307,9 +331,9 @@ void FreePalCycles(uint16_t palNum);
 void DisablePalCycles();
 void EnablePalCycles();
 // TODO
-void SetPal(uint8_t palNum, uint8_t numPals, ROMDATA Color* pal);
-// TODO
-void UNK_602A96A(uint8_t arg0, void* arg1);
+void SetPal(const uint8_t palNum, const uint8_t numPals, const Color* pal);
+void PalSetReverse(const uint8_t palNum, const uint8_t numPals, const Color* pal);
+void SetPalList(uint8_t palNum, const Color** palList);
 void UNK_602AA16();
 void UNK_602AA4C();
 void UNK_602AA64();

@@ -3,6 +3,9 @@
 #include "Sound/Music.h"
 #include "Sound/SoundEffect.h"
 #include <stdint.h>
+#include <stdbool.h>
+
+extern bool NoSound;
 
 // TODO: Most of these functions should probably be moved into
 // PsikyoSH-specific code, with only a few provided globally to the game/system
@@ -24,8 +27,8 @@ void UNK_602E56A();
 void PlaySoundEffectCoin();
 void UNK_602E586();
 void StopMusic();
-void DisableSoundEffects();
-void EnableSoundEffects();
+void DisableSound();
+void EnableSound();
 void UNK_602E64C(uint8_t, uint8_t);
 uint8_t UNK_602E68C(uint8_t);
 void UNK_602E6B8();
