@@ -11,7 +11,7 @@ GameBg CurrentGameBg;
 
 static uint8_t DemoSection = 0u;
 
-static ROMDATA Color* const BgPalPtrs[] = {
+static const Color* const BgPalPtrs[] = {
 	PAL_BGMAPSECTION0,
 	PAL_BGMAPSECTION1,
 	PAL_BGMAPSECTION2,
@@ -25,18 +25,18 @@ static ROMDATA Color* const BgPalPtrs[] = {
 	PAL_BGMAPVERSUS
 };
 
-static ROMDATA BgMap* const BgMapPtrs[] = {
-	(ROMDATA BgMap*)&BgMapSection0,
-	(ROMDATA BgMap*)&BgMapSection1,
-	(ROMDATA BgMap*)&BgMapSection2,
-	(ROMDATA BgMap*)&BgMapSection3,
-	(ROMDATA BgMap*)&BgMapSection4,
-	(ROMDATA BgMap*)&BgMapSection5,
-	(ROMDATA BgMap*)&BgMapSection6,
-	(ROMDATA BgMap*)&BgMapSection7,
-	(ROMDATA BgMap*)&BgMapSection8,
-	(ROMDATA BgMap*)&BgMapSection9,
-	(ROMDATA BgMap*)&BgMapVersus
+static const BgMap* const BgMapPtrs[] = {
+	(const BgMap*)&BgMapSection0,
+	(const BgMap*)&BgMapSection1,
+	(const BgMap*)&BgMapSection2,
+	(const BgMap*)&BgMapSection3,
+	(const BgMap*)&BgMapSection4,
+	(const BgMap*)&BgMapSection5,
+	(const BgMap*)&BgMapSection6,
+	(const BgMap*)&BgMapSection7,
+	(const BgMap*)&BgMapSection8,
+	(const BgMap*)&BgMapSection9,
+	(const BgMap*)&BgMapVersus
 };
 
 

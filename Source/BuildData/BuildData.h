@@ -26,7 +26,7 @@ extern const int16_t NumObjects;
 extern const int16_t UNK_4001E; // TODO: Could be the number of palettes (with 256-color palettes maybe counting as one).
 // TODO: Fix the pointers here.
 // BuildChecksumDataPtr and SequenceDataTablePtr are correct.
-extern ROMDATA Color* const PalDataPtr;
+extern const Color* const PalDataPtr;
 
 extern ROMDATA BgMap** const BgMapTablePtr;
 extern ROMDATA BgMap* const BgMapsPtr;
@@ -41,9 +41,9 @@ extern ROMDATA ObjectData* const ObjectDataTablePtr;
 // TODO
 //extern const RectData** RectDataTablePtr;
 
-extern ROMDATA Color** const PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
+extern const Color** const PalTableDataPtr; // Appears to be a list of NULL-terminated sequences of palette data pointers. NumPalLists is the number of such NULL-terminated lists.
 
 extern const Checksum* const BuildChecksumDataPtr;
 extern const uint32_t UNK_40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
-extern ROMDATA Color** const UNK_40048;
+extern const Color** const UNK_40048;

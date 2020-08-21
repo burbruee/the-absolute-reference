@@ -25,7 +25,7 @@ typedef struct ExchgFieldData {
 void UpdateItemExchgField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ExchgFieldData* data = item->data;
+	ExchgFieldData* data = (ExchgFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

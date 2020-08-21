@@ -11,6 +11,7 @@
 #include "Game/Save.h"
 #include "Video/Object.h"
 #include "Video/HwSprite.h"
+#include "Sound/Sound.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Eeprom.h"
 #include "Lib/LibC.h"
@@ -100,9 +101,6 @@ typedef enum RankingMode {
 
 static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankings, void* rankingExtras, RankingIndex rankingIndex, int16_t numRankings, RankingMode rankingMode);
 static void AddNewRanking(NewRankingData* newRanking);
-
-static void InitNameEntry(NameEntryData* nameEntry, Player* player);
-static bool UpdateNameEntry(NameEntryData* nameEntry);
 
 typedef enum EntryFlash {
 	ENTRYFLASH_FALSE = 0x00,
@@ -672,7 +670,7 @@ static void AddNewRanking(NewRankingData* newRanking) {
 	}
 }
 
-static void InitNameEntry(NameEntryData* nameEntry, Player* player) {
+void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 	nameEntry->player = player;
 
 	nameEntry->timeoutFrames = TIME(0, 30, 0);
@@ -689,7 +687,7 @@ static void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 }
 
 // TODO: Replace numeric literals assigned to charIndex with defined constants.
-static bool UpdateNameEntry(NameEntryData* nameEntry) {
+bool UpdateNameEntry(NameEntryData* nameEntry) {
 	bool done = false;
 
 	if (nameEntry->waitFrames != 0u) {

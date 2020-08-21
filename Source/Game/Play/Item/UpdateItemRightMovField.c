@@ -29,7 +29,7 @@ typedef struct RightMovFieldData {
 void UpdateItemRightMovField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	RightMovFieldData* data = item->data;
+	RightMovFieldData* data = (RightMovFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

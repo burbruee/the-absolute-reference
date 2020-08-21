@@ -35,7 +35,7 @@ void UpdateItemFreeFall(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	int16_t numLines;
-	FreeFallData* data = item->data;
+	FreeFallData* data = (FreeFallData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

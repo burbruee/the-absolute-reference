@@ -38,7 +38,7 @@ void InitDebugCode() {
 }
 
 bool UpdateDebugCode() {
-	DebugCodeInput* debugCodeInput = &DebugCode[NumDebugCodeInputs];
+	const DebugCodeInput* debugCodeInput = &DebugCode[NumDebugCodeInputs];
 
 	if (Settings[SETTING_COINMODE] == COINMODE_FREE && (GameButtonsNew[PLAYER1] || GameButtonsNew[PLAYER2])) {
 		if (GameButtonsNew[debugCodeInput->playerNum] == debugCodeInput->button) {

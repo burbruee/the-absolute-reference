@@ -2,6 +2,7 @@
 #include "Game/Play/Player.h"
 #include "Game/Play/Block.h"
 #include "Game/Play/Matrix.h"
+#include "Game/Play/Item/ShowItemWarningShotgun.h"
 #include "Game/Graphics/ShowBlockField.h"
 #include "Game/Graphics/ShowEffect.h"
 #include "Sound/Sound.h"
@@ -34,7 +35,7 @@ typedef struct ShotgunData {
 void UpdateItemShotgun(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ShotgunData* data = item->data;
+	ShotgunData* data = (ShotgunData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

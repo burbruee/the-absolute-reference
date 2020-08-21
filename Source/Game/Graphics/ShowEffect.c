@@ -11,7 +11,7 @@
 #include <assert.h>
 
 typedef struct BlockExplosionData {
-	ObjectData* objectTable;
+	const ObjectData* objectTable;
 	uint16_t palNum;
 	int16_t y;
 	int16_t x;
@@ -191,7 +191,7 @@ static void UNK_60174F8(Entity* entity) {
 #undef frames
 
 typedef struct SingleClearData {
-	ObjectData* objectTables[FIELD_DOUBLESWIDTH];
+	const ObjectData* objectTables[FIELD_DOUBLESWIDTH];
 	uint16_t palNums[FIELD_DOUBLESWIDTH];
 	int16_t y;
 } SingleClearData;
@@ -273,7 +273,7 @@ static void UpdateEntitySingleClear(Entity* entity) {
 	ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
 	int16_t y = data->y;
 	int16_t x = entity->data.info.player->screenPos[0] - 40;
-	// BUG: Should be "i < entity->data.info.player->fieldWidth". Results in
+	// BUG: Should be "col < entity->data.info.player->fieldWidth". Results in
 	// line clear explosions spanning only the left 10 columns of a doubles
 	// field.
 	for (int16_t col = 0; col < FIELD_SINGLEWIDTH; col++, x += 8) {
@@ -382,7 +382,7 @@ static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, in
 	}
 	palNum += 4;
 
-	ObjectData* blockObject;
+	const ObjectData* blockObject;
 	if (activeBlock & BLOCK_HARD) {
 		blockObject = OBJECT_HARDBLOCK;
 	}

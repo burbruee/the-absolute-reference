@@ -3,6 +3,7 @@
 #include "Game/Play/Ranking.h"
 #include "Game/Graphics/ShowText.h"
 #include "Game/Temp.h"
+#include "Lib/Math.h"
 #include "Lib/Macros.h"
 
 typedef struct RankingCodeNode RankingCodeNode;

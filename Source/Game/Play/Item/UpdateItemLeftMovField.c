@@ -29,7 +29,7 @@ typedef struct LeftMovFieldData {
 void UpdateItemLeftMovField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	LeftMovFieldData* data = item->data;
+	LeftMovFieldData* data = (LeftMovFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
@@ -87,7 +87,7 @@ void UpdateItemLeftMovField(Item* item) {
 
 		case STATE_SLAM:
 			activatingPlayer->screenOffset[0] -= 32;
-			if (activatingPlayer->screenOffset <= -16) {
+			if (activatingPlayer->screenOffset[0] <= -16) {
 				item->states[0]++;
 			}
 			break;

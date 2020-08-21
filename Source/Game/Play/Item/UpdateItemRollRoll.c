@@ -27,7 +27,7 @@ typedef struct RollRollData {
 void UpdateItemRollRoll(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	RollRollData* data = item->data;
+	RollRollData* data = (RollRollData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
@@ -97,7 +97,7 @@ void UpdateItemRollRoll(Item* item) {
 		case STATE_DEACTIVATE:
 			itemPlayer->itemMiscFlags &= ~ITEMMISC_ROTATE;
 			itemPlayer->play.flags &= PLAYFLAG_FORCEENTRY;
-			if (!NoDisableGarbage(itemPlayer)) {
+			if (!NoDisableGarbage(item)) {
 				itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			}
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;

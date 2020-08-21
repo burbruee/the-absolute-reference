@@ -55,7 +55,7 @@ typedef enum Status {
 void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums);
 void ShowPlayersStatus();
 
-const ObjectData* ObjectTableStatusDigits[10];
+extern const ObjectData* ObjectTableStatusDigits[10];
 void ShowStatusNumEx(uint32_t num, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, int16_t numDigits, bool zeroPad, NumAlign numAlign);
 void ShowStatusNum(uint32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign);
 

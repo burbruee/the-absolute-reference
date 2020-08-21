@@ -3,9 +3,7 @@
 #include <stddef.h>
 
 #define NUMRANKINGCODEDIGITS 16
-
 #define RANKINGCODEBASE 20
-extern const char RankingCodeChars[RANKINGCODEBASE];
 
 typedef struct Player Player;
 

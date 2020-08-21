@@ -24,7 +24,7 @@ const int16_t NumObjects = 1682;
 
 const int16_t UNK_4001E = 516;
 
-ROMDATA Color* const PalDataPtr = Pal.data;
+const Color* const PalDataPtr = Pal.data;
 
 ROMDATA BgMap** const BgMapTablePtr = BgMapTable;
 
@@ -32,7 +32,7 @@ ROMDATA BgMap** const BgMapTablePtr = BgMapTable;
 // adjacently in memory, so this pointer won't work as expected. A solution
 // would be to create a generic data array that all the maps are stored into,
 // then getting pointers from that array for the background map table.
-ROMDATA BgMap* const BgMapsPtr = &BgMapSection2;
+ROMDATA BgMap* const BgMapsPtr = (ROMDATA BgMap*)&BgMapSection2;
 
 ROMDATA void** const SequenceDataTablePtr = SequenceDataTable;
 ROMDATA ObjectData* const ObjectDataTablePtr = Objects.data;
@@ -40,7 +40,7 @@ ROMDATA ObjectData* const ObjectDataTablePtr = Objects.data;
 //ROMDATA MidiData* const MidiPtr = &Midi;
 // TODO
 //ROMDATA RectData* const RectDataTablePtr = RectDataTable;
-ROMDATA Color** const PalTableDataPtr = PalTable.data;
+const Color** const PalTableDataPtr = PalTable.data;
 const Checksum* const BuildChecksumDataPtr = BuildChecksum.checksums;
 const uint32_t UNK_40044 = 8u;
-ROMDATA Color** const UNK_40048 = PalTable.data;
+const Color** const UNK_40048 = PalTable.data;

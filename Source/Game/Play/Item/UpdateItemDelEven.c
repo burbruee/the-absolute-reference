@@ -31,7 +31,7 @@ typedef struct DelEvenData {
 void UpdateItemDelEven(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	DelEvenData* data = item->data;
+	DelEvenData* data = (DelEvenData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

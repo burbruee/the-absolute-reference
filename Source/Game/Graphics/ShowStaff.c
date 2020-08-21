@@ -216,9 +216,9 @@ static void UpdateEntityStaff(Entity* entity) {
 		if (entity->scrollPixels > 0 && !data->skip && data->pixelY[i] > data->topPixelY && data->pixelY[i] < data->bottomPixelY) {
 			if (data->pixelY[i] > data->bottomPixelY - 8) {
 				DisplayObjectEx(
-					ObjectTableStaff[i],
+					(const ObjectData*)ObjectTableStaff[i],
 					data->pixelY[i] + player->screenOffset[1],
-					data->pixelX + player->screenOffset[0],
+					data->pixelX[i] + player->screenOffset[0],
 					178u,
 					70u,
 					(data->pixelY[i] - data->bottomPixelY + 8) * -5 * UNSCALED,
@@ -228,9 +228,9 @@ static void UpdateEntityStaff(Entity* entity) {
 			}
 			else if (data->pixelY[i] < data->topPixelY + 8) {
 				DisplayObjectEx(
-					ObjectTableStaff[i],
+					(const ObjectData*)ObjectTableStaff[i],
 					data->pixelY[i] + player->screenOffset[1],
-					data->pixelX + player->screenOffset[0],
+					data->pixelX[i] + player->screenOffset[0],
 					178u,
 					70u,
 					(data->pixelY[i] - data->topPixelY) * 5 + 0x17,
@@ -240,9 +240,9 @@ static void UpdateEntityStaff(Entity* entity) {
 			}
 			else {
 				DisplayObjectEx(
-					ObjectTableStaff[i],
+					(const ObjectData*)ObjectTableStaff[i],
 					data->pixelY[i] + player->screenOffset[1],
-					data->pixelX + player->screenOffset[0],
+					data->pixelX[i] + player->screenOffset[0],
 					178u,
 					70u,
 					UNSCALED,

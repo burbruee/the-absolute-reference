@@ -13,7 +13,7 @@ extern ROMDATA PalData Pal;
 
 typedef struct PalTableData {
 	char header[8];
-	Color* data[133];
+	const Color* data[133];
 } PalTableData;
 
 // The palettes table contains palette lists; each list in the table is an

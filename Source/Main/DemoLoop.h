@@ -17,7 +17,7 @@ typedef enum DemoScreenState {
 	NUMDEMOSCREENS
 } DemoScreenState;
 
-DemoScreenState DemoScreen;
+extern DemoScreenState DemoScreen;
 
 bool NextScreenVersionTitle();
 

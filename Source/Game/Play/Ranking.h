@@ -109,7 +109,6 @@ void InitTodaysBestRankings();
 
 // TODO: Functions from UNK_6011D28 to UNK_6012828. I think they handle the
 // rankings shown in the demo screen.
-uint32_t RankingsChecksum();
 void CheckSaveRankings();
 void SaveRankings();
 bool LoadRankings();

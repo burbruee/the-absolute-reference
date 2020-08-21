@@ -10,6 +10,8 @@
 #include "Input/Button.h"
 #include "Sound/Sound.h"
 
+DemoScreenState DemoScreen;
+
 bool NextScreenVersionTitle() {
 	return
 		AddCoin[PLAYER1] || AddCoin[PLAYER2] ||

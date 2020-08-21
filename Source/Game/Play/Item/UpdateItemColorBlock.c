@@ -30,7 +30,7 @@ typedef struct ColorBlockData {
 void UpdateItemColorBlock(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	ColorBlockData* data = item->data;
+	ColorBlockData* data = (ColorBlockData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

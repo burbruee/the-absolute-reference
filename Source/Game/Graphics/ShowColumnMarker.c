@@ -1,4 +1,5 @@
 #include "Game/Graphics/ShowColumnMarker.h"
+#include "Game/Graphics/DisplayObject.h"
 #include "Video/Object.h"
 
 void ShowColumnMarker(Player* player, int16_t col) {

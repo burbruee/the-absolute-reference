@@ -4,6 +4,7 @@
 #include "Input/Coin.h"
 #include "Game/Play/Debug.h"
 #include "Game/Save.h"
+#include "Sound/Sound.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Setting.h"
 #include "HwData.h"

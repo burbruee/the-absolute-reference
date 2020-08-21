@@ -142,16 +142,16 @@ void ShowSystemSpecialText(int16_t x, int16_t y, const char* text, bool alpha) {
 }
 
 static const ObjectData* ObjectTableCharDigits[10] = {
-	OBJECTTABLE_CHARS['0'],
-	OBJECTTABLE_CHARS['1'],
-	OBJECTTABLE_CHARS['2'],
-	OBJECTTABLE_CHARS['3'],
-	OBJECTTABLE_CHARS['4'],
-	OBJECTTABLE_CHARS['5'],
-	OBJECTTABLE_CHARS['6'],
-	OBJECTTABLE_CHARS['7'],
-	OBJECTTABLE_CHARS['8'],
-	OBJECTTABLE_CHARS['9']
+	&OBJECTTABLE_CHARS['0'],
+	&OBJECTTABLE_CHARS['1'],
+	&OBJECTTABLE_CHARS['2'],
+	&OBJECTTABLE_CHARS['3'],
+	&OBJECTTABLE_CHARS['4'],
+	&OBJECTTABLE_CHARS['5'],
+	&OBJECTTABLE_CHARS['6'],
+	&OBJECTTABLE_CHARS['7'],
+	&OBJECTTABLE_CHARS['8'],
+	&OBJECTTABLE_CHARS['9']
 };
 
 void ShowSystemNum(int32_t num, int16_t y, int16_t x, int16_t numDigits, bool zeroPad, NumAlign numAlign, bool alpha) {

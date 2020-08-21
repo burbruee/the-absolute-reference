@@ -1,9 +1,11 @@
 #include "Main/GameLoop.h"
+#include "Main/DemoLoop.h"
 #include "Main/Frame.h"
 #include "Game/Play/Player.h"
 #include "Game/Play/Ranking.h"
 #include "Game/Play/Versus.h"
 #include "Game/Graphics/Entity.h"
+#include "Game/Graphics/ShowText.h"
 #include "Game/Save.h"
 #include "Game/Screen.h"
 #include "Game/PalNum.h"
@@ -54,6 +56,7 @@ static const Color UNK_6032884[NUMPALCOLORS_4BPP] = {
 };
 
 static void UpdateGameMusic();
+static GameLoopState StartGameLoop();
 
 void InitGame() {
 	UNK_602AA4C();
@@ -343,7 +346,7 @@ static GameLoopState GameStartDoubles() {
 ROMDATA Color UNK_60328C4[NUMPALCOLORS_4BPP];
 
 uint16_t GameStartPlayer;
-GameLoopState StartGameLoop() {
+static GameLoopState StartGameLoop() {
 	UNK_602AA4C();
 
 	if (UpdateFrame()) return GAMELOOP_TEST;

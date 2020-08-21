@@ -1093,7 +1093,7 @@ int32_t UNK_6025AE4(int16_t bgIndex, GameBg* gameBg) {
 	UNK_60AD228[var0].UNK_10 = gameBg;
 	UNK_60AD228[bgIndex].UNK_14 = 0;
 	
-	for (BgMap* bgMap = gameBg->UNK_0; bgMap != NULL; bgMap = gameBg->UNK_0) {
+	for (const BgMap* bgMap = gameBg->UNK_0; bgMap != NULL; bgMap = gameBg->UNK_0) {
 		UNK_60AD228[var0].UNK_14 += gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
 	}
 
@@ -1136,7 +1136,7 @@ void UNK_60267E4(int16_t bgIndex) {
 				&var4,
 				&var5);
 			if (var6->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
-				ROMDATA BgMap* const bgMap = var6->UNK_0;
+				const BgMap* const bgMap = var6->UNK_0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
@@ -1148,7 +1148,7 @@ void UNK_60267E4(int16_t bgIndex) {
 				}
 			}
 			else {
-				ROMDATA BgMap* const bgMap = var6->UNK_0;
+				const BgMap* const bgMap = var6->UNK_0;
 				int16_t var8 = var7;
 				int32_t var14 = var13;
 				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
@@ -1190,7 +1190,7 @@ GameBg* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3)
 				}
 			}
 			while (*arg2 >= (int16_t)gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4) {
-				ROMDATA BgMap* var2 = gameBg->UNK_8;
+				const BgMap* var2 = gameBg->UNK_8;
 				*arg2 -= gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
 				if (var2->header.tileInfo == 0) {
 					if (UNK_60AD228[var3].UNK_60 != NULL) {
@@ -1567,7 +1567,7 @@ void UpdatePalCycles() {
 	}
 }
 
-void NewPalCycle(uint8_t palNum, Color* pal0, Color* pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep) {
+void NewPalCycle(uint8_t palNum, const Color* pal0, const Color* pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep) {
 	size_t heapIndex = MAXPALCYCLES;
 
 	// Check if there's already a cycle for palNum.
@@ -1765,6 +1765,7 @@ void UNK_602AB9E() {
 void UNK_602AC68(int16_t* arg0) {
 	int16_t var0 = arg0[0];
 	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {
-		SetPalList((uint8_t)var1[1], ((int32_t)var1[2] << 16) | var1[3]);
+		// TODO: Figure out a way to translate the construction of a pointer here to portable code.
+		//SetPalList((uint8_t)var1[1], ((int32_t)var1[2] << 16) | var1[3]);
 	}
 }

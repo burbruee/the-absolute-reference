@@ -1,5 +1,6 @@
 #include "Game/Play/Item/UpdateItemFlipField.h"
 #include "Game/Play/Player.h"
+#include "Game/Graphics/ShowBlockField.h"
 #include "Sound/Sound.h"
 
 enum FlipFieldState {
@@ -32,7 +33,7 @@ typedef struct FlipFieldData {
 void UpdateItemFlipField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	FlipFieldData* data = item->data;
+	FlipFieldData* data = (FlipFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

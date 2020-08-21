@@ -26,7 +26,7 @@ void ShowItemWarningDeathBlock(Player* player) {
 
 static void UpdateEntityItemWarningDeathBlock(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObject(data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
+	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->warningFrames >= 64) {
 		FreeEntity(entity);

@@ -24,7 +24,7 @@ typedef struct TransformData {
 void UpdateItemTransform(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	TransformData* data = item->data;
+	TransformData* data = (TransformData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

@@ -28,7 +28,7 @@ typedef struct Medal {
 } Medal;
 
 typedef struct MedalPalAnim {
-	Color* palStart, * palEnd;
+	const Color* palStart, * palEnd;
 	uint8_t palNum, palNumCycle, palNumEnd;
 } MedalPalAnim;
 
@@ -84,7 +84,7 @@ void InitMedals(Player* player, int16_t medalsY, int16_t medalsX) {
 }
 
 void ShowMedals(Player* player) {
-	Medal* medal = Medals;
+	Medal* medal = Medals[player->num];
 	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++, medal++) {
 		switch (medal->state) {
 		case MEDALSTATE_NULL:

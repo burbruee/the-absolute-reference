@@ -5,6 +5,7 @@
 #include "Video/Video.h"
 #include "Video/Pal.h"
 #include "Main/Frame.h"
+#include "Lib/LibC.h"
 
 void RemoveItems(Player* player) {
 	for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
@@ -314,10 +315,7 @@ void InitItems() {
 			ItemHeap[i].states[j] = 0u;
 		}
 
-		uint8_t* itemData = ItemHeap[i].data;
-		for (size_t j = 0; j < sizeoffield(Item, data); j++) {
-			itemData[j] = 0u;
-		}
+		MemSet(ItemHeap[i].data, 0, sizeoffield(Item, data));
 	}
 }
 

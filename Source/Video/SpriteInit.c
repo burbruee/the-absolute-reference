@@ -132,7 +132,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		return;
 
 	case ADDSPRITE_ANIM: {
-		ObjectData* animFrameObject = &object[data->animFrame];
+		const ObjectData* animFrameObject = &object[data->animFrame];
 		uint8_t flipXBgPriW;
 		if (data->UNK_20 < 4) {
 			UNK_6061932.tempSprite[0] = OBJECT_TOY(data->y + (*animFrameObject)[0]);

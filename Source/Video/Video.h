@@ -121,7 +121,7 @@ typedef struct STRUCT_6061932 {
 extern STRUCT_6061932 UNK_6061932;
 
 #define MAXVIDEOSETTERS 32
-uint16_t NumVideoSetters;
+extern uint16_t NumVideoSetters;
 typedef struct VideoSetter {
 	// NOTE: Video set functions must have three arguments, each of which is either
 	// a pointer or intptr_t/uintptr_t.
@@ -130,7 +130,7 @@ typedef struct VideoSetter {
 	void* args[3];
 } VideoSetter;
 
-VideoSetter VideoSetters[MAXVIDEOSETTERS];
+extern VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 extern STRUCT_607D218* UNK_6064750;
 
@@ -303,8 +303,6 @@ void UNK_60294C0(void* arg0, void* unused1, void* unused2);
 void SetBackdropColor(Color color);
 void VideoSetBackdropColor(void* color, void*, void*);
 void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
-void UNK_602970C();
-void UNK_602975E();
 // Runs all the video setters.
 void SetVideo();
 // Disables all video setters.
@@ -324,7 +322,7 @@ typedef enum PalCycleType {
 #define MAXPALCYCLES 32
 void InitPalCycles();
 void UpdatePalCycles();
-void NewPalCycle(uint8_t palNum, Color *pal0, Color *pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep);
+void NewPalCycle(uint8_t palNum, const Color *pal0, const Color *pal1, int16_t perPalDelay, PalCycleType type, int8_t stride, uint8_t endStep);
 // Pass this to FreePalCycles to free all cycles.
 #define FREEALLPALCYCLES 500u
 void FreePalCycles(uint16_t palNum);

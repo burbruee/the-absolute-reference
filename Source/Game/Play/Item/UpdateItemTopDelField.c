@@ -33,7 +33,7 @@ typedef struct TopDelFieldData {
 void UpdateItemTopDelField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	TopDelFieldData* data = item->data;
+	TopDelFieldData* data = (TopDelFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

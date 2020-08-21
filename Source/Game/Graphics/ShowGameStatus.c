@@ -6,9 +6,24 @@
 #include "Video/Object.h"
 #include "Video/HwSprite.h"
 #include "Main/MainLoop.h"
+#include "Main/GameLoop.h"
 #include "Main/Frame.h"
+#include "Input/Input.h"
 #include "Input/Credit.h"
 #include "Eeprom/Setting.h"
+
+const ObjectData* ObjectTableStatusDigits[10] = {
+	&OBJECTTABLE_STATUSDIGITS[0],
+	&OBJECTTABLE_STATUSDIGITS[1],
+	&OBJECTTABLE_STATUSDIGITS[2],
+	&OBJECTTABLE_STATUSDIGITS[3],
+	&OBJECTTABLE_STATUSDIGITS[4],
+	&OBJECTTABLE_STATUSDIGITS[5],
+	&OBJECTTABLE_STATUSDIGITS[6],
+	&OBJECTTABLE_STATUSDIGITS[7],
+	&OBJECTTABLE_STATUSDIGITS[8],
+	&OBJECTTABLE_STATUSDIGITS[9],
+};
 
 void ShowNextLabel(Player* player, int16_t x) {
 	if (player->modeFlags & MODE_ITEM) {

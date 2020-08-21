@@ -31,7 +31,7 @@ typedef struct BottomDelFieldData {
 void UpdateItemBottomDelField(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
-	BottomDelFieldData* data = item->data;
+	BottomDelFieldData* data = (BottomDelFieldData*)item->data;
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {

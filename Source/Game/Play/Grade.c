@@ -1,6 +1,7 @@
 #include "Game/Play/Grade.h"
 #include "Game/Play/Player.h"
 #include "Game/Save.h"
+#include "Sound/Sound.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Setting.h"
 

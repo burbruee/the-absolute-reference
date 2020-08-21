@@ -7,9 +7,9 @@
 
 // SH-2: sizeof(GameBg) == 0x20
 typedef struct GameBg {
-	ROMDATA BgMap* UNK_0;
+	const BgMap* UNK_0;
 	int32_t UNK_4;
-	ROMDATA BgMap* UNK_8;
+	const BgMap* UNK_8;
 	uint32_t UNK_C;
 	uint8_t UNK_10;
 	uint8_t index;
