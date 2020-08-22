@@ -8,6 +8,6 @@
 
 extern bool AddCoin[NUMPLAYERS];
 extern bool AddService;
-extern ServiceInput AddServiceInputOld;
+extern uint8_t AddServiceInputOld;
 extern uint8_t NumAddServiceFrames;
-extern ServiceInput ServiceInputOld;
+extern uint8_t ServiceInputOld;

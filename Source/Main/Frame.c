@@ -49,7 +49,7 @@ bool UpdateFrame() {
 	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
-	UNK_60237DE();
+	UNK_60237DE(); // TODO
 	UNK_6024244();
 	UpdateEntities();
 	UNK_6025078();

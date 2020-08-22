@@ -221,7 +221,7 @@ STRUCT_607D218* UNK_6023DAE(STRUCT_607D218* arg0) {
 	}
 
 	STRUCT_607D218* var0 = UNK_607CF10[UNK_6060068];
-	MemSet(var0, sizeof(STRUCT_607D218), 0u);
+	MemSet(var0, 0u, sizeof(STRUCT_607D218));
 
 	if (arg0 != NULL) {
 		var0->UNK_0 = arg0;
@@ -307,7 +307,7 @@ void UNK_6023E5A(STRUCT_607D218* arg0) {
 	UNK_607CF10[UNK_6060068] = arg0;
 }
 
-STRUCT_607D218* UNK_6023EFE(const void (**arg0)(), STRUCT_607D218* arg1) {
+STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
     STRUCT_607D218* var0 = UNK_606005C;
     if (arg1 == (STRUCT_607D218 *)~(intptr_t)0) {
         arg1 = UNK_606005C;
@@ -318,9 +318,9 @@ STRUCT_607D218* UNK_6023EFE(const void (**arg0)(), STRUCT_607D218* arg1) {
         var0 = UNK_606005C;
     }
     else {
-		const void (*fun0)();
-		const void (*fun1)();
-		const void (*fun2)();
+		void (*fun0)();
+		void (*fun1)();
+		void (*fun2)();
 
         if (arg0[3] == NULL) {
             fun0 = UNK_6023788;
@@ -1090,11 +1090,12 @@ int32_t UNK_6025AE4(int16_t bgIndex, GameBg* gameBg) {
 	else {
 		var0 = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
 	}
-	UNK_60AD228[var0].UNK_10 = gameBg;
+	UNK_60AD228[var0].UNK_10 = gameBg->UNK_0;
 	UNK_60AD228[bgIndex].UNK_14 = 0;
 	
-	for (const BgMap* bgMap = gameBg->UNK_0; bgMap != NULL; bgMap = gameBg->UNK_0) {
-		UNK_60AD228[var0].UNK_14 += gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
+	STRUCT_GameBg_0* var1 = gameBg->UNK_0;
+	for (const BgMap* bgMap = var1->UNK_0; bgMap != NULL; var1++, bgMap = var1->UNK_0) {
+		UNK_60AD228[var0].UNK_14 += var1->UNK_0->header.UNK_6 * var1->UNK_4;
 	}
 
 	UNK_60AD228[var0].UNK_4C = 0;
@@ -1109,6 +1110,7 @@ void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
 	UNK_60AD228[var0].UNK_50 += arg3;
 }
 
+// TODO: There's bugs in this.
 void UNK_60267E4(int16_t bgIndex) {
 	const int16_t var0 = Bgs[bgIndex].UNK_6;
 
@@ -1130,7 +1132,7 @@ void UNK_60267E4(int16_t bgIndex) {
 		var4 = 0;
 		for (size_t i = 0u; i < 32u; i++, var16++) {
 			uint32_t* const var10 = UNK_60AD228[var1].UNK_4[var2];
-			GameBg* const var6 = UNK_6026AAC(
+			STRUCT_GameBg_0* const var6 = UNK_6026AAC(
 				bgIndex,
 				var16,
 				&var4,
@@ -1166,46 +1168,46 @@ void UNK_60267E4(int16_t bgIndex) {
 	}
 }
 
-GameBg* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) {
+STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16_t* arg3) {
 	const int16_t var0 = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
-	GameBg* gameBg;
+	STRUCT_GameBg_0* struct0;
 	if (var0 < 0) {
-		gameBg = NULL;
+		struct0 = NULL;
 	}
 	else {
-		gameBg = UNK_60AD228[var0].UNK_10;
-		if (gameBg->UNK_0 != NULL) {
+		struct0 = UNK_60AD228[var0].UNK_10;
+		if (struct0->UNK_0 != NULL) {
 			*arg2 = arg1;
 			const int16_t var3 = *arg2;
 			assert(var3 >= 0 && var3 < lengthof(UNK_60AD228));
-			GameBg* var1 = gameBg;
+			STRUCT_GameBg_0* var1 = UNK_60AD228[var0].UNK_10;
 			while (*arg2 < 0) {
 				if (UNK_60AD228[var3].UNK_60 == NULL) {
 					*arg2 += UNK_60AD228[var3].UNK_14;
 				}
 				else {
 					*arg2 += UNK_60AD228[var3].UNK_64;
-					gameBg = UNK_60AD228[var3].UNK_60;
-					var1 = gameBg;
+					var1 = UNK_60AD228[var3].UNK_60;
+					var1 = struct0;
 				}
 			}
-			while (*arg2 >= (int16_t)gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4) {
-				const BgMap* var2 = gameBg->UNK_8;
-				*arg2 -= gameBg->UNK_0->header.UNK_6 * gameBg->UNK_4;
-				if (var2->header.tileInfo == 0) {
+			for (STRUCT_GameBg_0* var4 = var1; *arg2 >= (int16_t)var4->UNK_0->header.UNK_6 * var4->UNK_4;) {
+				*arg2 -= var4->UNK_0->header.UNK_6 * var4->UNK_4;
+				var4++;
+				if (var4->UNK_0 == NULL) {
 					if (UNK_60AD228[var3].UNK_60 != NULL) {
-						gameBg = UNK_60AD228[var3].UNK_60;
+						struct0 = UNK_60AD228[var3].UNK_60;
 					}
 					else {
-						gameBg = var1;
+						struct0 = var1;
 					}
 				}
 			}
-			*arg3 = gameBg->UNK_0->header.UNK_6 - *arg2 - 1;
-			*arg2 %= gameBg->UNK_0->header.UNK_6;
+			*arg3 = struct0->UNK_0->header.UNK_6 - *arg2 - 1;
+			*arg2 %= struct0->UNK_0->header.UNK_6;
 		}
 	}
-	return gameBg;
+	return struct0;
 }
 
 void UNK_6026FCA(int16_t bgIndex, int16_t arg1) {
@@ -1240,7 +1242,7 @@ void UNK_60294C0(void* arg0, void* unused1, void* unused2) {
 
 void SetBackdropColor(Color color) {
 	VideoSetters[NumVideoSetters].set = VideoSetBackdropColor;
-	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)color;
+	VideoSetters[NumVideoSetters++].args[0] = (void*)(uintptr_t)color;
 }
 
 void VideoSetBackdropColor(void* color, void* unused1, void* unused2) {
@@ -1268,7 +1270,7 @@ void VideoSetBackdropColor(void* color, void* unused1, void* unused2) {
 
 static void UNK_602970C();
 static void UNK_602975E();
-static const void (*UNK_60356D0[4])() = {
+static void (* UNK_60356D0[4])() = {
 	UNK_602970C,
 	UNK_602970C,
 	NULL,
@@ -1425,8 +1427,8 @@ void UNK_6029814(uint32_t subtractedData, uint32_t addedData, uint8_t start, uin
 		uint32_t offset3 = num3 / size;
 
 		// Bits [23, 16].
-		num1 += ((addedData >> 16) & 0xFFu) - ((subtractedData >> 16) & 0xFFu);
-		uint32_t offset2 = num1 / size;
+		num2 += ((addedData >> 16) & 0xFFu) - ((subtractedData >> 16) & 0xFFu);
+		uint32_t offset2 = num2 / size;
 
 		// Bits [15, 8].
 		num1 += ((addedData >>  8) & 0xFFu) - ((subtractedData >>  8) & 0xFFu);

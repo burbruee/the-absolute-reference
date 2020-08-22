@@ -139,7 +139,7 @@ typedef struct STRUCT_60AD228 {
 	uint16_t UNK_0;
 	uint32_t* UNK_4[2];
 	uint16_t UNK_C[2];
-	GameBg* UNK_10;
+	STRUCT_GameBg_0* UNK_10;
 	int32_t UNK_14;
 	uint32_t UNK_18[2];
 	uint32_t UNK_20[2];
@@ -155,7 +155,7 @@ typedef struct STRUCT_60AD228 {
 	int16_t UNK_54;
 	int16_t UNK_56;
 	int16_t UNK_58;
-	GameBg* UNK_60;
+	STRUCT_GameBg_0* UNK_60;
 	int32_t UNK_64;
 } STRUCT_60AD228;
 
@@ -223,7 +223,7 @@ STRUCT_607D218* UNK_6023DAE(STRUCT_607D218*);
 
 void UNK_6023E5A(STRUCT_607D218*);
 
-STRUCT_607D218* UNK_6023EFE(const void (**)(), STRUCT_607D218*);
+STRUCT_607D218* UNK_6023EFE(void (**)(), STRUCT_607D218*);
 
 void* UNK_6023FA4(void (**)(), STRUCT_607D218*);
 
@@ -288,7 +288,7 @@ void UNK_6026698(int16_t bgNum, void**, void*, int16_t, int16_t, int16_t, int16_
 void UNK_60267E4(int16_t);
 void UNK_602682A(int16_t, int16_t, int16_t, bool);
 void UNK_6026870(int16_t, int16_t, int16_t);
-GameBg* UNK_6026AAC(int16_t, int16_t, int16_t*, int16_t*);
+STRUCT_GameBg_0* UNK_6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
 void UNK_6026FCA(int16_t bgIndex, int16_t arg1);
 void UNK_6026FDC(int16_t, int16_t);

@@ -98,7 +98,7 @@ void UpdateInputs() {
 	SystemButtonsDown[PLAYER1] = ~INPUTS[INPUT_BUTTONS1P];
 	SystemButtonsDown[PLAYER2] = ~INPUTS[INPUT_BUTTONS2P];
 
-	ServiceInput serviceInput = ~INPUTS[INPUT_SERVICE];
+	uint8_t serviceInput = ~INPUTS[INPUT_SERVICE];
 
 	if ((~serviceInput & SERVICE_ADDSERVICE) == AddServiceInputOld) {
 		AddService = false;

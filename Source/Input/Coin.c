@@ -2,6 +2,6 @@
 
 bool AddCoin[NUMPLAYERS];
 bool AddService;
-ServiceInput AddServiceInputOld;
+uint8_t AddServiceInputOld;
 uint8_t NumAddServiceFrames;
-ServiceInput ServiceInputOld;
+uint8_t ServiceInputOld;

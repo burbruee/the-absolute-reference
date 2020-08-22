@@ -54,7 +54,7 @@ void UNK_60169DC() {
 }
 
 void UNK_6016A30(uint8_t arg0) {
-	for (size_t i = 0; i < 4; i++) {
+	for (size_t i = 0; i < lengthoffield(GameBg, UNK_16); i++) {
 		CurrentGameBg.UNK_16[i] = 0;
 	}
 
@@ -81,10 +81,10 @@ void UNK_6016A30(uint8_t arg0) {
 	}
 
 	SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-	CurrentGameBg.UNK_0 = BgMapPtrs[CurrentGameBg.index];
-	CurrentGameBg.UNK_4 = 1;
-	CurrentGameBg.UNK_8 = NULL;
-	CurrentGameBg.UNK_C = 1;
+	CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+	CurrentGameBg.UNK_0[0].UNK_4 = 1;
+	CurrentGameBg.UNK_0[1].UNK_0 = NULL;
+	CurrentGameBg.UNK_0[1].UNK_4 = 1;
 	SetBgDarkness(CurrentGameBg.UNK_1E, 0);
 	UNK_60267E4(CurrentGameBg.UNK_1E);
 }
@@ -103,10 +103,10 @@ void UNK_6016B40() {
 			CurrentGameBg.index = CurrentGameBg.UNK_12;
 		}
 		SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-		CurrentGameBg.UNK_0 = BgMapPtrs[CurrentGameBg.index];
-		CurrentGameBg.UNK_4 = 1;
-		CurrentGameBg.UNK_8 = NULL;
-		CurrentGameBg.UNK_C = 1;
+		CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+		CurrentGameBg.UNK_0[0].UNK_4 = 1;
+		CurrentGameBg.UNK_0[1].UNK_0 = NULL;
+		CurrentGameBg.UNK_0[1].UNK_4 = 1;
 		UNK_60267E4(CurrentGameBg.UNK_1E);
 	}
 	else {
@@ -204,10 +204,10 @@ void UpdateGameBg() {
 					CurrentGameBg.index = CurrentGameBg.UNK_12;
 				}
 				SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-				CurrentGameBg.UNK_0 = BgMapPtrs[CurrentGameBg.index];
-				CurrentGameBg.UNK_4 = 1;
-				CurrentGameBg.UNK_8 = NULL;
-				CurrentGameBg.UNK_C = 1;
+				CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+				CurrentGameBg.UNK_0[0].UNK_4 = 1;
+				CurrentGameBg.UNK_0[1].UNK_0 = NULL;
+				CurrentGameBg.UNK_0[1].UNK_4 = 1;
 				UNK_60267E4(CurrentGameBg.UNK_1E);
 			}
 			else {

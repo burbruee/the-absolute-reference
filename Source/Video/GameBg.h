@@ -5,12 +5,16 @@
 #include "PlatformTypes.h"
 #include <stdint.h>
 
-// SH-2: sizeof(GameBg) == 0x20
-typedef struct GameBg {
+// SH-2: sizeof(STRUCT_GameBg_0) == 0x8
+typedef struct STRUCT_GameBg_0 {
 	const BgMap* UNK_0;
 	int32_t UNK_4;
-	const BgMap* UNK_8;
-	uint32_t UNK_C;
+} STRUCT_GameBg_0;
+
+// SH-2: sizeof(GameBg) == 0x20
+typedef struct GameBg GameBg;
+struct GameBg {
+	STRUCT_GameBg_0 UNK_0[2];
 	uint8_t UNK_10;
 	uint8_t index;
 	uint8_t UNK_12;
@@ -18,7 +22,7 @@ typedef struct GameBg {
 	uint8_t frame;
 	int16_t UNK_16[4];
 	int16_t UNK_1E;
-} GameBg;
+};
 
 extern GameBg CurrentGameBg;
 

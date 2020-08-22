@@ -7,7 +7,9 @@
 // Case 3 does nothing.
 // Case 4 appears to be like DisplayObjectEx, as it supports scaling inputs.
 // Case 5 appears similar to case 4, with some differences in its inputs.
+#include <stdio.h>
 void AddSprite(AddSpriteType type, AddSpriteData* data) {
+	printf("%d\n", (int)type);
 	const ObjectData* object;
 	switch (type) {
 	case ADDSPRITE_0:
@@ -61,6 +63,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		Sprites[1][6] = UNK_6061932.tempSprite[6];
 		Sprites[1][7] = UNK_6061932.tempSprite[7];
 		return;
+
 	case ADDSPRITE_2:
 		object = data->data;
 		UNK_6061932.tempSprite[0] = data->y;
