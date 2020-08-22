@@ -8,7 +8,7 @@
 // Case 4 appears to be like DisplayObjectEx, as it supports scaling inputs.
 // Case 5 appears similar to case 4, with some differences in its inputs.
 void AddSprite(AddSpriteType type, AddSpriteData* data) {
-	const ObjectData* object = data->data;
+	const ObjectData* object;
 	switch (type) {
 	case ADDSPRITE_0:
 		NumSprites = SPRITE_FIRST;
@@ -62,6 +62,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		Sprites[1][7] = UNK_6061932.tempSprite[7];
 		return;
 	case ADDSPRITE_2:
+		object = data->data;
 		UNK_6061932.tempSprite[0] = data->y;
 		UNK_6061932.tempSprite[1] = data->x;
 		// Set sprite's vertical flip, sprite priority, height, and height scale.
@@ -81,6 +82,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		return;
 
 	case ADDSPRITE_4:
+		object = data->data;
 		UNK_6061932.tempSprite[0] = data->y1;
 		UNK_6061932.tempSprite[1] = data->x1;
 		// Set sprite's vertical flip, unknown word 2 bit, sprite priority, height, and height scale.
@@ -115,6 +117,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		return;
 
 	case ADDSPRITE_5:
+		object = data->data;
 		// Set X and Y position of the sprite, but clear all other bits in words 0 and 1.
 		UNK_6061932.tempSprite[0] = OBJECT_TOY(data->y1);
 		UNK_6061932.tempSprite[1] = OBJECT_TOX(data->x1);
@@ -132,6 +135,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		return;
 
 	case ADDSPRITE_ANIM: {
+		object = data->data;
 		const ObjectData* animFrameObject = &object[data->animFrame];
 		uint8_t flipXBgPriW;
 		if (data->UNK_20 < 4) {
@@ -170,6 +174,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 	}
 
 	case ADDSPRITE_7:
+		object = data->data;
 		UNK_6061932.tempSprite[0] = OBJECT_TOY(data->y + (*object)[0]);
 		UNK_6061932.tempSprite[1] = OBJECT_TOX(data->x + (*object)[1]);
 		UNK_6061932.tempSprite[2] |= (*object)[2] & ~OBJECT_SCALEY;
@@ -181,6 +186,7 @@ void AddSprite(AddSpriteType type, AddSpriteData* data) {
 		return;
 
 	case ADDSPRITE_8:
+		object = data->data;
 		UNK_6061932.tempSprite[0] = OBJECT_TOY(data->y + (*object)[0]);
 		UNK_6061932.tempSprite[1] = OBJECT_TOX(data->x + (*object)[1]);
 		UNK_6061932.tempSprite[2] = ((*object)[2] & ~OBJECT_SCALEY) | UNSCALED;
