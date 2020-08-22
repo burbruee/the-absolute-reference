@@ -1,7 +1,3 @@
-Reorganize sources so there isn't such a strict distinction between reverse
-engineered TAP code vs. platform-specific code: Sources/Item/Item.h,
-Sources/Platform/PsikyoSH/Main.c, etc.
-
 Write up about PsikyoSH scaling, and how it works for TAP.
 
 Provide a test suite to compare gameplay recordings of TAR vs. running the
@@ -50,9 +46,6 @@ per-pixel paletted rendering, rather than caching the objects in 32bpp textures
 first draft). And, since the object handling will be done by the frontend
 rather than with the PsikyoSH code, layers can be directly rendered in-order,
 allowing per-layer batching.
-
-Probably move the Show* functions' sources into a Graphics subdirectory, since
-they appear to be grouped in the original program binary.
 
 This may be related to the "object group" (or whatever they are) functions,
 that haven't been explored much yet.

@@ -14,12 +14,12 @@
 I call a four-line clear a "skill clear", based on the SK medal. To me, it
 seems to be a good alternative to the trademarked name.
 
-The reverse-engineered game code (everything in the Game directory and PsikyoSH
-platform support) is intended to be a fully playable reference of TAP,
-minimally changed to fit my taste in coding style, and to ensure full
-portability. Bugs in the original game that have well-defined behavior are
-kept, but bugs with undefined behavior are fixed; all known bugs are noted in
-the code. Unused code/data is included.
+The reverse-engineered game code (everything outside Source/Platform, except 
+Source/Platform/PsikyoSH and what PsikyoSH uses) is intended to be a fully 
+playable reference of TAP, minimally changed to fit my taste in coding style, 
+and to ensure full portability. Bugs in the original game that have well-defined 
+behavior are kept, but bugs with undefined behavior are fixed; all known bugs 
+are noted in the code. Unused code/data is included.
 
 - Contributing -
 For the reverse-engineered game code, only bug fixes will be accepted, and it
