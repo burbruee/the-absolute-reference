@@ -133,7 +133,7 @@ static ScreenState StartCopyrightScreen() {
 			InitVideoSetters();
 			UNK_602406E();
 			InitEntities();
-			UNK_6026FCA(CurrentGameBg.UNK_1E, 0u);
+			UNK_6026FCA(CurrentGameBg.bgIndex, 0u);
 			SetPal(160u, NUMPALCOLORS_4BPP, PALPTR(0x205));
 
 			for (int16_t frames = 0; frames < 3; frames++) {

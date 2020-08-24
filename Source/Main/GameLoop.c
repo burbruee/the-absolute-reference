@@ -18,8 +18,8 @@
 ROMDATA Color PalCycleTextPal0[NUMPALCOLORS_4BPP];
 
 // TODO: Some/all of these uint8_t's are probably actually GameMusic type.
-static uint16_t UNK_6079290;
-static uint16_t UNK_6079292;
+static uint16_t NumVersusNoItemFrames;
+static uint16_t NumVersusCementFrames;
 static uint16_t UNK_6079294;
 static uint8_t UNK_6079296;
 static uint8_t UNK_6079297;
@@ -182,8 +182,8 @@ void CheckSetNewChallenger(Player *player) {
 		GameFlags |= GAME_STARTWAITINGPLAYER;
 	}
 
-	UNK_6079290 = 0;
-	UNK_6079292 = 0;
+	   NumVersusNoItemFrames = 0;
+	   NumVersusCementFrames = 0;
 }
 
 GameLoopState GameStartVersus() {
@@ -195,12 +195,12 @@ GameLoopState GameStartVersus() {
 			Players[PLAYER1].nowFlags |= NOW_NOUPDATE;
 			Players[PLAYER2].nowFlags |= NOW_NOUPDATE;
 			if (GameButtonsDown[PLAYER1] == BUTTON_START && GameButtonsDown[PLAYER2] == BUTTON_START) {
-				UNK_6079290++;
+				            NumVersusNoItemFrames++;
 			}
 			if (
 				GameButtonsDown[PLAYER1] == (BUTTON_START | BUTTON_2 | BUTTON_1) &&
 				GameButtonsDown[PLAYER2] == (BUTTON_START | BUTTON_2 | BUTTON_1)) {
-				UNK_6079292++;
+				            NumVersusCementFrames++;
 			}
 		}
 		else {
@@ -219,18 +219,18 @@ GameLoopState GameStartVersus() {
 			// TODO: These could be signalling to start a fading background
 			// transition (|= 1u) and transition to the versus background (=
 			// 10u).
-			CurrentGameBg.UNK_12 = 10u;
+			CurrentGameBg.nextBgMapIndex = BGMAP_VERSUS;
 			CurrentGameBg.UNK_10 |= 1u;
 			Game.numVersusRoundWins[PLAYER2] = 0u;
 			Game.numVersusRoundWins[PLAYER1] = 0u;
 			Game.numVersusRounds = 0u;
 			InitItems();
 			UNK_601FAD0(); // TODO
-			if (UNK_6079292 >= TIME(0, 1, 0)) {
+			if (NumVersusCementFrames >= TIME(0, 1, 0)) {
 				Players[PLAYER1].modeFlags |= MODE_CEMENT;
 				Players[PLAYER2].modeFlags |= MODE_CEMENT;
 			}
-			else if (UNK_6079290 >= TIME(0, 1, 0)) {
+			else if (NumVersusNoItemFrames >= TIME(0, 1, 0)) {
 				Players[PLAYER1].modeFlags |= MODE_NOITEM;
 				Players[PLAYER2].modeFlags |= MODE_NOITEM;
 			}
@@ -388,7 +388,7 @@ static GameLoopState StartGameLoop() {
 	}
 
 	UNK_60169DC();
-	UNK_6026FCA(CurrentGameBg.UNK_1E, 1);
+	UNK_6026FCA(CurrentGameBg.bgIndex, 1);
 	SetPal(202u, 1u, UNK_60328C4);
 	NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1u, 63u);
 	bool downNextPalCycle = false;

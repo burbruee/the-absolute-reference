@@ -51,3 +51,6 @@ extern ROMDATA BgMap16 BgMapSection9;
 extern ROMDATA BgMap16 BgMapVersus;
 
 extern ROMDATA BgMap* BgMapTable[11];
+
+#define BGMAP_SECTION(section) (section)
+#define BGMAP_VERSUS 10

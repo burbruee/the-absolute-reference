@@ -1119,66 +1119,6 @@ void UNK_60267E4(int16_t bgIndex) {
 	}
 }
 
-// TODO: There's bugs in this.
-#if 0
-void UNK_60267E4(int16_t bgIndex) {
-	const int16_t var0 = Bgs[bgIndex].UNK_6;
-
-	const int16_t var1 = Bgs[bgIndex].UNK_18[var0];
-	if (var1 < 0) {
-		return;
-	}
-
-	const int16_t var2 = UNK_60AD228[var1].UNK_54;
-
-	int16_t var4;
-	int16_t var5;
-	var4 = 0;
-	if (var1 != -1) {
-		UNK_60AD228[var1].UNK_56 = 1;
-		const int32_t var13 = -16 - UNK_60AD228[var1].UNK_18[var2] / 16;
-		const int16_t var7 = -16 - UNK_60AD228[var1].UNK_18[var0] / 16 - UNK_60AD228[var1].UNK_4C / 16;
-		int16_t var16 = -16 - UNK_60AD228[var1].UNK_28[var2] / 16 - UNK_60AD228[var1].UNK_50 / 16;
-		var4 = 0;
-		for (size_t i = 0u; i < 32u; i++, var16++) {
-			uint32_t* const var10 = UNK_60AD228[var1].UNK_4[var2];
-			STRUCT_GameBg_0* const var6 = UNK_6026AAC(
-				bgIndex,
-				var16,
-				&var4,
-				&var5);
-			if (var6->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
-				const BgMap* const bgMap = var6->UNK_0;
-				int16_t var8 = var7;
-				int32_t var14 = var13;
-				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
-					int32_t var9 = var8 % var6->UNK_0->header.UNK_4;
-					if (var9 < 0) {
-						var9 += var6->UNK_0->header.UNK_4;
-					}
-					var10[(var14 % 16) * 32] = bgMap->names[var4 * bgMap->header.UNK_4 + var9];
-				}
-			}
-			else {
-				const BgMap* const bgMap = var6->UNK_0;
-				int16_t var8 = var7;
-				int32_t var14 = var13;
-				for (size_t j = 0u; j < 16u; j++, var8++, var14++) {
-					int32_t var9 = var8 % var6->UNK_0->header.UNK_4;
-					if (var9 < 0) {
-						var9 += var6->UNK_0->header.UNK_4;
-					}
-					var10[(var14 % 16) * 32] = (bgMap->names[var4 * bgMap->header.UNK_4 * 2 + var9] & 0xFFFFu) | var6->UNK_0->header.tileInfo;
-				}
-			}
-		}
-
-		UNK_60AD228[var2].UNK_38[var1] %= 16;
-		UNK_60AD228[var2].UNK_3C[var1] %= 16;
-	}
-}
-#endif
-
 void UNK_602682A(int16_t arg0, int16_t arg1, int16_t arg2, bool arg3) {
 	if (arg3) {
 		UNK_60B13AE = 1;
@@ -1191,10 +1131,52 @@ void UNK_602682A(int16_t arg0, int16_t arg1, int16_t arg2, bool arg3) {
 }
 
 void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
-	int16_t var0 = 0;
 	const int16_t var1 = Bgs[bgIndex].UNK_18[arg1];
 	if (var1 != -1) {
-		// TODO
+		UNK_60AD228[var1].UNK_56 = 1;
+		const int32_t var2 = -UNK_60AD228[var1].UNK_18[arg2] / 16 - 16;
+		const int32_t var3 = UNK_60AD228[var1].UNK_20[arg2];
+		const int32_t var5 =
+			-UNK_60AD228[var1].UNK_18[arg2] / 16 - UNK_60AD228[var1].UNK_4C / 16 - 16;
+		int32_t var6 =
+			-UNK_60AD228[var1].UNK_28[arg2] / 16 - UNK_60AD228[var1].UNK_50 / 16 - 16;
+
+		arg1 = 1;
+		if (arg1) {
+			int16_t var0 = 0;
+			int16_t var4 = 0;
+			for (int32_t i = 0; i < 32; i++, var6++) {
+				uint32_t* var7 = &UNK_60AD228[var1].UNK_4[arg2][(i - var3 / 16 - 16) % 32];
+				const STRUCT_GameBg_0* var8 = UNK_6026AAC(bgIndex, var6, &var4, &var0);
+				if (var8->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+					const BgMap32* const bgMap32 = (const BgMap32* const)var8->UNK_0;
+					int32_t var10 = var5;
+					int32_t var11 = var2;
+					for (int32_t j = 0; j < 16; j++, var10++, var11++) {
+						int32_t var12 = var10 % var8->UNK_0->header.UNK_4;
+						if (var12 < 0) {
+							var12 += var8->UNK_0->header.UNK_4;
+						}
+						var7[(var11 % 16) * 32] = bgMap32->names[var4 * bgMap32->header.UNK_4 + var12];
+					}
+				}
+				else {
+					const BgMap16* const bgMap16 = (const BgMap16* const)var8->UNK_0;
+					int32_t var10 = var5;
+					int32_t var11 = var2;
+					for (int32_t j = 0; j < 16; j++, var10++, var11++) {
+						int32_t var12 = var10 % var8->UNK_0->header.UNK_4;
+						if (var12 < 0) {
+							var12 += var8->UNK_0->header.UNK_4;
+						}
+						var7[(var11 % 16) * 32] = var8->UNK_0->header.tileInfo | bgMap16->names[var4 * bgMap16->header.UNK_4 + var12];
+					}
+				}
+			}
+		}
+
+		UNK_60AD228[var1].UNK_38[arg2] %= 16;
+		UNK_60AD228[var1].UNK_3C[arg2] %= 16;
 	}
 }
 

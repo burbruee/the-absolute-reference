@@ -42,20 +42,20 @@ static const BgMap* const BgMapPtrs[] = {
 
 void UNK_60169DC() {
 	CurrentGameBg.UNK_10 = 1;
-	CurrentGameBg.index = 6;
+	CurrentGameBg.bgMapIndex = 6;
 	CurrentGameBg.UNK_13 = 1;
 	for (size_t i = 0; i < 4; i++) {
-		CurrentGameBg.UNK_16[i] = 0;
+		CurrentGameBg.darknesses[i] = 0;
 	}
 
 	UNK_6024ED8();
-	CurrentGameBg.UNK_1E = UNK_60257EE();
-	UNK_6026FDC(CurrentGameBg.UNK_1E, 1);
+	CurrentGameBg.bgIndex = UNK_60257EE();
+	UNK_6026FDC(CurrentGameBg.bgIndex, 1);
 }
 
 void UNK_6016A30(uint8_t arg0) {
-	for (size_t i = 0; i < lengthoffield(GameBg, UNK_16); i++) {
-		CurrentGameBg.UNK_16[i] = 0;
+	for (size_t i = 0; i < lengthoffield(GameBg, darknesses); i++) {
+		CurrentGameBg.darknesses[i] = 0;
 	}
 
 	if (arg0 != 0) {
@@ -64,88 +64,88 @@ void UNK_6016A30(uint8_t arg0) {
 	}
 
 	CurrentGameBg.UNK_13 = 2;
-	CurrentGameBg.UNK_16[0] = 2;
+	CurrentGameBg.darknesses[0] = 2;
 	if (MainLoop == MAINLOOP_DEMO) {
 		if (Screen == SCREEN_VERSUSDEMO) {
-			CurrentGameBg.index = 10;
+			CurrentGameBg.bgMapIndex = 10;
 		}
 		else if (Screen == SCREEN_TWINDEMO) {
-			CurrentGameBg.index = Rand(9u);
+			CurrentGameBg.bgMapIndex = Rand(9u);
 		}
 		else {
-			CurrentGameBg.index = DemoSection;
+			CurrentGameBg.bgMapIndex = DemoSection;
 		}
 	}
 	else {
-		CurrentGameBg.index = CurrentGameBg.UNK_12;
+		CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 	}
 
-	SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-	CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+	SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+	CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 	CurrentGameBg.UNK_0[0].UNK_4 = 1;
 	CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 	CurrentGameBg.UNK_0[1].UNK_4 = 1;
-	SetBgDarkness(CurrentGameBg.UNK_1E, 0);
-	UNK_60267E4(CurrentGameBg.UNK_1E);
+	SetBgDarkness(CurrentGameBg.bgIndex, 0);
+	UNK_60267E4(CurrentGameBg.bgIndex);
 }
 
 void UNK_6016B40() {
-	SetBgDarkness(CurrentGameBg.UNK_1E, CurrentGameBg.UNK_16[1]);
-	if (CurrentGameBg.UNK_16[1] + 6 > 63) {
-		CurrentGameBg.UNK_16[1] = 63;
-		SetBgDarkness(CurrentGameBg.UNK_1E, 63);
+	SetBgDarkness(CurrentGameBg.bgIndex, CurrentGameBg.darknesses[1]);
+	if (CurrentGameBg.darknesses[1] + 6 > 63) {
+		CurrentGameBg.darknesses[1] = 63;
+		SetBgDarkness(CurrentGameBg.bgIndex, 63);
 		CurrentGameBg.UNK_13 = 3;
-		CurrentGameBg.UNK_16[0] = 2;
+		CurrentGameBg.darknesses[0] = 2;
 		if (MainLoop == MAINLOOP_DEMO) {
-			CurrentGameBg.index = DemoSection;
+			CurrentGameBg.bgMapIndex = DemoSection;
 		}
 		else {
-			CurrentGameBg.index = CurrentGameBg.UNK_12;
+			CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 		}
-		SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-		CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+		SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+		CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 		CurrentGameBg.UNK_0[0].UNK_4 = 1;
 		CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 		CurrentGameBg.UNK_0[1].UNK_4 = 1;
-		UNK_60267E4(CurrentGameBg.UNK_1E);
+		UNK_60267E4(CurrentGameBg.bgIndex);
 	}
 	else {
-		CurrentGameBg.UNK_16[1] += 6;
+		CurrentGameBg.darknesses[1] += 6;
 	}
 }
 
 void UNK_6016BDE() {
-	SetBgDarkness(CurrentGameBg.UNK_1E, CurrentGameBg.UNK_16[1]);
-	if ((CurrentGameBg.UNK_16[1] -= 6) <= 0) {
-		CurrentGameBg.UNK_16[1] = 0;
-		SetBgDarkness(CurrentGameBg.UNK_1E, 0);
+	SetBgDarkness(CurrentGameBg.bgIndex, CurrentGameBg.darknesses[1]);
+	if ((CurrentGameBg.darknesses[1] -= 6) <= 0) {
+		CurrentGameBg.darknesses[1] = 0;
+		SetBgDarkness(CurrentGameBg.bgIndex, 0);
 		CurrentGameBg.UNK_13 = 1;
 	}
 
-	if (--CurrentGameBg.UNK_16[0] == 0) {
+	if (--CurrentGameBg.darknesses[0] == 0) {
 		CurrentGameBg.frame = (CurrentGameBg.frame + 1) % 32;
-		CurrentGameBg.UNK_16[0] = 2;
+		CurrentGameBg.darknesses[0] = 2;
 		int8_t var0 = CurrentGameBg.frame;
 		int8_t var1 = var0 % 4;
 		if (var1 < 0) {
 			var1 += 3;
 		}
-		UNK_6025B9A(CurrentGameBg.UNK_1E, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
-		UNK_60267E4(CurrentGameBg.UNK_1E);
+		UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
+		UNK_60267E4(CurrentGameBg.bgIndex);
 	}
 }
 
 void UNK_6016C14() {
-	if (--CurrentGameBg.UNK_16[0] == 0) {
+	if (--CurrentGameBg.darknesses[0] == 0) {
 		CurrentGameBg.frame = (CurrentGameBg.frame + 1) % 32;
-		CurrentGameBg.UNK_16[0] = 2;
+		CurrentGameBg.darknesses[0] = 2;
 		int8_t var0 = CurrentGameBg.frame;
 		int8_t var1 = var0 % 4;
 		if (var0 < 0) {
 			var0 += 3;
 		}
-		UNK_6025B9A(CurrentGameBg.UNK_1E, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
-		UNK_60267E4(CurrentGameBg.UNK_1E);
+		UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
+		UNK_60267E4(CurrentGameBg.bgIndex);
 	}
 }
 
@@ -178,8 +178,8 @@ void UpdateGameBg() {
 				if (section2p > section1p) {
 					section = section2p;
 				}
-				if (CurrentGameBg.index != section) {
-					CurrentGameBg.UNK_12 = section;
+				if (CurrentGameBg.bgMapIndex != section) {
+					CurrentGameBg.nextBgMapIndex = section;
 					UNK_6016A30(1);
 				}
 				if (DemoSection < section) {
@@ -191,50 +191,50 @@ void UpdateGameBg() {
 		CurrentGameBg.UNK_10 &= ~0x07u;
 		switch (CurrentGameBg.UNK_13) {
 		case 2:
-			SetBgDarkness(CurrentGameBg.UNK_1E, CurrentGameBg.UNK_16[1]);
-			if (CurrentGameBg.UNK_16[1] + 6 > 63) {
-				CurrentGameBg.UNK_16[1] = 63;
-				SetBgDarkness(CurrentGameBg.UNK_1E, 63);
+			SetBgDarkness(CurrentGameBg.bgIndex, CurrentGameBg.darknesses[1]);
+			if (CurrentGameBg.darknesses[1] + 6 > 63) {
+				CurrentGameBg.darknesses[1] = 63;
+				SetBgDarkness(CurrentGameBg.bgIndex, 63);
 				CurrentGameBg.UNK_13 = 3u;
-				CurrentGameBg.UNK_16[0] = 2;
+				CurrentGameBg.darknesses[0] = 2;
 				if (MainLoop == MAINLOOP_DEMO) {
-					CurrentGameBg.index = DemoSection;
+					CurrentGameBg.bgMapIndex = DemoSection;
 				}
 				else {
-					CurrentGameBg.index = CurrentGameBg.UNK_12;
+					CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 				}
-				SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.index]);
-				CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.index];
+				SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+				CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 				CurrentGameBg.UNK_0[0].UNK_4 = 1;
 				CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 				CurrentGameBg.UNK_0[1].UNK_4 = 1;
-				UNK_60267E4(CurrentGameBg.UNK_1E);
+				UNK_60267E4(CurrentGameBg.bgIndex);
 			}
 			else {
-				CurrentGameBg.UNK_16[1] += 6;
+				CurrentGameBg.darknesses[1] += 6;
 			}
 			break;
 
 		case 3:
-			SetBgDarkness(CurrentGameBg.UNK_1E, CurrentGameBg.UNK_16[1]);
-			CurrentGameBg.UNK_16[1] -= 6;
-			if (CurrentGameBg.UNK_16[1] <= 0) {
-				CurrentGameBg.UNK_16[1] = 0;
-				SetBgDarkness(CurrentGameBg.UNK_1E, 0);
+			SetBgDarkness(CurrentGameBg.bgIndex, CurrentGameBg.darknesses[1]);
+			CurrentGameBg.darknesses[1] -= 6;
+			if (CurrentGameBg.darknesses[1] <= 0) {
+				CurrentGameBg.darknesses[1] = 0;
+				SetBgDarkness(CurrentGameBg.bgIndex, 0);
 				CurrentGameBg.UNK_13 = 1;
 			}
 		case 1:
-			CurrentGameBg.UNK_16[0]--;
-			if (CurrentGameBg.UNK_16[0] == 0) {
+			CurrentGameBg.darknesses[0]--;
+			if (CurrentGameBg.darknesses[0] == 0) {
 				CurrentGameBg.frame = (CurrentGameBg.frame + 1) % 32;
-				CurrentGameBg.UNK_16[0] = 2;
+				CurrentGameBg.darknesses[0] = 2;
 				int8_t var0 = CurrentGameBg.frame;
 				int8_t var1 = var0 % 4;
 				if (var1 % 4 < 0) {
 					var1 += 3;
 				}
-				UNK_6025B9A(CurrentGameBg.UNK_1E, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * VIDEO_WIDTH);
-				UNK_60267E4(CurrentGameBg.UNK_1E);
+				UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * VIDEO_WIDTH);
+				UNK_60267E4(CurrentGameBg.bgIndex);
 			}
 			break;
 

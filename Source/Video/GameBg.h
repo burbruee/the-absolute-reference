@@ -16,12 +16,12 @@ typedef struct GameBg GameBg;
 struct GameBg {
 	STRUCT_GameBg_0 UNK_0[2];
 	uint8_t UNK_10;
-	uint8_t index;
-	uint8_t UNK_12;
+	uint8_t bgMapIndex;
+	uint8_t nextBgMapIndex;
 	uint8_t UNK_13;
 	uint8_t frame;
-	int16_t UNK_16[4];
-	int16_t UNK_1E;
+	int16_t darknesses[4];
+	int16_t bgIndex;
 };
 
 extern GameBg CurrentGameBg;
