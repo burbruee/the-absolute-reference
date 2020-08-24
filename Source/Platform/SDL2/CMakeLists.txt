@@ -1,5 +1,3 @@
-set(CMAKE_VERBOSE_MAKEFILE on)
-
 set(EXECUTABLE_SOURCES
 	"../../BuildData/BuildData.c"
 	"../../BuildData/Checksum.c"

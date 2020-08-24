@@ -74,6 +74,7 @@ static STRUCT_60B0FE0 UNK_60B0FE0[2][20];
 
 static int16_t UNK_60B13A0[2];
 static bool UNK_60B13A4;
+static int16_t UNK_60B13AE;
 
 void UNK_6023788() {
 	// Empty.
@@ -1110,25 +1111,34 @@ void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
 	UNK_60AD228[var0].UNK_50 += arg3;
 }
 
+void UNK_60267E4(int16_t bgIndex) {
+	const int16_t var0 = Bgs[bgIndex].UNK_6;
+	const int16_t var1 = Bgs[bgIndex].UNK_18[var0];
+	if (var1 >= 0) {
+		UNK_6026870(bgIndex, var0, UNK_60AD228[var1].UNK_54);
+	}
+}
+
 // TODO: There's bugs in this.
+#if 0
 void UNK_60267E4(int16_t bgIndex) {
 	const int16_t var0 = Bgs[bgIndex].UNK_6;
 
-	if (Bgs[bgIndex].UNK_18[var0] < 0) {
+	const int16_t var1 = Bgs[bgIndex].UNK_18[var0];
+	if (var1 < 0) {
 		return;
 	}
 
-	const int16_t var2 = UNK_60AD228[Bgs[bgIndex].UNK_18[var0]].UNK_54;
+	const int16_t var2 = UNK_60AD228[var1].UNK_54;
 
 	int16_t var4;
 	int16_t var5;
 	var4 = 0;
-	if (Bgs[bgIndex].UNK_18[var0] != -1) {
-		const int16_t var1 = UNK_60AD228[Bgs[bgIndex].UNK_18[bgIndex]].UNK_0;
-		const int16_t var3 = Bgs[bgIndex].UNK_0;
-		const int32_t var13 = -(16 + (int32_t)UNK_60AD228[var1].UNK_18[var2] / 16);
-		const int16_t var7 = -(16 + (int32_t)UNK_60AD228[var1].UNK_18[var0] / 16 + UNK_60AD228[var1].UNK_4C / 16);
-		int16_t var16 = -(16 + UNK_60AD228[var1].UNK_28[var3] / 16 + UNK_60AD228[var1].UNK_50 / 16);
+	if (var1 != -1) {
+		UNK_60AD228[var1].UNK_56 = 1;
+		const int32_t var13 = -16 - UNK_60AD228[var1].UNK_18[var2] / 16;
+		const int16_t var7 = -16 - UNK_60AD228[var1].UNK_18[var0] / 16 - UNK_60AD228[var1].UNK_4C / 16;
+		int16_t var16 = -16 - UNK_60AD228[var1].UNK_28[var2] / 16 - UNK_60AD228[var1].UNK_50 / 16;
 		var4 = 0;
 		for (size_t i = 0u; i < 32u; i++, var16++) {
 			uint32_t* const var10 = UNK_60AD228[var1].UNK_4[var2];
@@ -1165,6 +1175,26 @@ void UNK_60267E4(int16_t bgIndex) {
 
 		UNK_60AD228[var2].UNK_38[var1] %= 16;
 		UNK_60AD228[var2].UNK_3C[var1] %= 16;
+	}
+}
+#endif
+
+void UNK_602682A(int16_t arg0, int16_t arg1, int16_t arg2, bool arg3) {
+	if (arg3) {
+		UNK_60B13AE = 1;
+		UNK_6026870(arg0, arg1, arg2);
+		UNK_60B13AE = 0;
+	}
+	else {
+		UNK_6026870(arg0, arg1, arg2);
+	}
+}
+
+void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
+	int16_t var0 = 0;
+	const int16_t var1 = Bgs[bgIndex].UNK_18[arg1];
+	if (var1 != -1) {
+		// TODO
 	}
 }
 

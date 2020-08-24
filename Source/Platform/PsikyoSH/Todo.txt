@@ -1,11 +1,10 @@
 Implement support for more than the PS5V2, i.e. the other PsikyoSH boards?
 
 In MAME, check what global variables are initialized with before main() is
-called, then add corresponding inits to the C code, including zero inits. May
-need to do some automation for this task, since there's so much data to look
-over.
+called, then add corresponding inits to the C code. May need to do some 
+automation for this task, since there's so much data to look over.
 
-Ensure constant data is stored and accessed from ROM, and variables/code are
-copied to RAM and code executed from RAM once main() is called. But maybe add
-an option to execute code from ROM, so more RAM is available, assuming ROM code
+Ensure constant data is stored and accessed from ROM, and variables/code are 
+copied to RAM and code executed from RAM once main() is called. But maybe add an 
+option to execute code from ROM, so more RAM is available, assuming ROM code 
 execution is fast enough on PS5V2.

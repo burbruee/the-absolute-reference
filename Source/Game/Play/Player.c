@@ -2423,7 +2423,7 @@ void UpdatePlayNext(Player* player) {
 	}
 	player->activePos[0] = activeCol;
 	if (player->modeFlags & MODE_BIG) {
-		player->activePos[0]++;
+		F32I(player->activePos[0])++;
 	}
 	player->activePos[1] = ENTRYPOS_Y;
 
@@ -2572,10 +2572,10 @@ void UpdatePlayBlockedEntry(Player* player) {
 		if (ROTATED_ANY(GameButtonsDown[player->num])) {
 			Rotation newRotation;
 			if (ROTATED_LEFT(GameButtonsDown[player->num])) {
-				newRotation = (player->activeRotation + 1u) % 4u;
+				newRotation = ROTATE_LEFT(player->activeRotation);
 			}
 			else {
-				newRotation = (player->activeRotation + 3u) % 4u;
+				newRotation = ROTATE_RIGHT(player->activeRotation);
 			}
 			player->numActiveRotations++;
 			if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), newRotation)) {

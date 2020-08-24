@@ -141,7 +141,7 @@ typedef struct STRUCT_60AD228 {
 	uint16_t UNK_C[2];
 	STRUCT_GameBg_0* UNK_10;
 	int32_t UNK_14;
-	uint32_t UNK_18[2];
+	int32_t UNK_18[2];
 	uint32_t UNK_20[2];
 	int32_t UNK_28[2];
 	int16_t UNK_30[2];
