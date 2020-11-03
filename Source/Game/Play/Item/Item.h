@@ -5,9 +5,7 @@
 #include "Lib/Macros.h"
 #include <stdint.h>
 #include <stdbool.h>
-
 struct Player;
-typedef struct Player Player;
 
 typedef enum ItemType {
 	ITEMTYPE_NULL,
@@ -88,7 +86,7 @@ struct Item {
 	uint8_t states[4];
 	DATA(data, 0x800);
 
-	Player* activatingPlayer;
+	struct Player* activatingPlayer;
 
 	Item* previous;
 	Item* next;
@@ -101,22 +99,22 @@ typedef enum ItemCategory {
 	ITEMCAT_NEUTRAL
 } ItemCategory;
 
-void RemoveItems(Player* player);
+void RemoveItems(struct Player* player);
 bool CheckDeactivateItem(Item* item);
-bool FreeFall(Player* player);
-bool UNK_6018584(Player* player); // Unused.
+bool FreeFall(struct Player* player);
+bool UNK_6018584(struct Player* player); // Unused.
 ItemCategory NoDisableGarbage(Item* item);
 
-bool ItemGood(Player* player);
-bool ItemBad(Player* player);
+bool ItemGood(struct Player* player);
+bool ItemBad(struct Player* player);
 ItemCategory GetItemCategory(ItemType itemType);
-bool ItemConfusing(Player* player);
+bool ItemConfusing(struct Player* player);
 
 void UNK_601886C();
 // NOTE: Unused. Not suggested to be used, since it doesn't work the same as
 // UpdateItems(), and the rest of the code depends on how UpdateItems() works.
 // Only included for the sake of completeness and preservation.
-//void UpdateVersusItems(Player* player);
+//void UpdateVersusItems(struct Player* player);
 
 // Init the items.
 void InitItems();

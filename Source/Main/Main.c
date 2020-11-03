@@ -3,7 +3,7 @@
 #include "PlatformUpdate.h"
 #include "PlatformTypes.h"
 
-#include "Video/SpriteInit.h"
+//#include "Video/SpriteInit.h"
 MAIN_RETURNTYPE main() {
 #if 0
 	AddSprite(ADDSPRITE_1, NULL);

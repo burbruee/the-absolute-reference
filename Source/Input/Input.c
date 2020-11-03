@@ -112,7 +112,6 @@ void UpdateInputs() {
 		}
 	}
 
-	bool updatePlayers = true;
 	if (~INPUTS[INPUT_SERVICE] & SERVICE_ADDSERVICE) {
 		NumAddServiceFrames++;
 	}
@@ -120,6 +119,7 @@ void UpdateInputs() {
 		NumAddServiceFrames = 0u;
 	}
 
+	bool updatePlayers = true;
 	if (PauseAllowed && !(SystemButtonsDown[PLAYER1] & BUTTON_START)) {
 		updatePlayers = false;
 	}
@@ -147,7 +147,7 @@ void UpdateInputs() {
 	serviceInput |= ~INPUTS[INPUT_SERVICE];
 	if (Settings[SETTING_COINMODE] != COINMODE_FREE) {
 		if (serviceInput & SERVICE_COIN1) {
-			*(uint8_t*)&AddCoin[PLAYER1] = true;
+			AddCoin[PLAYER1] = true;
 		}
 		else {
 			if (AddCoin[PLAYER1]) {
@@ -159,7 +159,7 @@ void UpdateInputs() {
 		}
 
 		if (serviceInput & SERVICE_COIN2) {
-			*(uint8_t*)&AddCoin[PLAYER2] = true;
+			AddCoin[PLAYER2] = true;
 		}
 		else {
 			if (AddCoin[PLAYER2]) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+struct Player;
 
 typedef enum MedalType {
 	MEDALTYPE_AC,
@@ -20,16 +21,13 @@ typedef enum MedalColor {
 	NUMMEDALCOLORS = MEDALCOLOR_GOLD
 } MedalColor;
 
-struct Player;
-typedef struct Player Player;
-
-void InitMedals(Player* player, int16_t y, int16_t x);
-void ShowMedals(Player* player);
+void InitMedals(struct Player* player, int16_t y, int16_t x);
+void ShowMedals(struct Player* player);
 void UNK_6020ECE();
 void UNK_6020F50(uint16_t arg0, int16_t y, int16_t x);
-void UpdateSkillMedal(Player* player);
-void UpdateComboMedal(Player* player);
-void UpdateSectionTimeMedal(Player* player, uint32_t sectionTime, uint32_t bestSectionTime);
-void UpdateAllClearMedal(Player* player);
-void UpdateRecoverMedal(Player* player);
-void UpdateRotateMedal(Player* player);
+void UpdateSkillMedal(struct Player* player);
+void UpdateComboMedal(struct Player* player);
+void UpdateSectionTimeMedal(struct Player* player, uint32_t sectionTime, uint32_t bestSectionTime);
+void UpdateAllClearMedal(struct Player* player);
+void UpdateRecoverMedal(struct Player* player);
+void UpdateRotateMedal(struct Player* player);

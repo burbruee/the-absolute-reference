@@ -107,7 +107,7 @@ static uint8_t NumInstantDropRows[NUMPLAYERS];
 static bool ManualLockUnprotected[NUMPLAYERS];
 
 typedef struct EntryData {
-	Block squares[MATRIX_HEIGHT * FIELD_SINGLEWIDTH * NUMPLAYERS];
+	Block tempMatrix[MATRIX_HEIGHT * FIELD_SINGLEWIDTH * NUMPLAYERS];
 	uint16_t numMatrixBlockings;
 	uint16_t numPlayerBlockings;
 	uint8_t itemWeights[NUMITEMTYPES];
@@ -1891,8 +1891,8 @@ void BackupMatrix(Player* player) {
 	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-			entry->squares[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] = MATRIX(player, row, col).block;
-			entry->squares[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] &= ~BLOCK_INVISIBLE;
+			entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] = MATRIX(player, row, col).block;
+			entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] &= ~BLOCK_INVISIBLE;
 		}
 	}
 }
@@ -1901,7 +1901,7 @@ void RestoreMatrix(Player* player) {
 	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-			MATRIX(player, row, col).block = entry->squares[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col];
+			MATRIX(player, row, col).block = entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col];
 		}
 	}
 }
@@ -1955,7 +1955,7 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 void SendGarbageRow(Player* player, int16_t fieldRow, int16_t garbageRow) {
 	TEMPPTR(EntryData, entry);
 	for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-		player->garbage[(player->otherPlayer->numGarbageRows + garbageRow) * MATRIX_SINGLEWIDTH + col] = entry->squares[garbageRow * FIELD_SINGLEWIDTH * 2 + col + 1];
+		player->garbage[(player->otherPlayer->numGarbageRows + garbageRow) * MATRIX_SINGLEWIDTH + col] = entry->tempMatrix[garbageRow * FIELD_SINGLEWIDTH * 2 + col + 1];
 	}
 }
 
@@ -1964,14 +1964,14 @@ int8_t AllClearGarbage(Player* player, uint8_t numLines) {
 
 	for (int16_t row = 0; row < numLines; row++) {
 		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-			entry->squares[row * FIELD_SINGLEWIDTH * 2 + col + 1] = player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col];
+			entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1] = player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col];
 		}
 	}
 
 	for (int16_t row = 0; row < numLines; row++) {
 		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
 			if (player->otherPlayer->numGarbageRows + row < GARBAGEHEIGHT) {
-				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col] = entry->squares[row * FIELD_SINGLEWIDTH * 2 + col + 1];
+				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col] = entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1];
 			}
 		}
 	}
@@ -1979,7 +1979,7 @@ int8_t AllClearGarbage(Player* player, uint8_t numLines) {
 	for (int16_t row = 0; row < numLines; row++) {
 		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
 			if (player->otherPlayer->numGarbageRows + numLines + row < GARBAGEHEIGHT) {
-				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + numLines + row) * FIELD_SINGLEWIDTH + col] = entry->squares[row * FIELD_SINGLEWIDTH * 2 + col + 1];
+				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + numLines + row) * FIELD_SINGLEWIDTH + col] = entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1];
 			}
 		}
 	}

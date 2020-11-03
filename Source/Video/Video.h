@@ -87,7 +87,7 @@ struct STRUCT_607D218 {
 	STRUCT_607D218* UNK_8;
 	STRUCT_607D218* UNK_C;
 	STRUCT_607D218* UNK_10;
-	STRUCT_607D218* UNK_14;
+	STRUCT_607D218* UNK_14; // NOTE: Appears to be a linked list next node pointer in UNK_60237DE.
 	uint16_t UNK_18;
 	uint16_t UNK_1A;
 	uint8_t UNK_1C[4];
@@ -96,7 +96,8 @@ struct STRUCT_607D218 {
 	Fixed32 UNK_28;
 	Fixed32 UNK_2C;
 	uint16_t UNK_30; // TODO: Might be bool.
-	void* UNK_300[16][4];
+	void* UNK_100[4][32];
+	void* UNK_300[16 * 4];
 };
 
 #define STRUCT_607D218_300_END(s) (&(s)->UNK_300[15])
@@ -205,9 +206,9 @@ void UNK_602392E(uintptr_t, void (*)());
 
 void UNK_60239B8(uintptr_t, uintptr_t);
 
-void UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
+bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4);
 
-void* UNK_6023A98(STRUCT_607D218*, void*, void*, void*);
+void UNK_6023A98(STRUCT_607D218*, void (*)(), void*, void*);
 
 void UNK_6023B76(STRUCT_607D218*);
 

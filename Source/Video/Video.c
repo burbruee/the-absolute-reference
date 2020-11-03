@@ -11,14 +11,15 @@
 #include "HwData.h"
 #include "BuildData/BuildData.h"
 #include <assert.h>
+#include <stdbool.h>
 
 #define SPRITELAYER_FREE 0x0000
 
 const int16_t UNK_60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 STRUCT_607D218* UNK_606005C = NULL;
 static void (**UNK_6060060)() = NULL;
-static uint16_t* UNK_6060064 = NULL;
-static int16_t UNK_6060068 = 0;
+static uint16_t* UNK_6060064 = NULL; // TODO: Appears to be a pointer to an array of four (u)int16_t.
+static int16_t UNK_6060068 = 0; // NOTE: Appears to be a count of the number of active STRUCT_607D218 objects.
 AddSpriteData SpriteAdders[64];
 int16_t SpriteAdderNameTable[64];
 STRUCT_6061932 UNK_6061932;
@@ -55,7 +56,7 @@ static STRUCT_607D218 UNK_607D218[192];
 
 static STRUCT_607D218* UNK_60AD218 = NULL;
 static PauseMode NextPauseMode;
-static uint16_t UNK_60AD21E = 0u;
+static bool UNK_60AD21E = false;
 static int16_t UNK_60AD220;
 static int16_t NumSpriteAdders;
 
@@ -95,7 +96,7 @@ void UNK_6023790() {
 		*var0++ = var1++;
 	}
 
-	UNK_6060068 = 0u;
+	UNK_6060068 = 0;
 
 	UNK_607D210 = NULL;
 	UNK_607D214 = NULL;
@@ -103,48 +104,42 @@ void UNK_6023790() {
 
 void UNK_60237DE() {
 	CurrentPauseMode = NextPauseMode;
-	// TODO: Not sure of all the data types here. UNK_300 might be a
-	// 16-byte-size union.
-#if 0
+	// TODO: Not sure of all the data types here. UNK_300 might be an array of 16-byte-size unions.
 	if (UNK_6060068 != 0) {
+		UNK_60AD218 = UNK_607D210;
 		do {
-			UNK_60AD21E = 0u;
+			UNK_60AD21E = false;
 			UNK_606005C = UNK_60AD218;
 			if (CurrentPauseMode < PAUSEMODE_GAME) {
-				int16_t var0 = UNK_60AD218->UNK_18;
-				void** var1 = &UNK_60AD218->UNK_300[(1 - var0 + 14) * 4 + 3];
-				while (var0 > 0) {
+				int16_t i = UNK_60AD218->UNK_18;
+				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 0; i--, var1 += 4u) {
 					UNK_6060064 = var1 - 3;
 					UNK_6060060 = var1;
-					((void(*)())*var1)();
-					if (UNK_60AD21E != 0) {
+					((void(*)())var1)();
+					if (UNK_60AD21E) {
 						break;
 					}
-					var0--;
-					var1 += 4;
 				}
 			}
-			else if (UNK_60AD218->UNK_300[15].UNK_0[2] != UNK_6023788) {
+			else if (UNK_60AD218->UNK_300[4 * 15 + 2] != UNK_6023788) {
 				int16_t i = UNK_60AD218->UNK_18;
-				void (**var1)() = &UNK_60AD218->UNK_300[1 - i + 14].UNK_0[3];
-				for (; i > 1; i--, var1 += 4u) {
-					UNK_6060064 = (uint16_t*)(var1 - 3); // TODO: STRUCT_607D218_300::UNK_0 might be a struct that has eight bytes of data, then two function pointers.
+				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 1; i--, var1 += 4u) {
+					UNK_6060064 = var1 - 3;
 					UNK_6060060 = var1;
-					(*var1)();
-					if (UNK_60AD21E != 0u) {
+					((void(*)())var1)();
+					if (UNK_60AD21E) {
 						break;
 					}
 				}
-				if (UNK_60AD21E == 0) {
-					UNK_6060060 = &UNK_60AD218->UNK_300[15].UNK_0[2];
-					UNK_60AD218->UNK_300[15].UNK_0[2]();
+				if (!UNK_60AD21E) {
+					UNK_6060060 = (void(**)())&UNK_60AD218->UNK_300[4 * 15];
+					((void(*)())UNK_60AD218->UNK_300[4 * 15])();
 				}
 			}
 			UNK_606005C = UNK_60AD218->UNK_14;
 			UNK_60AD218 = UNK_606005C;
 		} while (UNK_606005C != NULL);
 	}
-#endif
 }
 
 void UNK_602392E(uintptr_t arg0, void (*arg1)()) {
@@ -154,7 +149,7 @@ void UNK_602392E(uintptr_t arg0, void (*arg1)()) {
 		UNK_606005C = UNK_607D210;
 		do {
 			uint16_t i = UNK_606005C->UNK_18;
-			for (void** var0 = &UNK_606005C->UNK_300[14 - (i - 1)][3]; i != 0; i--, var0 += 4) {
+			for (void** var0 = &UNK_606005C->UNK_300[4 * (15 - i) + 3]; i != 0; i--, var0 += 4) {
 				if ((uintptr_t)*var0 == arg0) {
 					arg1();
 					break;
@@ -174,7 +169,7 @@ void UNK_60239B8(uintptr_t arg0, uintptr_t arg1) {
         UNK_606005C = UNK_607D210;
         do {
             uint16_t i = UNK_606005C->UNK_18;
-			for (void** var0 = &UNK_606005C->UNK_300[14 - (i - 1)][3]; i != 0; i--, var0 += 4) {
+			for (void** var0 = &UNK_606005C->UNK_300[4 * (15 - i) + 3]; i != 0; i--, var0 += 4) {
                 if ((uintptr_t)*var0 == arg0) {
                     *(uintptr_t*)var0 = arg1;
                 }
@@ -185,13 +180,76 @@ void UNK_60239B8(uintptr_t arg0, uintptr_t arg1) {
     UNK_606005C = temp0;
 }
 
-void UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
-	// TODO
+bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
+	void (**var0)();
+	void (*var1)();
+	if (arg0->UNK_18 == 0u) {
+		var0 = arg0->UNK_300[4 * 14 + 3];
+		arg0->UNK_18++;
+	}
+	else {
+		var0 = arg0->UNK_300[4 * 14 + 3];
+		size_t i;
+		for (i = 0u; i < arg0->UNK_18 && var1 != UNK_602378C; i++) {
+			var1 = *var0;
+			if (i > 14u) {
+				return false;
+			}
+			var0 -= 4;
+		}
+		if (i >= arg0->UNK_18) {
+			arg0->UNK_18++;
+		}
+	}
+
+	*(var0 - 0) = arg1;
+	*(var0 - 1) = (void*)(uintptr_t)arg4;
+	*(var0 - 2) = (void*)(uintptr_t)arg3;
+	*(var0 - 3) = (void*)(uintptr_t)arg2;
+	return true;
 }
 
-void* UNK_6023A98(STRUCT_607D218* arg0, void* arg1, void* arg2, void* arg3) {
-	// TODO
-	return NULL;
+void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
+	void** var1;
+	uint8_t var0;
+	if (arg0->UNK_18 == 0u) {
+		var0 = 0u;
+		var1 = &arg0->UNK_300[4 * 14 + 3];
+		arg0->UNK_18++;
+	}
+	else {
+		var1 = &arg0->UNK_300[4 * 14 + 3];
+		size_t i = 0u;
+		while (i < arg0->UNK_18 && *var1 != UNK_602378C) {
+			var1 -= 4;
+		}
+		var0 = i;
+		if (i >= arg0->UNK_18) {
+			arg0->UNK_18++;
+		}
+	}
+	*var1 = arg1;
+
+	size_t i;
+	void** var3 = var1 - 1;
+	void** var4;
+	for (i = 0u; i < 4u; i++) {
+		if (arg0->UNK_1C[i] == 0u) {
+			arg0->UNK_1C[i] = var0 + 1u;
+			// TODO: This is some strange pointer math, and might have to be completely changed for the code to work.
+			var4 = arg0->UNK_100[i];
+			*var3 = (void*)((uintptr_t)var4 | (i << 28));
+			var3 = var1 - 2;
+			break;
+		}
+	}
+	if (i < 4u) {
+		for (size_t i = 0u; i < 32u; i++, var4++) {
+			*var4 = NULL;
+		}
+		*(var3 - 0) = arg3;
+		*(var3 - 1) = arg2;
+	}
 }
 
 void UNK_6023B76(STRUCT_607D218* arg0) {
@@ -331,7 +389,7 @@ STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
         }
 
         UNK_606005C = var1;
-        var1->UNK_300[15][3] = (void*)fun0;
+        var1->UNK_300[4 * 15 + 3] = fun0;
 
         if (arg0[1] == NULL) {
             fun1 = UNK_6023788;
@@ -340,7 +398,7 @@ STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
             fun1 = arg0[1];
         }
 
-        var1->UNK_300[15][2] = (void*)fun1;
+        var1->UNK_300[4 * 15 + 2] = fun1;
 
         if (arg0[0] == NULL) {
             fun2 = UNK_6023788;
@@ -349,7 +407,7 @@ STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
             fun2 = arg0[0];
         }
 
-        var1->UNK_300[14][3] = (void*)fun2;
+        var1->UNK_300[4 * 14 + 3] = fun2;
         var1->UNK_18 = 1;
 
         if (arg0[2] != NULL) {
@@ -368,16 +426,16 @@ void* UNK_6023FA4(void (**arg0)(), STRUCT_607D218* arg1) {
 void UNK_6024030(STRUCT_607D218* arg0) {
 	STRUCT_607D218* var0 = UNK_606005C;
 	UNK_606005C = arg0;
-	((void (*)())arg0->UNK_300[15][3])();
+	((void (*)())arg0->UNK_300[4 * 15 + 3])();
 	UNK_6023E5A(arg0);
 	if (arg0 == var0) {
-		UNK_60AD21E = 1u;
+		UNK_60AD21E = true;
 	}
 	UNK_606005C = var0;
 }
 
 void UNK_602406E() {
-	if (UNK_6060068 != 0u) {
+	if (UNK_6060068 != 0) {
 		for (STRUCT_607D218* var0 = UNK_607D210, * var1; var0 != NULL; var0 = var1) {
 			var1 = var0->UNK_14;
 			UNK_6024030(var0);
@@ -386,7 +444,18 @@ void UNK_602406E() {
 }
 
 void UNK_60240A8(void* arg0) {
-	// TODO
+	if (UNK_6060068 != 0) {
+		for (STRUCT_607D218* var0 = UNK_607D210; var0 != NULL; var0 = var0->UNK_14) {
+			STRUCT_607D218* var1 = var0->UNK_14;
+			void** var2 = &var0->UNK_300[4 * 14 + 3];
+			for (size_t i = 0u; i < var0->UNK_18; i++, var2 -= 4) {
+				if (*var2 == arg0) {
+					UNK_6024030(arg0);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void SetNextPauseMode(PauseMode nextPauseMode) {
@@ -1134,19 +1203,19 @@ void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
 	const int16_t var1 = Bgs[bgIndex].UNK_18[arg1];
 	if (var1 != -1) {
 		UNK_60AD228[var1].UNK_56 = 1;
-		const int32_t var2 = -UNK_60AD228[var1].UNK_18[arg2] / 16 - 16;
-		const int32_t var3 = UNK_60AD228[var1].UNK_20[arg2];
+		const int32_t var2 = (-UNK_60AD228[var1].UNK_18[arg2] - 16) / 16;
+		const int32_t var3 = (-UNK_60AD228[var1].UNK_20[arg2] - 16) / 16;
 		const int32_t var5 =
-			-UNK_60AD228[var1].UNK_18[arg2] / 16 - UNK_60AD228[var1].UNK_4C / 16 - 16;
+			(-UNK_60AD228[var1].UNK_18[arg2] - 16) / 16 - UNK_60AD228[var1].UNK_4C / 16;
 		int32_t var6 =
-			-UNK_60AD228[var1].UNK_28[arg2] / 16 - UNK_60AD228[var1].UNK_50 / 16 - 16;
+			(-UNK_60AD228[var1].UNK_28[arg2] - 16) / 16 - UNK_60AD228[var1].UNK_50 / 16;
 
 		arg1 = 1;
 		if (arg1) {
 			int16_t var0 = 0;
 			int16_t var4 = 0;
 			for (int32_t i = 0; i < 32; i++, var6++) {
-				uint32_t* var7 = &UNK_60AD228[var1].UNK_4[arg2][(i - var3 / 16 - 16) % 32];
+				uint32_t* var7 = &UNK_60AD228[var1].UNK_4[arg2][(i + var3) & 0x1Fu];
 				const STRUCT_GameBg_0* var8 = UNK_6026AAC(bgIndex, var6, &var4, &var0);
 				if (var8->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
 					const BgMap32* const bgMap32 = (const BgMap32* const)var8->UNK_0;
@@ -1191,9 +1260,9 @@ STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16
 		if (struct0->UNK_0 != NULL) {
 			*arg2 = arg1;
 			const int16_t var3 = *arg2;
-			assert(var3 >= 0 && var3 < lengthof(UNK_60AD228));
 			STRUCT_GameBg_0* var1 = UNK_60AD228[var0].UNK_10;
 			while (*arg2 < 0) {
+				assert(var3 >= 0 && var3 < lengthof(UNK_60AD228));
 				if (UNK_60AD228[var3].UNK_60 == NULL) {
 					*arg2 += UNK_60AD228[var3].UNK_14;
 				}
@@ -1203,6 +1272,7 @@ STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16
 					var1 = struct0;
 				}
 			}
+			// TODO: Segfaults here for some reason.
 			for (STRUCT_GameBg_0* var4 = var1; *arg2 >= (int16_t)var4->UNK_0->header.UNK_6 * var4->UNK_4;) {
 				*arg2 -= var4->UNK_0->header.UNK_6 * var4->UNK_4;
 				var4++;

@@ -233,7 +233,7 @@ void UpdateGameBg() {
 				if (var1 % 4 < 0) {
 					var1 += 3;
 				}
-				UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * VIDEO_WIDTH);
+				UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
 				UNK_60267E4(CurrentGameBg.bgIndex);
 			}
 			break;

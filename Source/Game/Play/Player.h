@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Game/Play/Player.h"
 #include "Game/Play/Block.h"
 #include "Game/Play/Matrix.h"
 #include "Game/Play/Medal.h"
@@ -157,7 +156,7 @@ typedef enum MGradeFlag {
 	MGRADE_QUALIFIED = MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT3 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS | MGRADE_S9GRADE
 } MGradeFlag;
 
-typedef enum MiscFlag{
+typedef enum MiscFlag {
 	MISC_NONE = 0,
 	MISC_SKILLCLEARS1 = 1 << 0,
 	MISC_SKILLCLEARS2 = 1 << 1,
@@ -216,9 +215,10 @@ typedef enum Rotation {
 
 // TODO: Reorder. The SH-2 compiler reordered the fields to pack more tightly.
 // Look at init functions for ordering and grouping.
+struct Player;
 typedef struct Player Player;
 struct Player {
-	MatrixBlock *matrix;
+	MatrixBlock* matrix;
 	Block garbage[MATRIX_SINGLEWIDTH * GARBAGEHEIGHT];
 	uint8_t fieldHeight;
 	uint8_t fieldWidth;
@@ -226,8 +226,8 @@ struct Player {
 	uint8_t matrixWidth;
 	int16_t screenOffset[2];
 	//int16_t versusItemType; // Only used in UpdateVersusItems(), which is an unused function. That function could be a relic of TGM1's code, or was for an older version of TGM2.
-	Player *otherPlayer;
-	Player *itemPlayer;
+	struct Player* otherPlayer;
+	struct Player* itemPlayer;
 	uint8_t subStates[4];
 	int16_t values[4];
 	NowFlag nowFlags;
