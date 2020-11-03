@@ -190,16 +190,20 @@ static ScreenState StartCopyrightScreen() {
 
 static ScreenState StartTitleScreen() {
 	// TODO
+	return SCREEN_TESTMODE;
 }
 
 static ScreenState StartDeveloperScreen() {
 	// TODO
+	return SCREEN_TESTMODE;
 }
 
 static ScreenState StartVersionTitleScreen() {
 	// TODO
+	return SCREEN_TESTMODE;
 }
 
 static ScreenState StartDemoScreen() {
 	// TODO
+	return SCREEN_TESTMODE;
 }

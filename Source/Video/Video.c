@@ -261,6 +261,7 @@ void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
 	}
 }
 
+#if 0
 void UNK_6023B76(STRUCT_607D218* arg0) {
 	// TODO
 }
@@ -282,6 +283,7 @@ int32_t UNK_6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, i
 	// TODO
 	return 0u;
 }
+#endif
 
 STRUCT_607D218* UNK_6023DAE(STRUCT_607D218* arg0) {
 	if (UNK_6060068 >= lengthof(UNK_607CF10) - 1) {
@@ -427,10 +429,12 @@ STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
     return var1;
 }
 
+#if 0
 void* UNK_6023FA4(void (**arg0)(), STRUCT_607D218* arg1) {
 	// TODO
 	return NULL;
 }
+#endif
 
 void UNK_6024030(STRUCT_607D218* arg0) {
 	STRUCT_607D218* var0 = UNK_606005C;

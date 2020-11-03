@@ -104,27 +104,25 @@ void ShowStaff(Player* player) {
 
 	int16_t staffObjectIndex = 1;
 	int16_t staffRows[NUMSTAFFOBJECTS] = { 1 };
-	int16_t staffRow;
-	#define SET_STAFF_OBJECTS(section, objectTable) \
+	int16_t staffRow = 6;
+	#define SET_STAFF_OBJECTS(section, objectTable, rowAdvance) \
 		case section: \
 			for (int16_t j = 0; j < lengthof(objectTable); j++) { \
 				staffRows[staffObjectIndex] = staffRow; \
-				staffRow += 2; \
+				staffRow += rowAdvance; \
 				ObjectTableStaff[player->num][staffObjectIndex] = objectTable[j]; \
 			} \
-			staffRow += 3; \
 			break
 	for (int16_t i = 0; i < NUMSTAFFSECTIONS; i++) {
 		switch (staffSections[i]) {
-		SET_STAFF_OBJECTS(STAFF_BGDESIGN, objectTableBgDesignStaff);
-		SET_STAFF_OBJECTS(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff);
-		SET_STAFF_OBJECTS(STAFF_VISUALDESIGN, objectTableVisualDesignStaff);
-		SET_STAFF_OBJECTS(STAFF_PROGRAMMER, objectTableProgrammerStaff);
-		SET_STAFF_OBJECTS(STAFF_SOUND, objectTableSoundStaff);
-
-		default:
-			break;
+		SET_STAFF_OBJECTS(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
+		SET_STAFF_OBJECTS(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
+		SET_STAFF_OBJECTS(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
+		SET_STAFF_OBJECTS(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
+		SET_STAFF_OBJECTS(STAFF_SOUND, objectTableSoundStaff, 6);
+		default: break;
 		}
+		staffRow += 3;
 	}
 	#undef SET_STAFF_OBJECTS
 
@@ -134,7 +132,7 @@ void ShowStaff(Player* player) {
 	}
 
 	Entity* staffEntity;
-	if (staffEntity = AllocEntity()) {
+	if ((staffEntity = AllocEntity())) {
 		staffEntity->update = UpdateEntityStaff;
 		staffEntity->data.info.player = player;
 		StaffFireworkFrames[player->num] = 15u;
@@ -374,8 +372,8 @@ static void UpdateEntityGrandMasterCongratulations(Entity* entity) {
 	int32_t scalePixelOffset = ((player->scale - UNSCALED) << 10) / UNSCALED;
 	DisplayObjectEx(
 		OBJECT_GRANDMASTERCONGRATULATIONS,
-		120 + (scalePixelOffset * -12) >> 10,
-		player->screenPos[0] + (scalePixelOffset * -40) >> 10,
+		120 + ((scalePixelOffset * -12) >> 10),
+		player->screenPos[0] + ((scalePixelOffset * -40) >> 10),
 		179u,
 		125u,
 		player->scale,

@@ -5,7 +5,7 @@ static void UpdateEntityObject(Entity* entity);
 
 void ShowObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer) {
 	Entity* entity;
-	if (entity = AllocEntity()) {
+	if ((entity = AllocEntity())) {
 		entity->update = UpdateEntityObject;
 		entity->values[0] = 1;
 		ENTITY_BUFFER_PTR(BasicEntityInstanceData, data, entity);
@@ -27,7 +27,7 @@ static void UpdateEntityObjectEx(Entity* entity);
 
 void ShowObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, SpriteScale scaleY, SpriteScale scaleX, bool alpha) {
 	Entity* entity;
-	if (entity = AllocEntity()) {
+	if ((entity = AllocEntity())) {
 		entity->update = UpdateEntityObjectEx;
 		entity->values[0] = 1;
 		ENTITY_BUFFER_PTR(BasicEntityInstanceData, data, entity);

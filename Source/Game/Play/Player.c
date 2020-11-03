@@ -667,6 +667,7 @@ void SetMode(Player* player, ModeSelection modeSelection) {
 	case MODESELECTION_TGMPLUS: player->modeFlags |= MODE_TGMPLUS; break;
 	case MODESELECTION_TADEATH: player->modeFlags |= MODE_TADEATH; break;
 	case MODESELECTION_DOUBLES: player->modeFlags |= MODE_DOUBLES; break;
+	default: break;
 	}
 }
 
@@ -2821,7 +2822,7 @@ void UpdatePlayGameOver(Player* player) {
 			player->values[0] = 10;
 		}
 		if ((GameFlags & GAME_DOUBLES) && player->values[0] == 10) {
-			UNK_6029546(2u, 10, 0, 7); // TODO
+			UNK_6029546(2u, 10, 0, 7);
 		}
 
 		player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);

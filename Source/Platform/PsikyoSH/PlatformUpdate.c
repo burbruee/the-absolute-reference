@@ -1,6 +1,7 @@
 #include "PlatformUpdate.h"
 #include "Video/InitScaleRam.h"
 #include "HwData.h"
+#include "Lib/Macros.h"
 #include <stddef.h>
 
 // These messages are just the bare minimum to get across what the original

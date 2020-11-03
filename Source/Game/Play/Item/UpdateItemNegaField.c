@@ -68,7 +68,7 @@ void UpdateItemNegaField(Item* item) {
 			// Find highest row with squares, for the next nega row.
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					if (MATRIX(activatingPlayer, row, col).block & BLOCK_TYPE != BLOCKTYPE_EMPTY) {
+					if ((MATRIX(activatingPlayer, row, col).block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
 						data->topNegaRow = row;
 					}
 				}
@@ -92,7 +92,7 @@ void UpdateItemNegaField(Item* item) {
 				for(int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 					MatrixBlock* square = &MATRIX(itemPlayer, data->topNegaRow, col);
 					if (!(square->block & BLOCK_ITEM)) {
-						if (square->block & BLOCK_TYPE != BLOCKTYPE_EMPTY) {
+						if ((square->block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
 							square->block = NULLBLOCK;
 						}
 						else {

@@ -407,7 +407,7 @@ static GameLoopState StartGameLoop() {
 		UpdateGameMusic();
 		ShowPalCycleText(218 + 67, 218, VERSION_NAME, true);
 		if ((++numPalCycleFrames % 64u) == 0u) {
-			if (downNextPalCycle = !downNextPalCycle) {
+			if ((downNextPalCycle = !downNextPalCycle)) {
 				NewPalCycle(PALNUM_PALCYCLETEXT, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_DOWNSTOP, 1u, 63u);
 			}
 			else {
@@ -516,6 +516,9 @@ int16_t UNK_6008E38(int16_t level) {
 	else if (level >= 900) {
 		return 7;
 	}
+	else {
+		return 7;
+	}
 }
 
 int16_t UNK_6008EC8(int16_t level) {
@@ -526,6 +529,9 @@ int16_t UNK_6008EC8(int16_t level) {
 		return 2;
 	}
 	else if (level >= 300) {
+		return 3;
+	}
+	else {
 		return 3;
 	}
 }
@@ -544,6 +550,9 @@ int16_t UNK_6008EEC(int16_t level) {
 		return 2;
 	}
 	else if (level >= 500) {
+		return 7;
+	}
+	else {
 		return 7;
 	}
 }

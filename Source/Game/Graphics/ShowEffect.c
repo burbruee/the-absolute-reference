@@ -36,7 +36,7 @@ static void UpdateEntityFieldBlockExplosion(Entity* entity);
 
 void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
-	if (entity = AllocEntity()) {
+	if ((entity = AllocEntity())) {
 		entity->update = UpdateEntityFieldBlockExplosion;
 		entity->frames = 0;
 

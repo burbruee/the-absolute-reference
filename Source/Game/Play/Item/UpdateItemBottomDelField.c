@@ -194,5 +194,4 @@ void UpdateItemBottomDelField(Item* item) {
 			break;
 		}
 	}
-	// TODO
 }

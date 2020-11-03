@@ -236,7 +236,7 @@ void UpdateItemLaser(Item* item) {
 }
 
 static int16_t LaserCenterColumn(Player* player) {
-	if (player->activeBlock & BLOCK_TYPE == BLOCKTYPE_I && (player->activeRotation == ROTATION_RIGHT || player->activeRotation == ROTATION_LEFT)) {
+	if ((player->activeBlock & BLOCK_TYPE) == BLOCKTYPE_I && (player->activeRotation == ROTATION_RIGHT || player->activeRotation == ROTATION_LEFT)) {
 		return F32I(player->activePos[0]) + 1;
 	}
 	else {
