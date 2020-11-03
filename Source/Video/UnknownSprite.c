@@ -7,7 +7,7 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
     int16_t i = SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 	UNK_6061932.tempSprite[6]--;
     SpriteAdders[i].data = data;
-    SpriteAdders[i].type = 5u;
+    SpriteAdders[i].type = ADDSPRITE_5;
     SpriteAdders[i].y = y;
     SpriteAdders[i].x = x;
     SpriteAdders[i].UNK_34 = UNK_6061932.UNK_10;
@@ -23,19 +23,29 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
     return i;
 }
 
+void UNK_602BA70() {
+	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdders); i++) {
+		SpriteAdders[SpriteAdderNameTable[i]].type = ADDSPRITE_0;
+		SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
+		UNK_6061932.tempSprite[6]++;
+		if (UNK_6061932.tempSprite[6] != i) {
+			SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+			SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= SpriteAdderNameTable[i];
+			SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+		}
+	}
+}
+
 void UNK_602BB0C() {
 	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
-		if (SpriteAdders[SpriteAdderNameTable[i]].type == 5u) {
-			SpriteAdders[SpriteAdderNameTable[i]].type = 0u;
+		if (SpriteAdders[SpriteAdderNameTable[i]].type == ADDSPRITE_5) {
+			SpriteAdders[SpriteAdderNameTable[i]].type = ADDSPRITE_0;
 			SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
 			UNK_6061932.tempSprite[6]++;
 			if (UNK_6061932.tempSprite[6] != i) {
-				uint16_t* var0 = &SpriteAdderNameTable[i];
-
-				// Swap *adderIndex and SpriteAdderNameTable[UNK_6061932.tempSprite[6]].
-				*var0 ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
-				SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= *var0;
-				*var0 ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+				SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
+				SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= SpriteAdderNameTable[i];
+				SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 			}
 		}
 	}

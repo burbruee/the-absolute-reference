@@ -7,14 +7,27 @@ ROMDATA ObjectDataTable Objects;
 
 ROMDATA PalData Pal;
 
-ROMDATA BgMap16 BgMapSection0;
-ROMDATA BgMap16 BgMapSection1;
-ROMDATA BgMap32 BgMapSection2;
-ROMDATA BgMap16 BgMapSection3;
-ROMDATA BgMap32 BgMapSection4;
-ROMDATA BgMap16 BgMapSection5;
-ROMDATA BgMap16 BgMapSection6;
-ROMDATA BgMap16 BgMapSection7;
-ROMDATA BgMap16 BgMapSection8;
-ROMDATA BgMap16 BgMapSection9;
-ROMDATA BgMap16 BgMapVersus;
+#define HEADER16 { \
+	0xA0000000u | 0x10000u, \
+	0x78u, \
+	0x50u \
+}
+
+#define HEADER32 { \
+	0xA0000000u | BGMAPTILEINFO_PERTILEPAL | 0x10000u, \
+	0x78u, \
+	0x50u \
+}
+
+// TODO: Actually initialize these from the ROMs. For now, the headers are initialized correctly so the code can at least run.
+ROMDATA BgMap16 BgMapSection0 = { HEADER16 };
+ROMDATA BgMap16 BgMapSection1 = { HEADER16 };
+ROMDATA BgMap32 BgMapSection2 = { HEADER32 };
+ROMDATA BgMap16 BgMapSection3 = { HEADER16 };
+ROMDATA BgMap32 BgMapSection4 = { HEADER32 };
+ROMDATA BgMap16 BgMapSection5 = { HEADER16 };
+ROMDATA BgMap16 BgMapSection6 = { HEADER16 };
+ROMDATA BgMap16 BgMapSection7 = { HEADER16 };
+ROMDATA BgMap16 BgMapSection8 = { HEADER16 };
+ROMDATA BgMap16 BgMapSection9 = { HEADER16 };
+ROMDATA BgMap16 BgMapVersus = { HEADER16 };

@@ -9,5 +9,7 @@ uint32_t PlatformInit();
 void PlatformFrame();
 #define PLATFORM_FRAME() PlatformFrame()
 
+#define PLATFORM_FINISHUPDATE()
+
 int PlatformQuit();
 #define PLATFORM_QUIT() return PlatformQuit()

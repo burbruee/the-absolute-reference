@@ -296,7 +296,7 @@ void UNK_6026FDC(int16_t, int16_t);
 // TODO
 void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO
-void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't used it. -Brandon McGriff
+void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't use it. -Brandon McGriff
 void VideoSetScanlinesBank(void*, void*, void*);
 void UNK_6029498(int16_t);
 // TODO

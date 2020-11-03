@@ -49,7 +49,7 @@ bool UpdateFrame() {
 	ScreenTimeOdd = ScreenTime % 2u;
 	UpdateInputs();
 	InitSpriteLayers();
-	UNK_60237DE(); // TODO
+	UNK_60237DE();
 	UNK_6024244();
 	UpdateEntities();
 	UNK_6025078();
@@ -60,7 +60,25 @@ bool UpdateFrame() {
 	UNK_602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
+	do {
+		if (!PauseAllowed) {
+			goto noPause;
+		}
+		RandScale = 0u;
+		NumVblanks = 0u;
+		PLATFORM_FRAME();
+	} while (!(SystemButtonsDown[PLAYER1] & BUTTON_START));
+	UpdatePlayers();
+
+	noPause:
+	UNK_602BA70();
+	RandScale = 0u;
 	PLATFORM_FRAME();
+
+	SetVideo();
+	UNK_602AA64();
+	UpdatePalCycles();
+	   PLATFORM_FINISHUPDATE();
 
 	bool startTestMode;
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -89,7 +107,26 @@ bool UNK_602AECA() {
 	UNK_602DAD4(); // TODO: Sound function.
 	NumSprites = SPRITE_FIRST;
 
+	do {
+		if (!PauseAllowed) {
+			goto noPause;
+		}
+		UpdateInputs();
+		RandScale = 0u;
+		NumVblanks = 0u;
+		PLATFORM_FRAME();
+	} while (!(SystemButtonsDown[PLAYER1] & BUTTON_START));
+	UpdatePlayers();
+
+	noPause:
+	UNK_602BA70();
+	RandScale = 0u;
 	PLATFORM_FRAME();
+
+	SetVideo();
+	UNK_602AA64();
+	UpdatePalCycles();
+	PLATFORM_FINISHUPDATE();
 
 	bool startTestMode;
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
@@ -127,7 +164,26 @@ bool UpdateGame() {
 	UNK_602523C();
 	UNK_602DAD4(); // TODO: Sound function.
 
+	do {
+		if (!PauseAllowed) {
+			goto noPause;
+		}
+		UpdateInputs();
+		RandScale = 0u;
+		NumVblanks = 0u;
+		PLATFORM_FRAME();
+	} while (!(SystemButtonsDown[PLAYER1] & BUTTON_START));
+	UpdatePlayers();
+
+	noPause:
+	UNK_602BA70();
+	RandScale = 0u;
 	PLATFORM_FRAME();
+
+	SetVideo();
+	UNK_602AA64();
+	UpdatePalCycles();
+	PLATFORM_FINISHUPDATE();
 
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;
@@ -175,7 +231,26 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	UNK_602523C();
 	UNK_602DAD4(); // TODO: Sound function.
 
+	do {
+		if (!PauseAllowed) {
+			goto noPause;
+		}
+		UpdateInputs();
+		RandScale = 0u;
+		NumVblanks = 0u;
+		PLATFORM_FRAME();
+	} while (!(SystemButtonsDown[PLAYER1] & BUTTON_START));
+	UpdatePlayers();
+
+	noPause:
+	UNK_602BA70();
+	RandScale = 0u;
 	PLATFORM_FRAME();
+
+	SetVideo();
+	UNK_602AA64();
+	UpdatePalCycles();
+	PLATFORM_FINISHUPDATE();
 
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {
 		return false;

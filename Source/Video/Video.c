@@ -40,8 +40,17 @@ static int16_t SpriteLayerNames[MAXSPRITES];
 
 int16_t NumSprites;
 
-uint16_t NumVideoSetters;
+uint16_t NumVideoSetters = 0u;
 VideoSetter VideoSetters[MAXVIDEOSETTERS];
+
+typedef struct STRUCT_6064550 {
+	Color* src;
+	RAMDATA Color* dst;
+	int16_t delay;
+	int16_t frames;
+	int16_t index;
+} STRUCT_6064550;
+static STRUCT_6064550 UNK_6064550[32];
 
 // NOTE: Looks like this points to data that controls screen brightness during
 // transitions; might also be used for darkening the attract mode ranking
@@ -1226,7 +1235,7 @@ void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
 						if (var12 < 0) {
 							var12 += var8->UNK_0->header.UNK_4;
 						}
-						var7[(var11 % 16) * 32] = bgMap32->names[var4 * bgMap32->header.UNK_4 + var12];
+						var7[(var11 & 0xFu) * 32] = bgMap32->names[var4 * bgMap32->header.UNK_4 + var12];
 					}
 				}
 				else {
@@ -1238,7 +1247,7 @@ void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
 						if (var12 < 0) {
 							var12 += var8->UNK_0->header.UNK_4;
 						}
-						var7[(var11 % 16) * 32] = var8->UNK_0->header.tileInfo | bgMap16->names[var4 * bgMap16->header.UNK_4 + var12];
+						var7[(var11 & 0xFu) * 32] = var8->UNK_0->header.tileInfo | bgMap16->names[var4 * bgMap16->header.UNK_4 + var12];
 					}
 				}
 			}
@@ -1256,37 +1265,33 @@ STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16
 		struct0 = NULL;
 	}
 	else {
+		assert(var0 >= 0 && var0 < lengthof(UNK_60AD228));
 		struct0 = UNK_60AD228[var0].UNK_10;
 		if (struct0->UNK_0 != NULL) {
 			*arg2 = arg1;
-			const int16_t var3 = *arg2;
-			STRUCT_GameBg_0* var1 = UNK_60AD228[var0].UNK_10;
+			STRUCT_GameBg_0* var1 = struct0;
 			while (*arg2 < 0) {
-				assert(var3 >= 0 && var3 < lengthof(UNK_60AD228));
-				if (UNK_60AD228[var3].UNK_60 == NULL) {
-					*arg2 += UNK_60AD228[var3].UNK_14;
+				if (UNK_60AD228[var0].UNK_60 == NULL) {
+					*arg2 += UNK_60AD228[var0].UNK_14;
 				}
 				else {
-					*arg2 += UNK_60AD228[var3].UNK_64;
-					var1 = UNK_60AD228[var3].UNK_60;
+					*arg2 += UNK_60AD228[var0].UNK_64;
+					struct0 = UNK_60AD228[var0].UNK_60;
 					var1 = struct0;
 				}
 			}
-			// TODO: Segfaults here for some reason.
-			for (STRUCT_GameBg_0* var4 = var1; *arg2 >= (int16_t)var4->UNK_0->header.UNK_6 * var4->UNK_4;) {
-				*arg2 -= var4->UNK_0->header.UNK_6 * var4->UNK_4;
-				var4++;
-				if (var4->UNK_0 == NULL) {
-					if (UNK_60AD228[var3].UNK_60 != NULL) {
-						struct0 = UNK_60AD228[var3].UNK_60;
-					}
-					else {
-						struct0 = var1;
+			while (*arg2 >= (int16_t)struct0->UNK_0->header.UNK_6 * struct0->UNK_4) {
+				*arg2 -= struct0->UNK_0->header.UNK_6 * struct0->UNK_4;
+				struct0++;
+				if (struct0->UNK_0 == NULL) {
+					struct0 = var1;
+					if (UNK_60AD228[var0].UNK_60 != NULL) {
+						struct0 = UNK_60AD228[var0].UNK_60;
 					}
 				}
 			}
-			*arg3 = struct0->UNK_0->header.UNK_6 - *arg2 - 1;
-			*arg2 %= struct0->UNK_0->header.UNK_6;
+			*arg3 = (int16_t)struct0->UNK_0->header.UNK_6 - *arg2 - 1;
+			*arg2 %= (int16_t)struct0->UNK_0->header.UNK_6;
 		}
 	}
 	return struct0;
@@ -1829,17 +1834,23 @@ void UNK_602AA4C() {
 	VideoSetBackdropColor((void*)(uintptr_t)0x000000FFu, NULL, NULL);
 }
 
-struct {
-	Color offset_0;
-	RAMDATA Color* offset_4;
-	int16_t offset_8;
-	int16_t offset_A;
-	int16_t offset_C;
-} UNK_6064550[32];
+void UNK_602AA64() {
+	STRUCT_6064550* var0 = UNK_6064550;
+	for (size_t i = 0u; i < lengthof(UNK_6064550); i++) {
+		if (var0->src != NULL) {
+			if (--var0->frames == 0) {
+				*var0->dst = var0->src[var0->index] & COLOR(0xFF, 0xFF, 0xFF, 0x00);
+				const int16_t var2 = COLOR_GETA(var0->src[var0->index]) == 0x00 ? var0->index + 1 : 0;
+				var0->index = var2;
+				var0->frames = var0->delay;
+			}
+		}
+	}
+}
 
 void UNK_602AB9E() {
-	for (size_t i = 0; i < lengthof(UNK_6064550); i++) {
-		UNK_6064550[i].offset_0 = 0x00000000u;
+	for (size_t i = 0u; i < lengthof(UNK_6064550); i++) {
+		UNK_6064550[i].src = NULL;
 	}
 }
 

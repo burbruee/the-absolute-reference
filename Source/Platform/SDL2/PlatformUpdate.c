@@ -15,6 +15,8 @@
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
 #include "HwData.h"
+#include <stdlib.h>
+#include <time.h>
 
 // TODO: Init these from the program ROM.
 static ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
@@ -66,6 +68,11 @@ void SetSystemGraphicDataPtr() {
 }
 
 uint32_t PlatformInit() {
+	// Non-TAP, platform initialization.
+	srand(time(NULL));
+
+	// TAP initialization.
+	// TODO: Implement more of the initialization like the original, such as ROM checks.
 	UNK_602ACB0();
 	ScreenTime = 0u;
 	NumVideoSetters = 0u;
@@ -123,7 +130,9 @@ uint32_t PlatformInit() {
 }
 
 void PlatformFrame() {
-	// TODO
+	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
+	RandScale += rand();
+	NumVblanks++;
 }
 
 int PlatformQuit() {
