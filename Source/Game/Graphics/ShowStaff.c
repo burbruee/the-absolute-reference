@@ -105,28 +105,29 @@ void ShowStaff(Player* player) {
 	int16_t staffObjectIndex = 1;
 	int16_t staffRows[NUMSTAFFOBJECTS] = { 1 };
 	int16_t staffRow = 6;
-	#define SET_STAFF_OBJECTS(section, objectTable, rowAdvance) \
+	#define SET_STAFF(section, objectTable, rowHeight) \
 		case section: \
-			for (int16_t j = 0; j < lengthof(objectTable); j++) { \
+			for (int16_t j = 0; j < lengthof(objectTable); j++, staffObjectIndex++) { \
 				staffRows[staffObjectIndex] = staffRow; \
-				staffRow += rowAdvance; \
+				staffRow += rowHeight; \
 				ObjectTableStaff[player->num][staffObjectIndex] = objectTable[j]; \
 			} \
 			break
+	ObjectTableStaff[player->num][0] = OBJECT_STAFF;
 	for (int16_t i = 0; i < NUMSTAFFSECTIONS; i++) {
 		switch (staffSections[i]) {
-		SET_STAFF_OBJECTS(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
-		SET_STAFF_OBJECTS(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
-		SET_STAFF_OBJECTS(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
-		SET_STAFF_OBJECTS(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
-		SET_STAFF_OBJECTS(STAFF_SOUND, objectTableSoundStaff, 6);
-		default: break;
+			SET_STAFF(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
+			SET_STAFF(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
+			SET_STAFF(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
+			SET_STAFF(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
+			SET_STAFF(STAFF_SOUND, objectTableSoundStaff, 6);
+		default: continue;
 		}
 		staffRow += 3;
 	}
 	#undef SET_STAFF_OBJECTS
 
-	for (int16_t i = 0; i < lengthof(objectTableEndStaff); i++, staffObjectIndex++) {
+	for (int16_t i = 0; i < lengthof(objectTableEndStaff) - 1; i++, staffObjectIndex++) {
 		staffRows[staffObjectIndex] = endStaffRows[i] + staffRow;
 		ObjectTableStaff[player->num][staffObjectIndex] = objectTableEndStaff[i + 1];
 	}
@@ -206,8 +207,8 @@ static void UpdateEntityStaff(Entity* entity) {
 				i < NUMSTAFFOBJECTS - 2 ||
 				(i == NUMSTAFFOBJECTS - 2 && data->pixelY[i] > data->exitPixelY) ||
 				(i == NUMSTAFFOBJECTS - 1 && data->pixelY[i] > data->exitPixelY + 16)
-				)
-			) {
+			)
+		) {
 			data->pixelY[i] -= data->scrollRate;
 		}
 
@@ -269,6 +270,7 @@ static void UpdateEntityStaff(Entity* entity) {
 					player->grade = PLAYERGRADE_GM;
 					PlaySoundEffect(SOUNDEFFECT_LEVELUP);
 					ShowGrandMasterCongratulations(player);
+					player->miscFlags &= ~MISC_ORANGELINE;
 				}
 			}
 			else {
@@ -516,9 +518,9 @@ static const ObjectData* ObjectTableSoundStaff[3] = {
 };
 
 static const ObjectData* ObjectTableEndStaff[14] = {
-	// TODO: Name these.
-	OBJECTPTR(0x66F),
+	OBJECT_STAFF,
 
+	// TODO: Name these.
 	OBJECTPTR(0x689), OBJECTPTR(0x68a), OBJECTPTR(0x68b), OBJECTPTR(0x68c), OBJECTPTR(0x68d),
 	OBJECTPTR(0x68e), OBJECTPTR(0x68f), OBJECTPTR(0x690), OBJECTPTR(0x691), OBJECTPTR(0x692),
 	OBJECTPTR(0x693), OBJECTPTR(0x694), OBJECTPTR(0x695)
