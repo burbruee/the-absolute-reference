@@ -3,14 +3,14 @@
 
 // Must be defined as some scalar type castable to uintptr_t.
 typedef uint32_t Color;
+
 #define COLOR(r, g, b, a) ( \
-	( \
-		((Color)((r) & 0xFFu) << 24) | \
-		((Color)((g) & 0xFFu) << 16) | \
-		((Color)((b) & 0xFFu) <<  8) | \
-		((Color)((a) & 0xFFu) <<  0)   \
-	) \
+	((Color)((r) & 0xFFu) << 24) | \
+	((Color)((g) & 0xFFu) << 16) | \
+	((Color)((b) & 0xFFu) <<  8) | \
+	((Color)((a) & 0xFFu) <<  0)   \
 )
+
 #define COLOR_GETR(color) ((uint8_t)(((color) >> 24) & 0xFFu))
 #define COLOR_GETG(color) ((uint8_t)(((color) >> 16) & 0xFFu))
 #define COLOR_GETB(color) ((uint8_t)(((color) >>  8) & 0xFFu))
