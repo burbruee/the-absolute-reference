@@ -181,6 +181,7 @@ set(EXECUTABLE_HEADERS
 	"../../Lib/Math.h"
 
 	"../../Main/DemoLoop.h"
+	"../../Main/DemoReplayInput.h"
 	"../../Main/Frame.h"
 	"../../Main/GameLoop.h"
 	"../../Main/Main.h"
@@ -198,6 +199,7 @@ set(EXECUTABLE_HEADERS
 	"../../Video/Video.h"
 
 	"../Util/Color.h"
+	"../Util/DemoReplayInput.c"
 	"../Util/HwData.h"
 	"../Util/Macros.h"
 

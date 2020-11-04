@@ -2,6 +2,8 @@
 
 #include "Main/MainLoop.h"
 #include "Game/Screen.h"
+#include "Video/Video.h"
+#include "PlatformTypes.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -16,6 +18,8 @@ typedef enum DemoScreenState {
 	DEMOSCREEN_DOUBLES3,
 	NUMDEMOSCREENS
 } DemoScreenState;
+
+extern ROMDATA Color UNK_6033790[NUMPALCOLORS_4BPP];
 
 extern DemoScreenState DemoScreen;
 

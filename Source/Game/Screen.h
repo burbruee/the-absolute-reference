@@ -18,7 +18,8 @@ typedef enum ScreenState {
 	SCREEN_DOUBLESRANKING,
 	SCREEN_TESTMODE,
 	SCREEN_VERSIONTITLE,
-	SCREEN_GAME
+	SCREEN_GAME,
+	SCREEN_NULL = 0
 } ScreenState;
 extern ScreenState Screen;
 

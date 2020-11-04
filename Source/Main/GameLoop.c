@@ -24,7 +24,7 @@ static uint16_t UNK_6079294;
 static uint8_t UNK_6079296;
 static uint8_t UNK_6079297;
 static GameMusic CurrentGameMusic;
-static uint8_t UNK_6079299;
+GameMusic NextGameMusic;
 static uint8_t UNK_607929A;
 
 typedef enum GameLoopState {
@@ -55,7 +55,6 @@ static const Color UNK_6032884[NUMPALCOLORS_4BPP] = {
 	0x01010100u
 };
 
-static void UpdateGameMusic();
 static GameLoopState StartGameLoop();
 
 void InitGame() {
@@ -81,7 +80,7 @@ void InitGame() {
 	UNK_6079297 = 0u;
 	UNK_607929A = 0u;
 	CurrentGameMusic = GAMEMUSIC_0;
-	UNK_6079299 = 0u;
+	NextGameMusic = 0u;
 
 	GameLoop = GAMELOOP_INIT;
 
@@ -191,7 +190,7 @@ GameLoopState GameStartVersus() {
 	
 	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[PLAYER2].nowFlags & NOW_WAITING)) {
 		if (GameFlags & GAME_CHALLENGEDELAY) {
-			UNK_6079299 = 2u;
+			NextGameMusic = 2u;
 			Players[PLAYER1].nowFlags |= NOW_NOUPDATE;
 			Players[PLAYER2].nowFlags |= NOW_NOUPDATE;
 			if (GameButtonsDown[PLAYER1] == BUTTON_START && GameButtonsDown[PLAYER2] == BUTTON_START) {
@@ -206,7 +205,7 @@ GameLoopState GameStartVersus() {
 		else {
 			SetPal(PALNUM_15, 1u, PALPTR(0xF9));
 			SetPal(PALNUM_14, 1u, PALPTR(0xF8));
-			UNK_6079299 = 10u;
+			NextGameMusic = 10u;
 			Game.state = 0u;
 			GameFlags &= ~(GAME_TWIN | GAME_NEWCHALLENGER | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10) | GAME_VERSUS | GAME_BIT11;
 			Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
@@ -458,7 +457,7 @@ static GameLoopState StartGameLoop() {
 			}
 
 			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
-				UNK_6079299 = 2;
+				NextGameMusic = 2;
 				if (++UNK_6079294 < 180u) {
 					state = GAMELOOP_STOP;
 				}
@@ -557,6 +556,8 @@ int16_t UNK_6008EEC(int16_t level) {
 	}
 }
 
-static void UpdateGameMusic() {
+#if 0
+void UpdateGameMusic() {
 	// TODO
 }
+#endif

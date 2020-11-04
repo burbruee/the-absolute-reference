@@ -66,6 +66,7 @@ typedef enum NowFlag {
 	NOW_SELECTING = 1 << 0,
 	NOW_WAITING = 1 << 1,
 	NOW_PLAYING = 1 << 2,
+	NOW_BIT3 = 1 << 3,
 	NOW_ABSENT = 1 << 4,
 	NOW_STAFF = 1 << 5,
 	NOW_STOPPED = 1 << 6,
@@ -361,6 +362,8 @@ extern Player Players[NUMPLAYERS];
 // Used in UpdateVersusItems.
 //extern Player VersusPlayers[NUMPLAYERS];
 
+bool UpdateModeCodes(Player* player);
+
 void InitPlayers();
 
 extern const int16_t FieldPos[8];
@@ -370,6 +373,7 @@ extern const uint16_t NextSectionLevels[10];
 extern ItemType ItemDescriptions[NUMPLAYERS];
 void InitPlayer(PlayerNum playerNum);
 
+void NextPlayStart(Player* player);
 void UpdatePlayers();
 void ShowPlayers();
 
