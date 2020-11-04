@@ -124,7 +124,7 @@ void UNK_60237DE() {
 				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 0; i--, var1 += 4u) {
 					UNK_6060064 = var1 - 3;
 					UNK_6060060 = var1;
-					((void(*)())var1)();
+					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
 					}
@@ -135,7 +135,7 @@ void UNK_60237DE() {
 				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 1; i--, var1 += 4u) {
 					UNK_6060064 = var1 - 3;
 					UNK_6060060 = var1;
-					((void(*)())var1)();
+					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
 					}

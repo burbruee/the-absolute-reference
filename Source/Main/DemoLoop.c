@@ -151,7 +151,6 @@ static ScreenState StartCopyrightScreen() {
 			UNK_6029546(0, 0x14, 0, 6);
 
 			for (int16_t frames = 300; frames != 0; frames--) {
-				// TODO: Appears this is where a segfault happens, in the call of UpdateFrame.
 				if (UpdateFrame()) {
 					UNK_602406E();
 					return SCREEN_TESTMODE;
