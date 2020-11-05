@@ -24,6 +24,7 @@ set(EXECUTABLE_SOURCES
 	"../../Game/Graphics/ShowRowDel.c"
 	"../../Game/Graphics/ShowStaff.c"
 	"../../Game/Graphics/ShowText.c"
+	"../../Game/Graphics/ShowVersusReadyGo.c"
 
 	"../../Game/Play/Debug.c"
 	"../../Game/Play/DelayTable.c"
@@ -33,7 +34,6 @@ set(EXECUTABLE_SOURCES
 	"../../Game/Play/Player.c"
 	"../../Game/Play/Ranking.c"
 	"../../Game/Play/RankingCode.c"
-	"../../Game/Play/Versus.c"
 
 	"../../Game/Play/Item/Item.c"
 	"../../Game/Play/Item/ShowItemEffect.c"
@@ -125,6 +125,7 @@ set(EXECUTABLE_HEADERS
 	"../../Game/Graphics/ShowRowDel.h"
 	"../../Game/Graphics/ShowStaff.h"
 	"../../Game/Graphics/ShowText.h"
+	"../../Game/Graphics/ShowVersusReadyGo.h"
 
 	"../../Game/Play/Debug.h"
 	"../../Game/Play/DelayTable.h"
@@ -134,7 +135,6 @@ set(EXECUTABLE_HEADERS
 	"../../Game/Play/Player.h"
 	"../../Game/Play/Ranking.h"
 	"../../Game/Play/RankingCode.h"
-	"../../Game/Play/Versus.h"
 
 	"../../Game/Play/Item/Item.h"
 	"../../Game/Play/Item/ShowItemEffect.h"

@@ -3,11 +3,11 @@
 #include "Main/Frame.h"
 #include "Main/DemoReplayInput.h"
 #include "Game/Play/Player.h"
-#include "Game/Play/Versus.h"
 #include "Game/Play/Debug.h"
 #include "Game/Save.h"
 #include "Game/Graphics/ShowGameStatus.h"
 #include "Game/Graphics/ShowText.h"
+#include "Game/Graphics/ShowVersusReadyGo.h"
 #include "Game/Graphics/Entity.h"
 #include "Game/Graphics/ShowObject.h"
 #include "Video/Video.h"
@@ -52,7 +52,7 @@ static void InitDemoLoop() {
 	ScreenTime = 0u;
 	DemoScreen = DEMOSCREEN_START;
 	DemoWaitTime = 0u;
-	GameStartPlayer = STARTPLAYER_NONE;
+	StartPlayerFlags = STARTPLAYER_NONE;
 	UpdateFrame();
 	UNK_602AA16();
 }
@@ -198,8 +198,8 @@ static ScreenState StartCopyrightScreen() {
 }
 
 static ScreenState StartTitleScreen() {
-	int16_t sVar3 = 300;
-	bool bVar2 = false;
+	int16_t waitForDeveloperScreenFrames = 300;
+	bool waitForDeveloperScreen = false;
 
 	UNK_602AA4C();
 	if (UpdateFrame()) {
@@ -237,13 +237,13 @@ static ScreenState StartTitleScreen() {
 				if (NextScreenVersionTitle()) break;
 
 				ShowObject(OBJECTPTR(0x638) + (ScreenTime & 0xFu), 0, 0, 160u, 40u);
-				if (sVar3 == 0) {
-					bVar2 = true;
+				if (waitForDeveloperScreenFrames == 0) {
+					waitForDeveloperScreen = true;
 				}
 				else {
-					sVar3--;
+					waitForDeveloperScreenFrames--;
 				}
-				if (bVar2) {
+				if (waitForDeveloperScreen) {
 					do {
 						if (UNK_6064750 == NULL) {
 							UpdateFrame();
@@ -357,15 +357,6 @@ static ScreenState StartDeveloperScreen() {
 }
 
 static ScreenState StartVersionTitleScreen() {
-	bool bVar3;
-	bool bVar4;
-	uint32_t uVar1;
-	int16_t sVar7;
-	int16_t sStack60;
-	uint16_t uStack56;
-
-	int16_t sVar6 = 600;
-	bool bVar5 = false;
 	Demo = false;
 
 	UNK_602AA4C();
@@ -382,14 +373,12 @@ static ScreenState StartVersionTitleScreen() {
 	InitVideoSetters();
 	UNK_602406E();
 	InitEntities();
-	GameStartPlayer = PLAYER1;
+	StartPlayerFlags = STARTPLAYER_NONE;
 	InitPlayers();
 	SetPal(160u, 16u, PALPTR(0x1F4));
 	InitSystemTextPal();
 	SetPal(202u, 1u, PalCycleTextPal0);
 	NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1, 63u);
-	bVar3 = false;
-	uStack56 = 0;
 	UNK_6029814(0u, 0u, 0u, 0xFFu);
 	while (UNK_6064750 != NULL) {
 		if (UpdateFrame()) {
@@ -398,8 +387,7 @@ static ScreenState StartVersionTitleScreen() {
 	}
 	UNK_6026FCA(CurrentGameBg.bgIndex, 0);
 	for (int16_t i = 0; i < 3; i++) {
-		bVar4 = UpdateFrame();
-		if (bVar4 != false) {
+		if (UpdateFrame()) {
 			return SCREEN_TESTMODE;
 		}
 	}
@@ -409,63 +397,67 @@ static ScreenState StartVersionTitleScreen() {
 	UNK_6029498(6);
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	UNK_6029546(0, 20, 0, 6);
-	sStack60 = 0;
 	InitDebugCode();
+
+	uint16_t palCycleFrames = 0;
+	bool palCycleState = false;
+	int16_t frames = 600;
+	int16_t var0 = 0;
+	bool var1 = false;
 	while (true) {
-		bVar4 = UpdateFrame();
 		if (UpdateFrame()) {
 			UNK_602406E();
 			return SCREEN_TESTMODE;
 		}
 		if ((ScreenTime & 1u) == 0u) {
-			sStack60 += 1;
+			var0 += 1;
 		}
-		sStack60 &= 0xF;
-		ShowObject(OBJECTPTR(0x638) + sStack60 * 2u, 0, 0, 160u, 16u);
+		var0 &= 0xF;
+		ShowObject(OBJECTPTR(0x638) + var0 * 2u, 0, 0, 160u, 16u);
 		UNK_600FC50();
 		UpdateDebugCode();
 		if (CanStart(PLAYER1, false) && UpdateModeCodes(&Players[PLAYER1])) {
-			sVar6 += 300;
+			frames += 300;
 		}
 		if (CanStart(PLAYER2, false) && UpdateModeCodes(&Players[PLAYER2])) {
-			sVar6 += 300;
+			frames += 300;
 		}
 		ShowModeCodes(&Players[PLAYER1]);
 		ShowModeCodes(&Players[PLAYER2]);
-		if ((!(GameButtonsNew[PLAYER1] & BUTTON_START) || (GameStartPlayer & STARTPLAYER_1P)) || (GameStartPlayer & STARTPLAYER_2P)) {
-			if (((GameButtonsNew[PLAYER2] & BUTTON_START) && !(GameStartPlayer & STARTPLAYER_2P)) && !(GameStartPlayer & STARTPLAYER_1P) && CanStart(PLAYER2, false)) {
+		if ((!(GameButtonsNew[PLAYER1] & BUTTON_START) || (StartPlayerFlags & STARTPLAYER_1P)) || (StartPlayerFlags & STARTPLAYER_2P)) {
+			if (((GameButtonsNew[PLAYER2] & BUTTON_START) && !(StartPlayerFlags & STARTPLAYER_2P)) && !(StartPlayerFlags & STARTPLAYER_1P) && CanStart(PLAYER2, false)) {
 				CheckBuyGame(PLAYER2, false);
-				GameStartPlayer |= STARTPLAYER_2P;
+				StartPlayerFlags |= STARTPLAYER_2P;
 				Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
 				Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
-				if (5 < sVar6) {
-					sVar6 = 5;
+				if (frames > 5) {
+					frames = 5;
 				}
 			}
 		}
 		else {
 			if (CanStart(PLAYER1, false)) {
 				CheckBuyGame(PLAYER1, false);
-				GameStartPlayer |= STARTPLAYER_1P;
+				StartPlayerFlags |= STARTPLAYER_1P;
 				Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
 				Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
-				if (5 < sVar6) {
-					sVar6 = 5;
+				if (frames > 5) {
+					frames = 5;
 				}
 			}
 		}
-		if (sVar6 == 0) {
-			bVar5 = true;
+		if (frames == 0) {
+			var1 = true;
 		}
 		else {
-			sVar6--;
+			frames--;
 		}
 		ShowPalCycleText(256, 160, "PLUS", false);
-		if (++uStack56 % 64u == 0u) {
-			bVar3 = !bVar3;
-			NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, bVar3 ? PALCYCLETYPE_DOWNSTOP : PALCYCLETYPE_UPSTOP, 1, 63u);
+		if (++palCycleFrames % 64u == 0u) {
+			palCycleState = !palCycleState;
+			NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, palCycleState ? PALCYCLETYPE_DOWNSTOP : PALCYCLETYPE_UPSTOP, 1, 63u);
 		}
-		if (bVar5) break;
+		if (var1) break;
 		ShowCredits();
 	}
 	while (UNK_6064750 != NULL) {
@@ -475,7 +467,7 @@ static ScreenState StartVersionTitleScreen() {
 	}
 	UpdateFrame();
 	UNK_602406E();
-	if (GameStartPlayer != STARTPLAYER_NONE) {
+	if (StartPlayerFlags != STARTPLAYER_NONE) {
 		UNK_6029546(2, 10, 0, 6);
 		for (int16_t i = 0; i < 10; i++) {
 			if (UpdateFrame()) {
@@ -579,7 +571,7 @@ static ScreenState StartDemoScreen() {
 				NextGameMusic = GAMEMUSIC_10;
 				SetPal(15u, 1u, PALPTR(0xF9));
 				SetPal(14u, 1u, PALPTR(0xF8));
-				UNK_601FAD0();
+				ShowVersusReadyGo();
 				break;
 
 			case SCREEN_DOUBLESDEMO:

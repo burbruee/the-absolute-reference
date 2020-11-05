@@ -5,7 +5,7 @@
 
 // TODO: Use these in the code.
 typedef uint8_t SpriteScale;
-#define UNSCALED 0x3Fu
+#define UNSCALED 0x3F
 // TODO: Investigate whether a percentage-input macro can be created and replace this with it.
 #define SPRITESCALE(scale) ((SpriteScale)((scale) + UNSCALED))
 

@@ -6,7 +6,9 @@
 #include "Game/Save.h"
 #include "Lib/Math.h"
 
+StartPlayerFlag StartPlayerFlags;
 MainLoopState MainLoop;
+
 void RunMainLoop() {
 	// TODO: Change "while (true)" here to something like "while (!QUIT)", so
 	// ports to OS's can exit the game. Usage of QUIT will have to be put

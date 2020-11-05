@@ -1332,7 +1332,7 @@ void NextPlayVersusOver(Player* player) {
 	player->play.state = PLAYSTATE_VERSUSOVER;
 	player->nowFlags |= NOW_SHOWFIELD | NOW_SHOWNEXTBLOCK;
 
-	PlayerNum winnerFlag;
+	GameFlag winnerFlag;
 	if (player->num == PLAYER1) {
 		winnerFlag = GAME_WINNER1P;
 	}

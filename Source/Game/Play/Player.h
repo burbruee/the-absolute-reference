@@ -340,7 +340,8 @@ typedef enum GameMusic {
 	GAMEMUSIC_7,
 	GAMEMUSIC_8,
 	GAMEMUSIC_9,
-	GAMEMUSIC_10
+	GAMEMUSIC_10,
+	GAMEMUSIC_NEGATIVE = -1
 } GameMusic;
 
 typedef struct GameData {
@@ -352,7 +353,7 @@ typedef struct GameData {
 	PlayerNum versusWinner;
 	uint8_t UNK_9; // TODO: Padding?
 	ModeFlag modeFlags[NUMPLAYERS];
-	int16_t music; // Set to GameMusic enum values. Has to be a signed int type, so check-if-negative is guaranteed to work.
+	GameMusic music;
 	uint16_t UNK_10; // TODO: Padding? Unused?
 	uint16_t UNK_12; // TODO: Padding? Unused?
 } GameData;
@@ -374,6 +375,7 @@ extern ItemType ItemDescriptions[NUMPLAYERS];
 void InitPlayer(PlayerNum playerNum);
 
 void NextPlayStart(Player* player);
+void NextPlayVersusOver(Player* player);
 void UpdatePlayers();
 void ShowPlayers();
 
