@@ -68,7 +68,8 @@ MainLoopState RunDemoLoop() {
 	InitDemoLoop();
 	DisablePause();
 
-	for (bool runDemoLoop = true, stopDemoLoop = UpdateFrame(); !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
+	bool runDemoLoop = true;
+	while (!UpdateFrame()) {
 		switch (Screen) {
 		case SCREEN_COPYRIGHT:
 			Screen = StartCopyrightScreen();
@@ -124,9 +125,61 @@ MainLoopState RunDemoLoop() {
 	return MAINLOOP_TEST;
 }
 
+static ROMDATA Color UNK_65790[NUMPALCOLORS_4BPP];
+static ROMDATA Color UNK_657D0[NUMPALCOLORS_4BPP];
+
 static ScreenState StartRankingScreen() {
-	// TODO
-	return SCREEN_TESTMODE;
+	UNK_602AA4C();
+	if (!UpdateFrame()) {
+		UNK_602AB9E();
+		FreePalCycles(500);
+		UNK_6029814(0u, 0u, 0u, 0xFFu);
+		do {
+			if (UNK_6064750 == NULL) {
+				InitVideoSetters();
+				UNK_602406E();
+				InitEntities();
+				UNK_60169DC();
+				UNK_6026FCA(CurrentGameBg.bgIndex, 1);
+				for (int16_t frames = 0; frames < 3; frames++) {
+					if (UpdateFrame()) {
+						return SCREEN_TESTMODE;
+					}
+				}
+				SpritePriority[0] = 0x13u;
+				SpritePriority[1] = 0x66u;
+				UNK_6029498(6);
+				SetBackdropColor(0);
+				SetBgDarkness(CurrentGameBg.bgIndex, 24);
+				Alpha[4] = 0x1Fu;
+				UNK_6029546(0, 20, 0, 6);
+				SetPal(159u, 1u, UNK_65790);
+				SetPal(202u, 1, UNK_657D0);
+				int8_t rankingScreen = 0;
+				if (Screen == SCREEN_NORMALRANKING) {
+					rankingScreen = 1;
+				}
+				else if (Screen != SCREEN_MASTERRANKING) {
+					if (Screen == SCREEN_MASTERSECTIONTIMERANKING) {
+						rankingScreen = 2;
+					}
+					else if (Screen == SCREEN_DOUBLESRANKING) {
+						rankingScreen = 3;
+					}
+				}
+				return UNK_6012828(rankingScreen);
+			}
+			if (UpdateFrame()) {
+				return SCREEN_TESTMODE;
+			}
+		} while (!NextScreenVersionTitle());
+
+		return SCREEN_VERSIONTITLE;
+	}
+	else {
+		return SCREEN_TESTMODE;
+	}
+
 }
 
 static ScreenState StartCopyrightScreen() {

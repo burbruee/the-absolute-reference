@@ -497,7 +497,6 @@ static GameLoopState GameStartDoubles() {
 	return GAMELOOP_RESTART;
 }
 
-// TODO: Init from ROM data.
 ROMDATA Color UNK_60328C4[NUMPALCOLORS_4BPP];
 
 StartPlayerFlag StartPlayers;
