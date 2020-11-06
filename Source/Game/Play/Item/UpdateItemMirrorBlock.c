@@ -189,5 +189,4 @@ void UpdateItemMirrorBlock(Item* item) {
 			break;
 		}
 	}
-	// TODO
 }

@@ -237,7 +237,7 @@ elseif(VCPKG_TOOLCHAIN)
 
 	find_package(SDL2 REQUIRED)
 	target_link_libraries(${EXECUTABLE_NAME}
-		PRIVATE
+		PUBLIC
 			SDL2::SDL2
 			SDL2::SDL2main
 	)

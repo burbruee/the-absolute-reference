@@ -1858,9 +1858,6 @@ void UNK_602AB9E() {
 	}
 }
 
-// TODO: Consider changing subtractedData to a struct type. Elements [1, 3] of the array
-// could be "int16_t argData[3]", and subtractedData[0] could be some sort of 16-bit type
-// value.
 void UNK_602AC68(int16_t* arg0) {
 	int16_t var0 = arg0[0];
 	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {

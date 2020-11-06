@@ -2,10 +2,13 @@
 #include "Game/Play/Player.h"
 #include "Game/Play/Debug.h"
 #include "Game/Play/Grade.h"
+#include "Game/Play/Medal.h"
 #include "Game/Graphics/Entity.h"
 #include "Game/Graphics/ShowGameStatus.h"
 #include "Game/Graphics/ShowClearTime.h"
 #include "Game/Graphics/ShowObject.h"
+#include "Main/MainLoop.h"
+#include "Main/DemoLoop.h"
 #include "Input/Button.h"
 #include "Main/Frame.h"
 #include "Game/Save.h"
@@ -28,23 +31,23 @@ static RankingFlag RankingFlags;
 
 NewRankingData NewRankings[NUMPLAYERS];
 
-#define _CHAR(i) &OBJECTTABLE_RANKINGCHARS[i]
+#define CHAROBJECT(i) &OBJECTTABLE_RANKINGCHARS[i]
 static const ObjectData* ObjectTableRankingChars[61] = {
-	_CHAR(0), _CHAR(1), _CHAR(2), _CHAR(3), _CHAR(4),
-	_CHAR(5), _CHAR(6), _CHAR(7), _CHAR(8), _CHAR(9),
-	_CHAR(10), _CHAR(11), _CHAR(12), _CHAR(13), _CHAR(14),
-	_CHAR(15), _CHAR(16), _CHAR(17), _CHAR(18), _CHAR(19),
-	_CHAR(20), _CHAR(21), _CHAR(22), _CHAR(23), _CHAR(24),
-	_CHAR(25), _CHAR(26), _CHAR(27), _CHAR(28), _CHAR(29),
-	_CHAR(30), _CHAR(31), _CHAR(32), _CHAR(33), _CHAR(34),
-	_CHAR(35), _CHAR(36), _CHAR(37), _CHAR(38), _CHAR(39),
-	_CHAR(40), _CHAR(41), _CHAR(42), _CHAR(43), _CHAR(44),
-	_CHAR(45), _CHAR(46), _CHAR(47), _CHAR(48), _CHAR(49),
-	_CHAR(50), _CHAR(51), _CHAR(52), _CHAR(53), _CHAR(54),
-	_CHAR(55), _CHAR(56), _CHAR(57), _CHAR(58), _CHAR(59),
-	_CHAR(60)
+	CHAROBJECT( 0), CHAROBJECT( 1), CHAROBJECT( 2), CHAROBJECT( 3), CHAROBJECT( 4),
+	CHAROBJECT( 5), CHAROBJECT( 6), CHAROBJECT( 7), CHAROBJECT( 8), CHAROBJECT( 9),
+	CHAROBJECT(10), CHAROBJECT(11), CHAROBJECT(12), CHAROBJECT(13), CHAROBJECT(14),
+	CHAROBJECT(15), CHAROBJECT(16), CHAROBJECT(17), CHAROBJECT(18), CHAROBJECT(19),
+	CHAROBJECT(20), CHAROBJECT(21), CHAROBJECT(22), CHAROBJECT(23), CHAROBJECT(24),
+	CHAROBJECT(25), CHAROBJECT(26), CHAROBJECT(27), CHAROBJECT(28), CHAROBJECT(29),
+	CHAROBJECT(30), CHAROBJECT(31), CHAROBJECT(32), CHAROBJECT(33), CHAROBJECT(34),
+	CHAROBJECT(35), CHAROBJECT(36), CHAROBJECT(37), CHAROBJECT(38), CHAROBJECT(39),
+	CHAROBJECT(40), CHAROBJECT(41), CHAROBJECT(42), CHAROBJECT(43), CHAROBJECT(44),
+	CHAROBJECT(45), CHAROBJECT(46), CHAROBJECT(47), CHAROBJECT(48), CHAROBJECT(49),
+	CHAROBJECT(50), CHAROBJECT(51), CHAROBJECT(52), CHAROBJECT(53), CHAROBJECT(54),
+	CHAROBJECT(55), CHAROBJECT(56), CHAROBJECT(57), CHAROBJECT(58), CHAROBJECT(59),
+	CHAROBJECT(60)
 };
-#undef _CHAR
+#undef CHAROBJECT
 
 static const char* NameEntryChars[42] = {
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -58,7 +61,7 @@ static const char* DefaultName = "ARK";
 
 #define NUMINVALIDNAMES 20
 static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
-	"   ", "A  ", "AA ", "AAA", "666",
+	"", "A", "AA ", "AAA", "666",
 	"AHO", "ASS", "AUM", "DIE", "ETA",
 	"FUC", "FUK", "HIV", "IRA", "KKK",
 	"OSI", "PEE", "PIS", "PLO", "SEX",
@@ -80,7 +83,7 @@ static void UNK_6011D28(int16_t y, int16_t x);
 static void UNK_6011DB0(int16_t y, int16_t x);
 static void UNK_6011DF0(int16_t y, int16_t x);
 static void UNK_6011E48(int16_t y, int16_t x);
-static void UNK_6011E88(Entity* entity);
+static void UpdateEntityRanking(Entity* entity);
 // UNK_60122D8
 // UNK_6012354
 // UNK_6012828
@@ -106,9 +109,9 @@ typedef enum EntryFlash {
 	ENTRYFLASH_FALSE = 0x00,
 	ENTRYFLASH_TRUE = 0xFF
 } EntryFlash;
-static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash);
-static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash);
-static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash);
+static void ShowPlayRanking(NewRankingData* newRanking, EntryFlash entryFlash);
+static void ShowPlayRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash);
+static void ShowPlayRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash);
 
 void ShowSectionTimesEx(uint32_t* sectionTimes, int16_t y, int16_t x) {
 	uint32_t clearTime = 0u;
@@ -137,65 +140,65 @@ void UNK_6011858() {
 }
 
 // TODO: Use macros here instead of hard-coded hex numbers.
-#define _TA { 'T', '.', 'A', '\0' }
+#define TA_NAME { 'T', '.', 'A', '\0' }
 
 // All-time default rankings.
 
 static const Ranking DefaultRankings[NUMRANKINGS] = {
-	{ _TA, 0x00001518u },
-	{ _TA, 0x08001518u },
-	{ _TA, 0x10001518u },
-	{ _TA, 0x18001518u },
-	{ _TA, 0x20001518u },
-	{ _TA, 0x28001518u },
-	{ _TA, 0x30001518u },
-	{ _TA, 0x38001518u },
-	{ _TA, 0x40001518u },
-	{ _TA, 0x48001518u },
-	{ _TA, 0x48011940u },
-	{ _TA, 0x3000FD20u },
-	{ _TA, 0x1800E100u },
-	{ _TA, 0x10001388u },
-	{ _TA, 0x08000FA0u },
-	{ _TA, 0x00000BB8u },
-	{ _TA, 0x18011940u },
-	{ _TA, 0x1000D2F0u },
-	{ _TA, 0x08008CA0u },
+	{ TA_NAME, 0x00001518u },
+	{ TA_NAME, 0x08001518u },
+	{ TA_NAME, 0x10001518u },
+	{ TA_NAME, 0x18001518u },
+	{ TA_NAME, 0x20001518u },
+	{ TA_NAME, 0x28001518u },
+	{ TA_NAME, 0x30001518u },
+	{ TA_NAME, 0x38001518u },
+	{ TA_NAME, 0x40001518u },
+	{ TA_NAME, 0x48001518u },
+	{ TA_NAME, 0x48011940u },
+	{ TA_NAME, 0x3000FD20u },
+	{ TA_NAME, 0x1800E100u },
+	{ TA_NAME, 0x10001388u },
+	{ TA_NAME, 0x08000FA0u },
+	{ TA_NAME, 0x00000BB8u },
+	{ TA_NAME, 0x18011940u },
+	{ TA_NAME, 0x1000D2F0u },
+	{ TA_NAME, 0x08008CA0u },
 };
 
 static const Ranking DefaultDoublesLevelRankings[NUMRANKINGPLACES] = {
-	{ _TA, 0x0096008Cu },
-	{ _TA, 0x0064005Au },
-	{ _TA, 0x00320028u }
+	{ TA_NAME, 0x0096008Cu },
+	{ TA_NAME, 0x0064005Au },
+	{ TA_NAME, 0x00320028u }
 };
 
 // Today's best default rankings.
 
 static const Ranking DefaultMasterTodaysBestRankings[NUMRANKINGPLACES] = {
-	{ _TA, 0x18011940 },
-	{ _TA, 0x1000FD20 },
-	{ _TA, 0x0800E100 }
+	{ TA_NAME, 0x18011940 },
+	{ TA_NAME, 0x1000FD20 },
+	{ TA_NAME, 0x0800E100 }
 };
 
 static const Ranking DefaultNormalTodaysBestRankings[NUMRANKINGPLACES] = {
-	{ _TA, 0x00000BB8 },
-	{ _TA, 0x000007D0 },
-	{ _TA, 0x000003E8 }
+	{ TA_NAME, 0x00000BB8 },
+	{ TA_NAME, 0x000007D0 },
+	{ TA_NAME, 0x000003E8 }
 };
 
 static const Ranking DefaultDoublesTodaysBestTimeRankings[NUMRANKINGPLACES] = {
-	{ _TA, 0x10011940 },
-	{ _TA, 0x0800FD20 },
-	{ _TA, 0x0000E100 }
+	{ TA_NAME, 0x10011940 },
+	{ TA_NAME, 0x0800FD20 },
+	{ TA_NAME, 0x0000E100 }
 };
 
 static const Ranking DefaultDoublesTodaysBestLevelRankings[NUMRANKINGPLACES] = {
-	{ _TA, 0x0032001E },
-	{ _TA, 0x001E000A },
-	{ _TA, 0x000A0000 }
+	{ TA_NAME, 0x0032001E },
+	{ TA_NAME, 0x001E000A },
+	{ TA_NAME, 0x000A0000 }
 };
 
-#undef TA
+#undef TA_NAME
 
 void InitRankings() {
 	RankingFlags = RANKINGFLAG_NONE;
@@ -324,15 +327,279 @@ static void UNK_6011E48(int16_t y, int16_t x) {
 	ShowObject(OBJECTPTR(0x223), y, x + 230, 0u, 110u);
 }
 
-// TODO: Entity updater.
-// UNK_6011E88
+typedef struct RankingInstanceData {
+	void* rankingExtras;
+	int16_t y;
+	int16_t x;
+	int16_t lineX;
+	uint16_t index;
+} RankingInstanceData;
 
-// TODO: Instantiates an entity updated by UNK_6011E88
-// UNK_60122D8
+static const ObjectData* UNK_3B0EC[20] = {
+	OBJECTPTR(0x229),
+	OBJECTPTR(0X22A),
+	OBJECTPTR(0X22B),
+	OBJECTPTR(0X22C),
+	OBJECTPTR(0X22D),
+	OBJECTPTR(0X22E),
+	OBJECTPTR(0X22F),
+	OBJECTPTR(0X230),
+	OBJECTPTR(0X231),
+	OBJECTPTR(0X232),
+	OBJECTPTR(0X233),
+	OBJECTPTR(0X234),
+	OBJECTPTR(0X235),
+	OBJECTPTR(0X236),
+	OBJECTPTR(0X237),
+	OBJECTPTR(0X238),
+	OBJECTPTR(0X239),
+	OBJECTPTR(0X23A),
+	OBJECTPTR(0X23C),
+	OBJECTPTR(0X23B)
+};
 
-// UNK_6012354
+static void UpdateEntityRanking(Entity* entity) {
+	ENTITY_INST_DATA_PTR(RankingInstanceData, data, entity);
 
-// UNK_6012828
+	if (entity->values[3] == 0) {
+		if (data->lineX != 0 && (data->lineX += 24) > 0) {
+			data->lineX = 0;
+		}
+	}
+	else {
+		entity->values[3]--;
+	}
+
+	if (entity->values[2] != 0) {
+		entity->values[2]--;
+		return;
+	}
+
+	if (data->x != 0) {
+		int16_t stepX = data->x;
+		if (stepX < 0) {
+			stepX += 3;
+		}
+		stepX /= 4;
+		if (stepX > 16) {
+			stepX = 16;
+		}
+		data->x -= stepX;
+	}
+	const Ranking* const ranking = ENTITY_DATA(entity).ranking;
+	const int16_t y = data->y;
+	const int16_t x = data->x;
+	const int16_t x0 = x + 10;
+	const int16_t y0 = y + 10;
+	const int16_t y1 = y + 2;
+	switch (entity->values[1]) {
+	case RANKINGSCREEN_MASTER:
+		DisplayObject(ObjectTableRankingChars[data->index + 16], y, x0, 0, 110u);
+		ShowRankingName(ranking->name, y, x + 31, 0u, 110u);
+		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data)], y, x + 85, 0u, 110u);
+		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 126);
+		UNK_6020F50(*(uint16_t*)data->rankingExtras, y, x + 215);
+		if (RANKINGDATA_GETORANGELINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 202u, 40u, 0xCu, UNSCALED, false);
+		}
+		else if (RANKINGDATA_GETGREENLINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 0u, 40u, 0xCu, UNSCALED, false);
+		}
+		break;
+
+	case RANKINGSCREEN_NORMAL:
+		DisplayObject(ObjectTableRankingChars[data->index + 16], y, x0, 0u, 110u);
+		ShowRankingName(ranking->name, y, x + 42, 0u, 110u);
+		UNK_6011AD2(RANKINGDATA_GETVALUE(ranking->data), y, x + 214);
+		if (RANKINGDATA_GETGREENLINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 0, 40u, 0xCu, UNSCALED, false);
+		}
+		break;
+
+	case RANKINGSCREEN_MASTERSECTIONTIMES:
+		if (data->index == 0u) {
+			ShowStatusNumEx(0u, y1, x0, 0u, 40u, 3, false, NUMALIGN_RIGHT);
+		}
+		else {
+			ShowStatusNumEx(NextSectionLevels[data->index - 1], y1, x0, 0u, 40u, 3, false, NUMALIGN_RIGHT);
+		}
+		DisplayObject(OBJECTPTR(0x228), y1, x + 34, 0u, 110u);
+		ShowStatusNumEx(NextSectionLevels[data->index], y1, x + 42, 0u, 40u, 3, false, NUMALIGN_RIGHT);
+		ShowRankingName(ranking->name, y, x + 97, 0u, 110u);
+		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data)], y, x + 166, 0, 110u);
+		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 229);
+		if (RANKINGDATA_GETORANGELINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 202u, 40u, 0xCu, UNSCALED, false);
+		}
+		else if (RANKINGDATA_GETGREENLINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 0, 40u, 0xCu, UNSCALED, false);
+		}
+		break;
+
+	case RANKINGSCREEN_DOUBLES:
+		DisplayObject(ObjectTableRankingChars[data->index + 16], y, x0, 0u, 110u);
+		ShowRankingName(ranking->name, y, x + 35, 0u, 110u);
+		ShowStatusNumEx(RANKINGDATA_GET1PLEVEL(((Ranking*)data->rankingExtras)->data), y1, x + 85, 0u, 40u, 3, false, NUMALIGN_RIGHT);
+		ShowRankingName("&", y, x + 118, 0u, 110u);
+		ShowRankingName(((Ranking*)data->rankingExtras)->name, y, x + 141, 0u, 110u);
+		ShowStatusNumEx(RANKINGDATA_GET2PLEVEL(((Ranking*)data->rankingExtras)->data), y1, x + 191, 0u, 40u, 3, false, NUMALIGN_RIGHT);
+		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 230);
+		if (RANKINGDATA_GETGREENLINE(ranking->data)) {
+			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 0, 40u, 0xCu, UNSCALED, false);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void ShowRanking(Ranking* ranking, void* rankingExtras, int16_t y, int16_t x, uint16_t index, RankingScreenState rankingScreen, int16_t showDelay, int16_t lineScrollDelay) {
+	Entity* entity;
+	if ((entity = AllocEntity())) {
+		entity->update = UpdateEntityRanking;
+
+		entity->values[0] = 1;
+		entity->values[1] = rankingScreen;
+		entity->values[2] = showDelay;
+		entity->values[3] = lineScrollDelay;
+
+		ENTITY_DATA(entity).ranking = ranking;
+
+		ENTITY_INST_DATA_PTR(RankingInstanceData, data, entity);
+		data->rankingExtras = rankingExtras;
+		data->y = y;
+		data->x = VIDEO_WIDTH;
+		data->lineX = -VIDEO_WIDTH;
+		data->index = index;
+	}
+}
+
+void ShowRankings(RankingScreenState rankingScreen) {
+	switch (rankingScreen) {
+	case RANKINGSCREEN_MASTER:
+		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&Save->rankings[RANKINGINDEX_MASTER + place], &Save->masterMedalRankings[place], y, 0, place + 1u, RANKINGSCREEN_MASTER, showDelay, 90);
+		}
+		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&MasterTodaysBestRankings[place], &MasterTodaysBestMedalRankings[place], y, 0, place + 1u, 0, showDelay, 90);
+		}
+		break;
+
+	case RANKINGSCREEN_NORMAL:
+		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&Save->rankings[RANKINGINDEX_NORMAL + place], NULL, y, 0, place + 1u, RANKINGSCREEN_NORMAL, showDelay, 90);
+		}
+		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&NormalTodaysBestRankings[place], NULL, y, 0, place + 1u, RANKINGSCREEN_NORMAL, showDelay, 90);
+		}
+		break;
+
+	case RANKINGSCREEN_MASTERSECTIONTIMES:
+		for (int16_t section = 0, y = 86, showDelay = 0; section < 10; section++, y += 19, showDelay += 12) {
+			ShowRanking(&Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section], NULL, y, 0, section, RANKINGSCREEN_MASTERSECTIONTIMES, showDelay, 138);
+		}
+		break;
+
+	case RANKINGSCREEN_DOUBLES:
+		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&Save->rankings[place], &Save->doublesLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
+		}
+		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&DoublesTodaysBestTimeRankings[place], &DoublesTodaysBestLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
+	UNK_6020ECE();
+	ShowRankings(rankingScreen);
+
+	int16_t frames = 0;
+	bool done = false;
+	RankingScreenState nextRankingScreen = rankingScreen;
+	while (!UpdateFrame()) {
+		frames++;
+		if (UNK_6064750 == NULL) {
+			if (done) {
+				switch (Screen) {
+				case SCREEN_NORMALRANKING:
+					return SCREEN_MASTERRANKING;
+
+				case SCREEN_MASTERRANKING:
+					return SCREEN_MASTERSECTIONTIMERANKING;
+
+				default:
+					return SCREEN_DEVELOPER;
+				}
+			}
+			if (frames >= TIME(0, 6, 0)) {
+				UNK_6029546(2, 20, 0, 6);
+				done = true;
+			}
+		}
+
+		if (MainLoop == MAINLOOP_DEMO && NextScreenVersionTitle()) {
+			UNK_602406E();
+			return SCREEN_VERSIONTITLE;
+		}
+
+		if (UNK_6064750 == NULL) {
+			if ((GameButtonsNew[PLAYER1] & BUTTON_LEFT) || (GameButtonsNew[PLAYER2] & BUTTON_LEFT)) {
+				nextRankingScreen = (nextRankingScreen + 3) % NUMRANKINGSCREENS;
+				InitEntities();
+				ShowRankings(nextRankingScreen);
+				UNK_6029546(0, 20, 0, 6);
+				frames = 0;
+			}
+			else if ((GameButtonsNew[PLAYER1] & BUTTON_RIGHT) || (GameButtonsNew[PLAYER2] & BUTTON_RIGHT)) {
+				nextRankingScreen = (nextRankingScreen + 1) % NUMRANKINGSCREENS;
+				InitEntities();
+				ShowRankings(nextRankingScreen);
+				UNK_6029546(0, 20, 0, 6);
+				frames = 0;
+			}
+		}
+
+		switch (nextRankingScreen) {
+		case RANKINGSCREEN_MASTER:
+			ShowObject(OBJECTPTR(0x217), 14, 10, 0u, 110u);
+			UNK_6011D28(35, 0);
+			ShowObject(OBJECTPTR(0x21F), 134, 10, 0u, 110u);
+			UNK_6011D28(155, 0);
+			break;
+
+		case RANKINGSCREEN_NORMAL:
+			ShowObject(OBJECTPTR(0x219), 14, 10, 0u, 110u);
+			UNK_6011DB0(35, 0);
+			ShowObject(OBJECTPTR(0x21F), 134, 10, 0u, 110u);
+			UNK_6011DB0(155, 0);
+			break;
+
+		case RANKINGSCREEN_MASTERSECTIONTIMES:
+			ShowObject(OBJECTPTR(0x21B), 14, 10, 0u, 110u);
+			UNK_6011DF0(37, 0);
+			break;
+
+		case RANKINGSCREEN_DOUBLES:
+			ShowObject(OBJECTPTR(0x21D), 14, 10, 0u, 110u);
+			UNK_6011E48(35, 0);
+			ShowObject(OBJECTPTR(0x21F), 134, 10, 0u, 110u);
+			UNK_6011E48(155, 0);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	UNK_602406E();
+	return SCREEN_TESTMODE;
+}
 
 static uint32_t RankingsChecksum() {
 	uint32_t checksum = 0u;
@@ -489,7 +756,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 
 	if (player->modeFlags & MODE_DOUBLES) {
 		RankingPlace place;
-	       
+	
 		place = DoublesRankingPlace(Players[PLAYER1].level + Players[PLAYER2].level, player->clearTime, &Save->rankings[RANKINGINDEX_DOUBLES], Save->doublesLevelRankings, NUMRANKINGPLACES);
 		if (place >= RANKINGPLACE_FIRST) {
 			newRankingFlags |= 1 << (place + RANKINGINDEX_DOUBLES);
@@ -865,7 +1132,7 @@ bool UpdatePlayRanking(Player* player) {
 							newRanking->flashFrames = 192;
 							AddNewRanking(newRanking);
 						}
-						ShowRankingDoubles(newRanking, ENTRYFLASH_FALSE);
+						ShowPlayRankingDoubles(newRanking, ENTRYFLASH_FALSE);
 					}
 					else {
 						if (newRanking->labelScaleFrames == 0u && UpdateNameEntry(newRanking->nameEntries)) {
@@ -873,16 +1140,16 @@ bool UpdatePlayRanking(Player* player) {
 							newRanking->flashFrames = 192;
 							AddNewRanking(newRanking);
 						}
-						ShowRanking(newRanking, ENTRYFLASH_FALSE);
+						ShowPlayRanking(newRanking, ENTRYFLASH_FALSE);
 					}
 					return false;
 
 				case NEWRANKING_END:
 					if (newRanking->player->modeFlags & MODE_DOUBLES) {
-						ShowRankingDoubles(newRanking, ENTRYFLASH_TRUE);
+						ShowPlayRankingDoubles(newRanking, ENTRYFLASH_TRUE);
 					}
 					else {
-						ShowRanking(newRanking, ENTRYFLASH_TRUE);
+						ShowPlayRanking(newRanking, ENTRYFLASH_TRUE);
 					}
 
 					if (--newRanking->flashFrames < 0) {
@@ -911,10 +1178,10 @@ bool UpdatePlayRanking(Player* player) {
 	}
 }
 
-static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
+static void ShowPlayRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 	Player* player = newRanking->player;
 	if ((player->modeFlags & (MODE_NORMAL | MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH)) && !newRanking->flags) {
-		ShowRankingCodeNameEntry(newRanking, entryFlash);
+		ShowPlayRankingCodeNameEntry(newRanking, entryFlash);
 	}
 	else {
 		int16_t rankingX = player->num * 160;
@@ -950,7 +1217,7 @@ static void ShowRanking(NewRankingData* newRanking, EntryFlash entryFlash) {
 	}
 }
 
-static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash) {
+static void ShowPlayRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entryFlash) {
 	int16_t labelX = newRanking->player->num * 160;
 	DisplayObjectEx(OBJECT_NAMEENTRYLABEL, 105, labelX + 20, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 	if (newRanking->labelScaleFrames != 0u) {
@@ -967,7 +1234,7 @@ static void ShowRankingCodeNameEntry(NewRankingData* newRanking, EntryFlash entr
 	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries->charIndex] - ' '], 117, labelX + 36 + newRanking->nameEntries->numChars * 16, flashPalNum, 110u);
 }
 
-static void ShowRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash) {
+static void ShowPlayRankingDoubles(NewRankingData* newRanking, EntryFlash entryFlash) {
 	DisplayObjectEx(OBJECT_DOUBLESRANKINGLABEL, 43, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 	DisplayObjectEx(OBJECT_DOUBLESTODAYSBESTRANKINGLABEL, 80, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);
 	DisplayObjectEx(OBJECT_DOUBLESCLEARTIMELABEL, 117, 107, 0u, 110u, UNSCALED, newRanking->labelScaleX, false);

@@ -20,9 +20,9 @@ void ShowClearTime(uint32_t time, int16_t y, int16_t x) {
 		time -= minutes * TIME(1, 0, 0);
 		uint32_t seconds = time / TIME(0, 1, 0);
 		uint32_t centiseconds = ((time - seconds * TIME(0, 1, 0)) * 100u) / TIME(0, 1, 0);
-		entity->data.info.minutes = minutes;
-		entity->data.info.seconds = seconds;
-		entity->data.info.centiseconds = centiseconds;
+		entity->data.unionData.minutes = minutes;
+		entity->data.unionData.seconds = seconds;
+		entity->data.unionData.centiseconds = centiseconds;
 
 		ENTITY_INST_DATA_PTR(ClearTimeData, data, entity);
 		data->y = y;
@@ -34,9 +34,9 @@ void UpdateEntityClearTime(Entity* entity) {
 	ENTITY_INST_DATA_PTR(ClearTimeData, data, entity);
 	int16_t y = data->y;
 	int16_t x = data->x;
-	uint8_t minutes = entity->data.info.minutes;
-	uint8_t seconds = entity->data.info.seconds;
-	uint8_t centiseconds = entity->data.info.centiseconds;
+	uint8_t minutes = entity->data.unionData.minutes;
+	uint8_t seconds = entity->data.unionData.seconds;
+	uint8_t centiseconds = entity->data.unionData.centiseconds;
 
 	DisplayObject(ObjectTableRankingDigits[minutes / 10u], y, x, 0u, 110u); // 11 wide.
 	DisplayObject(ObjectTableRankingDigits[minutes % 10u], y, x + 11, 0u, 110u); // 9 wide.

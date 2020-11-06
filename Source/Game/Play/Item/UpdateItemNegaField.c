@@ -44,7 +44,7 @@ void UpdateItemNegaField(Item* item) {
 			if (!(itemPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL && !ItemGood(itemPlayer)) {
 				activatingPlayer->activeItemType = ITEMTYPE_NEGAFIELD;
 				SetFieldBorderColor(itemPlayer, ITEMTYPE_NEGAFIELD);
-				ShowItemWarningNegaField(itemPlayer); // TODO
+				ShowItemWarningNegaField(itemPlayer);
 				PlaySoundEffect(SOUNDEFFECT_BADITEM);
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;

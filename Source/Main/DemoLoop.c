@@ -167,7 +167,7 @@ static ScreenState StartRankingScreen() {
 						rankingScreen = 3;
 					}
 				}
-				return UNK_6012828(rankingScreen);
+				return ShowRankingScreen(rankingScreen);
 			}
 			if (UpdateFrame()) {
 				return SCREEN_TESTMODE;

@@ -11,7 +11,7 @@ void ShowItemWarningXRay(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningXRay;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->warningFrames = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = 4;

@@ -40,7 +40,7 @@ void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 		entity->update = UpdateEntityFieldBlockExplosion;
 		entity->frames = 0;
 
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 
 		ENTITY_INST_DATA_PTR(BlockExplosionData, data, entity);
 		data->x = player->screenPos[0] + 8 * col - 8 * (player->matrixWidth / 2);
@@ -73,7 +73,7 @@ void ShowFireworks(Player* player, int16_t row, int16_t col, uint32_t seed) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityFireworks;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = player->screenPos[0] + (col + 2) * 8 - (player->matrixWidth / 2) * 8;
@@ -113,7 +113,7 @@ void ShowAllClear(Player* player, int16_t row, int16_t col, bool unused) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityAllClear;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = player->screenPos[0] + (col + 2) * 8 - (player->matrixWidth / 2) * 8;
@@ -124,7 +124,7 @@ void ShowAllClear(Player* player, int16_t row, int16_t col, bool unused) {
 }
 
 static void UpdateEntityAllClear(Entity* entity) {
-	Player* player = entity->data.info.player;
+	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	data->palNum = PalNumTableFireworks[Rand(5u)];
 	if (entity->frames < 32) {
@@ -154,7 +154,7 @@ void UNK_60173B4(Player* player, int16_t row, int16_t col) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UNK_60174F8;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 0;
 
 		ENTITY_INST_DATA_PTR(structUNK_60174F8, data, entity);
@@ -206,7 +206,7 @@ void ShowLineClear(Player* player, int16_t row) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntitySingleClear;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 0;
 		entity->explosionsWidth = player->matrixWidth;
 		entity->clearRow = row;
@@ -245,7 +245,7 @@ void ShowStaffClear(Player* player, int16_t row) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntitySingleClear;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 0;
 		entity->explosionsWidth = player->matrixWidth;
 		entity->clearRow = row;
@@ -272,7 +272,7 @@ void ShowStaffClear(Player* player, int16_t row) {
 static void UpdateEntitySingleClear(Entity* entity) {
 	ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
 	int16_t y = data->y;
-	int16_t x = entity->data.info.player->screenPos[0] - 40;
+	int16_t x = entity->data.unionData.player->screenPos[0] - 40;
 	// BUG: Should be "col < entity->data.info.player->fieldWidth". Results in
 	// line clear explosions spanning only the left 10 columns of a doubles
 	// field.
@@ -309,7 +309,7 @@ void ShowThrownOutActiveBlock(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityThrownOutActiveBlock;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frames = 1;
 		entity->blockVerticalV = -4;
 		ENTITY_INST_DATA_PTR(ThrownOutActiveBlockData, data, entity);
@@ -327,7 +327,7 @@ void ShowThrownOutActiveBlock(Player* player) {
 }
 
 static void UpdateEntityThrownOutActiveBlock(Entity* entity) {
-	Player* player = entity->data.info.player;
+	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(ThrownOutActiveBlockData, data, entity);
 
 	data->y += entity->blockVerticalV;

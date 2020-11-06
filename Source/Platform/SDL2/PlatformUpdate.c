@@ -91,7 +91,7 @@ uint32_t PlatformInit() {
 	UNK_606564C = 0u; // Set, but never used.
 	DisablePause();
 	MainLoop = MAINLOOP_DEMO;
-	//UNK_602AC68(SystemGraphicDataPtr->UNK_118); // TODO
+	UNK_602AC68(SystemGraphicDataPtr->UNK_118);
 	SetPal(1u, 1u, Pal1);
 	UNK_602BC50(0u);
 	SetPal(1u, 15u, PALPTR(0xEB));

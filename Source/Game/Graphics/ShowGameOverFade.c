@@ -35,7 +35,7 @@ void ShowGameOverFade(Player* player) {
 		entity->fadesPerFrame = 1;
 
 		uint32_t fadeDelay = (player->modeFlags & MODE_INVISIBLE) ? TIME(0, 6, 0) : 0u;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		ENTITY_INST_DATA_PTR(GameOverFadeData, data, entity);
 		for (int16_t row = 0; row < FIELD_HEIGHT + 1; row++) {
 			data->fadeRows[row].delay = fadeDelay + row * 8;
@@ -52,7 +52,7 @@ void ShowGameOverFade(Player* player) {
 }
 
 static void UpdateEntityGameOverFade(Entity* entity) {
-	Player* player = entity->data.info.player;
+	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(GameOverFadeData, data, entity);
 	if (CurrentPauseMode < PAUSEMODE_GAME) {
 		if (entity->states[0] == STATE_FADE) {

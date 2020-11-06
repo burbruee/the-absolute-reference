@@ -12,7 +12,7 @@ void ShowItemEffect(Player* player, int16_t row, int16_t col) {
 
 	if ((entity = AllocEntity())) {
 		entity->update = UpdateEntityItemEffect;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		entity->frame = 0;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		data->x = player->screenPos[0] + 8 * col;

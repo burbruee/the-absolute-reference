@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Game/Screen.h"
 #include "Game/Play/Player.h"
 #include "Video/Object.h"
 #include "Video/HwSprite.h"
@@ -106,6 +107,16 @@ void UNK_6011858(); // TODO: Check TGM2 to see if this contains any code. Does n
 
 void InitRankings();
 void InitTodaysBestRankings();
+
+typedef enum RankingScreenState {
+	RANKINGSCREEN_MASTER,
+	RANKINGSCREEN_NORMAL,
+	RANKINGSCREEN_MASTERSECTIONTIMES,
+	RANKINGSCREEN_DOUBLES,
+	NUMRANKINGSCREENS
+} RankingScreenState;
+
+ScreenState ShowRankingScreen(RankingScreenState rankingScreen);
 
 // TODO: Functions from UNK_6011D28 to UNK_6012828. I think they handle the
 // rankings shown in the demo screen.

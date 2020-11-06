@@ -155,7 +155,6 @@ void UpdateItemFreeFall(Item* item) {
 
 		case STATE_GARBAGE:
 			FreeFall(activatingPlayer);
-			numLines;
 			for (numLines = 1; numLines < MATRIX_HEIGHT - 1; numLines++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 					if ((MATRIX(activatingPlayer, numLines, col).block & BLOCK_TYPE) == BLOCKTYPE_EMPTY) {

@@ -2786,7 +2786,7 @@ void UpdatePlayEntry(Player* player) {
 
 void UpdatePlayGameOver(Player* player) {
 	if ((GameFlags & GAME_TWIN) && (player->nowFlags & NOW_SHOWRANKINGCODE)) {
-		ShowRankingCode(player); // TODO
+		ShowRankingCode(player);
 		return;
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->numSecretGradeRows >= 5) {

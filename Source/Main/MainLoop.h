@@ -18,4 +18,3 @@ typedef enum MainLoopState {
 extern MainLoopState MainLoop;
 
 void RunMainLoop();
-// TODO

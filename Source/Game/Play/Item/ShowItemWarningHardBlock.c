@@ -11,7 +11,7 @@ void ShowItemWarningHardBlock(Player* player) {
 	Entity* entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityItemWarningHardBlock;
-		entity->data.info.player = player;
+		entity->data.unionData.player = player;
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		entity->warningFrames = 0;
 		data->x = 4;

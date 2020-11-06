@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game/Play/Player.h"
+#include "Game/Play/Ranking.h"
 #include "Game/Graphics/DisplayObject.h"
 #include "Lib/Fixed.h"
 #include "Lib/Macros.h"
@@ -15,19 +16,20 @@
 #define ENTITY_BUFFERSIZE (0x40 * sizeof(void*))
 
 // Use if the union applies, otherwise use a custom type in Entity::data.
-typedef union EntityInfo {
+typedef union EntityUnionData {
 	Player* player;
 	const ObjectData* objectTable;
 	struct {
 		uint8_t minutes, seconds, centiseconds;
 	};
 	Fixed32 scale;
+	Ranking* ranking;
 	// TODO: Remaining fields.
-} EntityInfo;
+} EntityUnionData;
 
 typedef struct EntityData {
-	EntityInfo info;
-	DATA(instanceData, ENTITY_BUFFERSIZE - sizeof(EntityInfo));
+	EntityUnionData unionData;
+	DATA(instanceData, ENTITY_BUFFERSIZE - sizeof(EntityUnionData));
 } EntityData;
 
 // Common type useful for most basic types of entities, that don't need
@@ -63,7 +65,7 @@ struct Entity {
 // For extra data not in the EntityData union, declare a struct for your
 // entity, and access the struct using ENTITY_INST_DATA_PTR.
 #define ENTITY_BUFFER_PTR(type, ptr, entity) type* ptr = (type*)(entity)->buffer
-#define ENTITY_DATA(entity) (entity->data.info)
+#define ENTITY_DATA(entity) (entity->data.unionData)
 #define ENTITY_INST_DATA_PTR(type, ptr, entity) type* ptr = (type*)(entity)->data.instanceData
 
 void InitEntities();
