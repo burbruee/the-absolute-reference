@@ -199,7 +199,6 @@ set(EXECUTABLE_HEADERS
 	"../../Video/Video.h"
 
 	"../Util/Color.h"
-	"../Util/DemoReplayInput.c"
 	"../Util/HwData.h"
 	"../Util/Macros.h"
 

@@ -212,6 +212,7 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	InitSpriteLayers();
 	UNK_60237DE();
 	UpdatePlayers();
+
 	GameButtonsDown[PLAYER1] = systemButtons1p;
 	GameButtonsDown[PLAYER2] = systemButtons2p;
 	SystemButtonsDown[PLAYER1] = systemButtons1p;

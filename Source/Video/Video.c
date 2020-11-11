@@ -862,8 +862,10 @@ void UNK_602471C(AddSpriteData* arg0) {
 void WriteSpriteLayers() {
 	// Convert from layers to a linear name sequence.
 	int16_t nameIndex = SPRITE_FIRST;
-	int16_t* currentLayer = SpriteLayerNames;
-	for (int16_t layer = 0; layer < lengthof(SpriteLayers); layer++) {
+    SpriteNames[0] = 0u;
+    SpriteNames[1] = 1u;
+    int16_t* currentLayer = SpriteLayers;
+    for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
 		for (int16_t layerName = *currentLayer++; layerName != 0; nameIndex++) {
 			SpriteNames[nameIndex] = layerName;
 			layerName = SpriteLayerNames[layerName];
@@ -876,7 +878,7 @@ void WriteSpriteLayers() {
 
 void InitSpriteLayers() {
 	// Set all layers as free.
-	for (int16_t layer = 0; layer < lengthof(SpriteLayers); layer++) {
+    for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
 		SpriteLayers[layer] = SPRITELAYER_FREE;
 	}
 }

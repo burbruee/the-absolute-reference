@@ -658,9 +658,9 @@ static ScreenState StartDemoScreen() {
 			UNK_6029498(6);
 			UNK_6029546(0, 20, 0, 6);
 			ScreenTime = 0u;
-			int32_t demoReplayFrames = 0;
+			uint32_t demoReplayFrames = 0u;
 			for (int16_t i = 0; i < 10; i++) {
-				if (UpdateDemo( demoReplayInput + ScreenTime, demoReplayInput + ScreenTime + DEMOREPLAY_LENGTH)) {
+				if (UpdateDemo(&demoReplayInput[ScreenTime], &demoReplayInput[ScreenTime + DEMOREPLAY_LENGTH])) {
 					demoReplayFrames = DEMOREPLAY_FRAMES;
 					nextScreen = SCREEN_TESTMODE;
 				}
@@ -765,9 +765,8 @@ static ScreenState StartDemoScreen() {
 				UNK_602E586();
 
 				switch (Screen) {
-				default:
 				case SCREEN_TWINDEMO:
-					break;
+					return SCREEN_NORMALRANKING;
 
 				case SCREEN_VERSUSDEMO:
 					return SCREEN_VERSIONTITLE;
@@ -775,10 +774,12 @@ static ScreenState StartDemoScreen() {
 				case SCREEN_DOUBLESDEMO:
 					DemoScreen = DEMOSCREEN_START;
 					return SCREEN_DOUBLESRANKING;
+
+				default:
+					// BUG: Maybe there was no consideration that this switch might hit the default case originally, but the original code behaves as if it just breaks out in the default case.
+					break;
 				}
 			}
-
-			return SCREEN_NORMALRANKING;
 		}
 		if (UpdateFrame()) {
 			return SCREEN_TESTMODE;

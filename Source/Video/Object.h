@@ -139,7 +139,6 @@ typedef struct ObjectDataTable {
 	ObjectData data[0x6DC];
 } ObjectDataTable;
 
-// TODO: Define in PlatformSupport/DataTable.c
 extern ROMDATA ObjectDataTable Objects;
 #define OBJECTPTR(i) ((ROMDATA ObjectData*)&Objects.data[(i)])
 
