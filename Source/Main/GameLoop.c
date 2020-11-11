@@ -15,21 +15,23 @@
 #include "Sound/Sound.h"
 #include "Lib/Math.h"
 
+ROMDATA Color UNK_6032884[NUMPALCOLORS_4BPP];
+ROMDATA Color UNK_60328C4[NUMPALCOLORS_4BPP];
 ROMDATA Color PalCycleTextPal0[NUMPALCOLORS_4BPP];
 
 // Used in CheckSetNewChallenger.
-static uint16_t NumVersusNoItemFrames;
-static uint16_t NumVersusCementFrames;
+static uint16_t NumVersusNoItemFrames = 0u;
+static uint16_t NumVersusCementFrames = 0u;
 
 // Used in StartGameLoop.
-static uint16_t UNK_6079294;
+static uint16_t UNK_6079294 = 0u;
 
 // These are used in UpdateGameMusic.
-static uint8_t UNK_6079296;
-static uint8_t UNK_6079297;
-static GameMusic CurrentGameMusic;
-GameMusic NextGameMusic;
-static uint8_t UNK_607929A; // TODO: FSM state. In range [0, 2].
+static uint8_t UNK_6079296 = 0u;
+static uint8_t UNK_6079297 = 0u;
+static GameMusic CurrentGameMusic = GAMEMUSIC_0;
+GameMusic NextGameMusic = GAMEMUSIC_0;
+static uint8_t UNK_607929A = 0u; // TODO: FSM state. In range [0, 2].
 
 typedef enum GameLoopState {
 	GAMELOOP_RESTART = 0,
@@ -39,25 +41,6 @@ typedef enum GameLoopState {
 	GAMELOOP_START = 8
 } GameLoopState;
 static GameLoopState GameLoop;
-
-static const Color UNK_6032884[NUMPALCOLORS_4BPP] = {
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u,
-	0x01010100u
-};
 
 static GameLoopState StartGameLoop();
 
@@ -496,8 +479,6 @@ static GameLoopState GameStartDoubles() {
 	Players[PLAYER2].modeFlags = MODE_DOUBLES;
 	return GAMELOOP_RESTART;
 }
-
-ROMDATA Color UNK_60328C4[NUMPALCOLORS_4BPP];
 
 StartPlayerFlag StartPlayers;
 static GameLoopState StartGameLoop() {

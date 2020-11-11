@@ -4,11 +4,10 @@
   frontends have optional features that can be compiled in (such as SDL2 having
   software, OpenGL, and Vulkan renderers).
 * Until free assets are created, both of TAP's MAME ROM sets (tgm2 and tgm2p)
-  are required. The assets will be extracted and saved for faster loading on
-  the first run for platforms having a file system. For baremetal platforms,
-  tools are provided that can extract and incorporate the assets into the
-  build. The assets (object, tile, palette, and sound data) are Arika's
-  property, so don't distribute them, nor builds incorporating them.
+  are required. For baremetal platforms, tools are provided that can extract
+  and incorporate the assets into the build. The assets (object, tile, palette,
+  and sound data) are Arika's property, so don't distribute them, nor builds
+  incorporating them.
 
 - Notes -
 I call a four-line clear a "skill clear", based on the SK medal. To me, it

@@ -14,11 +14,11 @@
 
 PauseMode CurrentPauseMode = PAUSEMODE_NOPAUSE;
 
-bool ScreenTimeOdd;
-uint32_t ScreenTime;
-uint32_t Uptime;
-uint32_t DemoWaitTime;
-uint16_t UNK_606564C;
+bool ScreenTimeOdd = false;
+uint32_t ScreenTime = 0u;
+uint32_t Uptime = 0u;
+uint32_t DemoWaitTime = 0u;
+uint16_t UNK_606564C = 0u;
 
 uint32_t RandScale;
 
@@ -26,12 +26,12 @@ uint32_t RandScale;
 // and TestModeDisabled, data after RandScale might be more appropriate in
 // another .c/.h.
 
-bool TestModeDisabled;
+bool TestModeDisabled = false;
 
-uint16_t UNK_6060024;
-uint32_t UNK_6060028;
-uint32_t NumVblanks;
-bool VblankFinished;
+uint16_t UNK_6060024 = 0u;
+uint32_t UNK_6060028 = 0u;
+uint32_t NumVblanks = 0u;
+bool VblankFinished = false;
 
 void UNK_602ACB0() {
 	UNK_6060024 = 0xFFFFu;
@@ -78,7 +78,7 @@ bool UpdateFrame() {
 	SetVideo();
 	UNK_602AA64();
 	UpdatePalCycles();
-	   PLATFORM_FINISHUPDATE();
+	PLATFORM_FINISHUPDATE();
 
 	bool startTestMode;
 	if (MainLoop == MAINLOOP_TEST || TestModeDisabled || (INPUTS[INPUT_SERVICE] & SERVICE_TEST)) {

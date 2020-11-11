@@ -8,8 +8,9 @@
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Setting.h"
 #include "HwData.h"
+#include "PlatformUpdate.h"
 
-bool PauseAllowed;
+bool PauseAllowed = false;
 
 void InitCredits() {
 	UNK_6064765 = 20u;
@@ -92,6 +93,8 @@ static inline void NormalCoinMode(uint16_t price, uint8_t* credits, uint8_t* coi
 }
 
 void UpdateInputs() {
+	PLATFORM_UPDATEINPUTS();
+
 	UNK_6064756[0] = (~INPUTS[INPUT_UNUSED] >> 4) & 0xF;
 	UNK_6064756[1] = ~INPUTS[INPUT_UNUSED] & 0xF;
 

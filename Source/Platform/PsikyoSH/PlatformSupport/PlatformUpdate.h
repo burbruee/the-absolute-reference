@@ -345,6 +345,8 @@ static inline void PlatformInit() {
 }
 #define PLATFORM_INIT() PlatformInit()
 
+#define PLATFORM_UPDATEINPUTS()
+
 static inline void PlatformFrame() {
 	while (PauseAllowed) {
 		UpdateInputs();

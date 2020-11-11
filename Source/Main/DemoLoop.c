@@ -21,7 +21,7 @@
 
 ROMDATA Color UNK_6033790[NUMPALCOLORS_4BPP];
 
-DemoScreenState DemoScreen;
+DemoScreenState DemoScreen = DEMOSCREEN_START;
 
 bool NextScreenVersionTitle() {
 	return
@@ -154,8 +154,8 @@ static ScreenState StartRankingScreen() {
 				SetBgDarkness(CurrentGameBg.bgIndex, 24);
 				Alpha[4] = 0x1Fu;
 				UNK_6029546(0, 20, 0, 6);
-				SetPal(159u, 1u, UNK_65790);
-				SetPal(202u, 1, UNK_657D0);
+				SetPal(159u, 1u, PALPTR(0x15C));
+				SetPal(202u, 1, PALPTR(0x15D));
 				int8_t rankingScreen = 0;
 				if (Screen == SCREEN_NORMALRANKING) {
 					rankingScreen = 1;

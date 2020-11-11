@@ -12,8 +12,6 @@
 // PsikyoSH. The only exceptions to that rule would be accessing ROM and
 // WORKRAM, which can be accessed mostly freely.
 
-extern ROMDATA void* ROM[0x100000 / sizeof(void*)];
-
 extern RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 
 extern RAMDATA uint8_t INPUTS[NUMINPUTS];

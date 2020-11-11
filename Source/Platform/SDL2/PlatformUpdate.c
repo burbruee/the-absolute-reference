@@ -1,6 +1,8 @@
 #include "PlatformUpdate.h"
 #include "Video/Video.h"
 #include "Main/MainLoop.h"
+#include "Main/DemoLoop.h"
+#include "Main/GameLoop.h"
 #include "Main/Frame.h"
 #include "Main/DemoReplayInput.h"
 #include "Input/Input.h"
@@ -17,11 +19,11 @@
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
 #include "HwData.h"
+#include "SDL.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-// TODO: Init these from the program ROM.
 static ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
 static ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
 
@@ -70,9 +72,8 @@ void SetSystemGraphicDataPtr() {
 	SystemGraphicDataPtr = (SystemGraphicData*)SequenceDataTablePtr[7];
 }
 
-// TODO: Enable tile ROM loading once rendering is implemented.
-//#define LOAD_TILEROMS
-#ifdef LOAD_TILEROMS
+// NOTE: For constant data loaded into RAM, take the RAM address and subtract 0x5FFF860 to get the address in program ROM.
+
 #define TILEROM_SIZE 0x200000
 #define NUMTILEROMS 16
 uint8_t* TileData;
@@ -94,19 +95,70 @@ const char * TileRomFileNames[NUMTILEROMS] = {
     "Roms/95ts_10l.u58",
     "Roms/96ts_10h.u59"
 };
-#endif
 
-// NOTE: For constant data loaded into RAM, take the RAM address and subtract 0x5FFF860 to get the address in program ROM.
-#define ROMOFFSET_DEMOREPLAYINPUTTWIN 0x33F87u
+#define PROGRAMROM_SIZE 0x80000
+#define NUMPROGRAMROMS 2
+
+#define ROMOFFSET_DEMOREPLAYINPUTTWIN    0x33F87u
 #define ROMOFFSET_DEMOREPLAYINPUTDOUBLES 0x3495Fu
-#define ROMOFFSET_DEMOREPLAYINPUTVERSUS 0x35337u
+#define ROMOFFSET_DEMOREPLAYINPUTVERSUS  0x35337u
+
+#define ROMCOLOR(colorData, offset) COLOR((colorData)[(offset) + 0], (colorData)[(offset) + 1], (colorData)[(offset) + 2], (colorData)[(offset) + 3])
+#define ROMOFFSET_PAL1             0x3141Cu
+#define ROMOFFSET_PALSMALLTEXT     0x3145Cu
+#define ROMOFFSET_UNK_6032884      0x33024u
+#define ROMOFFSET_UNK_60328C4      0x33064u
+#define ROMOFFSET_PALCYCLETEXTPAL0 0x33EE8u
+#define ROMOFFSET_UNK_6033790      0x33F30u
+
+#define ROMOFFSET_PAL 0x60088u
+
+#define ROMOFFSET_BGMAPSECTION2 0x68B8Cu
+#define ROMOFFSET_BGMAPSECTION5 0x72194u
+#define ROMOFFSET_BGMAPSECTION8 0x76C9Cu
+#define ROMOFFSET_BGMAPSECTION3 0x7B7A4u
+#define ROMOFFSET_BGMAPSECTION1 0x802ACu
+#define ROMOFFSET_BGMAPSECTION0 0x84DB4u
+#define ROMOFFSET_BGMAPSECTION4 0x898BCu
+#define ROMOFFSET_BGMAPSECTION6 0x92EC4u
+#define ROMOFFSET_BGMAPSECTION7 0x979CCu
+#define ROMOFFSET_BGMAPSECTION9 0x9C4D4u
+#define ROMOFFSET_BGMAPVERSUS   0xA0FDCu
+static const size_t BgMapRomOffsets[] = {
+	ROMOFFSET_BGMAPSECTION2,
+	ROMOFFSET_BGMAPSECTION5,
+	ROMOFFSET_BGMAPSECTION8,
+	ROMOFFSET_BGMAPSECTION3,
+	ROMOFFSET_BGMAPSECTION1,
+	ROMOFFSET_BGMAPSECTION0,
+	ROMOFFSET_BGMAPSECTION4,
+	ROMOFFSET_BGMAPSECTION6,
+	ROMOFFSET_BGMAPSECTION7,
+	ROMOFFSET_BGMAPSECTION9,
+	ROMOFFSET_BGMAPVERSUS
+};
+
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
+
+SDL_Window* window = NULL;
+SDL_Renderer* renderer = NULL;
+
+void ExitHandler() {
+	free(TileData);
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+}
 
 uint32_t PlatformInit() {
 	// Non-TAP, platform initialization.
 	srand(time(NULL));
 
-#ifdef LOAD_TILEROMS
+	SDL_Init(SDL_INIT_VIDEO);
+	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN);
+	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+
 	{
 		TileData = malloc(NUMTILEROMS * TILEROM_SIZE);
 		uint8_t* const tileDataTemp = malloc(NUMTILEROMS * TILEROM_SIZE);
@@ -118,41 +170,38 @@ uint32_t PlatformInit() {
 		for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
 			const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE];
 			const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE];
-			uint8_t* tile = &TileData[i * TILEROM_SIZE];
+			uint8_t* tilePtr = &TileData[i * TILEROM_SIZE];
 			for (size_t j = 0u; j < TILEROM_SIZE; j += 4u) {
-				*tile++ = *tileLow++;
-				*tile++ = *tileLow++;
-				*tile++ = *tileHigh++;
-				*tile++ = *tileHigh++;
+				*tilePtr++ = *tileLow++;
+				*tilePtr++ = *tileLow++;
+				*tilePtr++ = *tileHigh++;
+				*tilePtr++ = *tileHigh++;
 			}
 		}
 		free(tileDataTemp);
 	}
-#endif
 
 	{
-		uint8_t* programData = malloc(0x80000 * 2);
-		FILE* upperFile = fopen("Roms/2b.u21", "rb");
-		FILE* lowerFile = fopen("Roms/1b.u22", "rb");
-		uint8_t* upperData = malloc(0x80000);
-		uint8_t* lowerData = malloc(0x80000);
-		fread(upperData, 0x80000u, 1u, upperFile);
-		fread(lowerData, 0x80000u, 1u, lowerFile);
-		fclose(upperFile);
-		fclose(lowerFile);
+		uint8_t* programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+		uint8_t* programTemp = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+		FILE* programHighFile = fopen("Roms/2b.u21", "rb");
+		FILE* programLowFile = fopen("Roms/1b.u22", "rb");
+		fread(&programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE, 1u, programHighFile);
+		fread(&programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE, 1u, programLowFile);
+		fclose(programHighFile);
+		fclose(programLowFile);
 		uint8_t* programPtr = programData;
-		uint8_t* upperPtr = upperData;
-		uint8_t* lowerPtr = lowerData;
-		for (size_t i = 0u; i < 0x80000u * 2u; i += 4u) {
-			*programPtr++ = upperPtr[1];
-			*programPtr++ = upperPtr[0];
-			upperPtr += 2;
-			*programPtr++ = lowerPtr[1];
-			*programPtr++ = lowerPtr[0];
-			lowerPtr += 2;
+		uint8_t* programHigh = &programTemp[PROGRAMROM_SIZE * 0];
+		uint8_t* programLow = &programTemp[PROGRAMROM_SIZE * 1];
+		for (size_t i = 0u; i < PROGRAMROM_SIZE * NUMPROGRAMROMS; i += 4u) {
+			*programPtr++ = programHigh[1];
+			*programPtr++ = programHigh[0];
+			programHigh += 2;
+			*programPtr++ = programLow[1];
+			*programPtr++ = programLow[0];
+			programLow += 2;
 		}
-		free(upperData);
-		free(lowerData);
+		free(programTemp);
 
 		for (size_t i = 0u; i < DEMOREPLAY_LENGTH * NUMPLAYERS; i++) {
 			DemoReplayInputTwin[i] = programData[ROMOFFSET_DEMOREPLAYINPUTTWIN + i];
@@ -160,7 +209,55 @@ uint32_t PlatformInit() {
 			DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
 		}
 
-		memcpy(Objects.header, &programData[ROMOFFSET_OBJECTDATA], lengthof(Objects.header));
+		memcpy(Pal.data, &programData[ROMOFFSET_PAL], sizeof(Pal.header));
+		for (size_t i = 0u; i < lengthof(Pal.data); i++) {
+			Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
+		}
+
+		for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
+			Pal1[i] = ROMCOLOR(&programData[ROMOFFSET_PAL1], i * 4u);
+			PalSmallText[i] = ROMCOLOR(&programData[ROMOFFSET_PALSMALLTEXT], i * 4u);
+			UNK_6032884[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6032884], i * 4u);
+			UNK_60328C4[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_60328C4], i * 4u);
+			PalCycleTextPal0[i] = ROMCOLOR(&programData[ROMOFFSET_PALCYCLETEXTPAL0], i * 4u);
+			UNK_6033790[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6033790], i * 4u);
+		}
+
+		for (size_t i = 0u; i < lengthof(BgMapTable); i++) {
+			BgMapTable[i]->header.tileInfo =
+				((uint32_t)programData[BgMapRomOffsets[i] + 0] << 24) |
+				((uint32_t)programData[BgMapRomOffsets[i] + 1] << 16) |
+				((uint32_t)programData[BgMapRomOffsets[i] + 2] <<  8) |
+				((uint32_t)programData[BgMapRomOffsets[i] + 3] <<  0);
+			BgMapTable[i]->header.UNK_4 =
+				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 0] << 8) |
+				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 1] << 0);
+			BgMapTable[i]->header.UNK_6 =
+				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 0] << 8) |
+				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 1] << 0);
+
+			uint8_t* programPtr = &programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + sizeoffield(BgMapHeader, UNK_6)];
+			if (BgMapTable[i]->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+				uint32_t* name = ((BgMap32*)BgMapTable[i])->names;
+				for (size_t i = 0u; i < lengthoffield(BgMap32, names); i++, name++, programPtr += sizeof(uint32_t)) {
+					*name =
+						((uint32_t)programPtr[0] << 24) |
+						((uint32_t)programPtr[1] << 16) |
+						((uint32_t)programPtr[2] <<  8) |
+						((uint32_t)programPtr[3] <<  0);
+				}
+			}
+			else {
+				uint16_t* name = ((BgMap16*)BgMapTable[i])->names;
+				for (size_t i = 0u; i < lengthoffield(BgMap16, names); i++, name++, programPtr += sizeof(uint16_t)) {
+					*name =
+						((uint16_t)programPtr[0] << 8) |
+						((uint16_t)programPtr[1] << 0);
+				}
+			}
+		}
+
+		memcpy(Objects.header, &programData[ROMOFFSET_OBJECTDATA], sizeof(Objects.header));
 		for (size_t i = 0u; i < lengthof(Objects.data); i++) {
 			for (size_t j = 0u; j < 6u; j++) {
 				Objects.data[i][j] =
@@ -171,6 +268,7 @@ uint32_t PlatformInit() {
 
 		free(programData);
 	}
+	atexit(ExitHandler);
 
 	// TAP initialization.
 	// TODO: Implement more of the initialization like the original, such as ROM checks.
@@ -230,10 +328,108 @@ uint32_t PlatformInit() {
 	return 1u;
 }
 
+void PlatformUpdateInputs() {
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_QUIT:
+			exit(EXIT_SUCCESS);
+			break;
+
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym) {
+			case SDLK_q: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_START; break;
+			case SDLK_c: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_3; break;
+			case SDLK_x: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_2; break;
+			case SDLK_z: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_1; break;
+			case SDLK_a: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_LEFT; break;
+			case SDLK_d: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_RIGHT; break;
+			case SDLK_s: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_DOWN; break;
+			case SDLK_w: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_UP; break;
+
+			case SDLK_r: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_START; break;
+			case SDLK_n: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_3; break;
+			case SDLK_b: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_2; break;
+			case SDLK_v: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_1; break;
+			case SDLK_f: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_LEFT; break;
+			case SDLK_h: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_RIGHT; break;
+			case SDLK_g: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_DOWN; break;
+			case SDLK_t: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_UP; break;
+
+			case SDLK_e: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN1; break;
+			case SDLK_y: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN2; break;
+			case SDLK_TAB: INPUTS[INPUT_SERVICE] &= ~SERVICE_ADDSERVICE; break;
+			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TEST; break;
+			case SDLK_SPACE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TILT; break;
+
+			default: break;
+			}
+			break;
+
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym) {
+			case SDLK_q: INPUTS[INPUT_BUTTONS1P] |= BUTTON_START; break;
+			case SDLK_c: INPUTS[INPUT_BUTTONS1P] |= BUTTON_3; break;
+			case SDLK_x: INPUTS[INPUT_BUTTONS1P] |= BUTTON_2; break;
+			case SDLK_z: INPUTS[INPUT_BUTTONS1P] |= BUTTON_1; break;
+			case SDLK_a: INPUTS[INPUT_BUTTONS1P] |= BUTTON_LEFT; break;
+			case SDLK_d: INPUTS[INPUT_BUTTONS1P] |= BUTTON_RIGHT; break;
+			case SDLK_s: INPUTS[INPUT_BUTTONS1P] |= BUTTON_DOWN; break;
+			case SDLK_w: INPUTS[INPUT_BUTTONS1P] |= BUTTON_UP; break;
+
+			case SDLK_r: INPUTS[INPUT_BUTTONS2P] |= BUTTON_START; break;
+			case SDLK_n: INPUTS[INPUT_BUTTONS2P] |= BUTTON_3; break;
+			case SDLK_b: INPUTS[INPUT_BUTTONS2P] |= BUTTON_2; break;
+			case SDLK_v: INPUTS[INPUT_BUTTONS2P] |= BUTTON_1; break;
+			case SDLK_f: INPUTS[INPUT_BUTTONS2P] |= BUTTON_LEFT; break;
+			case SDLK_h: INPUTS[INPUT_BUTTONS2P] |= BUTTON_RIGHT; break;
+			case SDLK_g: INPUTS[INPUT_BUTTONS2P] |= BUTTON_DOWN; break;
+			case SDLK_t: INPUTS[INPUT_BUTTONS2P] |= BUTTON_UP; break;
+
+			case SDLK_e: INPUTS[INPUT_SERVICE] |= SERVICE_COIN1; break;
+			case SDLK_y: INPUTS[INPUT_SERVICE] |= SERVICE_COIN2; break;
+			case SDLK_TAB: INPUTS[INPUT_SERVICE] |= SERVICE_ADDSERVICE; break;
+			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] |= SERVICE_TEST; break;
+			case SDLK_SPACE: INPUTS[INPUT_SERVICE] |= SERVICE_TILT; break;
+
+			default: break;
+			}
+			break;
+
+		default: break;
+		}
+	}
+}
+
 void PlatformFrame() {
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
 	RandScale += rand();
 	NumVblanks++;
+}
+
+void PlatformFinishUpdate() {
+	SDL_SetRenderDrawColor(renderer, 0u, 0u, 0u, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(renderer);
+
+	SDL_SetRenderDrawColor(renderer, 255u, 255u, 255u, SDL_ALPHA_OPAQUE);
+	if (!(SpriteNames[0] & SPRITENAME_TERMINATE) && !(SpriteNames[1] & SPRITENAME_TERMINATE)) {
+		for (size_t i = SPRITE_FIRST; i < MAXSPRITES; i++) {
+			const SpriteData* sprite = &Sprites[SpriteNames[i] & ~SPRITENAME_TERMINATE];
+			SDL_Rect rect = {
+				OBJECT_GETX(sprite),
+				OBJECT_GETY(sprite),
+				(OBJECT_GETW(sprite) + 1) * 16,
+				(OBJECT_GETH(sprite) + 1) * 16
+			};
+			SDL_RenderFillRect(renderer, &rect);
+
+			if (SpriteNames[i] & SPRITENAME_TERMINATE) {
+                break;
+			}
+		}
+	}
+
+	SDL_RenderPresent(renderer);
 }
 
 int PlatformQuit() {

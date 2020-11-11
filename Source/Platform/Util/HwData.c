@@ -1,8 +1,5 @@
 #include "HwData.h"
 
-// TODO: Consider removing this.
-ROMDATA void* ROM[0x100000 / sizeof(void*)];
-
 RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 RAMDATA uint8_t INPUTS[NUMINPUTS] = { 0xFFu, 0xFFu, 0xFFu, 0xFFu };
 RAMDATA uint8_t EEPROM[4];

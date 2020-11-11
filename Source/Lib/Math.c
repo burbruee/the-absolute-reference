@@ -167,7 +167,7 @@ static uint32_t xtrct(uint32_t Rm, uint32_t Rn) {
 	(((((value) >> (8 * 0))) & 0xFF) << ((byte0) << 3)) \
 )
 
-uint32_t RandSeed;
+uint32_t RandSeed = 0u;
 
 uint32_t Rand(uint32_t upperBound) {
 	RandSeed = RandScale * ((RandSeed << 3) - RandSeed + ScreenTime);
