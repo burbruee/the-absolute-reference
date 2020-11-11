@@ -17,6 +17,7 @@
 #include "Input/Button.h"
 #include "Sound/Sound.h"
 #include "Lib/Math.h"
+#include "Config.h"
 
 ROMDATA Color UNK_6033790[NUMPALCOLORS_4BPP];
 
@@ -505,7 +506,7 @@ static ScreenState StartVersionTitleScreen() {
 		else {
 			frames--;
 		}
-		ShowPalCycleText(256, 160, "PLUS", false);
+		ShowPalCycleText(256 - VERSION_OFFSET, 160, VERSION_NAME, false);
 		if (++palCycleFrames % 64u == 0u) {
 			palCycleState = !palCycleState;
 			NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, palCycleState ? PALCYCLETYPE_DOWNSTOP : PALCYCLETYPE_UPSTOP, 1, 63u);
@@ -687,7 +688,7 @@ static ScreenState StartDemoScreen() {
 				}
 				demoReplayFrames++;
 				UpdateGameMusic();
-				ShowPalCycleText(285, 218, "PLUS", true);
+				ShowPalCycleText(285, 218, VERSION_NAME, true);
 				if (++palCycleFrames % 64u == 0u) {
 					palCycleDown = !palCycleDown;
 					NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, palCycleDown ? PALCYCLETYPE_DOWNSTOP : PALCYCLETYPE_UPSTOP, 1, 63u);
