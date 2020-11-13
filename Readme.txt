@@ -21,9 +21,12 @@ behavior are kept, but bugs with undefined behavior are fixed; all known bugs
 are noted in the code. Unused code/data is included.
 
 - Contributing -
+
 For the reverse-engineered game code, only bug fixes will be accepted, and it
-must be fully portable C99 code. Outside of the game code, contributions don't
-have to follow such strict requirements, especially support for more platforms.
+must be fully portable C99 code; more specifically, it has to use the subset of
+C99 that works with both more fully compliant compilers (GCC, Clang) and less
+compliant ones (MSVC). Outside of the game code, contributions don't have to
+follow such strict requirements, especially support for more platforms.
 
 - License -
 MIT. See License.txt. This software is unaffiliated with Arika, Psikyo, and The
