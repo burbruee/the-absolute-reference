@@ -415,7 +415,7 @@ void PlatformFrame() {
 	NumVblanks++;
 }
 
-Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
+static Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
 	SDL_RenderClear(renderer);
 
@@ -425,9 +425,16 @@ void PlatformFinishUpdate() {
 	int pitch;
 	SDL_LockTexture(framebufferTexture, NULL, &pixels, &pitch);
 	for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
-		for (size_t x = 0u; x < VIDEO_WIDTH; x++) {
-			((Color*)(pixels + y * pitch))[x] = framebuffer[y * VIDEO_WIDTH + x];
-		}
+		// Being able to use memcpy here is why the code uses the Color typedef and
+		// COLOR* macros. The game code and frontend have matching pixel formats, so we
+		// don't have to do any conversion. The SDL2 texture rows *might* be longer than
+		// VIDEO_WIDTH though, so we can't optimize it to a whole-framebuffer copy, but
+		// this is pretty good. We also can't directly pass the texture pixels pointer
+		// to the Render function, because the Render function has to read the
+		// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
+		// locked texture.
+		// -Brandon McGriff
+		memcpy(pixels + y * pitch, framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
 	}
 	SDL_UnlockTexture(framebufferTexture);
 
