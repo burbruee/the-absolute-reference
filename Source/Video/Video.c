@@ -1559,7 +1559,7 @@ typedef struct PalCycle {
 
 static PalCycle PalCycleHeap[MAXPALCYCLES];
 
-static bool NoPalCycles;
+static bool NoPalCycles = false;
 
 void InitPalCycles() {
 	// Set all palette cycles as free.
@@ -1579,34 +1579,30 @@ void UpdatePalCycles() {
 				cycle->palFrames = cycle->perPalDelay;
 				if (cycle->stride >= 0) {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						Color color = COLOR(0, 0, 0, 0);
-
 						cycle->palFixed[j].r -= cycle->palFixedV[j].r;
-						COLOR_SETR(color, F16I(cycle->palFixed[j].r) & 0xFC);
-
 						cycle->palFixed[j].g -= cycle->palFixedV[j].g;
-						COLOR_SETG(color, F16I(cycle->palFixed[j].g) & 0xFC);
-
 						cycle->palFixed[j].b -= cycle->palFixedV[j].b;
-						COLOR_SETB(color, F16I(cycle->palFixed[j].b) & 0xFC);
 
-						tempPal[j] = color;
+						tempPal[j] = COLOR(
+							F16I(cycle->palFixed[j].r) & 0xFCu,
+							F16I(cycle->palFixed[j].g) & 0xFCu,
+							F16I(cycle->palFixed[j].b) & 0xFCu,
+							0x00u
+						);
 					}
 				}
 				else {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						Color color = COLOR(0, 0, 0, 0);
-
 						cycle->palFixed[j].r += cycle->palFixedV[j].r;
-						COLOR_SETR(color, F16I(cycle->palFixed[j].r) & 0xFC);
-
 						cycle->palFixed[j].g += cycle->palFixedV[j].g;
-						COLOR_SETG(color, F16I(cycle->palFixed[j].g) & 0xFC);
-
 						cycle->palFixed[j].b += cycle->palFixedV[j].b;
-						COLOR_SETB(color, F16I(cycle->palFixed[j].b) & 0xFC);
 
-						tempPal[j] = color;
+						tempPal[j] = COLOR(
+							F16I(cycle->palFixed[j].r) & 0xFCu,
+							F16I(cycle->palFixed[j].g) & 0xFCu,
+							F16I(cycle->palFixed[j].b) & 0xFCu,
+							0x00u
+						);
 					}
 				}
 
@@ -1618,6 +1614,7 @@ void UpdatePalCycles() {
 				if (cycle->step > cycle->endStep || cycle->step < 0) {
 					switch (cycle->type) {
 					case PALCYCLETYPE_UPSTOP:
+					case PALCYCLETYPE_DOWNSTOP:
 						cycle->type = PALCYCLETYPE_FREE;
 						cycle->palNum = -1;
 						cycle->step = cycle->endStep;
@@ -1649,10 +1646,6 @@ void UpdatePalCycles() {
 						}
 						break;
 
-					case PALCYCLETYPE_DOWNSTOP:
-						cycle->type = PALCYCLETYPE_FREE;
-						break;
-
 					default:
 						break;
 					}
@@ -1676,15 +1669,16 @@ void NewPalCycle(uint8_t palNum, const Color* pal0, const Color* pal1, int16_t p
 	// If there's no cycle for palNum already, look for a free cycle.
 	if (heapIndex == MAXPALCYCLES) {
 		for (uint16_t i = 0u; i < MAXPALCYCLES; i++) {
-			if (PalCycleHeap[i].type <= PALCYCLETYPE_FREE) {
+			if (PalCycleHeap[i].type == PALCYCLETYPE_FREE) {
 				heapIndex = i;
+				break;
 			}
 		}
 	}
 
-	// BUG: There's no handling of the case where a free cycle wasn't found in
-	// the SH-2 code. So a safeguard has been addedData here. TAP only ever
-	// allocates at most three palette cycles, so the bug never shows up.
+	// BUG: There's no handling of the case where a free cycle wasn't found in the
+	// SH-2 code. So a safeguard has been added here. TAP only ever allocates at
+	// most three palette cycles, so the bug never shows up.
 	if (heapIndex == MAXPALCYCLES) {
 		return;
 	}
@@ -1731,7 +1725,7 @@ void NewPalCycle(uint8_t palNum, const Color* pal0, const Color* pal1, int16_t p
 		else { \
 			cycle->palFixed[i].c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].c = stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))
+		cycle->palFixedV[i].c = (stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))) >> 6
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);
