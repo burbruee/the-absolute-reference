@@ -4,6 +4,7 @@
 #include "Main/DemoReplayInput.h"
 #include "Game/Play/Player.h"
 #include "Game/Play/Debug.h"
+#include "Game/PalNum.h"
 #include "Game/Save.h"
 #include "Game/Graphics/ShowGameStatus.h"
 #include "Game/Graphics/ShowText.h"
@@ -126,9 +127,6 @@ MainLoopState RunDemoLoop() {
 	return MAINLOOP_TEST;
 }
 
-static ROMDATA Color UNK_65790[NUMPALCOLORS_4BPP];
-static ROMDATA Color UNK_657D0[NUMPALCOLORS_4BPP];
-
 static ScreenState StartRankingScreen() {
 	UNK_602AA4C();
 	if (!UpdateFrame()) {
@@ -154,8 +152,8 @@ static ScreenState StartRankingScreen() {
 				SetBgDarkness(CurrentGameBg.bgIndex, 24);
 				Alpha[4] = 0x1Fu;
 				UNK_6029546(0, 20, 0, 6);
-				SetPal(159u, 1u, PALPTR(0x15C));
-				SetPal(202u, 1, PALPTR(0x15D));
+				SetPal(PALNUM_PALCYCLETEXT, 1u, PALPTR(0x15C));
+				SetPal(202u, 1u, PALPTR(0x15D));
 				int8_t rankingScreen = 0;
 				if (Screen == SCREEN_NORMALRANKING) {
 					rankingScreen = 1;

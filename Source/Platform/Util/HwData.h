@@ -1,8 +1,6 @@
-// TODO: Move the VIDEOREGS defines to more specific headers, like HwSprite.h.
 #pragma once
 
 #include "PlatformTypes.h"
-#include "Video/HwSprite.h"
 #include "Video/VideoDefs.h"
 #include "Input/InputTypes.h"
 #include <stdint.h>

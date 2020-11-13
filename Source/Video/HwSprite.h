@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Video/VideoDefs.h"
+#include "HwData.h"
 #include <stdint.h>
 
 // TODO: Use these in the code.

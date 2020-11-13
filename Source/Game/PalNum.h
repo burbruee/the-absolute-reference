@@ -3,7 +3,7 @@
 #include "Video/PalNum.h"
 
 // TODO: Define constants for all palette numbers here.
-#define PALNUM_SMALLTEXT UINT8_C(0) // TODO: PALNUM_STATUSTEXT?
+#define PALNUM_OBJECT UINT8_C(0)
 #define PALNUM_ITEMDESCRIPTION UINT8_C(4)
 #define PALNUM_CHECKSUMNG UINT8_C(10)
 #define PALNUM_15 UINT8_C(15)

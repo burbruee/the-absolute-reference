@@ -18,6 +18,8 @@
 #include "Game/Graphics/ShowText.h"
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
+#include "Platform/Util/Render.h"
+#include "PlatformTypes.h"
 #include "HwData.h"
 #include "SDL.h"
 #include <stdio.h>
@@ -113,6 +115,7 @@ const char * TileRomFileNames[NUMTILEROMS] = {
 
 #define ROMOFFSET_PAL 0x60088u
 
+// By matching the offset array's order to the original's pointer array, a simple loop can be used for initialization. -Brandon McGriff
 #define ROMOFFSET_BGMAPSECTION2 0x68B8Cu
 #define ROMOFFSET_BGMAPSECTION5 0x72194u
 #define ROMOFFSET_BGMAPSECTION8 0x76C9Cu
@@ -142,6 +145,7 @@ static const size_t BgMapRomOffsets[] = {
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+SDL_Texture* framebufferTexture = NULL;
 
 void ExitHandler() {
 	free(TileData);
@@ -158,6 +162,8 @@ uint32_t PlatformInit() {
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+	framebufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_STREAMING, VIDEO_WIDTH, VIDEO_HEIGHT);
+	SDL_SetTextureBlendMode(framebufferTexture, SDL_BLENDMODE_NONE);
 
 	{
 		TileData = malloc(NUMTILEROMS * TILEROM_SIZE);
@@ -209,7 +215,9 @@ uint32_t PlatformInit() {
 			DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
 		}
 
-		memcpy(Pal.data, &programData[ROMOFFSET_PAL], sizeof(Pal.header));
+		for (size_t i = 0u; i < lengthoffield(PalData, header); i++) {
+			putchar(Pal.header[i]);
+		}
 		for (size_t i = 0u; i < lengthof(Pal.data); i++) {
 			Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
 		}
@@ -312,7 +320,7 @@ uint32_t PlatformInit() {
 	}
 
 	Save->programChecksum = 0u; // TODO: Actually load and check this with LoadProgramChecksum.
-	SetPal(PALNUM_SMALLTEXT, 1, PalSmallText);
+	SetPal(0u, 1, PalSmallText);
 	SetPal(PALNUM_CHECKSUMNG, 1, Pal1);
 	SetPal(PALNUM_SYSTEMTEXT, 1, PAL_SYSTEMTEXT);
 
@@ -407,27 +415,23 @@ void PlatformFrame() {
 	NumVblanks++;
 }
 
+Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
-	SDL_SetRenderDrawColor(renderer, 0u, 0u, 0u, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	SDL_SetRenderDrawColor(renderer, 255u, 255u, 255u, SDL_ALPHA_OPAQUE);
-	if (!(SpriteNames[0] & SPRITENAME_TERMINATE) && !(SpriteNames[1] & SPRITENAME_TERMINATE)) {
-		for (size_t i = SPRITE_FIRST; i < MAXSPRITES; i++) {
-			const SpriteData* sprite = &Sprites[SpriteNames[i] & ~SPRITENAME_TERMINATE];
-			SDL_Rect rect = {
-				OBJECT_GETX(sprite),
-				OBJECT_GETY(sprite),
-				(OBJECT_GETW(sprite) + 1) * 16,
-				(OBJECT_GETH(sprite) + 1) * 16
-			};
-			SDL_RenderFillRect(renderer, &rect);
+	Render(framebuffer, TileData);
 
-			if (SpriteNames[i] & SPRITENAME_TERMINATE) {
-                break;
-			}
+	void* pixels;
+	int pitch;
+	SDL_LockTexture(framebufferTexture, NULL, &pixels, &pitch);
+	for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
+		for (size_t x = 0u; x < VIDEO_WIDTH; x++) {
+			((Color*)(pixels + y * pitch))[x] = framebuffer[y * VIDEO_WIDTH + x];
 		}
 	}
+	SDL_UnlockTexture(framebufferTexture);
+
+	SDL_RenderCopy(renderer, framebufferTexture, NULL, NULL);
 
 	SDL_RenderPresent(renderer);
 }

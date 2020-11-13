@@ -1483,7 +1483,7 @@ void SetVideo() {
 	NumVideoSetters = NumVideoSetters < MAXVIDEOSETTERS ? NumVideoSetters : MAXVIDEOSETTERS;
 
 	VideoSetter* setter = VideoSetters;
-	for (uint16_t i = 0u; i < NumVideoSetters; i++) {
+	for (uint16_t i = 0u; i < NumVideoSetters; i++, setter++) {
 		setter->set(setter->args[0], setter->args[1], setter->args[2]);
 	}
 
@@ -1772,6 +1772,7 @@ void SetPal(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
 	VideoSetters[NumVideoSetters].args[1] = (void*)(uintptr_t)numPals;
 	VideoSetters[NumVideoSetters++].args[2] = (void*)pal;
 }
+
 static void VideoSetPal(void* palNumArg, void* numPalsArg, void* palArg) {
 	const uint8_t palNum = (uint8_t)(uintptr_t)palNumArg;
 	const uint8_t numPals = (uint8_t)(uintptr_t)numPalsArg;

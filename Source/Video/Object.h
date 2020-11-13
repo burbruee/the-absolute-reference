@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Video/VideoDefs.h"
+#include "Video/HwSprite.h"
 #include "PlatformTypes.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -85,16 +86,16 @@ enum ObjectBits {
 #define OBJECT_GETUNKNOWN0(object) ((bool)(((*(object))[2] & OBJECT_UNKNOWN0) >> 14))
 #define OBJECT_GETSPRPRI(object) ((uint8_t)(((*(object))[2] & OBJECT_SPRPRI) >> 12))
 #define OBJECT_GETH(object) ((uint8_t)(((*(object))[2] & OBJECT_H) >> 8))
-#define OBJECT_GETSCALEY(object) ((uint8_t)((*(object))[2] & OBJECT_SCALEY))
+#define OBJECT_GETSCALEY(object) ((SpriteScale)((*(object))[2] & OBJECT_SCALEY))
 #define OBJECT_GETFLIPX(object) ((bool)(((*(object))[3] & OBJECT_FLIPX) >> 15))
 #define OBJECT_GETUNKNOWN1(object) ((bool)(((*(object))[2] & OBJECT_UNKNOWN1) >> 14))
 #define OBJECT_GETBGPRI(object) ((uint8_t)(((*(object))[3] & OBJECT_BGPRI) >> 12))
 #define OBJECT_GETW(object) ((uint8_t)(((*(object))[3] & OBJECT_W) >> 8))
-#define OBJECT_GETSCALEX(object) ((uint8_t)((*(object))[3] & 0xFF))
+#define OBJECT_GETSCALEX(object) ((SpriteScale)((*(object))[3] & 0xFF))
 #define OBJECT_GETPALNUM(object) ((uint8_t)(((*(object))[4] & OBJECT_PALNUM) >> 8))
 #define OBJECT_GETBPP(object) ((Bpp)(((*(object))[4] & OBJECT_BPP) >> 7))
 #define OBJECT_GETALPHA(object) ((uint8_t)(((*(object))[4] & OBJECT_ALPHA) >> 4))
-#define OBJECT_GETTILE(object) ((((uint32_t)(*(object))[4] & OBJECT_TILETOP) << 16) | ((uint32_t)(*(object))[5] & OBJECT_TILEBOTTOM)))
+#define OBJECT_GETTILE(object) ((((uint32_t)(*(object))[4] & OBJECT_TILETOP) << 16) | ((uint32_t)(*(object))[5] & OBJECT_TILEBOTTOM))
 
 #define OBJECT_TOY(y) ((uint16_t)((int16_t)(y) & OBJECT_Y))
 #define OBJECT_TONUMSPRITES(numSprites) (((uint16_t)(numSprites) << 10) & OBJECT_NUMSPRITES)
@@ -122,12 +123,12 @@ enum ObjectBits {
 #define OBJECT_SETUNKNOWN0(object, unknown0)     ((*(object))[2] = ((*(object))[2] & ~OBJECT_UNKNOWN0)   | OBJECT_TOUNKNOWN0(unknown0))
 #define OBJECT_SETSPRPRI(object, sprPri)         ((*(object))[2] = ((*(object))[2] & ~OBJECT_SPRPRI)     | OBJECT_TOSPRPRI(sprPri))
 #define OBJECT_SETH(object, h)                   ((*(object))[2] = ((*(object))[2] & ~OBJECT_H)          | OBJECT_TOH(h))
-#define OBJECT_SETSCALEY(object, scaleX)         ((*(object))[2] = ((*(object))[2] & ~OBJECT_SCALEY)     | OBJECT_TOY(y))
+#define OBJECT_SETSCALEY(object, scaleY)         ((*(object))[2] = ((*(object))[2] & ~OBJECT_SCALEY)     | OBJECT_TOSCALEY(scaleY))
 #define OBJECT_SETFLIPX(object, flipX)           ((*(object))[3] = ((*(object))[3] & ~OBJECT_FLIPX)      | OBJECT_TOFLIPX(flipX))
 #define OBJECT_SETUNKNOWN1(object, unknown1)     ((*(object))[3] = ((*(object))[3] & ~OBJECT_UNKNOWN1)   | OBJECT_TOUNKNOWN1(unknown1))
 #define OBJECT_SETBGPRI(object, bgPri)           ((*(object))[3] = ((*(object))[3] & ~OBJECT_BGPRI)      | OBJECT_TOBGPRI(bgPri))
 #define OBJECT_SETW(object, w)                   ((*(object))[3] = ((*(object))[3] & ~OBJECT_W)          | OBJECT_TOW(w))
-#define OBJECT_SETSCALEX(object, scaleY)         ((*(object))[3] = ((*(object))[3] & ~OBJECT_SCALEX)     | OBJECT_TOSCALEX(scaleX))
+#define OBJECT_SETSCALEX(object, scaleX)         ((*(object))[3] = ((*(object))[3] & ~OBJECT_SCALEX)     | OBJECT_TOSCALEX(scaleX))
 #define OBJECT_SETPALNUM(object, palNum)         ((*(object))[4] = ((*(object))[4] & ~OBJECT_PALNUM)     | OBJECT_TOPALNUM(palNum))
 #define OBJECT_SETBPP(object, bpp)               ((*(object))[4] = ((*(object))[4] & ~OBJECT_BPP)        | OBJECT_TOBPP(bpp))
 #define OBJECT_SETALPHA(object, alpha)           ((*(object))[4] = ((*(object))[4] & ~OBJECT_ALPHA)      | OBJECT_TOALPHA(alpha))

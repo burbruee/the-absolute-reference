@@ -5,7 +5,7 @@
 #include "HwData.h"
 #include <stdbool.h>
 
-static void AddObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, uint8_t scaleY, uint8_t scaleX, uint8_t etc) {
+static void AddObjectSprite(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, uint16_t layer, SpriteScale scaleY, SpriteScale scaleX, uint8_t etc) {
 	OBJECT_SETY(&UNK_6061932.tempSprite, y + OBJECT_GETY(object));
 	OBJECT_SETX(&UNK_6061932.tempSprite, x + OBJECT_GETX(object));
 
@@ -49,7 +49,7 @@ void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNu
 	const ObjectData* curData = object;
 	if (palNum != 0u) {
 		while (numSprites-- != 0) {
-			AddObjectSprite(curData++, y, x, palNum, layer, 0x3F, 0x3F, etc);
+			AddObjectSprite(curData++, y, x, palNum, layer, UNSCALED, UNSCALED, etc);
 		}
 	}
 	else {
