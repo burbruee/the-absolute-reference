@@ -398,7 +398,7 @@ static void UpdateEntityRanking(Entity* entity) {
 		ShowRankingName(ranking->name, y, x + 31, 0u, 110u);
 		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data)], y, x + 85, 0u, 110u);
 		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 126);
-		UNK_6020F50(*(uint16_t*)data->rankingExtras, y, x + 215);
+		ShowRankingMedals(*(uint16_t*)data->rankingExtras, y, x + 215);
 		if (RANKINGDATA_GETORANGELINE(ranking->data)) {
 			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 202u, 40u, 0xCu, UNSCALED, false);
 		}
@@ -416,7 +416,7 @@ static void UpdateEntityRanking(Entity* entity) {
 		}
 		break;
 
-	case RANKINGSCREEN_MASTERSECTIONTIMES:
+	case RANKINGSCREEN_SECTIONTIME:
 		if (data->index == 0u) {
 			ShowStatusNumEx(0u, y1, x0, 0u, 40u, 3, false, NUMALIGN_RIGHT);
 		}
@@ -495,9 +495,9 @@ void ShowRankings(RankingScreenState rankingScreen) {
 		}
 		break;
 
-	case RANKINGSCREEN_MASTERSECTIONTIMES:
-		for (int16_t section = 0, y = 86, showDelay = 0; section < 10; section++, y += 19, showDelay += 12) {
-			ShowRanking(&Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section], NULL, y, 0, section, RANKINGSCREEN_MASTERSECTIONTIMES, showDelay, 138);
+	case RANKINGSCREEN_SECTIONTIME:
+		for (int16_t section = 0, y = 54, showDelay = 0; section < 10; section++, y += 19, showDelay += 12) {
+			ShowRanking(&Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section], NULL, y, 0, section, RANKINGSCREEN_SECTIONTIME, showDelay, 138);
 		}
 		break;
 
@@ -519,7 +519,7 @@ ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
 	UNK_6020ECE();
 	ShowRankings(rankingScreen);
 
-	int16_t frames = 0;
+	uint16_t frames = 0u;
 	bool done = false;
 	RankingScreenState nextRankingScreen = rankingScreen;
 	while (!UpdateFrame()) {
@@ -531,7 +531,7 @@ ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
 					return SCREEN_MASTERRANKING;
 
 				case SCREEN_MASTERRANKING:
-					return SCREEN_MASTERSECTIONTIMERANKING;
+					return SCREEN_SECTIONTIMERANKING;
 
 				default:
 					return SCREEN_DEVELOPER;
@@ -554,14 +554,14 @@ ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
 				InitEntities();
 				ShowRankings(nextRankingScreen);
 				UNK_6029546(0, 20, 0, 6);
-				frames = 0;
+				frames = 0u;
 			}
 			else if ((GameButtonsNew[PLAYER1] & BUTTON_RIGHT) || (GameButtonsNew[PLAYER2] & BUTTON_RIGHT)) {
 				nextRankingScreen = (nextRankingScreen + 1) % NUMRANKINGSCREENS;
 				InitEntities();
 				ShowRankings(nextRankingScreen);
 				UNK_6029546(0, 20, 0, 6);
-				frames = 0;
+				frames = 0u;
 			}
 		}
 
@@ -580,7 +580,7 @@ ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
 			UNK_6011DB0(155, 0);
 			break;
 
-		case RANKINGSCREEN_MASTERSECTIONTIMES:
+		case RANKINGSCREEN_SECTIONTIME:
 			ShowObject(OBJECTPTR(0x21B), 14, 10, 0u, 110u);
 			UNK_6011DF0(37, 0);
 			break;

@@ -126,9 +126,9 @@ void UNK_6020ECE() {
 	NewPalCycle(212u, PALPTR(0x208), PALPTR(0x20C), 2, PALCYCLETYPE_BOUNCE, 1u, 32u); // Bronze.
 }
 
-void UNK_6020F50(uint16_t medals, int16_t y, int16_t x) {
+void ShowRankingMedals(uint16_t medals, int16_t y, int16_t x) {
 	int32_t medalColorBit = 0;
-	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++, medalColorBit += 2, x += 48) {
+	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++, medalColorBit += 2, x += 16) {
 		MedalColor medalColor = (medals >> medalColorBit) & 3;
 		DisplayObject(ObjectTableMedals[medalType], y, x, MedalPalAnims[medalColor].palNumCycle, 110u);
 	}

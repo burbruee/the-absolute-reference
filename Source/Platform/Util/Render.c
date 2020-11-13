@@ -30,7 +30,11 @@ static const uint32_t AlphaTable[0x100] = {
 
 void Render(Color* const framebuffer, const uint8_t* const tileData) {
 	// TODO: Implement line drawing to replace this.
-	memset(framebuffer, 0, sizeof(Color) * VIDEO_HEIGHT * VIDEO_WIDTH);
+	for (size_t i = 0u; i < VIDEO_HEIGHT; i++) {
+		for (size_t j = 0u; j < VIDEO_WIDTH; j++) {
+			framebuffer[i * VIDEO_WIDTH + j] = COLOR(128u, 128u, 128u, 0u);
+		}
+	}
 
 	if (!(SpriteNames[0] & SPRITENAME_TERMINATE) && !(SpriteNames[1] & SPRITENAME_TERMINATE)) {
 		for (size_t i = SPRITE_FIRST; i < MAXSPRITES; i++) {

@@ -24,7 +24,7 @@ typedef enum MedalColor {
 void InitMedals(struct Player* player, int16_t y, int16_t x);
 void ShowMedals(struct Player* player);
 void UNK_6020ECE();
-void UNK_6020F50(uint16_t arg0, int16_t y, int16_t x);
+void ShowRankingMedals(uint16_t arg0, int16_t y, int16_t x);
 void UpdateSkillMedal(struct Player* player);
 void UpdateComboMedal(struct Player* player);
 void UpdateSectionTimeMedal(struct Player* player, uint32_t sectionTime, uint32_t bestSectionTime);

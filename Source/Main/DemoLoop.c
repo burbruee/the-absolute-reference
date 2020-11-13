@@ -96,7 +96,7 @@ MainLoopState RunDemoLoop() {
 
 		case SCREEN_NORMALRANKING:
 		case SCREEN_MASTERRANKING:
-		case SCREEN_MASTERSECTIONTIMERANKING:
+		case SCREEN_SECTIONTIMERANKING:
 		case SCREEN_DOUBLESRANKING:
 			Screen = StartRankingScreen();
 			break;
@@ -154,17 +154,14 @@ static ScreenState StartRankingScreen() {
 				UNK_6029546(0, 20, 0, 6);
 				SetPal(PALNUM_PALCYCLETEXT, 1u, PALPTR(0x15C));
 				SetPal(202u, 1u, PALPTR(0x15D));
-				int8_t rankingScreen = 0;
-				if (Screen == SCREEN_NORMALRANKING) {
-					rankingScreen = 1;
-				}
-				else if (Screen != SCREEN_MASTERRANKING) {
-					if (Screen == SCREEN_MASTERSECTIONTIMERANKING) {
-						rankingScreen = 2;
-					}
-					else if (Screen == SCREEN_DOUBLESRANKING) {
-						rankingScreen = 3;
-					}
+
+				RankingScreenState rankingScreen = 0;
+				switch (Screen) {
+				default                       :
+				case SCREEN_MASTERRANKING     : rankingScreen = RANKINGSCREEN_MASTER; break;
+				case SCREEN_NORMALRANKING     : rankingScreen = RANKINGSCREEN_NORMAL; break;
+				case SCREEN_SECTIONTIMERANKING: rankingScreen = RANKINGSCREEN_SECTIONTIME; break;
+				case SCREEN_DOUBLESRANKING    : rankingScreen = RANKINGSCREEN_DOUBLES; break;
 				}
 				return ShowRankingScreen(rankingScreen);
 			}
