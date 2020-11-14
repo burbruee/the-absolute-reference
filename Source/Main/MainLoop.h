@@ -8,7 +8,7 @@ typedef enum StartPlayerFlag {
 	STARTPLAYER_1P = 1 << PLAYER1,
 	STARTPLAYER_2P = 1 << PLAYER2
 } StartPlayerFlag;
-extern StartPlayerFlag StartPlayerFlags;
+extern StartPlayerFlag StartPlayers;
 
 typedef enum MainLoopState {
 	MAINLOOP_DEMO,

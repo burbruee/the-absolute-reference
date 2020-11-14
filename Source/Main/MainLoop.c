@@ -6,8 +6,8 @@
 #include "Game/Save.h"
 #include "Lib/Math.h"
 
-StartPlayerFlag StartPlayerFlags;
-MainLoopState MainLoop;
+StartPlayerFlag StartPlayers = STARTPLAYER_NONE;
+MainLoopState MainLoop = MAINLOOP_DEMO;
 
 void RunMainLoop() {
 	// TODO: Change "while (true)" here to something like "while (!QUIT)", so

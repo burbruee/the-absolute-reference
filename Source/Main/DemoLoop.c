@@ -55,7 +55,7 @@ static void InitDemoLoop() {
 	ScreenTime = 0u;
 	DemoScreen = DEMOSCREEN_START;
 	DemoWaitTime = 0u;
-	StartPlayerFlags = STARTPLAYER_NONE;
+	StartPlayers = STARTPLAYER_NONE;
 	UpdateFrame();
 	UNK_602AA16();
 }
@@ -423,7 +423,7 @@ static ScreenState StartVersionTitleScreen() {
 	InitVideoSetters();
 	UNK_602406E();
 	InitEntities();
-	StartPlayerFlags = STARTPLAYER_NONE;
+	StartPlayers = STARTPLAYER_NONE;
 	InitPlayers();
 	SetPal(160u, 16u, PALPTR(0x1F4));
 	InitSystemTextPal();
@@ -474,10 +474,10 @@ static ScreenState StartVersionTitleScreen() {
 		}
 		ShowModeCodes(&Players[PLAYER1]);
 		ShowModeCodes(&Players[PLAYER2]);
-		if ((!(GameButtonsNew[PLAYER1] & BUTTON_START) || (StartPlayerFlags & STARTPLAYER_1P)) || (StartPlayerFlags & STARTPLAYER_2P)) {
-			if (((GameButtonsNew[PLAYER2] & BUTTON_START) && !(StartPlayerFlags & STARTPLAYER_2P)) && !(StartPlayerFlags & STARTPLAYER_1P) && CanStart(PLAYER2, false)) {
+		if ((!(GameButtonsNew[PLAYER1] & BUTTON_START) || (StartPlayers & STARTPLAYER_1P)) || (StartPlayers & STARTPLAYER_2P)) {
+			if (((GameButtonsNew[PLAYER2] & BUTTON_START) && !(StartPlayers & STARTPLAYER_2P)) && !(StartPlayers & STARTPLAYER_1P) && CanStart(PLAYER2, false)) {
 				CheckBuyGame(PLAYER2, false);
-				StartPlayerFlags |= STARTPLAYER_2P;
+				StartPlayers |= STARTPLAYER_2P;
 				Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
 				Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
 				if (frames > 5) {
@@ -488,7 +488,7 @@ static ScreenState StartVersionTitleScreen() {
 		else {
 			if (CanStart(PLAYER1, false)) {
 				CheckBuyGame(PLAYER1, false);
-				StartPlayerFlags |= STARTPLAYER_1P;
+				StartPlayers |= STARTPLAYER_1P;
 				Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
 				Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
 				if (frames > 5) {
@@ -517,7 +517,7 @@ static ScreenState StartVersionTitleScreen() {
 	}
 	UpdateFrame();
 	UNK_602406E();
-	if (StartPlayerFlags != STARTPLAYER_NONE) {
+	if (StartPlayers != STARTPLAYER_NONE) {
 		UNK_6029546(2, 10, 0, 6);
 		for (int16_t i = 0; i < 10; i++) {
 			if (UpdateFrame()) {

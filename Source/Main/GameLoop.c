@@ -480,7 +480,6 @@ static GameLoopState GameStartDoubles() {
 	return GAMELOOP_RESTART;
 }
 
-StartPlayerFlag StartPlayers;
 static GameLoopState StartGameLoop() {
 	UNK_602AA4C();
 
@@ -594,7 +593,7 @@ static GameLoopState StartGameLoop() {
 
 			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
 				NextGameMusic = 2;
-				if (++UNK_6079294 < 180u) {
+				if (++UNK_6079294 >= TIME(0, 3, 0)) {
 					state = GAMELOOP_STOP;
 				}
 

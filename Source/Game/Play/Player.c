@@ -282,7 +282,7 @@ void InitPlayer(PlayerNum playerNum) {
 
 	// Player GRS data.
 	player->section = 0u;
-	player->gradeScale = 0x0000;
+	player->gradeScale = 0x0000u;
 	player->gradeBefore = PLAYERGRADE_9;
 	player->grade = PLAYERGRADE_9;
 	player->numComboClears = 0u;

@@ -284,7 +284,7 @@ struct Player {
 	PlayerGrade grade;
 	uint16_t section;
 	PlayerGrade gradeBefore;
-	Fixed16 gradeScale;
+	uint16_t gradeScale;
 	uint16_t numRotations;
 	uint16_t numRotateBlocks;
 	uint16_t numActiveRotations;

@@ -192,11 +192,11 @@ const ObjectData* ObjectTableGrades[NUMPLAYERGRADES] = {
 void ShowGrade(Player* player, uint8_t palNum) {
 	if (player->gradeScale > UNSCALED) {
 		int16_t offset = -((((player->gradeScale - UNSCALED) << 10) / UNSCALED) << 4) >> 10;
-		DisplayObjectEx(ObjectTableGrades[player->grade], 35 + offset, player->screenPos[0] + 50 + offset, palNum, 110u, player->gradeScale, player->gradeScale, false);
+		DisplayObjectEx(ObjectTableGrades[player->grade], 35 + offset, player->screenPos[0] + 50 + offset, palNum, 110u, player->gradeScale & 0xFFu, player->gradeScale & 0xFFu, false);
 		DisplayObject(ObjectTableGrades[player->gradeBefore], 35, player->screenPos[0] + 50, palNum, LAYER_GAMESTATUS);
 
 		if (CurrentPauseMode < PAUSEMODE_GAME) {
-			player->gradeScale -= F16(0, 0x04);
+			player->gradeScale -= 4u;
 		}
 		if (player->gradeScale <= UNSCALED) {
 			player->gradeScale = UNSCALED;
