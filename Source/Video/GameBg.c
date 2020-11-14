@@ -116,7 +116,8 @@ void UNK_6016B40() {
 
 void UNK_6016BDE() {
 	SetBgDarkness(CurrentGameBg.bgIndex, CurrentGameBg.darknesses[1]);
-	if ((CurrentGameBg.darknesses[1] -= 6) <= 0) {
+	CurrentGameBg.darknesses[1] -= 6;
+	if (CurrentGameBg.darknesses[1] <= 0) {
 		CurrentGameBg.darknesses[1] = 0;
 		SetBgDarkness(CurrentGameBg.bgIndex, 0);
 		CurrentGameBg.UNK_13 = 1;
@@ -179,11 +180,11 @@ void UpdateGameBg() {
 					section = section2p;
 				}
 				if (CurrentGameBg.bgMapIndex != section) {
-					CurrentGameBg.nextBgMapIndex = section;
+					CurrentGameBg.nextBgMapIndex = (uint8_t)section;
 					UNK_6016A30(1);
 				}
 				if (DemoSection < section) {
-					DemoSection = section;
+					DemoSection = (uint8_t)section;
 				}
 			}
 		}

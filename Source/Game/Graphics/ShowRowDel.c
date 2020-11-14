@@ -26,7 +26,7 @@ void ShowRowDel(Player* player, int16_t delRow) {
 
 static void UpdateEntityRowDel(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObject(&data->objectTable[entity->values[1]], data->y, data->x, data->palNum, 124u);
+	DisplayObject(&data->objectTable[entity->values[1]], data->y, data->x, (uint8_t)data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME && (entity->frames & 1)) {
 		entity->animFrame++;

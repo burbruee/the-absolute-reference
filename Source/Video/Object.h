@@ -113,7 +113,7 @@ enum ObjectBits {
 #define OBJECT_TOPALNUM(palNum) (((uint16_t)(palNum) << 8) & OBJECT_PALNUM)
 #define OBJECT_TOBPP(bpp) (((uint16_t)(Bpp)(bpp) << 7u) & OBJECT_BPP)
 #define OBJECT_TOALPHA(alpha) (((uint16_t)(alpha) << 4) & OBJECT_ALPHA)
-#define OBJECT_TOTILETOP(tile) (((uint16_t)(tile) >> 16u) & OBJECT_TILETOP)
+#define OBJECT_TOTILETOP(tile) ((uint16_t)((uint32_t)(tile) >> 16u) & OBJECT_TILETOP)
 #define OBJECT_TOTILEBOTTOM(tile) ((uint16_t)(tile) & OBJECT_TILEBOTTOM)
 
 #define OBJECT_SETY(object, y)                   ((*(object))[0] = ((*(object))[0] & ~OBJECT_Y)          | OBJECT_TOY(y))

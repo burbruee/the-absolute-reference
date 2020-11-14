@@ -2,6 +2,7 @@
 #include "Video/Video.h"
 #include "Lib/Macros.h"
 #include "BuildData/BuildData.h"
+#include <assert.h>
 
 int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
     int16_t i = SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
@@ -12,7 +13,7 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
     SpriteAdders[i].x = x;
     SpriteAdders[i].UNK_34 = UNK_6061932.UNK_10;
     SpriteAdders[i].UNK_36 = 1;
-    SpriteAdders[i].layer = UNK_6061932.UNK_12;
+    SpriteAdders[i].layer = (uint8_t)UNK_6061932.UNK_12;
     SpriteAdders[i].UNK_2C &= ~0x8000u;
     SpriteAdders[i].bppAlphaTileTop = 0u;
     SpriteAdders[i].palNum = 0u;
@@ -24,11 +25,12 @@ int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
 }
 
 void UNK_602BA70() {
-	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdders); i++) {
+	for (size_t i = (size_t)UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdders); i++) {
 		SpriteAdders[SpriteAdderNameTable[i]].type = ADDSPRITE_0;
 		SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
 		UNK_6061932.tempSprite[6]++;
 		if (UNK_6061932.tempSprite[6] != i) {
+			assert(UNK_6061932.tempSprite[6] < lengthof(SpriteAdderNameTable));
 			SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 			SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= SpriteAdderNameTable[i];
 			SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
@@ -37,12 +39,13 @@ void UNK_602BA70() {
 }
 
 void UNK_602BB0C() {
-	for (size_t i = UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
+	for (size_t i = (size_t)UNK_6061932.tempSprite[6] + 1u; i < lengthof(SpriteAdderNameTable); i++) {
 		if (SpriteAdders[SpriteAdderNameTable[i]].type == ADDSPRITE_5) {
 			SpriteAdders[SpriteAdderNameTable[i]].type = ADDSPRITE_0;
 			SpriteAdders[SpriteAdderNameTable[i]].UNK_2C = 0x8000u;
 			UNK_6061932.tempSprite[6]++;
 			if (UNK_6061932.tempSprite[6] != i) {
+				assert(UNK_6061932.tempSprite[6] < lengthof(SpriteAdderNameTable));
 				SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 				SpriteAdderNameTable[UNK_6061932.tempSprite[6]] ^= SpriteAdderNameTable[i];
 				SpriteAdderNameTable[i] ^= SpriteAdderNameTable[UNK_6061932.tempSprite[6]];

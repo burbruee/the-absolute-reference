@@ -244,7 +244,7 @@ static void UNK_6011AD2(uint32_t score, int16_t y, int16_t x) {
 
 	x += 80;
 	for (int16_t i = 0; i < 6; i++) {
-		DisplayObject(ObjectTableRankingChars[16u + (score & 0xFu) % 10u], y, x, 0u, 110u);
+		DisplayObject(ObjectTableRankingChars[(16u + score % 10u) & 0x1Fu], y, x, 0u, 110u);
 		score /= 10u;
 		x -= 16;
 		if (score == 0u) {

@@ -94,13 +94,13 @@ static void UpdateEntityNewChallenger(Entity* entity) {
 		}
 
 		if (--entity->displayFrames != 0) {
-			SpriteScale scaleY = F32I(data->scaleY);
+			SpriteScale scaleY = (SpriteScale)F32I(data->scaleY);
 			int16_t y = (0x40 - F32I(data->scaleY)) * 20;
 			if (y < 0) {
 				y += 127;
 			}
 			// TODO: See what index 1 of the object table is.
-			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, PALNUM_TEXTOVERLAYBG, 125u, F32I(data->scaleY), UNSCALED, false);
+			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, PALNUM_TEXTOVERLAYBG, 125u, (SpriteScale)F32I(data->scaleY), UNSCALED, false);
 		}
 		else {
 			GameFlags &= ~GAME_CHALLENGEDELAY;

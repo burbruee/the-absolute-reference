@@ -91,7 +91,7 @@ static void UpdateEntityFireworks(Entity* entity) {
 		&data->objectTable[entity->frames],
 		data->y - scaleOffset,
 		data->x - scaleOffset,
-		data->palNum,
+		(uint8_t)data->palNum,
 		115u,
 		entity->frames + UNSCALED,
 		entity->frames + UNSCALED,
@@ -128,7 +128,7 @@ static void UpdateEntityAllClear(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	data->palNum = PalNumTableFireworks[Rand(5u)];
 	if (entity->frames < 32) {
-		DisplayObject(&data->objectTable[entity->frames], data->y - 32, data->x - 32, data->palNum, 115u);
+		DisplayObject(&data->objectTable[entity->frames], data->y - 32, data->x - 32, (uint8_t)data->palNum, 115u);
 	}
 
 	uint8_t palNum = ScreenTime % 4 == 0u ? 2u : 8u;
@@ -431,7 +431,7 @@ static void DisplayThrownOutActiveBlock(Player* player, int16_t x, int16_t y, in
 		BlockDefSquare* blockDefSquare = BLOCKDEFROW(blockDef, rotation, row);
 		for (int16_t col = 0; col < 4; col++, squareX += pixelSpread, blockDefSquare++) {
 			if (*blockDefSquare != DEFBLOCK_EMPTY) {
-				DisplayObjectEx(blockObject, squareY, squareX, palNum, 100u, scale, scale, false);
+				DisplayObjectEx(blockObject, squareY, squareX, (uint8_t)palNum, 100u, scale, scale, false);
 			}
 		}
 	}

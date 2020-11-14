@@ -216,7 +216,7 @@ void ShowRankingCode(Player* player) {
 		for (size_t col = 0u; col < NUMRANKINGCODEDIGITS / 2; col++, offsetX += 10) {
 			charOut[0] = *codeChar++;
 			charOut[1] = '\0';
-			ShowPalCycleText(player->screenPos[0] + offsetX - 40, 150 + row * 12, charOut, true);
+			ShowPalCycleText(player->screenPos[0] + offsetX - 40, (int16_t)(150 + row * 12), charOut, true);
 		}
 	}
 }

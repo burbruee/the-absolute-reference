@@ -24,7 +24,7 @@ void ShowItemEffect(Player* player, int16_t row, int16_t col) {
 
 static void UpdateEntityItemEffect(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObject(&data->objectTable[entity->frame], data->y, data->x, data->palNum, 115u);
+	DisplayObject(&data->objectTable[entity->frame], data->y, data->x, (uint8_t)data->palNum, 115u);
 	if (CurrentPauseMode < PAUSEMODE_GAME && ++entity->frame >= 14) {
 		FreeEntity(entity);
 	}

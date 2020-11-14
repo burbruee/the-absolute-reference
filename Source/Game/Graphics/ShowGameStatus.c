@@ -367,6 +367,9 @@ void ShowOtherItemDescriptions(Item* item) {
 					break;
 
 				default:
+					// BUG: The original didn't handle the default case. This was added just to silence compiler warnings.
+					y = player->screenPos[1] + 5;
+					x = player->screenPos[0] + 30;
 					break;
 				}
 
@@ -538,15 +541,15 @@ void ShowCredits() {
 			if (*Credits != 0) {
 				ShowNumCredits(*Credits, 267, 228);
 			}
-			else if (PayCoins[PLAYER1] != 0 && PayCoins[PLAYER1] != 0) {
-				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 218, 228, false);
-				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
+			else if (PayCoins[PLAYER1] != 0 && PayCoins[PLAYER2] != 0) {
+				ShowNumCoins(PayCoins[PLAYER1], (uint8_t)Settings[SETTING_PRICE1P], 218, 228, false);
+				ShowNumCoins(PayCoins[PLAYER2], (uint8_t)Settings[SETTING_PRICE2P], 251, 228, true);
 			}
 			else if (PayCoins[PLAYER1] != 0) {
-				ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 251, 228, true);
+				ShowNumCoins(PayCoins[PLAYER1], (uint8_t)Settings[SETTING_PRICE1P], 251, 228, true);
 			}
 			else if (PayCoins[PLAYER2] != 0) {
-				ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
+				ShowNumCoins(PayCoins[PLAYER2], (uint8_t)Settings[SETTING_PRICE2P], 251, 228, true);
 			}
 		}
 		else {
@@ -555,7 +558,7 @@ void ShowCredits() {
 					ShowNumCredits(Credits[PLAYER1], 10, 228);
 				}
 				else if (PayCoins[PLAYER1] != 0) {
-					ShowNumCoins(PayCoins[PLAYER1], Settings[SETTING_PRICE1P], 10, 228, true);
+					ShowNumCoins(PayCoins[PLAYER1], (uint8_t)Settings[SETTING_PRICE1P], 10, 228, true);
 				}
 			}
 			if (!(started & STARTED_PLAYER2)) {
@@ -563,7 +566,7 @@ void ShowCredits() {
 					ShowNumCredits(Credits[PLAYER2], 267, 228);
 				}
 				else if (PayCoins[PLAYER2] != 0) {
-					ShowNumCoins(PayCoins[PLAYER2], Settings[SETTING_PRICE2P], 251, 228, true);
+					ShowNumCoins(PayCoins[PLAYER2], (uint8_t)Settings[SETTING_PRICE2P], 251, 228, true);
 				}
 			}
 			if (Services != 0) {

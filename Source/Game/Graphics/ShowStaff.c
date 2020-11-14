@@ -378,8 +378,8 @@ static void UpdateEntityGrandMasterCongratulations(Entity* entity) {
 		player->screenPos[0] + ((scalePixelOffset * -40) >> 10),
 		179u,
 		125u,
-		player->scale,
-		player->scale,
+		(SpriteScale)player->scale,
+		(SpriteScale)player->scale,
 		false
 	);
 

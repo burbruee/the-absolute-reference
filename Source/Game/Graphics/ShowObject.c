@@ -19,7 +19,7 @@ void ShowObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, 
 
 static void UpdateEntityObject(Entity* entity) {
 	ENTITY_BUFFER_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObject(data->objectTable, data->y, data->x, data->palNum, data->layer);
+	DisplayObject(data->objectTable, data->y, data->x, (uint8_t)data->palNum, data->layer);
 	FreeEntity(entity);
 }
 
@@ -44,6 +44,6 @@ void ShowObjectEx(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum
 
 static void UpdateEntityObjectEx(Entity* entity) {
 	ENTITY_BUFFER_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObjectEx(data->objectTable, data->y, data->x, data->palNum, data->layer, data->scaleY, data->scaleX, data->alpha);
+	DisplayObjectEx(data->objectTable, data->y, data->x, (uint8_t)data->palNum, data->layer, (SpriteScale)data->scaleY, (SpriteScale)data->scaleX, data->alpha);
 	FreeEntity(entity);
 }

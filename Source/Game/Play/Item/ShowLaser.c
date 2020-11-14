@@ -26,7 +26,7 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 
 static void UpdateEntityLaser(Entity* entity) {
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
-	DisplayObject(&data->objectTable[entity->laserAnimIndex], data->y, data->x, data->palNum, 124u);
+	DisplayObject(&data->objectTable[entity->laserAnimIndex], data->y, data->x, (uint8_t)data->palNum, 124u);
 
 	if (CurrentPauseMode < PAUSEMODE_GAME) {
 		if (++entity->laserFrames < 10) {

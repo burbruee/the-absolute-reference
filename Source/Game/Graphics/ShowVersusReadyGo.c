@@ -75,8 +75,8 @@ static void UpdateEntityVersusReadyGo(Entity* entity) {
 			data->scaleX = UNSCALED;
 		}
 
-		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
-		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
 
 		if (entity->values[0] != 0) {
 			break;
@@ -92,9 +92,9 @@ static void UpdateEntityVersusReadyGo(Entity* entity) {
 			data->scaleY = UNSCALED;
 		}
 
-		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
-		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
-		DisplayObjectEx(OBJECTPTR(0x179), data->y + 32, data->x, 0u, 110u, data->scaleY, UNSCALED, false);
+		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
+		DisplayObjectEx(OBJECTPTR(0x179), data->y + 32, data->x, 0u, 110u, (SpriteScale)data->scaleY, UNSCALED, false);
 
 		if (entity->values[0] != 0) {
 			break;
@@ -105,9 +105,9 @@ static void UpdateEntityVersusReadyGo(Entity* entity) {
 		break;
 
 	case 3u:
-		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
-		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, data->scaleX, false);
-		DisplayObjectEx(OBJECTPTR(0x17A), data->y + 32, data->x, 0u, 110u, data->scaleY, UNSCALED, false);
+		DisplayObjectEx(struct0->UNK_0, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_4, data->y, data->x, 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
+		DisplayObjectEx(OBJECTPTR(0x17A), data->y + 32, data->x, 0u, 110u, (SpriteScale)data->scaleY, UNSCALED, false);
 
 		if (entity->values[0] != 0) {
 			break;
@@ -126,19 +126,19 @@ static void UpdateEntityVersusReadyGo(Entity* entity) {
 		if (offsetX < 0) {
 			offsetX += UNSCALED;
 		}
-		DisplayObjectEx(struct0->UNK_0, data->y, data->x + offsetX / (UNSCALED + 1), 0u, 110u, UNSCALED, data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_0, data->y, data->x + offsetX / (UNSCALED + 1), 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
 
 		offsetX = struct0->UNK_9 * (UNSCALED + 1 - data->scaleX);
 		if (offsetX < 0) {
 			offsetX += UNSCALED;
 		}
-		DisplayObjectEx(struct0->UNK_4, data->y, data->x + offsetX / (UNSCALED + 1), 0u, 110u, UNSCALED, data->scaleX, false);
+		DisplayObjectEx(struct0->UNK_4, data->y, data->x + offsetX / (UNSCALED + 1), 0u, 110u, UNSCALED, (SpriteScale)data->scaleX, false);
 
 		offsetY = 0x18 * (UNSCALED + 1 - data->scaleX);
 		if (offsetY < 0) {
 			offsetY += UNSCALED;
 		}
-		DisplayObjectEx(OBJECTPTR(0x179), data->y + offsetY / (UNSCALED + 1) + 32, data->x, 0u, 110u, data->scaleX, UNSCALED, false);
+		DisplayObjectEx(OBJECTPTR(0x179), data->y + offsetY / (UNSCALED + 1) + 32, data->x, 0u, 110u, (SpriteScale)data->scaleX, UNSCALED, false);
 
 		if (entity->values[0] != 0) {
 			break;
