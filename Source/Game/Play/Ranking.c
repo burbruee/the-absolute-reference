@@ -244,8 +244,7 @@ static void UNK_6011AD2(uint32_t score, int16_t y, int16_t x) {
 
 	x += 80;
 	for (int16_t i = 0; i < 6; i++) {
-		uint8_t digit = score % 10u;
-		DisplayObject(ObjectTableRankingChars[0x10 + digit], y, x, 0u, 110u);
+		DisplayObject(ObjectTableRankingChars[16u + (score & 0xFu) % 10u], y, x, 0u, 110u);
 		score /= 10u;
 		x -= 16;
 		if (score == 0u) {
@@ -274,8 +273,8 @@ static void ShowRankingScore(uint32_t score, int16_t y, int16_t x) {
 
 	x += 60;
 	for (int16_t i = 0; i < 6; i++, x -= 12) {
-		DisplayObject(ObjectTableRankingDigits[score % 10], y, x, 0u, 110u);
-		if ((score /= 10) == 0u) {
+		DisplayObject(ObjectTableRankingDigits[(score & 0xFu) % 10u], y, x, 0u, 110u);
+		if ((score /= 10u) == 0u) {
 			break;
 		}
 	}
@@ -362,8 +361,11 @@ static void UpdateEntityRanking(Entity* entity) {
 	ENTITY_INST_DATA_PTR(RankingInstanceData, data, entity);
 
 	if (entity->values[3] == 0) {
-		if (data->lineX != 0 && (data->lineX += 24) > 0) {
-			data->lineX = 0;
+		if (data->lineX != 0) {
+			data->lineX += 24;
+			if (data->lineX > 0) {
+				data->lineX = 0;
+			}
 		}
 	}
 	else {
@@ -396,7 +398,7 @@ static void UpdateEntityRanking(Entity* entity) {
 	case RANKINGSCREEN_MASTER:
 		DisplayObject(ObjectTableRankingChars[data->index + 16], y, x0, 0, 110u);
 		ShowRankingName(ranking->name, y, x + 31, 0u, 110u);
-		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data)], y, x + 85, 0u, 110u);
+		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data) % NUMPLAYERGRADES], y, x + 85, 0u, 110u);
 		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 126);
 		ShowRankingMedals(*(uint16_t*)data->rankingExtras, y, x + 215);
 		if (RANKINGDATA_GETORANGELINE(ranking->data)) {
@@ -426,7 +428,7 @@ static void UpdateEntityRanking(Entity* entity) {
 		DisplayObject(OBJECTPTR(0x228), y1, x + 34, 0u, 110u);
 		ShowStatusNumEx(NextSectionLevels[data->index], y1, x + 42, 0u, 40u, 3, false, NUMALIGN_RIGHT);
 		ShowRankingName(ranking->name, y, x + 97, 0u, 110u);
-		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data)], y, x + 166, 0, 110u);
+		DisplayObject(UNK_3B0EC[RANKINGDATA_GETGRADE(ranking->data) % NUMPLAYERGRADES], y, x + 166, 0, 110u);
 		ShowRankingTime(RANKINGDATA_GETVALUE(ranking->data), y1, x + 229);
 		if (RANKINGDATA_GETORANGELINE(ranking->data)) {
 			DisplayObjectEx(OBJECTPTR(0x265), y0, data->lineX, 202u, 40u, 0xCu, UNSCALED, false);
@@ -691,7 +693,7 @@ bool LoadRankings() {
 static RankingPlace MasterRankingPlace(Player* player, Ranking* rankings, int16_t numRankings) {
 	Ranking* ranking = rankings;
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < numRankings; place++, ranking++) {
-		if (player->grade > RANKINGDATA_GETGRADE(ranking->data)) {
+		if ((uint32_t)player->grade > RANKINGDATA_GETGRADE(ranking->data)) {
 			return place;
 		}
 		else if (player->grade == RANKINGDATA_GETGRADE(ranking->data)) {

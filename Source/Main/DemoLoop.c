@@ -19,6 +19,7 @@
 #include "Sound/Sound.h"
 #include "Lib/Math.h"
 #include "Config.h"
+#include <assert.h>
 
 ROMDATA Color UNK_6033790[NUMPALCOLORS_4BPP];
 
@@ -451,7 +452,7 @@ static ScreenState StartVersionTitleScreen() {
 	uint16_t palCycleFrames = 0;
 	bool palCycleState = false;
 	int16_t frames = 600;
-	int16_t var0 = 0;
+	size_t var0 = 0u;
 	bool var1 = false;
 	while (true) {
 		if (UpdateFrame()) {
@@ -636,6 +637,7 @@ static ScreenState StartDemoScreen() {
 			default:
 				break;
 			}
+			assert(demoReplayInput != NULL);
 
 			uint32_t backupSeed = InitSeed;
 			InitSeed = (int32_t)initSeed1p;

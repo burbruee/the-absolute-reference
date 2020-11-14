@@ -121,9 +121,9 @@ void UNK_60237DE() {
 			UNK_606005C = UNK_60AD218;
 			if (CurrentPauseMode < PAUSEMODE_GAME) {
 				int16_t i = UNK_60AD218->UNK_18;
-				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 0; i--, var1 += 4u) {
-					UNK_6060064 = var1 - 3;
-					UNK_6060060 = var1;
+				for (void** var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 0; i--, var1 += 4u) {
+					UNK_6060064 = (uint16_t*)(var1 - 3);
+					UNK_6060060 = (void(**)())var1;
 					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
@@ -132,9 +132,9 @@ void UNK_60237DE() {
 			}
 			else if (UNK_60AD218->UNK_300[4 * 15 + 2] != UNK_6023788) {
 				int16_t i = UNK_60AD218->UNK_18;
-				for (void* var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 1; i--, var1 += 4u) {
-					UNK_6060064 = var1 - 3;
-					UNK_6060060 = var1;
+				for (void** var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 1; i--, var1 += 4u) {
+					UNK_6060064 = (uint16_t*)(var1 - 3);
+					UNK_6060060 = (void(**)())var1;
 					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
@@ -199,12 +199,13 @@ bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t a
 	else {
 		var0 = arg0->UNK_300[4 * 14 + 3];
 		size_t i;
-		for (i = 0u; i < arg0->UNK_18 && var1 != UNK_602378C; i++) {
+		if (arg0->UNK_18 != 0) {
 			var1 = *var0;
-			if (i > 14u) {
-				return false;
+			for (i = 0u; i < arg0->UNK_18 && var1 != UNK_602378C; i++, var0 -= 4, var1 = *var0) {
+				if (i > 14u) {
+					return false;
+				}
 			}
-			var0 -= 4;
 		}
 		if (i >= arg0->UNK_18) {
 			arg0->UNK_18++;
@@ -220,7 +221,7 @@ bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t a
 
 void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
 	void** var1;
-	uint8_t var0;
+	size_t var0;
 	if (arg0->UNK_18 == 0u) {
 		var0 = 0u;
 		var1 = &arg0->UNK_300[4 * 14 + 3];
@@ -229,9 +230,7 @@ void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
 	else {
 		var1 = &arg0->UNK_300[4 * 14 + 3];
 		size_t i = 0u;
-		while (i < arg0->UNK_18 && *var1 != UNK_602378C) {
-			var1 -= 4;
-		}
+		for (i = 0u; i < arg0->UNK_18 && *var1 != UNK_602378C; i++, var1 -= 4);
 		var0 = i;
 		if (i >= arg0->UNK_18) {
 			arg0->UNK_18++;
@@ -244,7 +243,7 @@ void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
 	void** var4;
 	for (i = 0u; i < 4u; i++) {
 		if (arg0->UNK_1C[i] == 0u) {
-			arg0->UNK_1C[i] = var0 + 1u;
+			arg0->UNK_1C[i] = (uint8_t)(var0 + 1u);
 			// TODO: This is some strange pointer math, and might have to be completely changed for the code to work.
 			var4 = arg0->UNK_100[i];
 			*var3 = (void*)((uintptr_t)var4 | (i << 28));

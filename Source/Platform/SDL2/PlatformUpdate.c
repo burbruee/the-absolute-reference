@@ -147,7 +147,7 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Texture* framebufferTexture = NULL;
 
-void ExitHandler() {
+void ExitHandler(void) {
 	free(TileData);
 
 	SDL_DestroyRenderer(renderer);
@@ -157,7 +157,7 @@ void ExitHandler() {
 
 uint32_t PlatformInit() {
 	// Non-TAP, platform initialization.
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN);
@@ -171,9 +171,18 @@ uint32_t PlatformInit() {
 
 	{
 		TileData = malloc(NUMTILEROMS * TILEROM_SIZE);
+		if (!TileData) {
+			exit(EXIT_FAILURE);
+		}
 		uint8_t* const tileDataTemp = malloc(NUMTILEROMS * TILEROM_SIZE);
+		if (!tileDataTemp) {
+			exit(EXIT_FAILURE);
+		}
 		for (size_t i = 0u; i < NUMTILEROMS; i++) {
 			FILE* const file = fopen(TileRomFileNames[i], "rb");
+			if (!file) {
+				exit(EXIT_FAILURE);
+			}
 			fread(&tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE, 1u, file);
 			fclose(file);
 		}
@@ -193,9 +202,21 @@ uint32_t PlatformInit() {
 
 	{
 		uint8_t* programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+		if (!programData) {
+			exit(EXIT_FAILURE);
+		}
 		uint8_t* programTemp = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+		if (!programTemp) {
+			exit(EXIT_FAILURE);
+		}
 		FILE* programHighFile = fopen("Roms/2b.u21", "rb");
+		if (!programHighFile) {
+			exit(EXIT_FAILURE);
+		}
 		FILE* programLowFile = fopen("Roms/1b.u22", "rb");
+		if (!programLowFile) {
+			exit(EXIT_FAILURE);
+		}
 		fread(&programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE, 1u, programHighFile);
 		fread(&programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE, 1u, programLowFile);
 		fclose(programHighFile);
@@ -438,7 +459,7 @@ void PlatformFinishUpdate() {
 		// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
 		// locked texture.
 		// -Brandon McGriff
-		memcpy(pixels + y * pitch, framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
+		memcpy(&((uint8_t*)pixels)[y * pitch], framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
 	}
 	SDL_UnlockTexture(framebufferTexture);
 
