@@ -87,8 +87,8 @@ void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 			player->levelScaleV = F16(4, 0x00);
 		}
 
-		int16_t offsetX = -(F16I(player->levelScale) << 5) / ((UNSCALED + 1) * 2);
-		int16_t offsetY = -(F16I(player->levelScale) << 3) / ((UNSCALED + 1) * 2);
+		int16_t offsetX = ((int16_t)F16I(player->levelScale) * -0x20) / ((UNSCALED + 1) * 2);
+		int16_t offsetY = ((int16_t)F16I(player->levelScale) * -0x08) / ((UNSCALED + 1) * 2);
 		SpriteScale levelScale = SPRITESCALE(F16I(player->levelScale));
 		DisplayObjectEx(OBJECT_LEVELLABEL, y + offsetY, x + offsetX, PALNUM_OBJECT, 110, levelScale, levelScale, false);
 	}
@@ -719,7 +719,7 @@ void ShowPlayersStatus() {
 			SelectPlayerStatusColor(player, statusPalNums);
 
 			ShowLevelLabel(player, levelY, playerNum == PLAYER1 ? 62 : 226);
-			ShowLevel(player, NextSectionLevels[2], levelY, playerNum == PLAYER1 ? 69 : 226, *progressPalNum);
+			ShowLevel(player, NextSectionLevels[2], levelY + 13, playerNum == PLAYER1 ? 69 : 226, *progressPalNum);
 		}
 	}
 	else if (GameFlags & GAME_TWIN) {
@@ -750,10 +750,10 @@ void ShowPlayersStatus() {
 
 			ShowStatusNumEx(player->score, 145, player->num == PLAYER1 ? 108 : 268, *progressPalNum, 40u, 6, false, NUMALIGN_CENTER);
 			if (player->modeFlags & (MODE_MASTER | MODE_TGMPLUS | MODE_TADEATH)) {
-				ShowLevel(player, NextSectionLevels[player->section], levelY, playerNum == PLAYER1 ? 108 : 268, *progressPalNum);
+				ShowLevel(player, NextSectionLevels[player->section], levelY + 13, playerNum == PLAYER1 ? 108 : 268, *progressPalNum);
 			}
 			else {
-				ShowLevel(player, NextSectionLevels[2], levelY, playerNum == PLAYER1 ? 108 : 268, *progressPalNum);
+				ShowLevel(player, NextSectionLevels[2], levelY + 13, playerNum == PLAYER1 ? 108 : 268, *progressPalNum);
 			}
 		}
 		ShowVersusWins(false);
@@ -772,10 +772,10 @@ void ShowPlayersStatus() {
 			ShowLevelLabel(player, 167, playerNum == PLAYER1 ? 111 : 178);
 
 			if (Demo) {
-				ShowLevel(player, NextSectionLevels[2], levelY, playerNum == PLAYER1 ? 111 : 185, *progressPalNum);
+				ShowLevel(player, NextSectionLevels[2], levelY + 13, playerNum == PLAYER1 ? 111 : 185, *progressPalNum);
 			}
 			else {
-				ShowLevel(player, NextSectionLevels[Settings[SETTING_MAXVERSUSSECTION]], levelY, playerNum == PLAYER1 ? 111 : 185, *progressPalNum);
+				ShowLevel(player, NextSectionLevels[Settings[SETTING_MAXVERSUSSECTION]], levelY + 13, playerNum == PLAYER1 ? 111 : 185, *progressPalNum);
 			}
 
 			ShowItemDescription(player);

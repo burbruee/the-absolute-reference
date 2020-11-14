@@ -54,7 +54,8 @@ void DisplayObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNu
 	}
 	else {
 		while (numSprites-- != 0) {
-			AddObjectSprite(curData++, y, x, OBJECT_GETPALNUM(object), layer, 0x3F, 0x3F, etc);
+			AddObjectSprite(curData, y, x, OBJECT_GETPALNUM(curData), layer, 0x3F, 0x3F, etc);
+			curData++;
 		}
 	}
 }

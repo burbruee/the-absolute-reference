@@ -39,7 +39,8 @@ typedef enum BlockType {
 	NUMBLOCKTYPES
 } BlockType;
 
-#define TOBLOCKNUM(blockType) ((blockType) - 2u)
-#define TOBLOCKTYPE(blockNum) ((blockNum) + 2u)
-#define TOBLOCKFLASHFRAMES(frames) (((frames) & 7) << 4)
-#define GETBLOCKFLASHFRAMES(block) (((block) & BLOCK_FLASHFRAMES) >> 4)
+#define TOBLOCKNUM(blockType) ((uint8_t)(blockType) - 2u)
+#define TOBLOCKTYPE(blockNum) ((BlockType)((blockNum) + 2u))
+#define TOBLOCKFLASHFRAMES(frames) ((Block)(((frames) & 7) << 4))
+#define GETBLOCKFLASHFRAMES(block) ((uint8_t)(((block) & BLOCK_FLASHFRAMES) >> 4))
+#define SETBLOCKFLASHFRAMES(block, frames) ((block) = ((block) & ~BLOCK_FLASHFRAMES) | TOBLOCKFLASHFRAMES((frames)))

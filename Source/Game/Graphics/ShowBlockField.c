@@ -6,6 +6,7 @@
 #include "Video/Video.h"
 #include "Video/Pal.h"
 #include "Lib/Math.h"
+#include <inttypes.h>
 #include <assert.h>
 
 const uint16_t PalNumTableNormalBlocks[NUMBLOCKTYPES] = { 58u, 68u, 78u, 88u, 98u, 108u, 118u, 48u, 128u, 138u };
@@ -87,7 +88,7 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 			}
 
 			startX = player->screenPos[0] + player->screenOffset[0] + col * 8 - (player->matrixWidth / 2) * 8;
-			startY = player->screenPos[1] + player->screenPos[1] - (player->matrixHeight + 3) * 8 - startY;
+			startY = player->screenPos[1] + player->screenOffset[1] - (player->matrixHeight + 3) * 8 - startY;
 			palNum = 9;
 		}
 		else {
@@ -117,13 +118,13 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 		if (showBlockType == SHOWBLOCKTYPE_TLS) {
 			block = player->activeBlock;
 			rotation = player->activeRotation;
-			int16_t col = F32I(player->activePos[0]), row = StepGravity(player, F32(20, 0x0000));
+			int16_t col = F32I(player->activePos[0]), row = F32IRVALUE(StepGravity(player, F32(20, 0x0000)));
 			if (block & BLOCK_BIG) {
 				row++;
 				col -= 2;
 			}
 			startX = player->screenPos[0] + player->screenOffset[0] + col * 8 - (player->matrixWidth / 2) * 8;
-			startY = player->screenPos[1] + player->screenOffset[1] + (player->matrixHeight - row - 2) * 8 - (player->matrixHeight - 2) * 8 - 6;
+			startY = player->screenPos[1] + player->screenOffset[1] - row * 8 - 6;
 			palNum = 4;
 		}
 
@@ -221,7 +222,7 @@ void ShowField(Player* player) {
 	}
 	DisplayObject(fieldBorderObject, y, x, palNum, LAYER_MATRIX);
 
-	for (int16_t row = 0, displayY = y - ((player->matrixHeight - 1) * 8 + 6); row < player->matrixHeight; row++, displayY += 8) {
+	for (int16_t row = 0, displayY = y - (player->matrixHeight - 1) * 8 - 6; row < player->matrixHeight; row++, displayY += 8) {
 		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
 			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
 			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
@@ -270,7 +271,7 @@ void ShowField(Player* player) {
 				}
 
 				if (!(block & BLOCK_FLASH)) {
-					const uint8_t blockNum = TOBLOCKNUM((size_t)block & BLOCK_TYPE);
+					const uint8_t blockNum = TOBLOCKNUM(block & BLOCK_TYPE);
 					assert(blockNum < lengthof(PalNumTableNormalBlocks));
 					uint8_t blockPalNum = PalNumTableNormalBlocks[blockNum] + 5u;
 					if (player->activeItemType == ITEMTYPE_GAMEOVER) {
@@ -299,12 +300,12 @@ void ShowField(Player* player) {
 					}
 				}
 				else {
-					const uint8_t flashFrames = GETBLOCKFLASHFRAMES(block) - 1;
-					if (flashFrames == 0) {
+					const uint8_t flashFrames = GETBLOCKFLASHFRAMES(block);
+					if (flashFrames - 1 == 0) {
 						block &= ~BLOCK_FLASH;
 					}
 					else {
-						block = (block & ~BLOCK_FLASHFRAMES) | TOBLOCKFLASHFRAMES(flashFrames);
+						SETBLOCKFLASHFRAMES(block, flashFrames - 1);
 					}
 					MATRIX(player, player->matrixHeight - row - 1, col).block = block;
 					palNum = 137u;
@@ -355,7 +356,7 @@ void ShowFieldPlus(Player* player) {
 
 	TEMPPTR(ObjectData, blockObject);
 	size_t numBlockObjects = 0u;
-	for (int16_t row = 0, displayY = y - ((player->matrixHeight - 1) * 8 - 6); row < player->matrixHeight; row++, displayY += 8) {
+	for (int16_t row = 0, displayY = y - (player->matrixHeight - 1) * 8 - 6; row < player->matrixHeight; row++, displayY += 8) {
 		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
 			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
 			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
@@ -407,13 +408,13 @@ void ShowFieldPlus(Player* player) {
 						block &= ~BLOCK_FLASH;
 					}
 					else {
-						block = (block & BLOCK_FLASHFRAMES) | TOBLOCKFLASHFRAMES(flashFrames - 1);
+						SETBLOCKFLASHFRAMES(block, flashFrames - 1);
 					}
 					MATRIX(player, player->matrixHeight - row - 1, col).block = block;
 					palNum = 137u;
 				}
 				else {
-					const uint8_t blockNum = TOBLOCKNUM(block);
+					const uint8_t blockNum = TOBLOCKNUM(block & BLOCK_TYPE);
 					assert(blockNum < lengthof(PalNumTableNormalBlocks));
 					palNum = PalNumTableNormalBlocks[blockNum] + 5u;
 					if (player->activeItemType == ITEMTYPE_GAMEOVER) {
@@ -466,13 +467,13 @@ void ShowFieldPlus(Player* player) {
 					for (size_t i = 0; i < sizeof(ObjectData) / sizeof(uint16_t); i++) {
 						(*blockObject)[i] = (*srcBlockObject)[i];
 					}
-					// NOTE: This sets the object's X position to the block's X
-					// position and the number of sprites to 1 for the object;
-					// the setting of the number of sprites is unnecessary, as
-					// the code modifies the sprite number field below to
-					// display in 32-sprite chunks, but the setting is kept
+					// NOTE: This sets the object's number of sprites to 1; the
+					// setting of the number of sprites is unnecessary, as the
+					// code modifies the sprite number field below to display
+					// in 31-sprite or less chunks, but the setting is kept
 					// here for documentation.
-					(*blockObject)[1] = (displayX & 0x3FF) | 0x400;
+					OBJECT_SETX(blockObject, displayX);
+					OBJECT_SETNUMSPRITES(blockObject, 1u);
 					OBJECT_SETY(blockObject, displayY);
 					OBJECT_SETPALNUM(blockObject, palNum);
 					blockObject++;
@@ -485,7 +486,6 @@ void ShowFieldPlus(Player* player) {
 	TEMPPTR(ObjectData, blocksObject);
 	while (numBlockObjects != 0u) {
 		size_t stride = numBlockObjects < 32u ? numBlockObjects : 31u;
-		(*blocksObject)[1] &= 0x3FF;
 		OBJECT_SETNUMSPRITES(blocksObject, stride);
 		DisplayObject(blocksObject, 0, 0, 0u, LAYER_MATRIX);
 		blocksObject += stride;

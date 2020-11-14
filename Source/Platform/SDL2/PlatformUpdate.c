@@ -240,9 +240,6 @@ uint32_t PlatformInit() {
 			DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
 		}
 
-		for (size_t i = 0u; i < lengthoffield(PalData, header); i++) {
-			putchar(Pal.header[i]);
-		}
 		for (size_t i = 0u; i < lengthof(Pal.data); i++) {
 			Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
 		}

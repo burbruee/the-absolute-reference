@@ -26,21 +26,21 @@ typedef int32_t Fixed32;
 #define F32FRVALUE(v) ((uint16_t)(v))
 
 typedef uint32_t UFixed32;
-#define UF32(i, f) (((uint32_t)(i) << 16) | ((uint32_t)(f) & 0xFFFFu))
+#define UF32(i, f) (((uint32_t)(i) << 16) | ((uint16_t)(f)))
 #define UF32I(v) (*((uint16_t*)(v) + !BIGEND))
 #define UF32F(v) (*((uint16_t*)(v) +  BIGEND))
 #define UF32IRVALUE(v) ((uint16_t)((v) >> 16))
 #define UF32FRVALUE(v) ((uint16_t)(v))
 
 typedef int16_t Fixed16;
-#define F16(i, f) (((int16_t)(i) << 8) | ((uint16_t)(f) & 0xFFu))
+#define F16(i, f) (((int16_t)(i) << 8) | ((uint8_t)(f)))
 #define F16I(v) (*(( int8_t*)(&v) + !BIGEND))
 #define F16F(v) (*((uint8_t*)(&v) +  BIGEND))
 #define F16IRVALUE(v) ((int8_t)((v) >> 16))
 #define F16FRVALUE(v) ((uint8_t)(v))
 
 typedef uint16_t UFixed16;
-#define UF16(i, f) (((uint16_t)(i) << 8) | ((uint16_t)(f) & 0xFFu))
+#define UF16(i, f) (((uint16_t)(i) << 8) | ((uint8_t)(f)))
 #define UF16I(v) (*((uint8_t*)(&v) + !BIGEND))
 #define UF16F(v) (*((uint8_t*)(&v) +  BIGEND))
 #define UF16IRVALUE(v) ((uint8_t)((v) >> 16))

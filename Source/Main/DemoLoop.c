@@ -595,8 +595,8 @@ static ScreenState StartDemoScreen() {
 			SetPal(246u, 10u, PALPTR(0x1D6));
 			SetPal(157u, 1u, PAL_TEXTOVERLAYBG);
 			UNK_60169DC();
-			Players[PLAYER1].nowFlags = NOW_BIT3 | NOW_STARTED;
-			Players[PLAYER2].nowFlags = NOW_BIT3 | NOW_STARTED;
+			Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED;
+			Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED;
 			Game.music = -1;
 			int16_t initSeed1p = 0, initSeed2p = 0; // BUG: Original didn't initialize these. Not really required, but it silences a compiler warning.
 			ButtonInput* demoReplayInput = NULL;

@@ -31,7 +31,7 @@
 #define ENTRY_ROW (MATRIX_HEIGHT - 1)
 // Top-most position within the entry row; using this causes entered
 // tetrominoes to initially float in sub-1G gravity.
-#define ENTRYPOS_Y (F16(ENTRY_ROW, 0xFFFF))
+#define ENTRYPOS_Y (F32(ENTRY_ROW, 0xFFFF))
 
 // A matrix is made of blocks of this type.
 // This type of block is not for use with tetrominoes.

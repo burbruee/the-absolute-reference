@@ -315,21 +315,23 @@ void InitPlayer(PlayerNum playerNum) {
 		InitSeed += Rand(1192u) + 1u;
 	}
 	player->seed = InitSeed;
-	uint8_t nextBlockNum = 0u; // BUG: Uninitialized, though the code guarantees it won't be read uninitialized; initialization added just to silence compiler warning.
-	bool rejected = true;
-	while (rejected) {
-		uint8_t nextBlockNum = GenNextInt(&player->seed, true) % 7;
-		if (nextBlockNum != TOBLOCKNUM(BLOCKTYPE_Z) && nextBlockNum != TOBLOCKNUM(BLOCKTYPE_S) && nextBlockNum != TOBLOCKNUM(BLOCKTYPE_O)) {
-			rejected = false;
+	uint8_t nextBlockNum = GenNextInt(&player->seed, true) % 7;
+	if (nextBlockNum == TOBLOCKNUM(BLOCKTYPE_Z) || nextBlockNum == TOBLOCKNUM(BLOCKTYPE_S) || nextBlockNum == TOBLOCKNUM(BLOCKTYPE_O)) {
+		bool rejected = true;
+		while (rejected) {
+			nextBlockNum = GenNextInt(&player->seed, true) % 7;
+			if (nextBlockNum != TOBLOCKNUM(BLOCKTYPE_Z) && nextBlockNum != TOBLOCKNUM(BLOCKTYPE_S) && nextBlockNum != TOBLOCKNUM(BLOCKTYPE_O)) {
+				rejected = false;
+			}
 		}
 	}
 	player->nextBlock = TOBLOCKTYPE(nextBlockNum);
 	size_t historyIndex = 0u;
-	for (; historyIndex < 2u; historyIndex++) {
+	for (; historyIndex < lengthoffield(Player, history) / 2; historyIndex++) {
 		player->history[historyIndex] = TOBLOCKNUM(BLOCKTYPE_Z);
 	}
-	for (uint8_t* historyEntry = &player->history[historyIndex]; historyIndex < lengthoffield(Player, history); historyIndex++) {
-		*historyEntry = TOBLOCKNUM(BLOCKTYPE_S);
+	for (; historyIndex < lengthoffield(Player, history); historyIndex++) {
+		player->history[historyIndex] = TOBLOCKNUM(BLOCKTYPE_S);
 	}
 	player->history[0] = TOBLOCKNUM(player->nextBlock & BLOCK_TYPE);
 
@@ -1185,7 +1187,7 @@ void NextPlayLock(Player* player) {
 
 	player->lockFrames = 0u;
 	ManualLockUnprotected[player->num] = false;
-	player->nowFlags &= NOW_SHOWTLSBLOCK;
+	player->nowFlags &= ~NOW_SHOWTLSBLOCK;
 	player->nowFlags |= NOW_LOCKING;
 }
 
@@ -1610,7 +1612,7 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 		if (F32I(landingRow) < F32I(player->activePos[1]) ) {
 			player->lockFrames = player->lockDelay;
 		}
-		F32I(player->activePos[1]) = landingRow;
+		player->activePos[1] = landingRow;
 	}
  
 	TEMPPTR(EntryData, entry);
@@ -1639,6 +1641,9 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 					if (ManualLockUnprotected[player->num]) {
 						player->lockFrames = 0;
 					}
+				}
+				else {
+					player->lockFrames = 0;
 				}
 			}
 		}
@@ -1829,7 +1834,7 @@ static inline void WriteBlockToMatrix(Player* player, const LockType lockType, c
 					}
 
 					if ((player->modeFlags & MODE_INVISIBLE) && lockType != LOCKTYPE_GAMEOVER && visibleFrames != 0) {
-						MATRIX(player, matrixRow, lockCol + blockCol).block |= BLOCK_INVISIBLE;
+						MATRIX(player, matrixRow, lockCol + blockCol).block |= BLOCK_FADING;
 						MATRIX(player, matrixRow, lockCol + blockCol).visibleFrames = visibleFrames;
 					}
 
@@ -2373,7 +2378,8 @@ void UpdatePlayNext(Player* player) {
 	player->activeBlock = player->nextBlock;
 	player->activeBlockItemType = player->nextBlockItemType;
 	uint8_t nextBlockNum;
-	for (uint8_t numRetries = Demo ? 6u : 5u; numRetries != 0u; numRetries--) {
+	for (uint8_t numRetries = Demo ? 6u : 5u; numRetries != 0u;) {
+		numRetries--;
 		nextBlockNum = GenNextBlockNum(player);
 		if (RANDOMIZER_USEHISTORY) {
 			int16_t numRejects = 0;
@@ -3298,9 +3304,9 @@ uint8_t NumSecretGradeRows(Player* player) {
 
 void SetFieldVisible(Player* player) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
-		MatrixBlock* square = &MATRIX(player, row, 1);
-		for (int16_t col = 1; col < player->matrixWidth - 1; col++, square++) {
-			square->block &= ~(BLOCK_FLASH | BLOCK_FADING | BLOCK_INVISIBLE);
+		MatrixBlock* matrixBlock = &MATRIX(player, row, 1);
+		for (int16_t col = 1; col < player->matrixWidth - 1; col++, matrixBlock++) {
+			matrixBlock->block &= ~(BLOCK_FLASH | BLOCK_FADING | BLOCK_INVISIBLE);
 		}
 	}
 }
