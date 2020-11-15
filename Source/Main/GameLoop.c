@@ -715,11 +715,14 @@ void UpdateGameMusic() {
 						if (Players[PLAYER1].nowFlags & NOW_WAITING) {
 							gameMusic1p = GAMEMUSIC_NEGATIVE;
 						}
-						if (Players[PLAYER1].play.state != PLAYSTATE_START || (Players[PLAYER2].nowFlags & NOW_PLAYING)) {
+						else if (Players[PLAYER1].play.state != PLAYSTATE_START || (Players[PLAYER2].nowFlags & NOW_PLAYING)) {
 							if (!(Players[PLAYER1].nowFlags & NOW_STOPPED)) {
 								if (!(GameFlags & GAME_TWIN)) {
 									if (!(Players[PLAYER1].modeFlags & MODE_DOUBLES)) {
 										gameMusic1p = UNK_6008E38(Players[PLAYER1].level);
+									}
+									else {
+										gameMusic1p = UNK_6008EC8(Players[PLAYER1].level);
 									}
 								}
 								else if (Players[PLAYER1].modeFlags & MODE_TADEATH) {
@@ -746,6 +749,9 @@ void UpdateGameMusic() {
 							}
 							else if (Players[PLAYER1].values[2] != 0) {
 								gameMusic1p = GAMEMUSIC_NEGATIVE;
+							}
+							else {
+								gameMusic1p = GAMEMUSIC_2;
 							}
 						}
 						else {
@@ -779,7 +785,7 @@ void UpdateGameMusic() {
 		if ((Players[PLAYER2].nowFlags & NOW_SELECTING) && (Players[PLAYER1].nowFlags & NOW_PLAYING) && !(Players[PLAYER1].nowFlags & NOW_STOPPED)) {
 			gameMusic2p = GAMEMUSIC_NEGATIVE;
 		}
-		if (!(Players[PLAYER2].nowFlags & NOW_NAMEENTRY)) {
+		else if (!(Players[PLAYER2].nowFlags & NOW_NAMEENTRY)) {
 			if (!(Players[PLAYER2].nowFlags & NOW_STAFF) || !(Players[PLAYER2].modeFlags & MODE_MASTER) || !(GameFlags & GAME_TWIN)) {
 				if (!(Players[PLAYER2].nowFlags & NOW_STAFF) || !(Players[PLAYER2].modeFlags & MODE_NORMAL) || !(GameFlags & GAME_TWIN)) {
 					if (!(Players[PLAYER2].nowFlags & NOW_STAFF) || !(Players[PLAYER2].modeFlags & (MODE_TGMPLUS | MODE_TADEATH)) || !(GameFlags & GAME_TWIN)) {
@@ -791,6 +797,9 @@ void UpdateGameMusic() {
 								if (!(GameFlags & GAME_TWIN)) {
 									if (!(Players[PLAYER2].modeFlags & MODE_DOUBLES)) {
 										gameMusic2p = UNK_6008E38(Players[PLAYER2].level);
+									}
+									else {
+										gameMusic2p = UNK_6008EC8(Players[PLAYER2].level);
 									}
 								}
 								else if (Players[PLAYER2].modeFlags & MODE_TADEATH) {
@@ -818,6 +827,9 @@ void UpdateGameMusic() {
 							else if (Players[PLAYER2].values[2] != 0) {
 								gameMusic2p = GAMEMUSIC_NEGATIVE;
 							}
+							else {
+								gameMusic2p = GAMEMUSIC_2;
+							}
 						}
 						else {
 							gameMusic2p = GAMEMUSIC_2;
@@ -843,22 +855,24 @@ void UpdateGameMusic() {
 		gameMusic2p = GAMEMUSIC_0;
 	}
 
-	if (gameMusic1p > GAMEMUSIC_NEGATIVE && gameMusic2p > GAMEMUSIC_NEGATIVE) {
-		GameMusic gameMusic;
-		if (gameMusic1p < gameMusic2p) {
-			gameMusic = gameMusic2p;
-		}
-		else {
-			gameMusic = gameMusic1p;
-		}
+	if (gameMusic1p <= GAMEMUSIC_NEGATIVE || gameMusic2p <= GAMEMUSIC_NEGATIVE) {
+		if (gameMusic1p > GAMEMUSIC_NEGATIVE || gameMusic2p > GAMEMUSIC_NEGATIVE) {
+			GameMusic gameMusic;
+			if (gameMusic1p == GAMEMUSIC_NEGATIVE) {
+				gameMusic = gameMusic2p;
+			}
+			else {
+				gameMusic = gameMusic1p;
+			}
 
-		if (Game.music != gameMusic) {
-			CurrentGameMusic = gameMusic;
+			if (Game.music != gameMusic) {
+				CurrentGameMusic = gameMusic;
+			}
 		}
 	}
-	else if (gameMusic1p > GAMEMUSIC_NEGATIVE || gameMusic2p > GAMEMUSIC_NEGATIVE) {
+	else {
 		GameMusic gameMusic;
-		if (gameMusic1p == GAMEMUSIC_NEGATIVE) {
+		if (gameMusic1p < gameMusic2p) {
 			gameMusic = gameMusic2p;
 		}
 		else {
@@ -893,10 +907,8 @@ void UpdateGameMusic() {
 			if (UNK_3A8CF[CurrentGameMusic][0] == 0u) {
 				UNK_6079296 = UNK_6079297;
 			}
-			else {
-				if (ScreenTime % UNK_3A8CF[CurrentGameMusic][0] == 0u) {
-					UNK_6079296 -= 1u;
-				}
+			else if (ScreenTime % UNK_3A8CF[CurrentGameMusic][0] == 0u) {
+				UNK_6079296--;
 			}
 
 			UNK_602E72A(UNK_6079296);
@@ -962,10 +974,8 @@ void UpdateGameMusic() {
 			if (UNK_3A8CF[CurrentGameMusic][1] == 0u) {
 				UNK_6079296 = UNK_6079297;
 			}
-			else {
-				if (ScreenTime % UNK_3A8CF[CurrentGameMusic][1] == 0u) {
-					UNK_6079296 += 1u;
-				}
+			else if (ScreenTime % UNK_3A8CF[CurrentGameMusic][1] == 0u) {
+				UNK_6079296++;
 			}
 		}
 		else {
