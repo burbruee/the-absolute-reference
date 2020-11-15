@@ -8,7 +8,7 @@
 #include "Game/Graphics/ShowClearTime.h"
 #include "Game/Graphics/ShowObject.h"
 #include "Main/MainLoop.h"
-#include "Main/DemoLoop.h"
+#include "Main/AttractLoop.h"
 #include "Input/Button.h"
 #include "Main/Frame.h"
 #include "Game/Save.h"
@@ -545,7 +545,7 @@ ScreenState ShowRankingScreen(RankingScreenState rankingScreen) {
 			}
 		}
 
-		if (MainLoop == MAINLOOP_DEMO && NextScreenVersionTitle()) {
+		if (MainLoop == MAINLOOP_ATTRACT && NextScreenVersionTitle()) {
 			UNK_602406E();
 			return SCREEN_VERSIONTITLE;
 		}

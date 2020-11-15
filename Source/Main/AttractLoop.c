@@ -1,4 +1,4 @@
-#include "Main/DemoLoop.h"
+#include "Main/AttractLoop.h"
 #include "Main/GameLoop.h"
 #include "Main/Frame.h"
 #include "Main/DemoReplayInput.h"
@@ -33,7 +33,7 @@ bool NextScreenVersionTitle() {
 		(CanStart(PLAYER2, false) && (ButtonsDown[PLAYER2] & (BUTTON_START | BUTTON_3 | BUTTON_2 | BUTTON_1)));
 }
 
-static void InitDemoLoop() {
+static void InitAttractLoop() {
 	UNK_6029814(0u, 0u, 0u, 0xFFu);
 	SpritePriority[0] = 0x13u;
 	SpritePriority[1] = 0x66u;
@@ -67,8 +67,8 @@ static ScreenState StartDeveloperScreen();
 static ScreenState StartVersionTitleScreen();
 static ScreenState StartDemoScreen();
 
-MainLoopState RunDemoLoop() {
-	InitDemoLoop();
+MainLoopState RunAttractLoop() {
+	InitAttractLoop();
 	DisablePause();
 
 	bool runDemoLoop = true;

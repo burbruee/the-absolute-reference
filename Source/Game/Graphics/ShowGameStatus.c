@@ -605,7 +605,7 @@ void ShowModeCodes(Player* player) {
 		layer = LAYER_GAMESTATUS;
 	}
 	else {
-		if (MainLoop == MAINLOOP_DEMO) {
+		if (MainLoop == MAINLOOP_ATTRACT) {
 			y = 180;
 			x = FieldPos[(player->num + 2) * 2];
 			layer = LAYER_GAMESTATUS;

@@ -1,5 +1,5 @@
 #include "Main/GameLoop.h"
-#include "Main/DemoLoop.h"
+#include "Main/AttractLoop.h"
 #include "Main/Frame.h"
 #include "Game/Play/Player.h"
 #include "Game/Play/Ranking.h"
@@ -137,7 +137,7 @@ MainLoopState RunGameLoop() {
 	}
 
 	Screen = SCREEN_NORMALRANKING;
-	return MAINLOOP_DEMO;
+	return MAINLOOP_ATTRACT;
 }
 
 GameLoopState InitGameLoop() {

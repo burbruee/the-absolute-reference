@@ -25,4 +25,4 @@ extern DemoScreenState DemoScreen;
 
 bool NextScreenVersionTitle();
 
-MainLoopState RunDemoLoop();
+MainLoopState RunAttractLoop();

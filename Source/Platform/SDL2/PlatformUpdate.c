@@ -1,7 +1,7 @@
 #include "PlatformUpdate.h"
 #include "Video/Video.h"
 #include "Main/MainLoop.h"
-#include "Main/DemoLoop.h"
+#include "Main/AttractLoop.h"
 #include "Main/GameLoop.h"
 #include "Main/Frame.h"
 #include "Main/DemoReplayInput.h"
@@ -319,7 +319,7 @@ uint32_t PlatformInit() {
 	Uptime = 0u;
 	UNK_606564C = 0u; // Set, but never used.
 	DisablePause();
-	MainLoop = MAINLOOP_DEMO;
+	MainLoop = MAINLOOP_ATTRACT;
     //UNK_602AC68(SystemGraphicDataPtr->UNK_118); // TODO: Sequence code. Seems to only be necessary in test mode.
 	SetPal(1u, 1u, Pal1);
 	UNK_602BC50(0u);

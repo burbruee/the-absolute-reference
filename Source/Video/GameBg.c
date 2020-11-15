@@ -65,7 +65,7 @@ void UNK_6016A30(uint8_t arg0) {
 
 	CurrentGameBg.UNK_13 = 2;
 	CurrentGameBg.darknesses[0] = 2;
-	if (MainLoop == MAINLOOP_DEMO) {
+	if (MainLoop == MAINLOOP_ATTRACT) {
 		if (Screen == SCREEN_VERSUSDEMO) {
 			CurrentGameBg.bgMapIndex = 10;
 		}
@@ -96,7 +96,7 @@ void UNK_6016B40() {
 		SetBgDarkness(CurrentGameBg.bgIndex, 63);
 		CurrentGameBg.UNK_13 = 3;
 		CurrentGameBg.darknesses[0] = 2;
-		if (MainLoop == MAINLOOP_DEMO) {
+		if (MainLoop == MAINLOOP_ATTRACT) {
 			CurrentGameBg.bgMapIndex = DemoSection;
 		}
 		else {
@@ -198,7 +198,7 @@ void UpdateGameBg() {
 				SetBgDarkness(CurrentGameBg.bgIndex, 63);
 				CurrentGameBg.UNK_13 = 3u;
 				CurrentGameBg.darknesses[0] = 2;
-				if (MainLoop == MAINLOOP_DEMO) {
+				if (MainLoop == MAINLOOP_ATTRACT) {
 					CurrentGameBg.bgMapIndex = DemoSection;
 				}
 				else {

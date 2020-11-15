@@ -85,7 +85,7 @@ set(EXECUTABLE_SOURCES
 	"../../Lib/LibC.c"
 	"../../Lib/Math.c"
 
-	"../../Main/DemoLoop.c"
+	"../../Main/AttractLoop.c"
 	"../../Main/Frame.c"
 	"../../Main/GameLoop.c"
 	"../../Main/Main.c"
@@ -188,7 +188,7 @@ set(EXECUTABLE_HEADERS
 	"../../Lib/Macros.h"
 	"../../Lib/Math.h"
 
-	"../../Main/DemoLoop.h"
+	"../../Main/AttractLoop.h"
 	"../../Main/DemoReplayInput.h"
 	"../../Main/Frame.h"
 	"../../Main/GameLoop.h"

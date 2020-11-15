@@ -1,5 +1,5 @@
 #include "Main/MainLoop.h"
-#include "Main/DemoLoop.h"
+#include "Main/AttractLoop.h"
 #include "Main/GameLoop.h"
 #include "Main/TestLoop.h"
 #include "Main/Frame.h"
@@ -7,7 +7,7 @@
 #include "Lib/Math.h"
 
 StartPlayerFlag StartPlayers = STARTPLAYER_NONE;
-MainLoopState MainLoop = MAINLOOP_DEMO;
+MainLoopState MainLoop = MAINLOOP_ATTRACT;
 
 void RunMainLoop() {
 	// TODO: Change "while (true)" here to something like "while (!QUIT)", so
@@ -21,8 +21,8 @@ void RunMainLoop() {
 		InitSeed += Rand(1192u) + 1u;
 
 		switch (MainLoop) {
-			case MAINLOOP_DEMO:
-				MainLoop = RunDemoLoop();
+			case MAINLOOP_ATTRACT:
+				MainLoop = RunAttractLoop();
 				continue;
 
 			case MAINLOOP_GAME:
@@ -37,6 +37,6 @@ void RunMainLoop() {
 				break;
 		}
 
-		MainLoop = MAINLOOP_DEMO;
+		MainLoop = MAINLOOP_ATTRACT;
 	}
 }

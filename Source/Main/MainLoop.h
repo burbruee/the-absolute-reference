@@ -11,7 +11,7 @@ typedef enum StartPlayerFlag {
 extern StartPlayerFlag StartPlayers;
 
 typedef enum MainLoopState {
-	MAINLOOP_DEMO,
+	MAINLOOP_ATTRACT,
 	MAINLOOP_GAME,
 	MAINLOOP_TEST
 } MainLoopState;
