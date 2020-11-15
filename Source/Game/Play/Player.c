@@ -1382,7 +1382,7 @@ void UpdateAutoshift(Player* player) {
 // check algorithm used, this assumption only works as long as all blocks are
 // polyominoes of some type; if a block were composed of multiple disconnected
 // pieces, that block could be judged as successfully rotated, in the case
-// where one of the pieces is outside the matrix, and that rotated block isn't
+// where one of the squares is outside the matrix, and that rotated block isn't
 // blocked by any matrix squares.
 
 static inline void CountBlockings(const Player* player, const int16_t col, const int16_t row, const Rotation rotation, const int16_t size, EntryData* entry) {
@@ -1497,7 +1497,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 						// position/rotation.
 
 						// I blocks never kick.
-						if ((player->activeBlock & BLOCK_TYPE) != BLOCKTYPE_I) {
+						if ((player->activeBlock & BLOCK_TYPE) == BLOCKTYPE_I) {
 							return true;
 						}
 
@@ -1538,7 +1538,7 @@ void CheckShiftActiveBlock(Player* player) {
 		if (player->level >= 400u) {
 			shiftDelay = 6u;
 		}
-		if (player->level >= 300) {
+		else if (player->level >= 300) {
 			shiftDelay = 8u;
 		}
 		else if (player->level >= 200) {
@@ -1560,24 +1560,30 @@ void CheckShiftActiveBlock(Player* player) {
 
 	ButtonInput shiftDirection = BUTTON_NONE;
 	if (GameButtonsDown[player->num] & BUTTON_LEFT) {
-		if (GameButtonsNew[player->num] & BUTTON_LEFT) {
-			shiftDirection = BUTTON_LEFT;
-		}
-		else if (player->autoshiftFrames < shiftDelay) {
-			player->autoshiftFrames++;
+		if (!(GameButtonsNew[player->num] & BUTTON_LEFT)) {
+			if (player->autoshiftFrames < shiftDelay) {
+				player->autoshiftFrames++;
+			}
+			else {
+				shiftDirection = BUTTON_LEFT;
+			}
 		}
 		else {
+			player->autoshiftFrames = 0u;
 			shiftDirection = BUTTON_LEFT;
 		}
 	}
 	if (GameButtonsDown[player->num] & BUTTON_RIGHT) {
-		if (GameButtonsNew[player->num] & BUTTON_RIGHT) {
-			shiftDirection = BUTTON_RIGHT;
-		}
-		else if (player->autoshiftFrames < shiftDelay) {
-			player->autoshiftFrames++;
+		if (!(GameButtonsNew[player->num] & BUTTON_RIGHT)) {
+			if (player->autoshiftFrames < shiftDelay) {
+				player->autoshiftFrames++;
+			}
+			else {
+				shiftDirection = BUTTON_RIGHT;
+			}
 		}
 		else {
+			player->autoshiftFrames = 0u;
 			shiftDirection = BUTTON_RIGHT;
 		}
 	}
@@ -1936,21 +1942,21 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		if ((1 << row) & lineFlags) {
 			ShowLineClear(player, row);
-			MatrixBlock* square = &MATRIX(player, row, 1);
-			for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-				if (square->block & BLOCK_HARD) {
+			MatrixBlock* matrixBlock = &MATRIX(player, row, 1);
+			for (int16_t col = 1; col < player->matrixWidth - 1; col++, matrixBlock++) {
+				if (matrixBlock->block & BLOCK_HARD) {
 					lineFlags |= LINEFLAG_HARDCLEAR;
 					lineFlags &= ~(1 << row);
-					square->block &= ~(BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL);
+					matrixBlock->block &= ~(BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL);
 				}
 				else {
-					if (square->block & BLOCK_ITEM) {
-						player->clearItemType = square->itemType;
+					if (matrixBlock->block & BLOCK_ITEM) {
+						player->clearItemType = matrixBlock->itemType;
 						player->itemEffectPos[0] = (uint8_t)col;
 						player->itemEffectPos[1] = (uint8_t)row;
 					}
-					square->block = NULLBLOCK;
-					square->itemType = ITEMTYPE_NULL;
+					matrixBlock->block = NULLBLOCK;
+					matrixBlock->itemType = ITEMTYPE_NULL;
 				}
 			}
 		}
@@ -2059,8 +2065,8 @@ void UpdatePlayLock(Player* player) {
 		pointsBaseValue = 0u;
 	}
 
-	numLines = NumLines(player, lineFlags);
-	if (numLines != 0u) {
+	uint8_t flaggedLines = NumLines(player, lineFlags);
+	if (flaggedLines != 0u) {
 		lineFlags &= ~LINEFLAG_HARDCLEAR;
 	}
 
@@ -2079,8 +2085,8 @@ void UpdatePlayLock(Player* player) {
 		}
 
 		if (versusGarbage) {
-			if (numLines > 1u && allClear) {
-				numLines = AllClearGarbage(player, numLines);
+			if (flaggedLines > 1u && allClear) {
+				flaggedLines = AllClearGarbage(player, flaggedLines);
 			}
 		}
 		else {
@@ -2089,28 +2095,29 @@ void UpdatePlayLock(Player* player) {
 	}
 
 	if (player->nowFlags & NOW_SKILLCOMBO) {
-		if (numLines == 0u) {
+		if (flaggedLines == 0u) {
 			player->nowFlags &= ~NOW_SKILLCOMBO;
 		}
 		else {
-			PlaySoundEffect(numLines >= numSkillClearLines ? SOUNDEFFECT_SURPRISE : SOUNDEFFECT_CHEER);
+			PlaySoundEffect(flaggedLines >= numSkillClearLines ? SOUNDEFFECT_SURPRISE : SOUNDEFFECT_CHEER);
 		}
 	}
-	else if (numLines >= numSkillClearLines) {
+	else if (flaggedLines >= numSkillClearLines) {
 		PlaySoundEffect(SOUNDEFFECT_APPLAUSE);
 		player->nowFlags |= NOW_SKILLCOMBO;
 	}
 
 	if (versusGarbage) {
-		if (player->otherPlayer->numGarbageRows + numLines > GARBAGEHEIGHT) {
-			numLines = GARBAGEHEIGHT - player->numGarbageRows;
+		if (player->otherPlayer->numGarbageRows + flaggedLines > GARBAGEHEIGHT) {
+			flaggedLines = GARBAGEHEIGHT - player->numGarbageRows;
 		}
 
 		if (player->clearItemType == ITEMTYPE_NULL) {
-			player->numGarbageRows += numLines;
+			player->numGarbageRows += flaggedLines;
 		}
 	}
 	if (lineFlags != LINEFLAG_NONE) {
+		player->lineFlags |= lineFlags;
 		NextPlayClear(player);
 		PlaySoundEffect(SOUNDEFFECT_CLEAR);
 	}
@@ -2171,6 +2178,7 @@ void UpdatePlayClear(Player* player) {
 				for (int16_t row = collapseRow; row < player->matrixHeight - 1; row++) {
 					for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 						MATRIX(player, row, col) = MATRIX(player, row + 1, col);
+						MATRIX(player, row, col).block &= ~BLOCK_FLASH;
 					}
 				}
 				// Set vanish row empty.
@@ -2187,8 +2195,8 @@ void UpdatePlayClear(Player* player) {
 					player->otherPlayer->activePos[1] -= F32(1, 0x0000);
 				}
 				// Remove collapsed row from the line flags then shift the flags a row down.
-				lineFlags &= ~(1 << collapseRow);
-				lineFlags >>= 1;
+				lineFlags = (lineFlags & ~(1 << collapseRow)) >> 1;
+				player->numLines++;
 			}
 		}
 		player->lineFlags = LINEFLAG_NONE;
@@ -2264,6 +2272,7 @@ void UpdatePlayClear(Player* player) {
 		if (player->clearItemType != ITEMTYPE_NULL) {
 			Item* item = AllocItem();
 			if (item != NULL) {
+				item->status = ITEMSTATUS_ACTIVE;
 				item->type = player->clearItemType;
 				item->activatingPlayer = player;
 			}
@@ -2377,6 +2386,7 @@ void UpdatePlayNext(Player* player) {
 	// Generate next block.
 	player->activeBlock = player->nextBlock;
 	player->activeBlockItemType = player->nextBlockItemType;
+	player->nextBlockItemType = ITEMTYPE_NULL;
 	uint8_t nextBlockNum;
 	for (uint8_t numRetries = Demo ? 6u : 5u; numRetries != 0u;) {
 		numRetries--;
@@ -2416,6 +2426,7 @@ void UpdatePlayNext(Player* player) {
 	}
 
 	// Entry position.
+	player->activeRotation = ROTATION_DOWN;
 	Fixed32 activeCol;
 	if (GameFlags & GAME_DOUBLES) {
 		if (player->num == PLAYER1) {
@@ -2443,6 +2454,7 @@ void UpdatePlayNext(Player* player) {
 		else {
 			initialRotation = ROTATE_RIGHT(player->activeRotation);
 		}
+		player->numActiveRotations++;
 
 		if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), initialRotation)) {
 			player->activeRotation = initialRotation;
@@ -2465,7 +2477,6 @@ void UpdatePlayNext(Player* player) {
 					Players[PLAYER1].showGameOver = false;
 
 					ShowGameOverFade(&Players[PLAYER1]);
-
 					LockActiveBlock(&Players[PLAYER1], LOCKTYPE_GAMEOVER);
 					LockActiveBlock(&Players[PLAYER2], LOCKTYPE_GAMEOVER);
 
@@ -2479,8 +2490,7 @@ void UpdatePlayNext(Player* player) {
 				}
 				else {
 					LockActiveBlock(player, LOCKTYPE_NORMAL);
-
-					ShowGameOverFade(player);
+					NextPlayGameOver(player);
 				}
 			}
 		}
@@ -2489,7 +2499,7 @@ void UpdatePlayNext(Player* player) {
 
 			player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
 
-			if (player->num != PLAYER2) {
+			if (player->num == PLAYER1) {
 				GameFlags |= GAME_WINNER2P;
 			}
 			else {
@@ -2499,9 +2509,9 @@ void UpdatePlayNext(Player* player) {
 		else {
 			if ((player->nowFlags & NOW_STAFF) && (player->modeFlags & (MODE_NORMAL | MODE_TGMPLUS | MODE_TADEATH))) {
 				player->values[1] = 1;
+				player->values[2] = 0;
 
 				ShowGameOverFade(player);
-
 				LockActiveBlock(player, LOCKTYPE_NORMAL);
 
 				player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
@@ -2513,7 +2523,7 @@ void UpdatePlayNext(Player* player) {
 
 				player->nowFlags &= ~(NOW_SHOWTLSBLOCK | NOW_SHOWACTIVEBLOCK);
 
-				ShowGameOverFade(player);
+				NextPlayGameOver(player);
 			}
 		}
 	}
@@ -2524,10 +2534,7 @@ void UpdatePlayNext(Player* player) {
 		Fixed32 gravity = CurrentGravity(player);
 
 		// Force 20G.
-		if (player->modeFlags & MODE_20G) {
-			gravity = F32(20, 0x0000);
-		}
-		else if ((player->nowFlags & NOW_STAFF) && (player->modeFlags & MODE_NORMAL)) {
+		if (player->modeFlags & MODE_20G || ((player->nowFlags & NOW_STAFF) && (player->modeFlags & MODE_NORMAL))) {
 			gravity = F32(20, 0x0000);
 		}
 

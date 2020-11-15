@@ -9,7 +9,7 @@
 #include <inttypes.h>
 #include <assert.h>
 
-const uint16_t PalNumTableNormalBlocks[NUMBLOCKTYPES] = { 58u, 68u, 78u, 88u, 98u, 108u, 118u, 48u, 128u, 138u };
+const uint16_t PalNumTableNormalBlocks[11] = { 58u, 68u, 78u, 88u, 98u, 108u, 118u, 48u, 128u, 138u, 16u };
 const uint16_t PalNumTableItemBlocks[NUMITEMTYPES] = { 226u, 226u, 226u, 236u, 236u, 236u, 236u, 236u, 226u, 226u, 226u, 226u, 226u, 226u, 246u, 226u, 246u, 226u, 226u };
 const Color* PalTableItemFieldBorder[NUMITEMTYPES] = {
 	PAL_REDFIELDBORDER,
