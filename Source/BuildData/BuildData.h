@@ -47,3 +47,5 @@ extern const Checksum* const BuildChecksumDataPtr;
 extern const uint32_t UNK_40044; // TODO: Number of checksums? The checksum data appears to have 8 similar-looking 8-byte sequences.
 
 extern const Color** const UNK_40048;
+
+extern const char* const DeveloperWebsite;

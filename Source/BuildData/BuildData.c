@@ -44,3 +44,5 @@ const Color** const PalTableDataPtr = PalTable.data;
 const Checksum* const BuildChecksumDataPtr = BuildChecksum.checksums;
 const uint32_t UNK_40044 = 8u;
 const Color** const UNK_40048 = PalTable.data;
+
+const char* const DeveloperWebsite = "http://www.arika.co.jp";

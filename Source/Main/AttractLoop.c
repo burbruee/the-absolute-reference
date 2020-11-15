@@ -17,6 +17,7 @@
 #include "Input/Input.h"
 #include "Input/Button.h"
 #include "Sound/Sound.h"
+#include "BuildData/BuildData.h"
 #include "Lib/Math.h"
 #include "Config.h"
 #include <assert.h>
@@ -707,7 +708,7 @@ static ScreenState StartDemoScreen() {
 					ShowObject(OBJECTPTR(0x636), 108, 484 - textOffsetX, 202u, 115u);
 					textX = 480;
 				}
-				ShowText(textX - textOffsetX - TextWidth("http://www.arika.co.jp") / 2, 112, "http://www.arika.co.jp", 179u, false);
+				ShowText(textX - textOffsetX - TextWidth(DeveloperWebsite) / 2, 112, DeveloperWebsite, 179u, false);
 				int16_t nextTextOffsetX;
 				if (textOffsetX + 1 > VIDEO_WIDTH) {
 					var0 = !var0;
