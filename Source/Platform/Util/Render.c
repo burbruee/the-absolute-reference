@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define PIXELALPHA (~UINT32_C(0))
+#define PIXELALPHA (UINT32_C(~0))
 
 static const uint32_t AlphaTable[0x100] = {
 	0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu,
@@ -53,16 +53,13 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
 			const uint32_t scaleX = SCALERAM[OBJECT_GETSCALEX(sprite)];
 			const uint32_t palNum = OBJECT_GETPALNUM(sprite);
 			const Bpp bpp = OBJECT_GETBPP(sprite);
-			uint32_t alphaTemp = OBJECT_GETALPHA(sprite);
-			{
-				alphaTemp = Alpha[alphaTemp >> 2] >> ((3u - (alphaTemp & 3u)) << 3);
-				if (alphaTemp & 0x80u) {
-					alphaTemp = PIXELALPHA;
-				}
-				else {
-					alphaTemp = 0x3Fu - (alphaTemp & 0x3Fu);
-					alphaTemp = (alphaTemp << 2) | (alphaTemp >> 4);
-				}
+			uint32_t alphaTemp = Alpha[OBJECT_GETALPHA(sprite)];
+			if (alphaTemp & 0x80u) {
+				alphaTemp = PIXELALPHA;
+			}
+			else {
+				alphaTemp = 0x3Fu - (alphaTemp & 0x3Fu);
+				alphaTemp = (alphaTemp << 2) | (alphaTemp >> 4);
 			}
 			const uint32_t alpha = alphaTemp;
 			const uint32_t tile = OBJECT_GETTILE(sprite);
@@ -105,9 +102,9 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
 						uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
 						Color* const pixel = &framebuffer[(y + offsetY) * VIDEO_WIDTH + x + offsetX];
 						*pixel = COLOR(
-							(COLOR_GETR(*color) * blendAlpha + COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							(COLOR_GETG(*color) * blendAlpha + COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							(COLOR_GETB(*color) * blendAlpha + COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							((uint32_t)COLOR_GETR(*color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							((uint32_t)COLOR_GETG(*color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							((uint32_t)COLOR_GETB(*color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
 							0u
 						);
 					}
