@@ -16,17 +16,19 @@ typedef struct InstanceData {
 static void UpdateEntityVersusReadyGo(Entity* entity);
 
 void ShowVersusReadyGo() {
+	uint8_t numVersusRoundsSetting = NumVersusRoundsSetting();
 	Entity *entity;
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityVersusReadyGo;
 		ENTITY_INST_DATA_PTR(InstanceData, data, entity);
 
 		data->numVersusRounds = Game.numVersusRounds;
+
 		if (data->numVersusRounds >= 5) {
 			data->numVersusRounds = 5;
 		}
 
-		const uint8_t maxVersusRoundWins = NumVersusRoundsSetting() - 1u;
+		const uint8_t maxVersusRoundWins = numVersusRoundsSetting - 1u;
 		if (Game.numVersusRoundWins[PLAYER1] >= maxVersusRoundWins && Game.numVersusRoundWins[PLAYER2] >= maxVersusRoundWins) {
 			data->numVersusRounds = 5;
 		}

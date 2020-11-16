@@ -115,14 +115,14 @@ typedef struct EntryData {
 
 static bool Blocked(Player* player, int16_t col, int16_t row, Rotation rotation);
 bool UpdateModeCodes(Player* player);
-void BackupMatrix(Player* player);
+static void BackupMatrix(Player* player);
 void CheckDisableItemDescription(Player* player);
 void CheckSetItemMode(Player* player);
 uint16_t GenNextInt(uint32_t* seed, bool update);
 void GenNextItem(Player* player);
 void NextPlayStart(Player* player);
 uint8_t NumSecretGradeRows(Player* player);
-void RestoreMatrix(Player* player);
+static void RestoreMatrix(Player* player);
 void SetFieldVisible(Player* player);
 void ThrowOutActiveBlock(Player* player);
 void UpdatePlayActive(Player* player);
@@ -1888,37 +1888,25 @@ void LockActiveBlock(Player* player, LockType lockType) {
 	}
 }
 
-// BUG: The column iteration loops in BackupMatrix and RestoreMatrix were not
-// rewritten in error; the SH-2 code starts with matrix column 1, even though
-// the temporary squares array rows are field-width. The temporary squares
-// array is long enough to accommodate this inconsistency, though. The
-// consistent way to index the temporary squares array would be to subtract 1
-// from the column number, or change FIELD_SINGLEWIDTH in the temporary squares
-// array struct field to MATRIX_SINGLEWIDTH; that change would be required if
-// both players' matrices in twin/versus were simultaneously saved to the
-// temporary squares array. It's probably a programmer's oversight, but the
-// behavior is well-defined, so it's not really a bug. Though it's marked as
-// bugged, because forks of the code might need to consider changing it.
-void BackupMatrix(Player* player) {
+static void BackupMatrix(Player* player) {
 	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
-		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-			entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] = MATRIX(player, row, col).block;
-			entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] &= ~BLOCK_INVISIBLE;
+		for (int16_t col = 0; col < player->matrixWidth - 1; col++) {
+			entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col] = MATRIX(player, row, col).block & ~BLOCK_INVISIBLE;
 		}
 	}
 }
 
-void RestoreMatrix(Player* player) {
+static void RestoreMatrix(Player* player) {
 	TEMPPTR(EntryData, entry);
 	for (int16_t row = 0; row < player->matrixHeight; row++) {
-		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
+		for (int16_t col = 0; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, row, col).block = entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + col];
 		}
 	}
 }
 
-bool AllClear(Player* player) {
+static bool AllClear(Player* player) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			if ((MATRIX(player, row, col).block & ~BLOCK_INVISIBLE) != NULLBLOCK) {
@@ -1929,7 +1917,7 @@ bool AllClear(Player* player) {
 	return true;
 }
 
-bool Line(Player* player, int16_t row) {
+static bool Line(Player* player, int16_t row) {
 	for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 		if ((MATRIX(player, row, col).block & ~BLOCK_INVISIBLE) == NULLBLOCK) {
 			return false;
@@ -1938,7 +1926,7 @@ bool Line(Player* player, int16_t row) {
 	return true;
 }
 
-LineFlag StartClear(Player* player, LineFlag lineFlags) {
+static LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		if ((1 << row) & lineFlags) {
 			ShowLineClear(player, row);
@@ -1964,42 +1952,54 @@ LineFlag StartClear(Player* player, LineFlag lineFlags) {
 	return lineFlags;
 }
 
-void SendGarbageRow(Player* player, int16_t fieldRow, int16_t garbageRow) {
+static void SendGarbageRow(Player* player, int16_t fieldRow, int16_t garbageRow) {
 	TEMPPTR(EntryData, entry);
-	for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-		player->garbage[(player->otherPlayer->numGarbageRows + garbageRow) * MATRIX_SINGLEWIDTH + col] = entry->tempMatrix[garbageRow * FIELD_SINGLEWIDTH * 2 + col + 1];
+	Player* const otherPlayer = player->otherPlayer;
+
+	const Block* garbageBlock = &entry->tempMatrix[fieldRow * FIELD_SINGLEWIDTH * NUMPLAYERS + 1u];
+	size_t i = 0u;
+	for (size_t col = 1u; col < MATRIX_SINGLEWIDTH - 1; col++, i++, garbageBlock++) {
+		otherPlayer->garbage[((size_t)otherPlayer->numGarbageRows + (size_t)garbageRow) * MATRIX_SINGLEWIDTH + i] = *garbageBlock;
 	}
 }
 
-int8_t AllClearGarbage(Player* player, uint8_t numLines) {
+static uint8_t AllClearGarbage(Player* player, uint8_t numLines) {
 	TEMPPTR(EntryData, entry);
+	Player* const otherPlayer = player->otherPlayer;
 
-	for (int16_t row = 0; row < numLines; row++) {
-		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-			entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1] = player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col];
+	for (size_t row = 0u; row < numLines; row++) {
+		size_t i = 0u;
+		Block* garbageBlock = &entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + 1u];
+		for (size_t col = 1u; col < MATRIX_SINGLEWIDTH - 1; col++, i++, garbageBlock++) {
+			*garbageBlock = otherPlayer->garbage[(otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + i];
 		}
 	}
 
-	for (int16_t row = 0; row < numLines; row++) {
-		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-			if (player->otherPlayer->numGarbageRows + row < GARBAGEHEIGHT) {
-				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + col] = entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1];
+	for (size_t row = 0u; row < numLines; row++) {
+		size_t i = 0u;
+		const Block* garbageBlock = &entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + 1u];
+		for (size_t col = 1u; col < MATRIX_SINGLEWIDTH - 1; col++, i++, garbageBlock++) {
+			if (otherPlayer->numGarbageRows + row < GARBAGEHEIGHT) {
+				otherPlayer->garbage[(otherPlayer->numGarbageRows + row) * MATRIX_SINGLEWIDTH + i] = *garbageBlock;
 			}
 		}
 	}
 
-	for (int16_t row = 0; row < numLines; row++) {
-		for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
-			if (player->otherPlayer->numGarbageRows + numLines + row < GARBAGEHEIGHT) {
-				player->otherPlayer->garbage[(player->otherPlayer->numGarbageRows + numLines + row) * FIELD_SINGLEWIDTH + col] = entry->tempMatrix[row * FIELD_SINGLEWIDTH * 2 + col + 1];
+	for (size_t row = 0u; row < numLines; row++) {
+		size_t i = 0u;
+		const Block* garbageBlock = &entry->tempMatrix[row * FIELD_SINGLEWIDTH * NUMPLAYERS + 1u];
+		for (size_t col = 1u; col < MATRIX_SINGLEWIDTH - 1; col++, i++, garbageBlock++) {
+			if (otherPlayer->numGarbageRows + row + numLines < GARBAGEHEIGHT) {
+				otherPlayer->garbage[(player->otherPlayer->numGarbageRows + row + numLines) * MATRIX_SINGLEWIDTH + i] = *garbageBlock;
 			}
 		}
 	}
 
-	if (player->otherPlayer->numGarbageRows + numLines > GARBAGEHEIGHT) {
-		numLines = 8 - player->otherPlayer->numGarbageRows;
+	uint8_t numSentGarbageRows = numLines * 2u;
+	if (otherPlayer->numGarbageRows + numLines * 2u > GARBAGEHEIGHT) {
+		numSentGarbageRows = GARBAGEHEIGHT - otherPlayer->numGarbageRows;
 	}
-	return numLines;
+	return numSentGarbageRows;
 }
 
 uint8_t NumLines(Player* player, LineFlag lineFlags) {
@@ -2112,8 +2112,8 @@ void UpdatePlayLock(Player* player) {
 			flaggedLines = GARBAGEHEIGHT - player->numGarbageRows;
 		}
 
-		if (player->clearItemType == ITEMTYPE_NULL) {
-			player->numGarbageRows += flaggedLines;
+		if (player->clearItemType == ITEMTYPE_NULL && flaggedLines > 1) {
+			player->otherPlayer->numGarbageRows += flaggedLines;
 		}
 	}
 	if (lineFlags != LINEFLAG_NONE) {
@@ -3081,15 +3081,14 @@ enum ReadyGoState {
 
 #define READYGO_FRAMES 0
 #define READYGO_Y 1
-#define READYGO_ROTATENEXTBLOCK 0
 
 void UpdatePlayStart(Player* player) {
 	if (player->modeFlags & MODE_VERSUS) {
 		if (!(GameFlags & GAME_VERSUSREADYGO)) {
 			NextPlay(player, (PlayData) { .flags = PLAYFLAG_NONE, .state = PLAYSTATE_NEXT });
 			GameFlags &= ~GAME_BIT11;
-			goto skipReadyGo;
 		}
+		goto skipReadyGo;
 	}
 	else if ((player->num != Game.versusWinner || Game.numVersusWins == 0) && !(player->modeFlags & (MODE_NORMAL | MODE_DOUBLES | MODE_TADEATH))) {
 		CheckSetItemMode(player);
@@ -3172,7 +3171,7 @@ void UpdatePlayStart(Player* player) {
 skipReadyGo:
 	UpdateAutoshift(player);
 
-	if ((GameFlags & GAME_VERSUS) && player->values[READYGO_ROTATENEXTBLOCK] < 70 && ROTATED_ANY(GameButtonsDown[player->num])) {
+	if ((GameFlags & GAME_VERSUS) && player->values[READYGO_FRAMES] < 70 && ROTATED_ANY(GameButtonsDown[player->num])) {
 		Rotation newRotation;
 		if (ROTATED_LEFT(GameButtonsDown[player->num])) {
 			newRotation = ROTATE_LEFT(player->activeRotation);
@@ -3186,7 +3185,7 @@ skipReadyGo:
 
 void UpdatePlayGarbageCheck(Player* player) {
 	if (!(player->nowFlags & NOW_NOGARBAGE)) {
-		if (player->numGarbageRows != 0u && player->itemPlayer->activeItemType != ITEMTYPE_MIRRORBLOCK) {
+		if (player->numGarbageRows != 0u && player->itemPlayer->activeItemType != ITEMTYPE_MIRRORBLOCK && player->itemPlayer->activeItemType != ITEMTYPE_DARKBLOCK) {
 			NextPlayGarbageEntry(player);
 		}
 		else {
