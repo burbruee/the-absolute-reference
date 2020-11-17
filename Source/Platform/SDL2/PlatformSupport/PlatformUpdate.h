@@ -2,8 +2,9 @@
 #include "Main/MainLoop.h"
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
-uint32_t PlatformInit();
+bool PlatformInit();
 #define PLATFORM_INIT() do { if (!PlatformInit()) { return EXIT_FAILURE; } } while (false)
 
 void PlatformUpdateInputs();
@@ -15,5 +16,4 @@ void PlatformFrame();
 void PlatformFinishUpdate();
 #define PLATFORM_FINISHUPDATE() PlatformFinishUpdate()
 
-int PlatformQuit();
-#define PLATFORM_QUIT() return PlatformQuit()
+#define PLATFORM_QUIT() return EXIT_SUCCESS

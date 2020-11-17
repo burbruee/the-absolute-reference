@@ -10,11 +10,6 @@ StartPlayerFlag StartPlayers = STARTPLAYER_NONE;
 MainLoopState MainLoop = MAINLOOP_ATTRACT;
 
 void RunMainLoop() {
-	// TODO: Change "while (true)" here to something like "while (!QUIT)", so
-	// ports to OS's can exit the game. Usage of QUIT will have to be put
-	// throughout the code, so a quit event can cause the program to quit. For
-	// platforms that shouldn't have a quit condition, just define QUIT to
-	// "false".
 	while (true) {
 		UpdateFrame();
 

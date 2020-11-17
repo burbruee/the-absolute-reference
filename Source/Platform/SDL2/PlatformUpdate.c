@@ -155,7 +155,7 @@ void ExitHandler(void) {
 	SDL_Quit();
 }
 
-uint32_t PlatformInit() {
+bool PlatformInit() {
 	// Non-TAP, platform initialization.
 	srand((unsigned)time(NULL));
 
@@ -355,7 +355,7 @@ uint32_t PlatformInit() {
 
 	// TODO: Return init success status, such as returning false if ROMs have
 	// the wrong checksum.
-	return 1u;
+	return true;
 }
 
 void PlatformUpdateInputs() {
@@ -463,9 +463,4 @@ void PlatformFinishUpdate() {
 	SDL_RenderCopy(renderer, framebufferTexture, NULL, NULL);
 
 	SDL_RenderPresent(renderer);
-}
-
-int PlatformQuit() {
-	// TODO
-	return EXIT_SUCCESS;
 }
