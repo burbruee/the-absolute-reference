@@ -166,7 +166,7 @@ bool PlatformInit() {
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
 
-	framebufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_STREAMING, VIDEO_WIDTH, VIDEO_HEIGHT);
+	framebufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING, VIDEO_WIDTH, VIDEO_HEIGHT);
 	SDL_SetTextureBlendMode(framebufferTexture, SDL_BLENDMODE_NONE);
 
 	{
