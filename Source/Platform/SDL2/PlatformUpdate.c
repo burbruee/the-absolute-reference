@@ -186,11 +186,11 @@ bool PlatformInit() {
 			fread(&tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE, 1u, file);
 			fclose(file);
 		}
+		uint8_t* tilePtr = TileData;
 		for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
 			const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE];
 			const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE];
-			uint8_t* tilePtr = &TileData[i * TILEROM_SIZE];
-			for (size_t j = 0u; j < TILEROM_SIZE; j += 4u) {
+			for (size_t j = 0u; j < TILEROM_SIZE * 2u; j += 4u) {
 				*tilePtr++ = *tileLow++;
 				*tilePtr++ = *tileLow++;
 				*tilePtr++ = *tileHigh++;

@@ -86,13 +86,13 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
 					const int32_t tileOffsetY = sourceY % 16;
 					uint8_t palOffset = (
 						tileData[
-							((tile + w * tileY) * 0x80 * (bpp + 1)) -
-							0xC00000 +
+							((tile + w * tileY) * 0x80u * (bpp + 1)) -
+							0xC00000u +
 							(tileOffsetX / (2 - bpp)) +
-							(tileX * 0x80 * (bpp + 1)) +
-							(tileOffsetY * 8 * (bpp + 1))
-						] >> ((4 - ((tileOffsetX & 1) * 4)) * (1 - bpp))
-					) & ((0xF0 * bpp) | 0x0F);
+							(tileX * 0x80u * (bpp + 1u)) +
+							(tileOffsetY * 8u * (bpp + 1u))
+						] >> ((4 - ((tileOffsetX & 1) * 4)) * (1u - bpp))
+					) & ((0xF0u * bpp) | 0x0Fu);
 
 					if (palOffset == 0u) {
 						continue;
