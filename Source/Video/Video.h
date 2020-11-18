@@ -286,7 +286,7 @@ void UNK_6025C1E(int16_t, int16_t, int16_t);
 void UNK_6025DFC();
 void UNK_6026530(int16_t, void*, int16_t, int16_t, int16_t);
 void UNK_6026698(int16_t bgNum, void**, void*, int16_t, int16_t, int16_t, int16_t, int16_t);
-void UNK_60267E4(int16_t bgIndex);
+void UNK_60267E4(int16_t bgIndex, int32_t);
 void UNK_602682A(int16_t, int16_t, int16_t, bool);
 void UNK_6026870(int16_t, int16_t, int16_t);
 STRUCT_GameBg_0* UNK_6026AAC(int16_t, int16_t, int16_t*, int16_t*);

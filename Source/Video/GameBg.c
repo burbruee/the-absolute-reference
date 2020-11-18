@@ -2,6 +2,7 @@
 #include "Video/BgMap.h"
 #include "Video/Video.h"
 #include "Video/Pal.h"
+#include "Video/PalNum.h"
 #include "Game/Play/Player.h"
 #include "Game/Screen.h"
 #include "Main/MainLoop.h"
@@ -63,7 +64,7 @@ void UNK_6016A30(uint8_t arg0) {
 		return;
 	}
 
-	CurrentGameBg.UNK_13 = 2;
+	CurrentGameBg.UNK_13 = 1;
 	CurrentGameBg.darknesses[0] = 2;
 	if (MainLoop == MAINLOOP_ATTRACT) {
 		if (Screen == SCREEN_VERSUSDEMO) {
@@ -80,13 +81,13 @@ void UNK_6016A30(uint8_t arg0) {
 		CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 	}
 
-	SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+	SetPal(PALNUM_BG, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
 	CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 	CurrentGameBg.UNK_0[0].UNK_4 = 1;
 	CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 	CurrentGameBg.UNK_0[1].UNK_4 = 1;
 	SetBgDarkness(CurrentGameBg.bgIndex, 0);
-	UNK_60267E4(CurrentGameBg.bgIndex);
+	UNK_60267E4(CurrentGameBg.bgIndex, 1);
 }
 
 void UNK_6016B40() {
@@ -102,12 +103,12 @@ void UNK_6016B40() {
 		else {
 			CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 		}
-		SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+		SetPal(PALNUM_BG, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
 		CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 		CurrentGameBg.UNK_0[0].UNK_4 = 1;
 		CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 		CurrentGameBg.UNK_0[1].UNK_4 = 1;
-		UNK_60267E4(CurrentGameBg.bgIndex);
+		UNK_60267E4(CurrentGameBg.bgIndex, 1);
 	}
 	else {
 		CurrentGameBg.darknesses[1] += 6;
@@ -132,7 +133,7 @@ void UNK_6016BDE() {
 			var1 += 3;
 		}
 		UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
-		UNK_60267E4(CurrentGameBg.bgIndex);
+		UNK_60267E4(CurrentGameBg.bgIndex, 1);
 	}
 }
 
@@ -146,7 +147,7 @@ void UNK_6016C14() {
 			var0 += 3;
 		}
 		UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
-		UNK_60267E4(CurrentGameBg.bgIndex);
+		UNK_60267E4(CurrentGameBg.bgIndex, 1);
 	}
 }
 
@@ -204,12 +205,12 @@ void UpdateGameBg() {
 				else {
 					CurrentGameBg.bgMapIndex = CurrentGameBg.nextBgMapIndex;
 				}
-				SetPal(160u, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
+				SetPal(PALNUM_BG, NUMPALCOLORS_8BPP / NUMPALCOLORS_4BPP, BgPalPtrs[CurrentGameBg.bgMapIndex]);
 				CurrentGameBg.UNK_0[0].UNK_0 = BgMapPtrs[CurrentGameBg.bgMapIndex];
 				CurrentGameBg.UNK_0[0].UNK_4 = 1;
 				CurrentGameBg.UNK_0[1].UNK_0 = NULL;
 				CurrentGameBg.UNK_0[1].UNK_4 = 1;
-				UNK_60267E4(CurrentGameBg.bgIndex);
+				UNK_60267E4(CurrentGameBg.bgIndex, 1);
 			}
 			else {
 				CurrentGameBg.darknesses[1] += 6;
@@ -235,7 +236,7 @@ void UpdateGameBg() {
 					var1 += 3;
 				}
 				UNK_6025B9A(CurrentGameBg.bgIndex, &CurrentGameBg, (var0 / 4) * -VIDEO_HEIGHT, var1 * -VIDEO_WIDTH);
-				UNK_60267E4(CurrentGameBg.bgIndex);
+				UNK_60267E4(CurrentGameBg.bgIndex, 1);
 			}
 			break;
 

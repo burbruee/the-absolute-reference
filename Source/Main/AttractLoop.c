@@ -181,6 +181,8 @@ static ScreenState StartRankingScreen() {
 }
 
 static ScreenState StartCopyrightScreen() {
+	int16_t screenFrames = 300;
+
 	UNK_602AA4C();
 	if (UpdateFrame()) {
 		return SCREEN_TESTMODE;
@@ -196,8 +198,7 @@ static ScreenState StartCopyrightScreen() {
 			UNK_602406E();
 			InitEntities();
 			UNK_6026FCA(CurrentGameBg.bgIndex, 0u);
-			SetPal(160u, 16u, PALPTR(0x205));
-
+			SetPal(PALNUM_BG, 16u, PALPTR(0x205));
 			for (int16_t frames = 0; frames < 3; frames++) {
 				if (UpdateFrame()) {
 					return SCREEN_TESTMODE;
@@ -220,7 +221,8 @@ static ScreenState StartCopyrightScreen() {
 					UNK_602406E();
 					return SCREEN_VERSIONTITLE;
 				}
-				ShowObject(OBJECTPTR(0x658), 0, 0, 160u, 40u); // TODO: Define a constant for the object pointer.
+
+				ShowObject(OBJECT_COPYRIGHT, 0, 0, PALNUM_BG, 40u);
 			}
 
 			for (bool stopDemoLoop = false; !stopDemoLoop; stopDemoLoop = UpdateFrame()) {
@@ -266,7 +268,7 @@ static ScreenState StartTitleScreen() {
 			UNK_602406E();
 			InitEntities();
 			UNK_6026FCA(CurrentGameBg.bgIndex, 0);
-			SetPal(160u, 16u, PALPTR(0x1F4));
+			SetPal(PALNUM_BG, 16u, PALPTR(0x1F4));
 			for (int16_t i = 0; i < 3; i++) {
 				if (UpdateFrame()) {
 					return SCREEN_TESTMODE;
@@ -287,7 +289,7 @@ static ScreenState StartTitleScreen() {
 				}
 				if (NextScreenVersionTitle()) break;
 
-				ShowObject(OBJECTPTR(0x638) + (ScreenTime & 0xFu), 0, 0, 160u, 40u);
+				ShowObject(OBJECTPTR(0x638) + (ScreenTime & 0xFu), 0, 0, PALNUM_BG, 40u);
 				if (waitForDeveloperScreenFrames == 0) {
 					waitForDeveloperScreen = true;
 				}
@@ -345,7 +347,7 @@ static ScreenState StartDeveloperScreen() {
 			UNK_602406E();
 			InitEntities();
 			UNK_6026FCA(CurrentGameBg.bgIndex, 0);
-			SetPal(160u, 16u, PALPTR(0x214));
+			SetPal(PALNUM_BG, 16u, PALPTR(0x214));
 			for (int16_t i = 0; i < 3; i++) {
 				if (UpdateFrame()) {
 					return SCREEN_TESTMODE;
@@ -366,7 +368,7 @@ static ScreenState StartDeveloperScreen() {
 				}
 				if (NextScreenVersionTitle()) break;
 
-				ShowObject(OBJECTPTR(0x6A4), 0, 0, 160u, 40u);
+				ShowObject(OBJECTPTR(0x6A4), 0, 0, PALNUM_BG, 40u);
 				if (var1 == 0) {
 					var0 = true;
 				}
@@ -426,7 +428,7 @@ static ScreenState StartVersionTitleScreen() {
 	InitEntities();
 	StartPlayers = STARTPLAYER_NONE;
 	InitPlayers();
-	SetPal(160u, 16u, PALPTR(0x1F4));
+	SetPal(PALNUM_BG, 16u, PALPTR(0x1F4));
 	InitSystemTextPal();
 	SetPal(202u, 1u, PalCycleTextPal0);
 	NewPalCycle(159u, PalCycleTextPal0, PAL_SYSTEMTEXT, 1, PALCYCLETYPE_UPSTOP, 1, 63u);
@@ -464,7 +466,7 @@ static ScreenState StartVersionTitleScreen() {
 			var0 += 1;
 		}
 		var0 &= 0xF;
-		ShowObject(OBJECTPTR(0x638) + var0 * 2u, 0, 0, 160u, 16u);
+		ShowObject(OBJECTPTR(0x638) + var0 * 2u, 0, 0, PALNUM_BG, 16u);
 		UNK_600FC50();
 		UpdateDebugCode();
 		if (CanStart(PLAYER1, false) && UpdateModeCodes(&Players[PLAYER1])) {

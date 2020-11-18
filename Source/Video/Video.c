@@ -1194,7 +1194,7 @@ void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
 	UNK_60AD228[var0].UNK_50 += arg3;
 }
 
-void UNK_60267E4(int16_t bgIndex) {
+void UNK_60267E4(int16_t bgIndex, int32_t arg1) {
 	const int16_t var0 = Bgs[bgIndex].UNK_6;
 	const int16_t var1 = Bgs[bgIndex].UNK_18[var0];
 	if (var1 >= 0) {

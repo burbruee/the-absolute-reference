@@ -345,13 +345,14 @@ bool PlatformInit() {
 	SetPal(0u, 1, PalSmallText);
 	SetPal(PALNUM_CHECKSUMNG, 1, Pal1);
 	SetPal(PALNUM_SYSTEMTEXT, 1, PAL_SYSTEMTEXT);
+	UpdateFrame();
 
 	InitSystemTextPal();
-
 	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
 	UNK_6029814(0x0000, 0x0000, 0, 0xFF);
 	SetPal(80u, 1u, PALPTR(0x1E1));
+	UpdateFrame();
 
 	// TODO: Return init success status, such as returning false if ROMs have
 	// the wrong checksum.
