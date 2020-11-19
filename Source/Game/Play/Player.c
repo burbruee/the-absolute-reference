@@ -1500,7 +1500,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 						col + defCol >= 0 &&
 						col + defCol <= player->matrixWidth - 1 &&
 						DEFBLOCK(player->activeBlock & BLOCK_TYPE, rotation, defRow, defCol) != DEFBLOCK_EMPTY &&
-						MATRIX(player, row - defRow, col).block != NULLBLOCK) {
+						MATRIX(player, row - defRow, col + defCol).block != NULLBLOCK) {
 						// The active block is blocked in the current
 						// position/rotation.
 

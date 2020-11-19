@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <assert.h>
 
 static ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
 static ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
@@ -160,8 +161,9 @@ bool PlatformInit() {
 	srand((unsigned)time(NULL));
 
 	SDL_Init(SDL_INIT_VIDEO);
-	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+	SDL_RenderSetLogicalSize(renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
 	SDL_SetRenderDrawColor(renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
@@ -265,9 +267,11 @@ bool PlatformInit() {
 			BgMapTable[i]->header.UNK_6 =
 				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 0] << 8) |
 				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 1] << 0);
+			assert(BgMapTable[i]->header.UNK_4 == 0x78u && BgMapTable[i]->header.UNK_6 == 0x50u);
 
 			uint8_t* programPtr = &programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + sizeoffield(BgMapHeader, UNK_6)];
 			if (BgMapTable[i]->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+				assert(((BgMap32*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap32*)BgMapTable[i])->header.UNK_6 == 0x50u);
 				uint32_t* name = ((BgMap32*)BgMapTable[i])->names;
 				for (size_t i = 0u; i < lengthoffield(BgMap32, names); i++, name++, programPtr += sizeof(uint32_t)) {
 					*name =
@@ -278,6 +282,7 @@ bool PlatformInit() {
 				}
 			}
 			else {
+				assert(((BgMap16*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap16*)BgMapTable[i])->header.UNK_6 == 0x50u);
 				uint16_t* name = ((BgMap16*)BgMapTable[i])->names;
 				for (size_t i = 0u; i < lengthoffield(BgMap16, names); i++, name++, programPtr += sizeof(uint16_t)) {
 					*name =
@@ -369,29 +374,29 @@ void PlatformUpdateInputs() {
 
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
-			case SDLK_q: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_START; break;
-			case SDLK_c: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_3; break;
-			case SDLK_x: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_2; break;
-			case SDLK_z: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_1; break;
+			case SDLK_RETURN: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_START; break;
+			case SDLK_SEMICOLON: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_3; break;
+			case SDLK_l: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_2; break;
+			case SDLK_k: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_1; break;
 			case SDLK_a: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_LEFT; break;
 			case SDLK_d: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_RIGHT; break;
 			case SDLK_s: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_DOWN; break;
 			case SDLK_w: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_UP; break;
 
-			case SDLK_r: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_START; break;
-			case SDLK_n: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_3; break;
-			case SDLK_b: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_2; break;
-			case SDLK_v: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_1; break;
-			case SDLK_f: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_LEFT; break;
-			case SDLK_h: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_RIGHT; break;
-			case SDLK_g: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_DOWN; break;
-			case SDLK_t: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_UP; break;
+			case SDLK_KP_ENTER: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_START; break;
+			case SDLK_KP_3: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_3; break;
+			case SDLK_KP_2: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_2; break;
+			case SDLK_KP_1: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_1; break;
+			case SDLK_KP_4: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_LEFT; break;
+			case SDLK_KP_6: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_RIGHT; break;
+			case SDLK_KP_5: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_DOWN; break;
+			case SDLK_KP_8: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_UP; break;
 
-			case SDLK_e: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN1; break;
-			case SDLK_y: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN2; break;
+			case SDLK_RSHIFT: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN1; break;
+			case SDLK_KP_PLUS: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN2; break;
 			case SDLK_TAB: INPUTS[INPUT_SERVICE] &= ~SERVICE_ADDSERVICE; break;
 			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TEST; break;
-			case SDLK_SPACE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TILT; break;
+			case SDLK_BACKSPACE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TILT; break;
 
 			default: break;
 			}
@@ -399,29 +404,29 @@ void PlatformUpdateInputs() {
 
 		case SDL_KEYUP:
 			switch (event.key.keysym.sym) {
-			case SDLK_q: INPUTS[INPUT_BUTTONS1P] |= BUTTON_START; break;
-			case SDLK_c: INPUTS[INPUT_BUTTONS1P] |= BUTTON_3; break;
-			case SDLK_x: INPUTS[INPUT_BUTTONS1P] |= BUTTON_2; break;
-			case SDLK_z: INPUTS[INPUT_BUTTONS1P] |= BUTTON_1; break;
+			case SDLK_RETURN: INPUTS[INPUT_BUTTONS1P] |= BUTTON_START; break;
+			case SDLK_SEMICOLON: INPUTS[INPUT_BUTTONS1P] |= BUTTON_3; break;
+			case SDLK_l: INPUTS[INPUT_BUTTONS1P] |= BUTTON_2; break;
+			case SDLK_k: INPUTS[INPUT_BUTTONS1P] |= BUTTON_1; break;
 			case SDLK_a: INPUTS[INPUT_BUTTONS1P] |= BUTTON_LEFT; break;
 			case SDLK_d: INPUTS[INPUT_BUTTONS1P] |= BUTTON_RIGHT; break;
 			case SDLK_s: INPUTS[INPUT_BUTTONS1P] |= BUTTON_DOWN; break;
 			case SDLK_w: INPUTS[INPUT_BUTTONS1P] |= BUTTON_UP; break;
 
-			case SDLK_r: INPUTS[INPUT_BUTTONS2P] |= BUTTON_START; break;
-			case SDLK_n: INPUTS[INPUT_BUTTONS2P] |= BUTTON_3; break;
-			case SDLK_b: INPUTS[INPUT_BUTTONS2P] |= BUTTON_2; break;
-			case SDLK_v: INPUTS[INPUT_BUTTONS2P] |= BUTTON_1; break;
-			case SDLK_f: INPUTS[INPUT_BUTTONS2P] |= BUTTON_LEFT; break;
-			case SDLK_h: INPUTS[INPUT_BUTTONS2P] |= BUTTON_RIGHT; break;
-			case SDLK_g: INPUTS[INPUT_BUTTONS2P] |= BUTTON_DOWN; break;
-			case SDLK_t: INPUTS[INPUT_BUTTONS2P] |= BUTTON_UP; break;
+			case SDLK_KP_ENTER: INPUTS[INPUT_BUTTONS2P] |= BUTTON_START; break;
+			case SDLK_KP_3: INPUTS[INPUT_BUTTONS2P] |= BUTTON_3; break;
+			case SDLK_KP_2: INPUTS[INPUT_BUTTONS2P] |= BUTTON_2; break;
+			case SDLK_KP_1: INPUTS[INPUT_BUTTONS2P] |= BUTTON_1; break;
+			case SDLK_KP_4: INPUTS[INPUT_BUTTONS2P] |= BUTTON_LEFT; break;
+			case SDLK_KP_6: INPUTS[INPUT_BUTTONS2P] |= BUTTON_RIGHT; break;
+			case SDLK_KP_5: INPUTS[INPUT_BUTTONS2P] |= BUTTON_DOWN; break;
+			case SDLK_KP_8: INPUTS[INPUT_BUTTONS2P] |= BUTTON_UP; break;
 
-			case SDLK_e: INPUTS[INPUT_SERVICE] |= SERVICE_COIN1; break;
-			case SDLK_y: INPUTS[INPUT_SERVICE] |= SERVICE_COIN2; break;
+			case SDLK_RSHIFT: INPUTS[INPUT_SERVICE] |= SERVICE_COIN1; break;
+			case SDLK_KP_PLUS: INPUTS[INPUT_SERVICE] |= SERVICE_COIN2; break;
 			case SDLK_TAB: INPUTS[INPUT_SERVICE] |= SERVICE_ADDSERVICE; break;
 			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] |= SERVICE_TEST; break;
-			case SDLK_SPACE: INPUTS[INPUT_SERVICE] |= SERVICE_TILT; break;
+			case SDLK_BACKSPACE: INPUTS[INPUT_SERVICE] |= SERVICE_TILT; break;
 
 			default: break;
 			}
@@ -429,19 +434,6 @@ void PlatformUpdateInputs() {
 
 		default: break;
 		}
-	}
-
-	if ((~INPUTS[INPUT_BUTTONS1P] & (BUTTON_UP | BUTTON_DOWN)) == (BUTTON_UP | BUTTON_DOWN)) {
-		INPUTS[INPUT_BUTTONS1P] |= BUTTON_UP | BUTTON_DOWN;
-	}
-	if ((~INPUTS[INPUT_BUTTONS1P] & (BUTTON_LEFT | BUTTON_RIGHT)) == (BUTTON_LEFT | BUTTON_RIGHT)) {
-		INPUTS[INPUT_BUTTONS1P] |= BUTTON_LEFT | BUTTON_RIGHT;
-	}
-	if ((~INPUTS[INPUT_BUTTONS2P] & (BUTTON_UP | BUTTON_DOWN)) == (BUTTON_UP | BUTTON_DOWN)) {
-		INPUTS[INPUT_BUTTONS2P] |= BUTTON_UP | BUTTON_DOWN;
-	}
-	if ((~INPUTS[INPUT_BUTTONS2P] & (BUTTON_LEFT | BUTTON_RIGHT)) == (BUTTON_LEFT | BUTTON_RIGHT)) {
-		INPUTS[INPUT_BUTTONS2P] |= BUTTON_LEFT | BUTTON_RIGHT;
 	}
 }
 

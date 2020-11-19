@@ -12,6 +12,7 @@
 #include "Lib/LibC.h"
 #include "Lib/Macros.h"
 #include <string.h>
+#include <assert.h>
 
 static void UpdateEntityStaff(Entity* entity);
 static void ShowGrandMasterCongratulations(Player* player);
@@ -28,7 +29,7 @@ static void UpdateEntityDeathIncomplete(Entity* entity);
 static uint16_t StaffFireworkFrames[NUMPLAYERS];
 
 #define NUMSTAFFOBJECTS 38
-static ObjectData* ObjectTableStaff[NUMPLAYERS][NUMSTAFFOBJECTS];
+static const ObjectData* ObjectTableStaff[NUMPLAYERS][NUMSTAFFOBJECTS];
 
 enum StaffSection {
 	STAFF_BGDESIGN = 1,
@@ -92,9 +93,11 @@ void ShowStaff(Player* player) {
 		PlaySoundEffect(SOUNDEFFECT_GRANDMASTER);
 	}
 
-	for (int16_t swapTries = 0; swapTries < NUMSTAFFOBJECTS * 2; swapTries++) {
-		int16_t i = NUMSTAFFOBJECTS % Rand(64u);
-		int16_t j = NUMSTAFFOBJECTS % Rand(64u);
+	for (int16_t swapTries = 0; swapTries < NUMSTAFFSECTIONS * 2; swapTries++) {
+		int16_t i = Rand(64u) % NUMSTAFFSECTIONS;
+		int16_t j = Rand(64u) % NUMSTAFFSECTIONS;
+		assert(i >= 0u && i < NUMSTAFFSECTIONS);
+		assert(j >= 0u && j < NUMSTAFFSECTIONS);
 		if (i != j) {
 			int8_t tempSection = staffSections[i];
 			staffSections[i] = staffSections[j];
@@ -103,31 +106,34 @@ void ShowStaff(Player* player) {
 	}
 
 	int16_t staffObjectIndex = 1;
-	int16_t staffRows[NUMSTAFFOBJECTS] = { 1 };
+	int16_t staffRows[NUMSTAFFOBJECTS];
 	int16_t staffRow = 6;
 	#define SET_STAFF(section, objectTable, rowHeight) \
 		case section: \
 			for (int16_t j = 0; j < lengthof(objectTable); j++, staffObjectIndex++) { \
+				assert(staffObjectIndex < NUMSTAFFOBJECTS); \
 				staffRows[staffObjectIndex] = staffRow; \
 				staffRow += rowHeight; \
+				assert(objectTable[j] != NULL); \
 				ObjectTableStaff[player->num][staffObjectIndex] = objectTable[j]; \
 			} \
 			break
 	ObjectTableStaff[player->num][0] = OBJECT_STAFF;
 	for (int16_t i = 0; i < NUMSTAFFSECTIONS; i++) {
 		switch (staffSections[i]) {
-			SET_STAFF(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
-			SET_STAFF(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
-			SET_STAFF(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
-			SET_STAFF(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
-			SET_STAFF(STAFF_SOUND, objectTableSoundStaff, 6);
+		SET_STAFF(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
+		SET_STAFF(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
+		SET_STAFF(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
+		SET_STAFF(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
+		SET_STAFF(STAFF_SOUND, objectTableSoundStaff, 6);
 		default: continue;
 		}
 		staffRow += 3;
 	}
 	#undef SET_STAFF_OBJECTS
 
-	for (int16_t i = 0; i < lengthof(objectTableEndStaff) - 1; i++, staffObjectIndex++) {
+	for (int16_t i = 0; i < lengthof(endStaffRows); i++, staffObjectIndex++) {
+		assert(staffObjectIndex < NUMSTAFFOBJECTS);
 		staffRows[staffObjectIndex] = endStaffRows[i] + staffRow;
 		ObjectTableStaff[player->num][staffObjectIndex] = objectTableEndStaff[i + 1];
 	}
@@ -153,7 +159,7 @@ void ShowStaff(Player* player) {
 			else {
 				data->pixelX[i] = player->screenPos[0] - (player->matrixWidth / 2) * 8 + 8;
 			}
-			data->pixelY[i] = player->screenPos[1] + (staffRows[i] + player->matrixHeight - 1) * 8 - (player->matrixHeight - 1) * 8 - 6;
+			data->pixelY[i] = player->screenPos[1] + staffRows[i] * 8 - 6;
 		}
 		SetPal(178u, 1u, PAL_STAFF);
 		SetPal(179u, 1u, PAL_GRANDMASTER);
@@ -177,27 +183,25 @@ static void UpdateEntityStaff(Entity* entity) {
 	}
 
 	ENTITY_INST_DATA_PTR(StaffData, data, entity);
-	if (!(player->modeFlags & (MODE_NORMAL | MODE_TGMPLUS | MODE_TADEATH)) || !(GameButtonsDown[player->num] & BUTTON_START)) {
-		if ((player->modeFlags & MODE_DOUBLES) && ((GameButtonsDown[PLAYER1] & BUTTON_START) || (GameButtonsDown[PLAYER2] & BUTTON_START))) {
-			data->scrollRate = SCROLLRATE_FAST;
-			data->scrollDivisor = 1;
-		}
-		else {
-			int16_t divisor;
-			if (player->modeFlags & MODE_MASTER) {
-				data->scrollRate = SCROLLRATE_NORMAL;
-				divisor = 4;
-			}
-			else {
-				data->scrollRate = SCROLLRATE_NORMAL;
-				divisor = 2;
-			}
-			data->scrollDivisor = divisor;
-		}
-	}
-	else {
+	if ((player->modeFlags & (MODE_NORMAL | MODE_TGMPLUS | MODE_TADEATH)) && (GameButtonsDown[player->num] & BUTTON_START)) {
 		data->scrollRate = SCROLLRATE_FAST;
 		data->scrollDivisor = 1u;
+	}
+	else if ((player->modeFlags & MODE_DOUBLES) && ((GameButtonsDown[PLAYER1] & BUTTON_START) || (GameButtonsDown[PLAYER2] & BUTTON_START))) {
+		data->scrollRate = SCROLLRATE_FAST;
+		data->scrollDivisor = 1;
+	}
+	else {
+		int16_t divisor;
+		if (player->modeFlags & MODE_MASTER) {
+			data->scrollRate = SCROLLRATE_NORMAL;
+			divisor = 4;
+		}
+		else {
+			data->scrollRate = SCROLLRATE_NORMAL;
+			divisor = 2;
+		}
+		data->scrollDivisor = divisor;
 	}
 
 	for (int16_t i = 0; i < NUMSTAFFOBJECTS; i++) {
@@ -213,33 +217,34 @@ static void UpdateEntityStaff(Entity* entity) {
 		}
 
 		if (entity->scrollPixels > 0 && !data->skip && data->pixelY[i] > data->topPixelY && data->pixelY[i] < data->bottomPixelY) {
+			assert(ObjectTableStaff[player->num][i] != NULL);
 			if (data->pixelY[i] > data->bottomPixelY - 8) {
 				DisplayObjectEx(
-					(const ObjectData*)ObjectTableStaff[i],
+					ObjectTableStaff[player->num][i],
 					data->pixelY[i] + player->screenOffset[1],
 					data->pixelX[i] + player->screenOffset[0],
 					178u,
 					70u,
-					(data->pixelY[i] - data->bottomPixelY + 8) * -5 * UNSCALED,
+					(data->pixelY[i] - data->bottomPixelY + 8) * -5 + UNSCALED,
 					UNSCALED,
 					false
 				);
 			}
 			else if (data->pixelY[i] < data->topPixelY + 8) {
 				DisplayObjectEx(
-					(const ObjectData*)ObjectTableStaff[i],
+					ObjectTableStaff[player->num][i],
 					data->pixelY[i] + player->screenOffset[1],
 					data->pixelX[i] + player->screenOffset[0],
 					178u,
 					70u,
-					(data->pixelY[i] - data->topPixelY) * 5 + 0x17,
+					(data->pixelY[i] - data->topPixelY) * 5 + SPRITESCALE(-0x28),
 					UNSCALED,
 					false
 				);
 			}
 			else {
 				DisplayObjectEx(
-					(const ObjectData*)ObjectTableStaff[i],
+					ObjectTableStaff[player->num][i],
 					data->pixelY[i] + player->screenOffset[1],
 					data->pixelX[i] + player->screenOffset[0],
 					178u,
@@ -510,7 +515,7 @@ static const ObjectData* ObjectTableVisualDesignStaff[2] = {
 
 static const ObjectData* ObjectTableProgrammerStaff[4] = {
 	// TODO: Name these.
-	OBJECTPTR(0x682), OBJECTPTR(0x683), OBJECTPTR(0x684)
+	OBJECTPTR(0x682), OBJECTPTR(0x683), OBJECTPTR(0x684), OBJECTPTR(0x685)
 };
 
 static const ObjectData* ObjectTableSoundStaff[3] = {
@@ -521,10 +526,10 @@ static const ObjectData* ObjectTableEndStaff[14] = {
 	OBJECT_STAFF,
 
 	// TODO: Name these.
-	OBJECTPTR(0x689), OBJECTPTR(0x68a), OBJECTPTR(0x68b), OBJECTPTR(0x68c), OBJECTPTR(0x68d),
-	OBJECTPTR(0x68e), OBJECTPTR(0x68f), OBJECTPTR(0x690), OBJECTPTR(0x691), OBJECTPTR(0x692),
+	OBJECTPTR(0x689), OBJECTPTR(0x68A), OBJECTPTR(0x68B), OBJECTPTR(0x68C), OBJECTPTR(0x68D),
+	OBJECTPTR(0x68E), OBJECTPTR(0x68F), OBJECTPTR(0x690), OBJECTPTR(0x691), OBJECTPTR(0x692),
 	OBJECTPTR(0x693), OBJECTPTR(0x694), OBJECTPTR(0x695)
 };
 
-static const int8_t StaffSections[6] = { 1, 2, 3, 4, 5, -1 };
+static const int8_t StaffSections[NUMSTAFFSECTIONS + 1] = { 1, 2, 3, 4, 5, -1 };
 static const int16_t EndStaffRows[13] = { 0, 2, 3, 4, 6, 7, 12, 14, 19, 20, 22, 27, 29 };

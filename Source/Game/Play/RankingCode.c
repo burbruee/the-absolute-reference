@@ -5,6 +5,7 @@
 #include "Game/Temp.h"
 #include "Lib/Math.h"
 #include "Lib/Macros.h"
+#include <assert.h>
 
 typedef struct RankingCodeNode RankingCodeNode;
 struct RankingCodeNode {
@@ -203,7 +204,9 @@ void NewRankingCode(Player *player) {
 	RankingCodeNode *node = &code[nameCharSum & 0xF];
 	char *rankingCodeChar = player->rankingCode;
 	for (size_t i = 0; i < NUMRANKINGCODEDIGITS; i++) {
+		assert(rankingCodeChar != NULL && node != NULL && node->digit % RANKINGCODEBASE < lengthof(RankingCodeChars));
 		*rankingCodeChar++ = RankingCodeChars[node->digit % RANKINGCODEBASE];
+		assert(node->next != NULL);
 		node = node->next;
 	}
 }
