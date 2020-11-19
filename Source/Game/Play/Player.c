@@ -1622,7 +1622,7 @@ void CheckShiftActiveBlock(Player* player) {
 
 void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 	Fixed32 landingRow = StepGravity(player, gravityStep);
-	if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
+	if (!Blocked(player, F32I(player->activePos[0]), F32I(landingRow), player->activeRotation)) {
 		if (F32I(landingRow) < F32I(player->activePos[1]) ) {
 			player->lockFrames = player->lockDelay;
 		}
