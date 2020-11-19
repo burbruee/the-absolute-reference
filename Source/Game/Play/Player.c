@@ -699,20 +699,24 @@ const ObjectData* ObjectTablesConfirm[2] = {
 
 void UpdatePlayerSelecting(Player* player) {
 	uint16_t fieldBorderPalNum = (player->num == PLAYER1) ? 16u : 32u;
+	SelectState state = player->subStates[SUBSTATE_SELECT];
 
-	if (player->subStates[SUBSTATE_SELECT] == SELECT_CHALLENGE) {
+	if (state != SELECT_CHALLENGE) {
 		ShowModeCodes(player);
 	}
 
-	if (player->subStates[SUBSTATE_SELECT] == SELECT_START) {
+	if (state == SELECT_START) {
+		player->subStates[SUBSTATE_SELECT] = SELECT_MODE;
+		player->values[0] = 0;
+		player->values[1] = TIME(0, 11, 0) - 1;
 		for (int16_t i = 0; i < lengthof(*SelectScales); i++) {
-			SelectScales[player->num][i] = -30 * i + 1;
+			SelectScales[player->num][i] = -30 * i;
 		}
 		player->values[0] = MODESELECTION_NORMAL;
 		SetMode(player, player->values[0]);
 		SetPal((uint8_t)fieldBorderPalNum, 16u, PAL_NORMALFIELDBORDER);
-		SetPal(15, 1, PAL_MODESELECTED);
-		SetPal(14, 1, PAL_MODENOTSELECTED);
+		SetPal(15u, 1u, PAL_MODESELECTED);
+		SetPal(14u, 1u, PAL_MODENOTSELECTED);
 		if (!player->otherPlayer->refusingChallenges && (player->otherPlayer->nowFlags & NOW_STARTED)) {
 			if (!(player->otherPlayer->nowFlags & NOW_SELECTING)) {
 				if (player->otherPlayer->play.state != PLAYSTATE_GAMEOVER && player->otherPlayer->play.state != PLAYSTATE_RANKING && !(player->otherPlayer->nowFlags & NOW_STAFF)) {
@@ -730,7 +734,7 @@ void UpdatePlayerSelecting(Player* player) {
 			}
 		}
 	}
-	else if (player->subStates[SUBSTATE_SELECT] == SELECT_MODE) {
+	else if (state == SELECT_MODE) {
 		for (int16_t i = 0; i < lengthof(*SelectScales); i++) {
 			if (SelectScales[player->num][i] < UNSCALED) {
 				SelectScales[player->num][i] += 8;
@@ -741,8 +745,7 @@ void UpdatePlayerSelecting(Player* player) {
 		}
 		DisplayObjectEx(OBJECT_SELECTMODE, 70, player->screenPos[0], 0u, 125u, UNSCALED, SelectScales[player->num][0], false);
 
-		#define SHOWSELECTMODEOPTION(mode, y, modeSelection) \
-		ShowText(player->screenPos[0] - TextWidth((mode)) / 2, (y), (mode), player->values[0] == (modeSelection) ? 15u : 14u, false);
+		#define SHOWSELECTMODEOPTION(mode, y, modeSelection) ShowText(player->screenPos[0] - TextWidth((mode)) / 2, (y), (mode), player->values[0] == (modeSelection) ? 15u : 14u, false);
 		SHOWSELECTMODEOPTION("NORMAL", 90, MODESELECTION_NORMAL);
 		SHOWSELECTMODEOPTION("MASTER", 105, MODESELECTION_MASTER);
 		SHOWSELECTMODEOPTION("TGM+", 122, MODESELECTION_TGMPLUS);
@@ -788,7 +791,18 @@ void UpdatePlayerSelecting(Player* player) {
 		default: break;
 		}
 
-		if (GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
+		if (!(GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1))) {
+			if (--player->values[1] == 0) {
+				if (player->modeFlags & MODE_DOUBLES) {
+					StartDoubles(player);
+				}
+				else {
+					player->subStates[SUBSTATE_SELECT] = SELECT_SINGLE;
+					PlaySoundEffect(SOUNDEFFECT_START);
+				}
+			}
+		}
+		else {
 			if (player->modeFlags & MODE_DOUBLES) {
 				StartDoubles(player);
 			}
@@ -800,18 +814,9 @@ void UpdatePlayerSelecting(Player* player) {
 				}
 			}
 		}
-		else if (--player->values[1] == 0) {
-			if (player->modeFlags & MODE_DOUBLES) {
-				StartDoubles(player);
-			}
-			else {
-				player->subStates[SUBSTATE_SELECT] = SELECT_SINGLE;
-				PlaySoundEffect(SOUNDEFFECT_START);
-			}
-		}
 	}
-	else if (player->subStates[SUBSTATE_SELECT] != SELECT_20 && player->subStates[SUBSTATE_SELECT] != SELECT_21) {
-		if (player->subStates[SUBSTATE_SELECT] == SELECT_CHALLENGE) {
+	else if (state != SELECT_20 && state != SELECT_21) {
+		if (state == SELECT_CHALLENGE) {
 			for (int16_t i = 0; i < lengthof(*SelectScales); i++) {
 				if (SelectScales[player->num][i] < UNSCALED) {
 					SelectScales[player->num][i] += 8;
@@ -843,32 +848,35 @@ void UpdatePlayerSelecting(Player* player) {
 			if (player->values[0] != challengeOld) {
 				PlaySoundEffect(SOUNDEFFECT_SELECT);
 			}
-			if ((player->otherPlayer->nowFlags & NOW_GAMEOVER) || (player->otherPlayer->nowFlags & NOW_STAFF)) {
+			if (((player->otherPlayer->nowFlags & NOW_GAMEOVER) || player->otherPlayer->play.state == PLAYSTATE_GAMEOVER || player->otherPlayer->play.state == PLAYSTATE_RANKING) && !(player->otherPlayer->nowFlags & NOW_STAFF)) {
+				if (GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
+					StartChallenger(player);
+				}
+				else if (--player->values[1] == 0) {
+					StartChallenger(player);
+				}
+			}
+			else {
 				GameFlags &= ~GAME_BIT12;
 				player->subStates[SUBSTATE_SELECT] = SELECT_MODE;
 				player->values[0] = MODESELECTION_NORMAL;
-				player->values[1] = TIME(0, 10, TIME(0, 1, 0) - 1);
-			}
-			else if (GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
-				StartChallenger(player);
-			}
-			else if (--player->values[1] == 0) {
-				StartChallenger(player);
+				player->values[1] = TIME(0, 11, 0) - 1u;
 			}
 		}
 		else if (player->subStates[SUBSTATE_SELECT] == SELECT_SINGLE) {
 			if (player->modeFlags & MODE_TGMPLUS) {
-				// NOTE: Maybe there were plans for master to be combinable with TGM+?
-				player->modeFlags &= MODE_MASTER | MODE_TGMPLUS | MODE_TLS | MODE_ITEM;
+				player->modeFlags &= MODE_20G | MODE_TGMPLUS | MODE_ITEM | MODE_TLS;
 				player->nextBlock &= BLOCK_TYPE;
 			}
 			if (player->modeFlags & MODE_TADEATH) {
 				player->modeFlags &= MODE_TADEATH;
 				player->nextBlock &= BLOCK_TYPE;
 			}
+			player->nowFlags = NOW_PLAYING | NOW_STARTED;
 			StartPlayer(player);
 			NextPlayStart(player);
-			//UNK_6066188.UNK_10 |= (player->num == PLAYER1) ? 0x02 : 0x04; // TODO: Background setting of some sort.
+			
+			CurrentGameBg.UNK_10 |= player->num == PLAYER1 ? 2u : 4u;
 		}
 	}
 }
@@ -1714,7 +1722,7 @@ void UpdatePlayActive(Player* player) {
 		// Test staff roll; GM can't be awarded.
 		if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_LEFT) {
 			player->section = 8u;
-			player->level = 899;
+			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
 			F16I(Grades[player->num].currentGrade) = GradeLevels[PLAYERGRADE_S8];

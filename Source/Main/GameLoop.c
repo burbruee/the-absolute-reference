@@ -487,7 +487,7 @@ static GameLoopState StartGameLoop() {
 
 	UNK_6029546(4, 0, 0, 0);
 
-	while (UNK_6064750) {
+	while (UNK_6064750 != NULL) {
 		if (UpdateFrame()) return GAMELOOP_TEST;
 	}
 
@@ -510,7 +510,7 @@ static GameLoopState StartGameLoop() {
 		Player *player = &Players[playerNum];
 		player->modeFlags |= Game.modeFlags[playerNum] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE);
 		if (StartPlayers & (1 << playerNum)) {
-			player->nowFlags |= NOW_STARTED | NOW_WAITING;
+			player->nowFlags = NOW_STARTED | NOW_SELECTING;
 			InitPlayer(playerNum);
 		}
 	}
@@ -528,9 +528,9 @@ static GameLoopState StartGameLoop() {
 	bool downNextPalCycle = false;
 	uint32_t numPalCycleFrames = 0u;
 	UNK_6029546(0u, 10, 0, 6);
+	ScreenTime = 0u;
 	Player *player1 = &Players[PLAYER1];
 	Player *player2 = &Players[PLAYER2];
-
 	GameLoopState state = GAMELOOP_RESTART;
 	while (state == GAMELOOP_RESTART) {
 		if (UpdateGame()) {
@@ -590,20 +590,19 @@ static GameLoopState StartGameLoop() {
 				player2->nowFlags |= NOW_INIT;
 				UNK_6029546(0, 10, 0, 6);
 			}
-
-			if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
-				NextGameMusic = 2;
-				if (++UNK_6079294 >= TIME(0, 3, 0)) {
-					state = GAMELOOP_STOP;
-				}
-
-				if (NextScreenVersionTitle()) {
-					UNK_6079294 = 0;
-				}
+		}
+		if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
+			NextGameMusic = 2;
+			if (++UNK_6079294 >= TIME(0, 3, 0)) {
+				state = GAMELOOP_STOP;
 			}
-			else {
+
+			if (NextScreenVersionTitle()) {
 				UNK_6079294 = 0;
 			}
+		}
+		else {
+			UNK_6079294 = 0;
 		}
 	}
 
