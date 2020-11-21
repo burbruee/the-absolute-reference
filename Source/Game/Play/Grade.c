@@ -305,7 +305,6 @@ void CheckNextSection(Player* player) {
 	if (!(player->nowFlags & NOW_STAFF) && player->section < 10u) {
 		bool sectionUp = false;
 		const uint16_t* nextSectionLevel = &NextSectionLevels[player->section];
-		uint16_t* maxVersusSection = &Settings[SETTING_MAXVERSUSSECTION];
 		for (uint16_t section = player->section; section < 10u; section++, nextSectionLevel++) {
 			if (player->level >= *nextSectionLevel) {
 				UpdateSectionGrade(player);
@@ -333,7 +332,7 @@ void CheckNextSection(Player* player) {
 					}
 					CurrentGameBg.UNK_10 |= player->num == PLAYER1 ? (PLAYER1 + 1) << 1 : (PLAYER2 + 1) << 1;
 					if (player->modeFlags & MODE_VERSUS) {
-						if (player->section >= *maxVersusSection + 1u) {
+						if (player->section >= Settings[SETTING_MAXVERSUSSECTION] + 1u) {
 							sectionUp = true;
 						}
 					}

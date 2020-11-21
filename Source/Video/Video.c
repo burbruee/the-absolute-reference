@@ -1175,13 +1175,13 @@ int32_t UNK_6025AE4(int16_t bgIndex, GameBg* gameBg) {
 		var0 = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
 	}
 	UNK_60AD228[var0].UNK_10 = gameBg->UNK_0;
-	UNK_60AD228[bgIndex].UNK_14 = 0;
+	UNK_60AD228[var0].UNK_14 = 0;
 	
-	STRUCT_GameBg_0* var1 = gameBg->UNK_0;
-	for (const BgMap* bgMap = var1->UNK_0; bgMap != NULL; var1++, bgMap = var1->UNK_0) {
-		assert((var1->UNK_0->header.UNK_6 * var1->UNK_4) & 0xFFFF);
-		UNK_60AD228[var0].UNK_14 += var1->UNK_0->header.UNK_6 * var1->UNK_4;
+ 	STRUCT_GameBg_0* var1 = gameBg->UNK_0;
+ 	for (const BgMap* bgMap = var1->UNK_0; bgMap != NULL; var1++, bgMap = var1->UNK_0) {
+ 		UNK_60AD228[var0].UNK_14 += bgMap->header.UNK_6 * var1->UNK_4;
 	}
+	assert((UNK_60AD228[var0].UNK_14 & 0xFFFFu) != 0u);
 
 	UNK_60AD228[var0].UNK_4C = 0;
 	UNK_60AD228[var0].UNK_50 = 0;
@@ -1278,8 +1278,7 @@ STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16
 			STRUCT_GameBg_0* var1 = struct0;
 			while (*arg2 < 0) {
 				if (UNK_60AD228[var0].UNK_60 == NULL) {
-					assert(UNK_60AD228[var0].UNK_14 & 0xFFFF);
-					// TODO: While debugging, there was a run where UNK_14 here didn't have any bits in the lower 16 set, resulting in an infinite loop.
+					assert((int16_t)(*arg2 + UNK_60AD228[var0].UNK_14) & 0xFFFF);
 					*arg2 += UNK_60AD228[var0].UNK_14;
 				}
 				else {

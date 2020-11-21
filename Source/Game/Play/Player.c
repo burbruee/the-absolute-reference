@@ -496,6 +496,7 @@ void UpdatePlayerPlaying(Player* player) {
 			break;
 
 		case PLAYSTATE_GAMEOVER:
+			timeStopped = true;
 			UpdatePlayGameOver(player);
 			break;
 
@@ -520,10 +521,12 @@ void UpdatePlayerPlaying(Player* player) {
 			break;
 
 		case PLAYSTATE_RANKING:
+			timeStopped = true;
 			UpdatePlayRanking(player);
 			break;
 
 		case PLAYSTATE_STAFFTRANSITION:
+			timeStopped = true;
 			UpdatePlayStaffTransition(player);
 			break;
 
@@ -2884,7 +2887,7 @@ uint32_t PointsBaseValue(Player* player, uint8_t numLines) {
 	}
 
 	if (player->modeFlags & MODE_BIG) {
-		if (numLines > 7u) {
+		if (numLines >= 8u) {
 			player->combo += (numLogicalLines - 1) * 2;
 			player->level += 4u;
 		}
@@ -2896,23 +2899,23 @@ uint32_t PointsBaseValue(Player* player, uint8_t numLines) {
 			player->combo += (numLogicalLines - 1) * 2;
 			player->level += 2u;
 		}
-		else if (numLines >= 1u) {
-			player->level++;
+		else if (numLines == 0u) {
+			player->combo = 1;
 		}
 		else {
-			player->combo = 1;
+			player->level++;
 		}
 	}
 	else {
-		if (numLines > 3u) {
+		if (numLines >= 4u) {
 			player->combo += (numLogicalLines - 1) * 2;
 			player->level += 4u;
 		}
-		else if (numLines > 2u) {
+		else if (numLines >= 3u) {
 			player->combo += (numLogicalLines - 1) * 2;
 			player->level += 3u;
 		}
-		else if (numLines > 1u) {
+		else if (numLines >= 2u) {
 			player->combo += (numLogicalLines - 1) * 2;
 			player->level += 2u;
 		}
@@ -2945,7 +2948,7 @@ uint32_t PointsBaseValue(Player* player, uint8_t numLines) {
 		pointsBaseValue++;
 	}
 
-	if ((player->modeFlags & MODE_NORMAL) || (GameFlags & GAME_TWIN)) {
+	if ((player->modeFlags & MODE_NORMAL) && (GameFlags & GAME_TWIN)) {
 		if (player->level >= NextSectionLevels[2]) {
 			player->level = NextSectionLevels[2];
 		}
