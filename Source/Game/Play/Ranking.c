@@ -61,7 +61,7 @@ static const char* DefaultName = "ARK";
 
 #define NUMINVALIDNAMES 20
 static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
-	"", "A", "AA ", "AAA", "666",
+	"   ", "A  ", "AA ", "AAA", "666",
 	"AHO", "ASS", "AUM", "DIE", "ETA",
 	"FUC", "FUK", "HIV", "IRA", "KKK",
 	"OSI", "PEE", "PIS", "PLO", "SEX",
@@ -1079,7 +1079,7 @@ bool UpdateNameEntry(NameEntryData* nameEntry) {
 	if (done) {
 		for (size_t i = 0; StringNCompare(InvalidNames[i], InvalidNames[NUMINVALIDNAMES], 3) != 0; i++) {
 			if (StringNCompare(InvalidNames[i], nameEntry->name, 3) == 0) {
-				*(uint32_t*)nameEntry->name = *(const uint32_t*)DefaultName;
+				MemCopy(sizeof(char) * 4, nameEntry->name, DefaultName);
 				break;
 			}
 		}

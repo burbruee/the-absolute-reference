@@ -1283,7 +1283,7 @@ static int16_t SecretGradeScales[NUMPLAYERS];
 #define numSecretGradeRows values[3]
 
 void NextPlayGameOver(Player* player) {
-	NewRankingData* newRanking = &NewRankings[player->num];
+NewRankingData* newRanking = &NewRankings[player->num];
 
 	player->values[0] = TIME(0, 6, 0);
 	player->values[1] = 1;
@@ -2808,7 +2808,6 @@ void UpdatePlayEntry(Player* player) {
 void UpdatePlayGameOver(Player* player) {
 	if ((GameFlags & GAME_TWIN) && (player->nowFlags & NOW_SHOWRANKINGCODE)) {
 		ShowRankingCode(player);
-		return;
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->numSecretGradeRows >= 5) {
 		DisplayObject(OBJECT_SECRETGRADE, 158, player->screenPos[0] - 35, 2u, 110u);

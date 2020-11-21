@@ -150,7 +150,7 @@ static void UpdateEntityVersusReadyGo(Entity* entity) {
 
 		if (entity->frames == 0) {
 			FreeEntity(entity);
-			GameFlags = GameFlags & ~GAME_VERSUSREADYGO;
+			GameFlags &= ~GAME_VERSUSREADYGO;
 		}
 		break;
 

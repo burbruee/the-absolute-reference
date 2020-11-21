@@ -73,7 +73,7 @@ static const ObjectData* ObjectTableMedals[NUMMEDALTYPES] = {
 
 void InitMedals(Player* player, int16_t medalsY, int16_t medalsX) {
 	Medal* medal = Medals[player->num];
-	for (MedalType medalType = 0u; medalType < NUMMEDALTYPES; medalType++) {
+	for (MedalType medalType = MEDALTYPE_AC; medalType < NUMMEDALTYPES; medalType++, medal++) {
 		medal->state = MEDALSTATE_NULL;
 		medal->type = medalType;
 		medal->animStep = 0;
@@ -90,6 +90,9 @@ void ShowMedals(Player* player) {
 		case MEDALSTATE_NULL:
 			if (player->medalColors[medalType] != MEDALCOLOR_NULL) {
 				medal->state++;
+			}
+			else {
+				break;
 			}
 
 		case MEDALSTATE_AWARDED:

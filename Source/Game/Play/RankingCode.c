@@ -73,6 +73,8 @@ void NewRankingCode(Player *player) {
 		code[i].next = &code[i + 1];
 		code[i + 1].previous = &code[i];
 	}
+	// BUG: The last code node never has it's digit initialized. But it's set below, before it's read.
+	code[NUMRANKINGCODEDIGITS - 1].next = &code[0];
 
 	// Generate ranking code.
 

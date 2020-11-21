@@ -1,6 +1,7 @@
 #include "Game/Play/Grade.h"
 #include "Game/Play/Player.h"
 #include "Game/Save.h"
+#include "Video/GameBg.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Setting.h"
@@ -330,7 +331,7 @@ void CheckNextSection(Player* player) {
 					else {
 						player->section++;
 					}
-					//UNK_6066188.UNK_10 |= player->num == PLAYER1 ? (PLAYER1 + 1) << 1 : (PLAYER2 + 1) << 1; // TODO
+					CurrentGameBg.UNK_10 |= player->num == PLAYER1 ? (PLAYER1 + 1) << 1 : (PLAYER2 + 1) << 1;
 					if (player->modeFlags & MODE_VERSUS) {
 						if (player->section >= *maxVersusSection + 1u) {
 							sectionUp = true;
