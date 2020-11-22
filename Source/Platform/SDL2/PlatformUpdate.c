@@ -157,7 +157,7 @@ void ExitHandler(void) {
 }
 
 #define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
-double previousFrameTime;
+static double previousFrameTime;
 
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
@@ -248,6 +248,7 @@ bool PlatformInit() {
 			DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
 		}
 
+		memcpy(Pal.header, &programData[ROMOFFSET_PAL], sizeof(Pal.header));
 		for (size_t i = 0u; i < lengthof(Pal.data); i++) {
 			Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
 		}
