@@ -674,11 +674,11 @@ void ShowChallengerMode(Player* player) {
 
 void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums) {
 	bool gold = false;
-	if (player->gravity >= F32(20, 0x0000) && ScreenTime % 4u) {
+	if (player->gravity >= F32(20, 0x0000) && (ScreenTime & 3u)) {
 		gold = true;
 	}
 
-	if (player->gravity >= F32(20, 0x0000) && (player->nowFlags & NOW_STARTED)) {
+	if (player->gravity >= F32(20, 0x0000) && !(player->nowFlags & NOW_STARTED)) {
 		gold = true;
 	}
 
