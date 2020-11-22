@@ -851,7 +851,7 @@ void UpdatePlayerSelecting(Player* player) {
 			if (player->values[0] != challengeOld) {
 				PlaySoundEffect(SOUNDEFFECT_SELECT);
 			}
-			if (((player->otherPlayer->nowFlags & NOW_GAMEOVER) || player->otherPlayer->play.state == PLAYSTATE_GAMEOVER || player->otherPlayer->play.state == PLAYSTATE_RANKING) && !(player->otherPlayer->nowFlags & NOW_STAFF)) {
+			if (!((player->otherPlayer->nowFlags & NOW_GAMEOVER) || player->otherPlayer->play.state == PLAYSTATE_GAMEOVER || player->otherPlayer->play.state == PLAYSTATE_RANKING) && !(player->otherPlayer->nowFlags & NOW_STAFF)) {
 				if (GameButtonsNew[player->num] & (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 					StartChallenger(player);
 				}
@@ -932,7 +932,7 @@ void UpdatePlayers() {
 		}
 
 		if (
-			(player->nowFlags & (NOW_SELECTING | NOW_WAITING | NOW_STAFF | NOW_STOPPED)) &&
+			!(player->nowFlags & (NOW_SELECTING | NOW_WAITING | NOW_STAFF | NOW_STOPPED)) &&
 			(GameFlags & (GAME_NEWCHALLENGER | GAME_NEWVERSUSROUND))) {
 			player->nowFlags |= NOW_WAITING;
 			player->nowFlags &= ~NOW_PLAYING;

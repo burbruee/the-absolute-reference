@@ -154,7 +154,7 @@ GameLoopState InitGameLoop() {
 	return GAMELOOP_START;
 }
 
-void CheckSetNewChallenger(Player *player) {
+void CheckSetNewChallenger(Player* player) {
 	GameFlags &= ~(GAME_STARTWAITINGPLAYER | GAME_NEWCHALLENGER);
 	if (player->otherPlayer->nowFlags & NOW_STARTED) {
 		if (player->otherPlayer->nowFlags & (NOW_STAFF | NOW_STOPPED)) {
@@ -168,8 +168,8 @@ void CheckSetNewChallenger(Player *player) {
 		GameFlags |= GAME_STARTWAITINGPLAYER;
 	}
 
-	   NumVersusNoItemFrames = 0;
-	   NumVersusCementFrames = 0;
+	NumVersusNoItemFrames = 0u;
+	NumVersusCementFrames = 0u;
 }
 
 GameLoopState GameStartVersus() {
@@ -181,12 +181,10 @@ GameLoopState GameStartVersus() {
 			Players[PLAYER1].nowFlags |= NOW_NOUPDATE;
 			Players[PLAYER2].nowFlags |= NOW_NOUPDATE;
 			if (GameButtonsDown[PLAYER1] == BUTTON_START && GameButtonsDown[PLAYER2] == BUTTON_START) {
-				            NumVersusNoItemFrames++;
+				NumVersusNoItemFrames++;
 			}
-			if (
-				GameButtonsDown[PLAYER1] == (BUTTON_START | BUTTON_2 | BUTTON_1) &&
-				GameButtonsDown[PLAYER2] == (BUTTON_START | BUTTON_2 | BUTTON_1)) {
-				            NumVersusCementFrames++;
+			if (GameButtonsDown[PLAYER1] == (BUTTON_START | BUTTON_2 | BUTTON_1) && GameButtonsDown[PLAYER2] == (BUTTON_START | BUTTON_2 | BUTTON_1)) {
+				NumVersusCementFrames++;
 			}
 		}
 		else {
@@ -194,7 +192,7 @@ GameLoopState GameStartVersus() {
 			SetPal(PALNUM_14, 1u, PALPTR(0xF8));
 			NextGameMusic = 10u;
 			Game.state = 0u;
-			GameFlags &= ~(GAME_TWIN | GAME_NEWCHALLENGER | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10) | GAME_VERSUS | GAME_BIT11;
+			GameFlags = (GameFlags & ~(GAME_TWIN | GAME_NEWCHALLENGER | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10)) | GAME_VERSUS | GAME_BIT11;
 			Game.modeFlags[PLAYER1] = Players[PLAYER1].modeFlags;
 			Game.modeFlags[PLAYER2] = Players[PLAYER2].modeFlags;
 			modeFlags = Game.modeFlags[Game.versusWinner] & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE | MODE_ITEM);
@@ -592,7 +590,7 @@ static GameLoopState StartGameLoop() {
 			}
 		}
 		if ((player1->nowFlags & NOW_GAMEOVER) && (player2->nowFlags & NOW_GAMEOVER)) {
-			NextGameMusic = 2;
+			NextGameMusic = GAMEMUSIC_2;
 			if (++UNK_6079294 >= TIME(0, 3, 0)) {
 				state = GAMELOOP_STOP;
 			}
