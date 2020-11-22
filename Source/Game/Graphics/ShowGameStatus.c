@@ -439,9 +439,9 @@ void UNK_600FC50() {
 }
 
 void ShowStartRequirement(Player* player) {
-	if ((ScreenTime & 0x60) && CanStart(player->num, false)) {
+	if (ScreenTime & 0x60) {
 		const uint16_t layer = 125u;
-		if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+		if (CanStart(player->num, false) || Settings[SETTING_COINMODE] == COINMODE_FREE) {
 			if (player->num == PLAYER1) {
 				DisplayObject(OBJECT_PUSH1PSTARTBUTTON, 100, player->screenPos[0], PALNUM_OBJECT, layer);
 			}
