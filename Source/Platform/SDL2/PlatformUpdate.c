@@ -156,13 +156,19 @@ void ExitHandler(void) {
 	SDL_Quit();
 }
 
+#define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
+double previousFrameTime;
+
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
 	srand((unsigned)time(NULL));
 
 	SDL_Init(SDL_INIT_VIDEO);
+
+	previousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+
 	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
 	SDL_SetRenderDrawColor(renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
@@ -445,10 +451,7 @@ void PlatformFrame() {
 
 static Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
-	SDL_RenderClear(renderer);
-
 	Render(framebuffer, TileData);
-
 	void* pixels;
 	int pitch;
 	SDL_LockTexture(framebufferTexture, NULL, &pixels, &pitch);
@@ -466,7 +469,14 @@ void PlatformFinishUpdate() {
 	}
 	SDL_UnlockTexture(framebufferTexture);
 
-	SDL_RenderCopy(renderer, framebufferTexture, NULL, NULL);
+	do {
+		SDL_RenderClear(renderer);
 
-	SDL_RenderPresent(renderer);
+		SDL_RenderCopy(renderer, framebufferTexture, NULL, NULL);
+
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1);
+	} while (((double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()) - previousFrameTime < FRAME_DURATION);
+
+	previousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 }
