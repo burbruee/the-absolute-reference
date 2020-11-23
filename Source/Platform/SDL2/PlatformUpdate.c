@@ -162,10 +162,9 @@ static Uint64 previousCounter;
 
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
-	previousCounter = SDL_GetPerformanceCounter();
-
 	SDL_Init(SDL_INIT_VIDEO);
 
+	previousCounter = SDL_GetPerformanceCounter();
 	previousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 
 	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
