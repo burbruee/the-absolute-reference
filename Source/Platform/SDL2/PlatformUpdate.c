@@ -158,10 +158,11 @@ void ExitHandler(void) {
 
 #define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
 static double previousFrameTime;
+static Uint64 previousCounter;
 
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
-	srand((unsigned)time(NULL));
+	previousCounter = SDL_GetPerformanceCounter();
 
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -446,8 +447,11 @@ void PlatformUpdateInputs() {
 
 void PlatformFrame() {
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
-	RandScale += rand();
+	const Uint64 currentCounter = SDL_GetPerformanceCounter();
+	RandScale += currentCounter - previousCounter;
+	previousCounter = currentCounter;
 	NumVblanks++;
+	SDL_Delay(1);
 }
 
 static Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
