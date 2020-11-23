@@ -2,10 +2,9 @@
 #include "Main/Frame.h"
 #include "Lib/Math.h"
 #include "Lib/Macros.h"
+#include <assert.h>
 
 uint32_t CoinCount;
-
-// TODO: UNK_6065644 ... UNK_606564C
 
 static DATA(SaveMemory, 0x100);
 // Place save data at the end of save memory, while guaranteeing alignment for
@@ -18,6 +17,8 @@ uint32_t BestTaDeathSectionTimes[10];
 uint32_t InitSeed;
 
 uint32_t PlayStatusChecksum() {
+	assert(sizeof(SaveData) <= sizeof(SaveMemory));
+
 	Save->coinCount = CoinCount & 0xFFFF;
 
 	return

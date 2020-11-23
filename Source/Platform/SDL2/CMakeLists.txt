@@ -3,6 +3,7 @@ list(APPEND EXECUTABLE_SOURCES
 	"../Util/Render.c"
 	"../Util/RomData.c"
 
+	"EepromAccess.c"
 	"PlatformUpdate.c"
 )
 list(APPEND EXECUTABLE_HEADERS
@@ -12,6 +13,7 @@ list(APPEND EXECUTABLE_HEADERS
 	"../Util/Render.h"
 
 	"PlatformSupport/Config.h"
+	"PlatformSupport/EepromAccess.h"
 	"PlatformSupport/HwData.h"
 	"PlatformSupport/PlatformUpdate.h"
 	"PlatformSupport/PlatformTypes.h"

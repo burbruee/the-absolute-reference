@@ -16,10 +16,10 @@ void ShowClearTime(uint32_t time, int16_t y, int16_t x) {
 		entity->update = UpdateEntityClearTime;
 		entity->values[0] = 1;
 
-		uint32_t minutes = time % TIME(1, 0, 0);
+		uint8_t minutes = time / TIME(1, 0, 0);
 		time -= minutes * TIME(1, 0, 0);
-		uint32_t seconds = time / TIME(0, 1, 0);
-		uint32_t centiseconds = ((time - seconds * TIME(0, 1, 0)) * 100u) / TIME(0, 1, 0);
+		uint8_t seconds = time / TIME(0, 1, 0);
+		uint8_t centiseconds = ((time - seconds * TIME(0, 1, 0)) * 100u) / TIME(0, 1, 0);
 		entity->data.unionData.minutes = minutes;
 		entity->data.unionData.seconds = seconds;
 		entity->data.unionData.centiseconds = centiseconds;

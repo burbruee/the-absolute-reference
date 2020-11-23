@@ -16,11 +16,6 @@ extern RAMDATA uint8_t INPUTS[NUMINPUTS];
 
 extern RAMDATA uint8_t EEPROM[4];
 
-uint8_t EepromRead(size_t i);
-#define EEPROM_READ(i) EepromRead((i))
-void EepromWrite(size_t i, uint8_t value);
-#define EEPROM_WRITE(i, value) EepromWrite((i), (value))
-
 extern RAMDATA uint8_t SOUNDCTRL[8];
 
 uint8_t SoundControlRead(size_t i);
