@@ -103,7 +103,7 @@ void UpdateInputs() {
 
 	uint8_t serviceInput = ~INPUTS[INPUT_SERVICE];
 
-	if ((~serviceInput & SERVICE_ADDSERVICE) == AddServiceInputOld) {
+	if ((serviceInput & SERVICE_ADDSERVICE) == AddServiceInputOld) {
 		AddService = false;
 	}
 	else {

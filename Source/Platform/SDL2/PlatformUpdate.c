@@ -18,6 +18,7 @@
 #include "Game/Graphics/ShowText.h"
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
+#include "Platform/Util/ini.h"
 #include "Platform/Util/Render.h"
 #include "PlatformTypes.h"
 #include "HwData.h"
@@ -144,11 +145,20 @@ static const size_t BgMapRomOffsets[] = {
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
 
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-SDL_Texture* framebufferTexture = NULL;
+static ini_t* config = NULL;
+
+static SDL_Window* window = NULL;
+static SDL_Renderer* renderer = NULL;
+static SDL_Texture* framebufferTexture = NULL;
+
+#define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
+static double previousFrameTime;
+static Uint64 previousCounter;
+
+static SDL_Keycode inputConfigKeyboard[NUMINPUTS][8];
 
 void ExitHandler(void) {
+	ini_free(config);
 	free(TileData);
 
 	SDL_DestroyRenderer(renderer);
@@ -156,12 +166,48 @@ void ExitHandler(void) {
 	SDL_Quit();
 }
 
-#define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
-static double previousFrameTime;
-static Uint64 previousCounter;
-
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
+	config = ini_load("taref.ini");
+	if (!config) {
+		exit(EXIT_FAILURE);
+	}
+
+	{
+		const char* value;
+		#define GET_KEY(input, button, i) \
+		do { \
+			value = ini_get(config, #input "_KEYBOARD", #button); \
+			if (value) { \
+				inputConfigKeyboard[input][i] = SDL_GetKeyFromName(value); \
+			} \
+		} while (0)
+
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_START, 0);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_3, 1);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_2, 2);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_1, 3);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_LEFT, 4);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_RIGHT, 5);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_DOWN, 6);
+		GET_KEY(INPUT_BUTTONS1P, BUTTON_UP, 7);
+
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_START, 0);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_3, 1);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_2, 2);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_1, 3);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_LEFT, 4);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_RIGHT, 5);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_DOWN, 6);
+		GET_KEY(INPUT_BUTTONS2P, BUTTON_UP, 7);
+
+		GET_KEY(INPUT_SERVICE, SERVICE_COIN1, 0);
+		GET_KEY(INPUT_SERVICE, SERVICE_COIN2, 1);
+		GET_KEY(INPUT_SERVICE, SERVICE_ADDSERVICE, 2);
+		GET_KEY(INPUT_SERVICE, SERVICE_TEST, 5);
+		GET_KEY(INPUT_SERVICE, SERVICE_TILT, 6);
+	}
+
 	SDL_Init(SDL_INIT_VIDEO);
 
 	previousCounter = SDL_GetPerformanceCounter();
@@ -372,74 +418,22 @@ bool PlatformInit() {
 }
 
 void PlatformUpdateInputs() {
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
-		switch (event.type) {
-		case SDL_QUIT:
-			exit(EXIT_SUCCESS);
-			break;
-
-		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym) {
-			case SDLK_RETURN: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_START; break;
-			case SDLK_SEMICOLON: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_3; break;
-			case SDLK_l: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_2; break;
-			case SDLK_k: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_1; break;
-			case SDLK_a: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_LEFT; break;
-			case SDLK_d: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_RIGHT; break;
-			case SDLK_s: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_DOWN; break;
-			case SDLK_w: INPUTS[INPUT_BUTTONS1P] &= ~BUTTON_UP; break;
-
-			case SDLK_KP_ENTER: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_START; break;
-			case SDLK_KP_3: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_3; break;
-			case SDLK_KP_2: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_2; break;
-			case SDLK_KP_1: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_1; break;
-			case SDLK_KP_4: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_LEFT; break;
-			case SDLK_KP_6: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_RIGHT; break;
-			case SDLK_KP_5: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_DOWN; break;
-			case SDLK_KP_8: INPUTS[INPUT_BUTTONS2P] &= ~BUTTON_UP; break;
-
-			case SDLK_RSHIFT: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN1; break;
-			case SDLK_KP_PLUS: INPUTS[INPUT_SERVICE] &= ~SERVICE_COIN2; break;
-			case SDLK_TAB: INPUTS[INPUT_SERVICE] &= ~SERVICE_ADDSERVICE; break;
-			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TEST; break;
-			case SDLK_BACKSPACE: INPUTS[INPUT_SERVICE] &= ~SERVICE_TILT; break;
-
-			default: break;
+	SDL_PumpEvents();
+	if (SDL_QuitRequested()) {
+		exit(EXIT_SUCCESS);
+	}
+	const Uint8* const keyboardState = SDL_GetKeyboardState(NULL);
+	for (size_t i = 0u; i < lengthof(inputConfigKeyboard); i++) {
+		for (size_t j = 0u; j < lengthof(*inputConfigKeyboard); j++) {
+			if (inputConfigKeyboard[i][j] != SDLK_UNKNOWN) {
+				SDL_Scancode scancode = SDL_GetScancodeFromKey(inputConfigKeyboard[i][j]);
+				if (keyboardState[scancode]) {
+					INPUTS[i] &= ~(1 << j);
+				}
+				else {
+					INPUTS[i] |= 1 << j;
+				}
 			}
-			break;
-
-		case SDL_KEYUP:
-			switch (event.key.keysym.sym) {
-			case SDLK_RETURN: INPUTS[INPUT_BUTTONS1P] |= BUTTON_START; break;
-			case SDLK_SEMICOLON: INPUTS[INPUT_BUTTONS1P] |= BUTTON_3; break;
-			case SDLK_l: INPUTS[INPUT_BUTTONS1P] |= BUTTON_2; break;
-			case SDLK_k: INPUTS[INPUT_BUTTONS1P] |= BUTTON_1; break;
-			case SDLK_a: INPUTS[INPUT_BUTTONS1P] |= BUTTON_LEFT; break;
-			case SDLK_d: INPUTS[INPUT_BUTTONS1P] |= BUTTON_RIGHT; break;
-			case SDLK_s: INPUTS[INPUT_BUTTONS1P] |= BUTTON_DOWN; break;
-			case SDLK_w: INPUTS[INPUT_BUTTONS1P] |= BUTTON_UP; break;
-
-			case SDLK_KP_ENTER: INPUTS[INPUT_BUTTONS2P] |= BUTTON_START; break;
-			case SDLK_KP_3: INPUTS[INPUT_BUTTONS2P] |= BUTTON_3; break;
-			case SDLK_KP_2: INPUTS[INPUT_BUTTONS2P] |= BUTTON_2; break;
-			case SDLK_KP_1: INPUTS[INPUT_BUTTONS2P] |= BUTTON_1; break;
-			case SDLK_KP_4: INPUTS[INPUT_BUTTONS2P] |= BUTTON_LEFT; break;
-			case SDLK_KP_6: INPUTS[INPUT_BUTTONS2P] |= BUTTON_RIGHT; break;
-			case SDLK_KP_5: INPUTS[INPUT_BUTTONS2P] |= BUTTON_DOWN; break;
-			case SDLK_KP_8: INPUTS[INPUT_BUTTONS2P] |= BUTTON_UP; break;
-
-			case SDLK_RSHIFT: INPUTS[INPUT_SERVICE] |= SERVICE_COIN1; break;
-			case SDLK_KP_PLUS: INPUTS[INPUT_SERVICE] |= SERVICE_COIN2; break;
-			case SDLK_TAB: INPUTS[INPUT_SERVICE] |= SERVICE_ADDSERVICE; break;
-			case SDLK_ESCAPE: INPUTS[INPUT_SERVICE] |= SERVICE_TEST; break;
-			case SDLK_BACKSPACE: INPUTS[INPUT_SERVICE] |= SERVICE_TILT; break;
-
-			default: break;
-			}
-			break;
-
-		default: break;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 list(APPEND EXECUTABLE_SOURCES
 	"../Util/HwData.c"
+	"../Util/ini.c"
 	"../Util/Render.c"
 	"../Util/RomData.c"
 
@@ -9,6 +10,7 @@ list(APPEND EXECUTABLE_SOURCES
 list(APPEND EXECUTABLE_HEADERS
 	"../Util/Color.h"
 	"../Util/HwData.h"
+	"../Util/ini.h"
 	"../Util/Macros.h"
 	"../Util/Render.h"
 

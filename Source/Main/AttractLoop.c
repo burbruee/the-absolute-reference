@@ -181,8 +181,6 @@ static ScreenState StartRankingScreen() {
 }
 
 static ScreenState StartCopyrightScreen() {
-	int16_t screenFrames = 300;
-
 	UNK_602AA4C();
 	if (UpdateFrame()) {
 		return SCREEN_TESTMODE;
