@@ -113,7 +113,7 @@ void UNK_6023790() {
 
 void UNK_60237DE() {
 	CurrentPauseMode = NextPauseMode;
-	// TODO: Not sure of all the data types here. UNK_300 might be an array of 16-byte-size unions.
+	// TODO: Not sure of all the data types here. UNK_300 might be an array of four-pointer-size unions.
 	if (UNK_6060068 != 0) {
 		UNK_60AD218 = UNK_607D210;
 		do {
@@ -141,8 +141,8 @@ void UNK_60237DE() {
 					}
 				}
 				if (!UNK_60AD21E) {
-					UNK_6060060 = (void(**)())&UNK_60AD218->UNK_300[4 * 15];
-					((void(*)())UNK_60AD218->UNK_300[4 * 15])();
+					UNK_6060060 = (void(**)())&UNK_60AD218->UNK_300[4 * 15 + 2];
+					((void(*)())UNK_60AD218->UNK_300[4 * 15 + 2])();
 				}
 			}
 			UNK_606005C = UNK_60AD218->UNK_14;
@@ -173,20 +173,20 @@ void UNK_602392E(uintptr_t arg0, void (*arg1)()) {
 
 void UNK_60239B8(uintptr_t arg0, uintptr_t arg1) {
 	STRUCT_607D218* temp0 = UNK_606005C;
-    
-    if (UNK_6060068 != 0) {
-        UNK_606005C = UNK_607D210;
-        do {
-            uint16_t i = UNK_606005C->UNK_18;
+	
+	if (UNK_6060068 != 0) {
+		UNK_606005C = UNK_607D210;
+		do {
+			uint16_t i = UNK_606005C->UNK_18;
 			for (void** var0 = &UNK_606005C->UNK_300[4 * (15 - i) + 3]; i != 0; i--, var0 += 4) {
-                if ((uintptr_t)*var0 == arg0) {
-                    *(uintptr_t*)var0 = arg1;
-                }
-            }
-        } while (UNK_606005C != NULL);
-    }
+				if ((uintptr_t)*var0 == arg0) {
+					*(uintptr_t*)var0 = arg1;
+				}
+			}
+		} while (UNK_606005C != NULL);
+	}
 
-    UNK_606005C = temp0;
+	UNK_606005C = temp0;
 }
 
 bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t arg3, uint32_t arg4) {
@@ -377,55 +377,55 @@ void UNK_6023E5A(STRUCT_607D218* arg0) {
 }
 
 STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
-    STRUCT_607D218* var0 = UNK_606005C;
-    if (arg1 == (STRUCT_607D218 *)~(intptr_t)0) {
-        arg1 = UNK_606005C;
-    }
-    STRUCT_607D218* var1 = UNK_6023DAE(arg1);
-    if (var1 == NULL) {
-        var1 = NULL;
-        var0 = UNK_606005C;
-    }
-    else {
+	STRUCT_607D218* var0 = UNK_606005C;
+	if (arg1 == (STRUCT_607D218 *)~(uintptr_t)0u) {
+		arg1 = UNK_606005C;
+	}
+	STRUCT_607D218* var1 = UNK_6023DAE(arg1);
+	if (var1 == NULL) {
+		var1 = NULL;
+		var0 = UNK_606005C;
+	}
+	else {
 		void (*fun0)();
 		void (*fun1)();
 		void (*fun2)();
 
-        if (arg0[3] == NULL) {
-            fun0 = UNK_6023788;
-        }
-        else {
-            fun0 = arg0[3];
-        }
+		if (arg0[3] == NULL) {
+			fun0 = UNK_6023788;
+		}
+		else {
+			fun0 = arg0[3];
+		}
 
-        UNK_606005C = var1;
-        var1->UNK_300[4 * 15 + 3] = fun0;
+		UNK_606005C = var1;
+		var1->UNK_300[4 * 15 + 3] = fun0;
 
-        if (arg0[1] == NULL) {
-            fun1 = UNK_6023788;
-        }
-        else {
-            fun1 = arg0[1];
-        }
+		if (arg0[1] == NULL) {
+			fun1 = UNK_6023788;
+		}
+		else {
+			fun1 = arg0[1];
+		}
 
-        var1->UNK_300[4 * 15 + 2] = fun1;
+		var1->UNK_300[4 * 15 + 2] = fun1;
 
-        if (arg0[0] == NULL) {
-            fun2 = UNK_6023788;
-        }
-        else {
-            fun2 = arg0[0];
-        }
+		if (arg0[0] == NULL) {
+			fun2 = UNK_6023788;
+		}
+		else {
+			fun2 = arg0[0];
+		}
 
-        var1->UNK_300[4 * 14 + 3] = fun2;
-        var1->UNK_18 = 1;
+		var1->UNK_300[4 * 14 + 3] = fun2;
+		var1->UNK_18 = 1;
 
-        if (arg0[2] != NULL) {
-            arg0[2]();
-        }
-    }
-    UNK_606005C = var0;
-    return var1;
+		if (arg0[2] != NULL) {
+			arg0[2]();
+		}
+	}
+	UNK_606005C = var0;
+	return var1;
 }
 
 #if 0
@@ -861,10 +861,10 @@ void UNK_602471C(AddSpriteData* arg0) {
 void WriteSpriteLayers() {
 	// Convert from layers to a linear name sequence.
 	int16_t nameIndex = SPRITE_FIRST;
-    SpriteNames[0] = 0u;
-    SpriteNames[1] = 1u;
-    int16_t* currentLayer = SpriteLayers;
-    for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
+	SpriteNames[0] = 0u;
+	SpriteNames[1] = 1u;
+	int16_t* currentLayer = SpriteLayers;
+	for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
 		for (int16_t layerName = *currentLayer++; layerName != 0; nameIndex++) {
 			SpriteNames[nameIndex] = layerName;
 			layerName = SpriteLayerNames[layerName];
@@ -877,7 +877,7 @@ void WriteSpriteLayers() {
 
 void InitSpriteLayers() {
 	// Set all layers as free.
-    for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
+	for (uint16_t layer = 0u; layer < lengthof(SpriteLayers); layer++) {
 		SpriteLayers[layer] = SPRITELAYER_FREE;
 	}
 }
@@ -886,22 +886,22 @@ int16_t AllocSpriteAdder() {
 	int16_t i = SpriteAdderNameTable[NumSpriteAdders];
 	NumSpriteAdders++;
 	SpriteAdders[i].flipXBgPri = 1u;
-    SpriteAdders[i].verticalHorizontal = 0u;
-    SpriteAdders[i].scaleX = UNSCALED;
-    SpriteAdders[i].scaleY = UNSCALED;
-    SpriteAdders[i].palNum = 0u;
-    SpriteAdders[i].bppAlphaTileTop = 0u;
-    SpriteAdders[i].layer = 16u;
-    SpriteAdders[i].type = 1u;
-    SpriteAdders[i].UNK_2C = 0xA030u;
-    SpriteAdders[i].UNK_2E = 0u;
-    SpriteAdders[i].UNK_30 = 0;
-    SpriteAdders[i].UNK_32 = 0;
-    SpriteAdders[i].UNK_34 = 0;
-    SpriteAdders[i].animFrame = 0;
-    SpriteAdders[i].UNK_36 = 0;
-    SpriteAdders[i].UNK_28 = 0;
-    return i;
+	SpriteAdders[i].verticalHorizontal = 0u;
+	SpriteAdders[i].scaleX = UNSCALED;
+	SpriteAdders[i].scaleY = UNSCALED;
+	SpriteAdders[i].palNum = 0u;
+	SpriteAdders[i].bppAlphaTileTop = 0u;
+	SpriteAdders[i].layer = 16u;
+	SpriteAdders[i].type = 1u;
+	SpriteAdders[i].UNK_2C = 0xA030u;
+	SpriteAdders[i].UNK_2E = 0u;
+	SpriteAdders[i].UNK_30 = 0;
+	SpriteAdders[i].UNK_32 = 0;
+	SpriteAdders[i].UNK_34 = 0;
+	SpriteAdders[i].animFrame = 0;
+	SpriteAdders[i].UNK_36 = 0;
+	SpriteAdders[i].UNK_28 = 0;
+	return i;
 }
 
 void FreeSpriteAdder(int16_t arg0) {
@@ -1382,9 +1382,14 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 		else {
 			UNK_6064750->UNK_30 = 0u;
 		}
-		UNK_6064750->UNK_2C = F32(0, 0x0000u);
+#if 1
+		UNK_6064750->UNK_2C = F32(0x80, 0x0000) / F32(0, arg1);
+#else
+		// TODO: Verify this sequence works with GCC release builds once the fixed point types have been refactored.
+		UNK_6064750->UNK_2C = F32(0, 0x0000);
 		F32I(UNK_6064750->UNK_2C) = 0x80;
-		UNK_6064750->UNK_2C /= arg1;
+		UNK_6064750->UNK_2C /= F32(0, arg1);
+#endif
 		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
 		if ((arg3 & 7) != 0) {
 			UNK_6029498(arg3 & 7);
@@ -1456,11 +1461,8 @@ static void UNK_602970C() {
 		UNK_6024030(UNK_606005C);
 		return;
 	}
-	else {
-		UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | F32I(UNK_6064750->UNK_28);
-		SetBackdropColor(UNK_6064750->backdropColor);
-		return;
-	}
+	UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | F32I(UNK_6064750->UNK_28);
+	SetBackdropColor(UNK_6064750->backdropColor);
 }
 
 static void UNK_602975E() {

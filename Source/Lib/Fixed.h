@@ -1,5 +1,6 @@
 #pragma once
 
+// TODO: Change fixed point types to a union of an array of the components and the full-size integer type. Incorrect behavior with GCC in release builds was found with F32I.
 #include "Config.h"
 #include <stdint.h>
 
