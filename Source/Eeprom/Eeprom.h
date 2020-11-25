@@ -13,6 +13,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define EEPROM_SIZE 0x100
+
 typedef enum Region {
 	REGION_JAPAN = 0,
 	REGION_USACANADA = 1 << 0,
