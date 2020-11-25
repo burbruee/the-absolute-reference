@@ -441,7 +441,7 @@ void PlatformUpdateInputs() {
 void PlatformFrame() {
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
 	const Uint64 currentCounter = SDL_GetPerformanceCounter();
-	RandScale += currentCounter - previousCounter;
+	RandScale += (uint32_t)(currentCounter - previousCounter);
 	previousCounter = currentCounter;
 	NumVblanks++;
 	SDL_Delay(1);

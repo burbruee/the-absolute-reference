@@ -5,6 +5,7 @@
 #include "EepromAccess.h"
 #include "HwData.h"
 #include <stdbool.h>
+#include <assert.h>
 
 // NOTE: Don't remove the empty loops after EEP-ROM accesses in here; the
 // PsikyoSH hardware probably requires some wait cycles between EEP-ROM
@@ -257,8 +258,9 @@ uint8_t ReadEepromByte(uint8_t offset) {
 
 void ReadEeprom(uint8_t offset, void* destination, size_t size) {
 	return;
+	assert(size < 0x100u);
     uint8_t* dstPtr = destination;
-	for (size_t i = 0u; i < size; i++) {
+	for (uint8_t i = 0u; i < size; i++) {
         *dstPtr++ = ReadEepromByte(offset + i);
     }
 }
@@ -309,8 +311,9 @@ void WriteEepromByte(uint8_t offset, uint8_t data) {
 
 void WriteEeprom(uint8_t offset, void* source, size_t size) {
 	return;
+	assert(size < 0x100u);
 	uint8_t* srcPtr = source;
-    for (size_t i = 0; i < size; i++) {
+    for (uint8_t i = 0; i < size; i++) {
         WriteEepromByte(offset + i, *srcPtr++);
     }
 }

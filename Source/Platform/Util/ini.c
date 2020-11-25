@@ -178,7 +178,7 @@ static void split_data(ini_t *ini) {
 ini_t* ini_load(const char *filename) {
   ini_t *ini = NULL;
   FILE *fp = NULL;
-  int n, sz;
+  size_t n, sz;
 
   /* Init ini struct */
   ini = malloc(sizeof(*ini));
@@ -205,6 +205,9 @@ ini_t* ini_load(const char *filename) {
 
   /* Load file content into memory, null terminate, init end var */
   ini->data = malloc(sz + 1);
+  if (!ini->data) {
+    return NULL;
+  }
   ini->data[sz] = '\0';
   ini->end = ini->data  + sz;
   n = fread(ini->data, 1, sz, fp);
@@ -346,21 +349,22 @@ static int replace(ini_t *ini, char *dst, const char *src, size_t dstsz, size_t 
   else if (dstsz > srcsz) {
     memmove(dst + srcsz, dst + dstsz, (size_t)(ini->end - dst) - dstsz + 1);
     memcpy(dst, src, srcsz);
-    ini->data = realloc(ini->data, srcdatasz);
-    if (!ini->data) {
+    char *data = realloc(ini->data, srcdatasz);
+    if (!data) {
       return 0;
     }
+    ini->data = data;
     ini->end = ini->data + srcdatasz - 1;
   }
   /* We realloc to the larger size, memmove up the data after the old value, then put in the new value */
   else {
     const ptrdiff_t dst_offset = dst - ini->data;
     const ptrdiff_t sz = ini->end - ini->data;
-    ini->data = realloc(ini->data, srcdatasz);
-    if (!ini->data) {
-      ini->end = NULL;
+    char *data = realloc(ini->data, srcdatasz);
+    if (!data) {
       return 0;
     }
+    ini->data = data;
     ini->end = ini->data + sz;
     /* It's not guaranteed that realloc returns the same pointer, so this guarantees the dst pointer will work */
     dst = ini->data + dst_offset;
@@ -388,6 +392,9 @@ int ini_set(ini_t *ini, const char *section, const char *key, const char *val) {
         char *section_start = next(ini, current_section);
         const size_t keyvalsz = strlen(key) + 1 + strlen(val) + 1;
         char *keyval = malloc(keyvalsz);
+        if (!keyval) {
+          return 0;
+        }
         strcpy(keyval, key);
         strcpy(keyval + strlen(key) + 1, val);
         int success = replace(ini, section_start, keyval, 0, keyvalsz);
@@ -432,6 +439,9 @@ int ini_set(ini_t *ini, const char *section, const char *key, const char *val) {
     char *section_start = next(ini, current_section);
     const size_t keyvalsz = strlen(key) + 1 + strlen(val) + 1;
     char *keyval = malloc(keyvalsz);
+    if (!keyval) {
+      return 0;
+    }
     strcpy(keyval, key);
     strcpy(keyval + strlen(key) + 1, val);
     int success = replace(ini, section_start, keyval, 0, keyvalsz);
@@ -442,6 +452,9 @@ int ini_set(ini_t *ini, const char *section, const char *key, const char *val) {
     /* The section doesn't exist, so create it and add the value */
     const size_t new_sectionsz = 1 + strlen(section) + 1 + strlen(key) + 1 + strlen(val) + 1;
     char *new_section = malloc(new_sectionsz);
+    if (!new_section) {
+      return 0;
+    }
     new_section[0] = '[';
     strcpy(new_section + 1, section);
     strcpy(new_section + 1 + strlen(section) + 1, key);
@@ -457,7 +470,7 @@ int ini_pset(ini_t *ini, const char *section, const char *key, const char *print
   va_start(args_list1, printfmt);
   va_list args_list2;
   va_copy(args_list2, args_list1);
-  int sz = vsnprintf(NULL, 0, printfmt, args_list1);
+  const size_t sz = vsnprintf(NULL, 0, printfmt, args_list1);
   va_end(args_list1);
   char *val = malloc(sz + 1);
   vsnprintf(val, sz + 1, printfmt, args_list2);
