@@ -174,7 +174,6 @@ static void split_data(ini_t *ini) {
 }
 
 
-
 ini_t* ini_load(const char *filename) {
   ini_t *ini = NULL;
   FILE *fp = NULL;

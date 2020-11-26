@@ -12,6 +12,9 @@
 // normal integer expressions with the value field, in the same way you'd use 
 // floating point values.
 
+// Shorthand for initialization, guaranteed to initialize correctly, regardless of system endianness. Can be used for initializing any fixed point type, where valid.
+#define FIXED(i, f) { .integer = (i), .fraction = (f) }
+
 typedef union Fixed32 {
 	struct {
 #if BIGEND
@@ -25,7 +28,8 @@ typedef union Fixed32 {
 	int32_t value;
 } Fixed32;
 
-#define F32(i, f) ((Fixed32)(int32_t)(((int32_t)(i) << 16) | ((uint16_t)(f))))
+#define F32(i, f) (Fixed32) { .integer = (int16_t)(i), .fraction = (uint16_t)(f) }
+#define F32V(i, f) ((((int32_t)(i) & 0xFFFF) << 16) | ((uint16_t)(f)))
 
 typedef union UFixed32 {
 	struct {
@@ -40,7 +44,8 @@ typedef union UFixed32 {
 	uint32_t value;
 } UFixed32;
 
-#define UF32(i, f) ((UFixed32)(uint32_t)(((uint32_t)(i) << 16) | ((uint16_t)(f))))
+#define UF32(i, f) (Fixed32) { .integer = (uint16_t)(i), .fraction = (uint16_t)(f) }
+#define UF32V(i, f) ((((uint32_t)(i) & 0xFFFFu) << 16) | ((uint16_t)(f)))
 
 typedef union Fixed16 {
 	struct {
@@ -55,7 +60,8 @@ typedef union Fixed16 {
 	int16_t value;
 } Fixed16;
 
-#define F16(i, f) ((Fixed16)(int16_t)(((int16_t)(i) << 16) | ((uint8_t)(f))))
+#define F16(i, f) (Fixed16) { .integer = (int8_t)(i), .fraction = (uint8_t)(f) }
+#define F16V(i, f) ((((int16_t)(i) & 0xFF) << 8) | ((uint8_t)(f)))
 
 typedef union UFixed16 {
 	struct {
@@ -70,4 +76,5 @@ typedef union UFixed16 {
 	uint16_t value;
 } UFixed16;
 
-#define UF16(i, f) ((UFixed16)(uint16_t)(((uint16_t)(i) << 16) | ((uint8_t)(f))))
+#define UF16(i, f) (UFixed16) { .integer = (uint8_t)(i), .fraction = (uint8_t)(f) }
+#define UF16V(i, f) ((((uint16_t)(i) & 0xFFu) << 8) | ((uint8_t)(f)))

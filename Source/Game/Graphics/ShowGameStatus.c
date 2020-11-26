@@ -28,7 +28,7 @@ const ObjectData* ObjectTableStatusDigits[10] = {
 void ShowNextLabel(Player* player, int16_t x) {
 	if (player->modeFlags & MODE_ITEM) {
 		player->nextScale.value += player->nextScaleV.value;
-		if (player->nextScale.value < F16(0, 0x00).value) {
+		if (player->nextScale.value < F16V(0, 0x00)) {
 			player->nextScaleA = F16(0, 0x00);
 			player->nextScaleV = F16(0, 0x00);
 			player->nextScale = F16(0, 0x00);
@@ -74,7 +74,7 @@ void ShowScoreLabel(Player* player) {
 void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 	if ((player->modeFlags & MODE_VERSUS) && player->level >= NextSectionLevels[Settings[SETTING_MAXVERSUSSECTION]] - 20) {
 		player->levelScale.value += player->levelScaleV.value;
-		if (player->levelScale.value < F16(0, 0x00).value) {
+		if (player->levelScale.value < F16V(0, 0x00)) {
 			player->levelScale = F16(0, 0x00);
 			player->levelScaleV = F16(0, 0x00);
 		}
@@ -674,11 +674,11 @@ void ShowChallengerMode(Player* player) {
 
 void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums) {
 	bool gold = false;
-	if (player->gravity.value >= F32(20, 0x0000).value && (ScreenTime & 3u)) {
+	if (player->gravity.value >= F32V(20, 0x0000) && (ScreenTime & 3u)) {
 		gold = true;
 	}
 
-	if (player->gravity.value >= F32(20, 0x0000).value && !(player->nowFlags & NOW_STARTED)) {
+	if (player->gravity.value >= F32V(20, 0x0000) && !(player->nowFlags & NOW_STARTED)) {
 		gold = true;
 	}
 

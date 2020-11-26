@@ -4,15 +4,15 @@
 // TrigTable is indexed with an angle, but the table requires that each quadrant
 // be mapped into the range 0 to 64.
 static const Fixed32 TrigTable[65] = {
-	F32(0, 0x0000), F32(0, 0x0648), F32(0, 0x0C8F), F32(0, 0x12D5), F32(0, 0x1917), F32(0, 0x1F56), F32(0, 0x2590), F32(0, 0x2BC4),
-	F32(0, 0x31F1), F32(0, 0x3817), F32(0, 0x3E33), F32(0, 0x4447), F32(0, 0x4A50), F32(0, 0x504D), F32(0, 0x563E), F32(0, 0x5C22),
-	F32(0, 0x61F7), F32(0, 0x67BD), F32(0, 0x6D74), F32(0, 0x7319), F32(0, 0x78AD), F32(0, 0x7E2E), F32(0, 0x839C), F32(0, 0x88F5),
-	F32(0, 0x8E39), F32(0, 0x9368), F32(0, 0x987F), F32(0, 0x9D7F), F32(0, 0xA267), F32(0, 0xA736), F32(0, 0xABEB), F32(0, 0xB085),
-	F32(0, 0xB504), F32(0, 0xB968), F32(0, 0xBDAE), F32(0, 0xC1D8), F32(0, 0xC5E4), F32(0, 0xC9D1), F32(0, 0xCD9F), F32(0, 0xD14D),
-	F32(0, 0xD4DB), F32(0, 0xD848), F32(0, 0xDB94), F32(0, 0xDEBE), F32(0, 0xE1C5), F32(0, 0xE4AA), F32(0, 0xE76B), F32(0, 0xEA09),
-	F32(0, 0xEC83), F32(0, 0xEED8), F32(0, 0xF109), F32(0, 0xF314), F32(0, 0xF4FA), F32(0, 0xF6BA), F32(0, 0xF853), F32(0, 0xF9C7),
-	F32(0, 0xFB14), F32(0, 0xFC3B), F32(0, 0xFD3A), F32(0, 0xFE13), F32(0, 0xFEC4), F32(0, 0xFF4E), F32(0, 0xFFB1), F32(0, 0xFFEC),
-	F32(1, 0x0000)
+	FIXED(0, 0x0000), FIXED(0, 0x0648), FIXED(0, 0x0C8F), FIXED(0, 0x12D5), FIXED(0, 0x1917), FIXED(0, 0x1F56), FIXED(0, 0x2590), FIXED(0, 0x2BC4),
+	FIXED(0, 0x31F1), FIXED(0, 0x3817), FIXED(0, 0x3E33), FIXED(0, 0x4447), FIXED(0, 0x4A50), FIXED(0, 0x504D), FIXED(0, 0x563E), FIXED(0, 0x5C22),
+	FIXED(0, 0x61F7), FIXED(0, 0x67BD), FIXED(0, 0x6D74), FIXED(0, 0x7319), FIXED(0, 0x78AD), FIXED(0, 0x7E2E), FIXED(0, 0x839C), FIXED(0, 0x88F5),
+	FIXED(0, 0x8E39), FIXED(0, 0x9368), FIXED(0, 0x987F), FIXED(0, 0x9D7F), FIXED(0, 0xA267), FIXED(0, 0xA736), FIXED(0, 0xABEB), FIXED(0, 0xB085),
+	FIXED(0, 0xB504), FIXED(0, 0xB968), FIXED(0, 0xBDAE), FIXED(0, 0xC1D8), FIXED(0, 0xC5E4), FIXED(0, 0xC9D1), FIXED(0, 0xCD9F), FIXED(0, 0xD14D),
+	FIXED(0, 0xD4DB), FIXED(0, 0xD848), FIXED(0, 0xDB94), FIXED(0, 0xDEBE), FIXED(0, 0xE1C5), FIXED(0, 0xE4AA), FIXED(0, 0xE76B), FIXED(0, 0xEA09),
+	FIXED(0, 0xEC83), FIXED(0, 0xEED8), FIXED(0, 0xF109), FIXED(0, 0xF314), FIXED(0, 0xF4FA), FIXED(0, 0xF6BA), FIXED(0, 0xF853), FIXED(0, 0xF9C7),
+	FIXED(0, 0xFB14), FIXED(0, 0xFC3B), FIXED(0, 0xFD3A), FIXED(0, 0xFE13), FIXED(0, 0xFEC4), FIXED(0, 0xFF4E), FIXED(0, 0xFFB1), FIXED(0, 0xFFEC),
+	FIXED(1, 0x0000)
 };
 
 uint8_t UNK_602B4E4(int32_t arg0, int32_t arg1) {
@@ -96,10 +96,10 @@ Fixed32 Sin(Angle angle) {
 		return TrigTable[128u - angle];
 	}
 	else if (angle >= 128u && angle < 192u) {
-		return (Fixed32)(-TrigTable[angle - 128u].value);
+		return (Fixed32) { .value = -TrigTable[angle - 128u].value };
 	}
 	else {
-		return (Fixed32)(-TrigTable[256u - angle].value);
+		return (Fixed32) { .value = -TrigTable[256u - angle].value };
 	}
 }
 
@@ -108,10 +108,10 @@ Fixed32 Cos(Angle angle) {
 		return TrigTable[64u - angle];
 	}
 	else if (angle >= 64u && angle < 128u) {
-		return (Fixed32)(-TrigTable[angle - 64u].value);
+		return (Fixed32) { .value = -TrigTable[angle - 64u].value };
 	}
 	else if (angle >= 128u && angle < 192u) {
-		return (Fixed32)(-TrigTable[192u - angle].value);
+		return (Fixed32) { .value = -TrigTable[192u - angle].value };
 	}
 	else {
 		return TrigTable[angle - 192u];

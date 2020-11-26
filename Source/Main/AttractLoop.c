@@ -602,6 +602,8 @@ static ScreenState StartDemoScreen() {
 			int16_t initSeed1p = 0, initSeed2p = 0; // BUG: Original didn't initialize these. Not really required, but it silences a compiler warning.
 			ButtonInput* demoReplayInput = NULL;
 			switch (Screen) {
+			// BUG: The original didn't initialize demoReplayInput in the default case. Added it here, to silence compiler warnings.
+			default:
 			case SCREEN_TWINDEMO:
 				demoReplayInput = DemoReplayInputTwin;
 				initSeed1p = 7;
@@ -634,11 +636,7 @@ static ScreenState StartDemoScreen() {
 				Players[PLAYER2].modeFlags = (Players[PLAYER2].modeFlags & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS)) | MODE_DOUBLES;
 				NextGameMusic = GAMEMUSIC_1;
 				break;
-
-			default:
-				break;
 			}
-			assert(demoReplayInput != NULL);
 
 			uint32_t backupSeed = InitSeed;
 			InitSeed = (int32_t)initSeed1p;
