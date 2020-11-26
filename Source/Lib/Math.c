@@ -96,10 +96,10 @@ Fixed32 Sin(Angle angle) {
 		return TrigTable[128u - angle];
 	}
 	else if (angle >= 128u && angle < 192u) {
-		return -TrigTable[angle - 128u];
+		return (Fixed32)(-TrigTable[angle - 128u].value);
 	}
 	else {
-		return -TrigTable[256u - angle];
+		return (Fixed32)(-TrigTable[256u - angle].value);
 	}
 }
 
@@ -108,10 +108,10 @@ Fixed32 Cos(Angle angle) {
 		return TrigTable[64u - angle];
 	}
 	else if (angle >= 64u && angle < 128u) {
-		return -TrigTable[angle - 64u];
+		return (Fixed32)(-TrigTable[angle - 64u].value);
 	}
 	else if (angle >= 128u && angle < 192u) {
-		return -TrigTable[192u - angle];
+		return (Fixed32)(-TrigTable[192u - angle].value);
 	}
 	else {
 		return TrigTable[angle - 192u];
@@ -176,7 +176,7 @@ uint32_t Rand(uint32_t upperBound) {
 	// TODO: For SH-2 ports, change this part to generate result using inline
 	// SH-2 assembly.
 	uint32_t m, n;
-	m = Cos(RandSeed);
+	m = Cos(RandSeed).value;
 	n = RandSeed;
 	dmuls(&m, &n);
 	uint32_t result = xtrct(m, n);

@@ -315,10 +315,10 @@ void ShowThrownOutActiveBlock(Player* player) {
 		ENTITY_INST_DATA_PTR(ThrownOutActiveBlockData, data, entity);
 		data->x =
 			player->screenPos[0] + player->screenOffset[0] +
-			player->activePos[0] * 8 - (player->matrixWidth / 2) * 8;
+			player->activePos[0].integer * 8 - (player->matrixWidth / 2) * 8;
 		data->y =
 			player->screenPos[1] + player->screenOffset[1] +
-			(player->matrixHeight - player->activePos[1] - 2) * 8 - (player->matrixHeight - 2) * 8 -
+			(player->matrixHeight - player->activePos[1].integer - 2) * 8 - (player->matrixHeight - 2) * 8 -
 			6;
 		data->activeBlock = player->activeBlock;
 		data->rotation = player->activeRotation;

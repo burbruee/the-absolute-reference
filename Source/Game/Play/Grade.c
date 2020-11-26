@@ -142,7 +142,7 @@ void UpdateGrade(Player* player, uint8_t numLogicalLines) {
 			player->miscFlags |= numSkillClears;
 		}
 
-		GradeLevel level = F16I(grade->currentGrade);
+		GradeLevel level = grade->currentGrade.integer;
 		if (level > GRADELEVEL_MAX) {
 			level = GRADELEVEL_MAX;
 		}
@@ -152,14 +152,14 @@ void UpdateGrade(Player* player, uint8_t numLogicalLines) {
 		}
 		newProgress /= 10u;
 		newProgress *= (player->level / 250u) + 1u;
-		uint8_t progress = F16F(grade->currentGrade) + newProgress;
+		uint8_t progress = grade->currentGrade.fraction + newProgress;
 		if (progress >= 100u) {
-			F16I(grade->currentGrade)++;
-			F16F(grade->currentGrade) = 0u;
+			grade->currentGrade.integer++;
+			grade->currentGrade.fraction = 0u;
 			grade->decayFrames = 0u;
 		}
 		else {
-			F16F(grade->currentGrade) = progress;
+			grade->currentGrade.fraction = progress;
 		}
 
 		if (player->combo > player->comboBefore && numLogicalLines > 1u) {
@@ -175,22 +175,22 @@ void UpdateGrade(Player* player, uint8_t numLogicalLines) {
 void CheckDecayGrade(Player* player) {
 	if (player->combo <= 1u) {
 		Grade* grade = &Grades[player->num];
-		GradeLevel level = F16I(grade->currentGrade);
+		GradeLevel level = grade->currentGrade.integer;
 
 		if (level > GRADELEVEL_MAX) {
 			level = GRADELEVEL_MAX;
 		}
 
-		if (F16F(grade->currentGrade) != 0u && ++grade->decayFrames >= GradeProgressions[level].decayDuration) {
+		if (grade->currentGrade.fraction != 0u && ++grade->decayFrames >= GradeProgressions[level].decayDuration) {
 			grade->decayFrames = 0u;
-			F16F(grade->currentGrade)--;
+			grade->currentGrade.fraction--;
 		}
 	}
 }
 
 void UpdatePlayerGrade(Player* player) {
 	if (!(player->nowFlags & NOW_STAFF) && !(player->modeFlags & (MODE_TGMPLUS | MODE_TADEATH))) {
-		while (F16I(Grades[player->num].currentGrade) > GradeLevels[player->grade] && player->grade < PLAYERGRADE_S9) {
+		while (Grades[player->num].currentGrade.integer > GradeLevels[player->grade] && player->grade < PLAYERGRADE_S9) {
 			player->grade++;
 			player->masteringTime = player->clearTime;
 			if (!(player->modeFlags & (MODE_NORMAL | MODE_DOUBLES | MODE_VERSUS))) {
@@ -210,16 +210,16 @@ ModeFlag UpdateSectionGrade(Player* player) {
 		Grade* grade = &Grades[player->num];
 
 		Fixed16 currentGrade = grade->currentGrade;
-		if (currentGrade < grade->gradeLastSection) {
+		if (currentGrade.value < grade->gradeLastSection.value) {
 			grade->sectionLevelUps[player->section] = F16(0u, 0u);
 		}
 		else {
-			if (F16F(currentGrade) < F16F(grade->gradeLastSection)) {
-				F16I(currentGrade)--;
-				F16F(currentGrade) += 100u;
+			if (currentGrade.fraction < grade->gradeLastSection.fraction) {
+				currentGrade.integer--;
+				currentGrade.fraction += 100u;
 			}
-			F16I(grade->sectionLevelUps[player->section]) = F16I(currentGrade) - F16I(grade->gradeLastSection);
-			F16F(grade->sectionLevelUps[player->section]) = F16F(currentGrade) - F16F(grade->gradeLastSection);
+			grade->sectionLevelUps[player->section].integer = currentGrade.integer - grade->gradeLastSection.integer;
+			grade->sectionLevelUps[player->section].fraction = currentGrade.fraction - grade->gradeLastSection.fraction;
 		}
 		grade->gradeLastSection = grade->currentGrade;
 

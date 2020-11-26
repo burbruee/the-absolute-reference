@@ -71,19 +71,19 @@ static void UpdateEntityNewChallenger(Entity* entity) {
 			data->scaleYA = F32(0x01, 0x8000);
 
 		case STATE_SCALESLOW:
-			data->scaleY += data->scaleYV;
-			data->scaleYV -= data->scaleYA;
-			if (data->scaleY <= F32(UNSCALED, 0x0000)) {
+			data->scaleY.value += data->scaleYV.value;
+			data->scaleYV.value -= data->scaleYA.value;
+			if (data->scaleY.value <= F32(UNSCALED, 0x0000).value) {
 				entity->states[0]++;
-				data->scaleYV = -F32(0x02, 0x0000);
-				data->scaleYA = -F32(0x00, 0x2000);
+				data->scaleYV.value = -F32(0x02, 0x0000).value;
+				data->scaleYA.value = -F32(0x00, 0x2000).value;
 			}
 			break;
 
 		case STATE_SCALEFAST:
-			data->scaleY += data->scaleYV;
-			data->scaleYV -= data->scaleYA;
-			if (data->scaleY >= F32(UNSCALED, 0x0000)) {
+			data->scaleY.value += data->scaleYV.value;
+			data->scaleYV.value -= data->scaleYA.value;
+			if (data->scaleY.value >= F32(UNSCALED, 0x0000).value) {
 				entity->states[0]++;
 				data->scaleY = F32(UNSCALED, 0x0000);
 			}
@@ -94,13 +94,12 @@ static void UpdateEntityNewChallenger(Entity* entity) {
 		}
 
 		if (--entity->displayFrames != 0) {
-			SpriteScale scaleY = (SpriteScale)F32I(data->scaleY);
-			int16_t y = (0x40 - F32I(data->scaleY)) * 20;
+			int16_t y = (0x40 - data->scaleY.integer) * 20;
 			if (y < 0) {
 				y += 127;
 			}
 			// TODO: See what index 1 of the object table is.
-			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, PALNUM_TEXTOVERLAYBG, 125u, (SpriteScale)F32I(data->scaleY), UNSCALED, false);
+			DisplayObjectEx(&OBJECTTABLE_NEWCHALLENGER[0], y / 128 + 120, data->x + 170, PALNUM_TEXTOVERLAYBG, 125u, (SpriteScale)data->scaleY.integer, UNSCALED, false);
 		}
 		else {
 			GameFlags &= ~GAME_CHALLENGEDELAY;

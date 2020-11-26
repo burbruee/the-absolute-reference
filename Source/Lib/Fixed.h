@@ -1,6 +1,5 @@
 #pragma once
 
-// TODO: Change fixed point types to a union of an array of the components and the full-size integer type. Incorrect behavior with GCC in release builds was found with F32I.
 #include "Config.h"
 #include <stdint.h>
 
@@ -9,40 +8,66 @@
 //
 // For the signed fixed point types, a -1 integer part would be below row 0.
 //
-// The I/F macros produce lvalues, so you can use them in expressions as well
-// as assign to the macro.
-//
-// The RVALUE macros are for rvalues, such as function return values, and can't
-// be used for assignment to the indivual parts.
-//
-// The fixed point types are endian-dependent, which allows doing arithmetic in
-// normal integer expressions with them, in the same way you'd use floating
-// point values.
+// The fixed point types are endian-dependent, which allows doing arithmetic in 
+// normal integer expressions with the value field, in the same way you'd use 
+// floating point values.
 
-typedef int32_t Fixed32;
-#define F32(i, f) (((int32_t)(i) << 16) | ((uint16_t)(f)))
-#define F32I(v) (*(( int16_t*)(&v) + !BIGEND))
-#define F32F(v) (*((uint16_t*)(&v) +  BIGEND))
-#define F32IRVALUE(v) ((int16_t)((v) >> 16))
-#define F32FRVALUE(v) ((uint16_t)(v))
+typedef union Fixed32 {
+	struct {
+#if BIGEND
+		int16_t integer;
+		uint16_t fraction;
+#else
+		uint16_t fraction;
+		int16_t integer;
+#endif
+	};
+	int32_t value;
+} Fixed32;
 
-typedef uint32_t UFixed32;
-#define UF32(i, f) (((uint32_t)(i) << 16) | ((uint16_t)(f)))
-#define UF32I(v) (*((uint16_t*)(v) + !BIGEND))
-#define UF32F(v) (*((uint16_t*)(v) +  BIGEND))
-#define UF32IRVALUE(v) ((uint16_t)((v) >> 16))
-#define UF32FRVALUE(v) ((uint16_t)(v))
+#define F32(i, f) ((Fixed32)(int32_t)(((int32_t)(i) << 16) | ((uint16_t)(f))))
 
-typedef int16_t Fixed16;
-#define F16(i, f) (((int16_t)(i) << 8) | ((uint8_t)(f)))
-#define F16I(v) (*(( int8_t*)(&v) + !BIGEND))
-#define F16F(v) (*((uint8_t*)(&v) +  BIGEND))
-#define F16IRVALUE(v) ((int8_t)((v) >> 16))
-#define F16FRVALUE(v) ((uint8_t)(v))
+typedef union UFixed32 {
+	struct {
+#if BIGEND
+		uint16_t integer;
+		uint16_t fraction;
+#else
+		uint16_t fraction;
+		uint16_t integer;
+#endif
+	};
+	uint32_t value;
+} UFixed32;
 
-typedef uint16_t UFixed16;
-#define UF16(i, f) (((uint16_t)(i) << 8) | ((uint8_t)(f)))
-#define UF16I(v) (*((uint8_t*)(&v) + !BIGEND))
-#define UF16F(v) (*((uint8_t*)(&v) +  BIGEND))
-#define UF16IRVALUE(v) ((uint8_t)((v) >> 16))
-#define UF16FRVALUE(v) ((uint8_t)(v))
+#define UF32(i, f) ((UFixed32)(uint32_t)(((uint32_t)(i) << 16) | ((uint16_t)(f))))
+
+typedef union Fixed16 {
+	struct {
+#if BIGEND
+		int8_t integer;
+		uint8_t fraction;
+#else
+		uint8_t fraction;
+		int8_t integer;
+#endif
+	};
+	int16_t value;
+} Fixed16;
+
+#define F16(i, f) ((Fixed16)(int16_t)(((int16_t)(i) << 16) | ((uint8_t)(f))))
+
+typedef union UFixed16 {
+	struct {
+#if BIGEND
+		uint8_t integer;
+		uint8_t fraction;
+#else
+		uint8_t fraction;
+		uint8_t integer;
+#endif
+	};
+	uint16_t value;
+} UFixed16;
+
+#define UF16(i, f) ((UFixed16)(uint16_t)(((uint16_t)(i) << 16) | ((uint8_t)(f))))

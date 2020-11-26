@@ -1382,14 +1382,9 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 		else {
 			UNK_6064750->UNK_30 = 0u;
 		}
-#if 1
-		UNK_6064750->UNK_2C = F32(0x80, 0x0000) / F32(0, arg1);
-#else
-		// TODO: Verify this sequence works with GCC release builds once the fixed point types have been refactored.
 		UNK_6064750->UNK_2C = F32(0, 0x0000);
-		F32I(UNK_6064750->UNK_2C) = 0x80;
-		UNK_6064750->UNK_2C /= F32(0, arg1);
-#endif
+		UNK_6064750->UNK_2C.integer = 0x80;
+		UNK_6064750->UNK_2C.value /= arg1;
 		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
 		if ((arg3 & 7) != 0) {
 			UNK_6029498(arg3 & 7);
@@ -1403,7 +1398,7 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 			else {
 				UNK_6064750->UNK_24 = arg2;
 			}
-			UNK_6064750->UNK_2C = -UNK_6064750->UNK_2C;
+			UNK_6064750->UNK_2C.value = -UNK_6064750->UNK_2C.value;
 		}
 		else {
 			if (arg0 == 1) {
@@ -1414,7 +1409,7 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 				else {
 					UNK_6064750->UNK_24 = arg2;
 				}
-				UNK_6064750->UNK_2C = -UNK_6064750->UNK_2C;
+				UNK_6064750->UNK_2C.value = -UNK_6064750->UNK_2C.value;
 			}
 			else {
 				if (arg0 == 2) {
@@ -1440,7 +1435,7 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 			}
 		}
 		UNK_6064750->UNK_28 = F32(0, 0x0000u);
-		F32I(UNK_6064750->UNK_28) = UNK_6064750->UNK_24;
+		UNK_6064750->UNK_28.integer = UNK_6064750->UNK_24;
 		SetBackdropColor(UNK_6064750->backdropColor);
 	}
 	else if (UNK_6064750 != NULL) {
@@ -1450,23 +1445,23 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 }
 
 static void UNK_602970C() {
-	UNK_6064750->UNK_28 += UNK_6064750->UNK_2C;
-	if (UNK_6064750->UNK_2C <= F32(0, 0x0000u)) {
-		if (F32I(UNK_6064750->UNK_28) <= 0) {
+	UNK_6064750->UNK_28.value += UNK_6064750->UNK_2C.value;
+	if (UNK_6064750->UNK_2C.value <= 0) {
+		if (UNK_6064750->UNK_28.integer <= 0) {
 			UNK_6024030(UNK_606005C);
 			return;
 		}
 	}
-	else if (F32I(UNK_6064750->UNK_28) >= 128) {
+	else if (UNK_6064750->UNK_28.integer >= 128) {
 		UNK_6024030(UNK_606005C);
 		return;
 	}
-	UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | F32I(UNK_6064750->UNK_28);
+	UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | UNK_6064750->UNK_28.integer;
 	SetBackdropColor(UNK_6064750->backdropColor);
 }
 
 static void UNK_602975E() {
-	if (F32I(UNK_6064750->UNK_2C) <= 0) {
+	if (UNK_6064750->UNK_2C.integer <= 0) {
 		if (UNK_6064750->UNK_30 == 0u) {
 			UNK_6029498(0);
 			UNK_6064750->backdropColor = COLOR(0x11, 0x11, 0x11, 0xFF);
@@ -1582,28 +1577,28 @@ void UpdatePalCycles() {
 				cycle->palFrames = cycle->perPalDelay;
 				if (cycle->stride >= 0) {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						cycle->palFixed[j].r -= cycle->palFixedV[j].r;
-						cycle->palFixed[j].g -= cycle->palFixedV[j].g;
-						cycle->palFixed[j].b -= cycle->palFixedV[j].b;
+						cycle->palFixed[j].r.value -= cycle->palFixedV[j].r.value;
+						cycle->palFixed[j].g.value -= cycle->palFixedV[j].g.value;
+						cycle->palFixed[j].b.value -= cycle->palFixedV[j].b.value;
 
 						tempPal[j] = COLOR(
-							F16I(cycle->palFixed[j].r) & 0xFCu,
-							F16I(cycle->palFixed[j].g) & 0xFCu,
-							F16I(cycle->palFixed[j].b) & 0xFCu,
+							cycle->palFixed[j].r.integer & 0xFCu,
+							cycle->palFixed[j].g.integer & 0xFCu,
+							cycle->palFixed[j].b.integer & 0xFCu,
 							0x00u
 						);
 					}
 				}
 				else {
 					for (uint16_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
-						cycle->palFixed[j].r += cycle->palFixedV[j].r;
-						cycle->palFixed[j].g += cycle->palFixedV[j].g;
-						cycle->palFixed[j].b += cycle->palFixedV[j].b;
+						cycle->palFixed[j].r.value += cycle->palFixedV[j].r.value;
+						cycle->palFixed[j].g.value += cycle->palFixedV[j].g.value;
+						cycle->palFixed[j].b.value += cycle->palFixedV[j].b.value;
 
 						tempPal[j] = COLOR(
-							F16I(cycle->palFixed[j].r) & 0xFCu,
-							F16I(cycle->palFixed[j].g) & 0xFCu,
-							F16I(cycle->palFixed[j].b) & 0xFCu,
+							cycle->palFixed[j].r.integer & 0xFCu,
+							cycle->palFixed[j].g.integer & 0xFCu,
+							cycle->palFixed[j].b.integer & 0xFCu,
 							0x00u
 						);
 					}
@@ -1728,7 +1723,7 @@ void NewPalCycle(uint8_t palNum, const Color* pal0, const Color* pal1, int16_t p
 		else { \
 			cycle->palFixed[i].c = F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00); \
 		} \
-		cycle->palFixedV[i].c = (stride * (F16(COLOR_GET##C(cycle->pal0[i]) & 0xFC, 0x00) - F16(COLOR_GET##C(cycle->pal1[i]) & 0xFC, 0x00))) >> 6
+		cycle->palFixedV[i].c.value = (stride * (((int16_t)(COLOR_GET##C(cycle->pal0[i]) & 0xFC) << 8) - ((int16_t)(COLOR_GET##C(cycle->pal1[i]) & 0xFC) << 8))) >> 6
 
 		INITCOMPONENT(r, R);
 		INITCOMPONENT(g, G);

@@ -27,14 +27,14 @@ const ObjectData* ObjectTableStatusDigits[10] = {
 
 void ShowNextLabel(Player* player, int16_t x) {
 	if (player->modeFlags & MODE_ITEM) {
-		player->nextScale += player->nextScaleV;
-		if (player->nextScale < F16(0, 0x00)) {
+		player->nextScale.value += player->nextScaleV.value;
+		if (player->nextScale.value < F16(0, 0x00).value) {
 			player->nextScaleA = F16(0, 0x00);
 			player->nextScaleV = F16(0, 0x00);
 			player->nextScale = F16(0, 0x00);
 		}
 		else {
-			player->nextScaleV -= player->nextScaleA;
+			player->nextScaleV.value -= player->nextScaleA.value;
 		}
 
 		if (!(player->miscFlags & MISC_ITEMHEADSUP)) {
@@ -45,13 +45,13 @@ void ShowNextLabel(Player* player, int16_t x) {
 		}
 		else if ((ScreenTime % 32u) == 0u && player->numItemBarBlocks > 17u) {
 			player->nextScale = F16(0, 0x00);
-			player->nextScaleV = (player->numItemBarBlocks - 17) << 9;
-			player->nextScaleA = (player->numItemBarBlocks - 17) << 5;
+			player->nextScaleV.value = (player->numItemBarBlocks - 17) << 9;
+			player->nextScaleA.value = (player->numItemBarBlocks - 17) << 5;
 		}
 
-		int16_t offsetX = -(F16I(player->nextScale) * 18) / (UNSCALED + 1);
-		int16_t offsetY = -(F16I(player->nextScale) * 6) / (UNSCALED + 1);
-		SpriteScale nextScale = SPRITESCALE(F16I(player->nextScale));
+		int16_t offsetX = -(player->nextScale.integer * 18) / (UNSCALED + 1);
+		int16_t offsetY = -(player->nextScale.integer * 6) / (UNSCALED + 1);
+		SpriteScale nextScale = SPRITESCALE(player->nextScale.integer);
 		DisplayObjectEx(OBJECT_NEXTBLOCKLABEL, 26 + offsetY, x + offsetX, PALNUM_OBJECT, 61u, nextScale, nextScale, false);
 	}
 	else {
@@ -73,13 +73,13 @@ void ShowScoreLabel(Player* player) {
 
 void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 	if ((player->modeFlags & MODE_VERSUS) && player->level >= NextSectionLevels[Settings[SETTING_MAXVERSUSSECTION]] - 20) {
-		player->levelScale += player->levelScaleV;
-		if (player->levelScale < F16(0, 0x00)) {
+		player->levelScale.value += player->levelScaleV.value;
+		if (player->levelScale.value < F16(0, 0x00).value) {
 			player->levelScale = F16(0, 0x00);
 			player->levelScaleV = F16(0, 0x00);
 		}
 		else {
-			player->levelScaleV -= F16(0, 0x40);
+			player->levelScaleV.value -= F16(0, 0x40).value;
 		}
 
 		if (ScreenTime % 20) {
@@ -87,9 +87,9 @@ void ShowLevelLabel(Player* player, int16_t y, int16_t x) {
 			player->levelScaleV = F16(4, 0x00);
 		}
 
-		int16_t offsetX = ((int16_t)F16I(player->levelScale) * -0x20) / ((UNSCALED + 1) * 2);
-		int16_t offsetY = ((int16_t)F16I(player->levelScale) * -0x08) / ((UNSCALED + 1) * 2);
-		SpriteScale levelScale = SPRITESCALE(F16I(player->levelScale));
+		int16_t offsetX = ((int16_t)player->levelScale.integer * -0x20) / ((UNSCALED + 1) * 2);
+		int16_t offsetY = ((int16_t)player->levelScale.integer * -0x08) / ((UNSCALED + 1) * 2);
+		SpriteScale levelScale = SPRITESCALE(player->levelScale.integer);
 		DisplayObjectEx(OBJECT_LEVELLABEL, y + offsetY, x + offsetX, PALNUM_OBJECT, 110, levelScale, levelScale, false);
 	}
 	else {
@@ -125,7 +125,7 @@ void ShowLevel(Player* player, int16_t nextSectionLevel, int16_t y, int16_t x, u
 	ShowStatusNumEx(player->level, y, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
 	ShowStatusNumEx(nextSectionLevel, y + 15, x, palNum, LAYER_GAMESTATUS, 3, false, NUMALIGN_RIGHT);
 
-	size_t gravityBarWidth = player->gravity >> 15;
+	size_t gravityBarWidth = player->gravity.value >> 15;
 	if (gravityBarWidth > 20u) {
 		gravityBarWidth = 20u;
 	}
@@ -674,11 +674,11 @@ void ShowChallengerMode(Player* player) {
 
 void SelectPlayerStatusColor(Player* player, uint8_t* statusPalNums) {
 	bool gold = false;
-	if (player->gravity >= F32(20, 0x0000) && (ScreenTime & 3u)) {
+	if (player->gravity.value >= F32(20, 0x0000).value && (ScreenTime & 3u)) {
 		gold = true;
 	}
 
-	if (player->gravity >= F32(20, 0x0000) && !(player->nowFlags & NOW_STARTED)) {
+	if (player->gravity.value >= F32(20, 0x0000).value && !(player->nowFlags & NOW_STARTED)) {
 		gold = true;
 	}
 

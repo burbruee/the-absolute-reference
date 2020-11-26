@@ -94,7 +94,7 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 		else {
 			block = player->activeBlock;
 			rotation = player->activeRotation;
-			int16_t col = F32I(player->activePos[0]), row = F32I(player->activePos[1]);
+			int16_t col = player->activePos[0].integer, row = player->activePos[1].integer;
 			if (block & BLOCK_BIG) {
 				row++;
 				col -= 2;
@@ -118,7 +118,7 @@ void ShowBlock(Player* player, ShowBlockType showBlockType, bool show) {
 		if (showBlockType == SHOWBLOCKTYPE_TLS) {
 			block = player->activeBlock;
 			rotation = player->activeRotation;
-			int16_t col = F32I(player->activePos[0]), row = F32IRVALUE(StepGravity(player, F32(20, 0x0000)));
+			int16_t col = player->activePos[0].integer, row = StepGravity(player, F32(20, 0x0000)).integer;
 			if (block & BLOCK_BIG) {
 				row++;
 				col -= 2;

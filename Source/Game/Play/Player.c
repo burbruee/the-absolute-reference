@@ -297,11 +297,11 @@ void InitPlayer(PlayerNum playerNum) {
 	player->miscFlags = MISC_NONE;
 	player->mGradeSectionTime = 0u;
 	player->score = 0u;
-	player->levelScaleV = 0x0000;
-	player->levelScale = 0x0000;
-	player->nextScaleA = 0x0000;
-	player->nextScaleV = 0x0000;
-	player->nextScale = 0x0000;
+	player->levelScaleV = F16(0, 0x0000);
+	player->levelScale = F16(0, 0x0000);
+	player->nextScaleA = F16(0, 0x0000);
+	player->nextScaleV = F16(0, 0x0000);
+	player->nextScale = F16(0, 0x0000);
 	MedalColor* medal = player->medalColors;
 	for (uint8_t i = 0u; i < NUMMEDALTYPES; i++, medal++) {
 		*medal = MEDALCOLOR_NULL;
@@ -1479,14 +1479,14 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 						// Kick right by default.
 						for (int16_t kick = 1; kick < 2; kick++) {
 							if (!Blocked(player, col + kick * 2 + 2, row, rotation)) {
-								F32I(player->activePos[0]) += kick * 2;
+								player->activePos[0].integer += kick * 2;
 								return false;
 							}
 						}
 						// Failing that, kick left.
 						for (int16_t kick = 1; kick < 2; kick++) {
 							if (!Blocked(player, col - kick * 2 + 2, row, rotation)) {
-								F32I(player->activePos[0]) -= kick * 2;
+								player->activePos[0].integer -= kick * 2;
 								return false;
 							}
 						}
@@ -1519,12 +1519,12 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 
 						// Kick right by default.
 						if (!Blocked(player, col + 1, row, rotation)) {
-							F32I(player->activePos[0])++;
+							player->activePos[0].integer++;
 							return false;
 						}
 						// Failing that, kick left.
 						else if (!Blocked(player, col - 1, row, rotation)) {
-							F32I(player->activePos[0])--;
+							player->activePos[0].integer--;
 							return false;
 						}
 						else {
@@ -1539,7 +1539,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 }
 
 void CheckShiftActiveBlock(Player* player) {
-	int16_t shiftCol = F32I(player->activePos[0]);
+	int16_t shiftCol = player->activePos[0].integer;
 
 	uint8_t shiftDelay;
 	if (player->modeFlags & MODE_TGMPLUS) {
@@ -1601,39 +1601,39 @@ void CheckShiftActiveBlock(Player* player) {
 
 	if (shiftDirection & BUTTON_LEFT) {
 		if (player->modeFlags & MODE_BIG) {
-			if (!Blocked(player, F32I(player->activePos[0]) - 2, F32I(player->activePos[1]), player->activeRotation)) {
+			if (!Blocked(player, player->activePos[0].integer - 2, player->activePos[1].integer, player->activeRotation)) {
 				shiftCol -= 2;
 			}
 		}
-		else if (!Blocked(player, F32I(player->activePos[0]) - 1, F32I(player->activePos[1]), player->activeRotation)) {
+		else if (!Blocked(player, player->activePos[0].integer - 1, player->activePos[1].integer, player->activeRotation)) {
 			shiftCol--;
 		}
 	}
 	if (shiftDirection & BUTTON_RIGHT) {
 		if (player->modeFlags & MODE_BIG) {
-			if (!Blocked(player, F32I(player->activePos[0]) + 2, F32I(player->activePos[1]), player->activeRotation)) {
+			if (!Blocked(player, player->activePos[0].integer + 2, player->activePos[1].integer, player->activeRotation)) {
 				shiftCol += 2;
 			}
 		}
-		else if (!Blocked(player, F32I(player->activePos[0]) + 1, F32I(player->activePos[1]), player->activeRotation)) {
+		else if (!Blocked(player, player->activePos[0].integer + 1, player->activePos[1].integer, player->activeRotation)) {
 			shiftCol++;
 		}
 	}
 
-	F32I(player->activePos[0]) = shiftCol;
+	player->activePos[0].integer = shiftCol;
 }
 
 void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 	Fixed32 landingRow = StepGravity(player, gravityStep);
-	if (!Blocked(player, F32I(player->activePos[0]), F32I(landingRow), player->activeRotation)) {
-		if (F32I(landingRow) < F32I(player->activePos[1]) ) {
+	if (!Blocked(player, player->activePos[0].integer, landingRow.integer, player->activeRotation)) {
+		if (landingRow.integer < player->activePos[1].integer ) {
 			player->lockFrames = player->lockDelay;
 		}
 		player->activePos[1] = landingRow;
 	}
  
 	TEMPPTR(EntryData, entry);
-	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]) - 1, player->activeRotation)) {
+	if (Blocked(player, player->activePos[0].integer, player->activePos[1].integer - 1, player->activeRotation)) {
 		if (!(player->modeFlags & MODE_DOUBLES) || entry->numMatrixBlockings != 0) {
 			if (player->lockFrames == player->lockDelay) {
 				PlaySoundEffect(SOUNDEFFECT_LAND);
@@ -1680,25 +1680,25 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 // If the gravity step is only whole rows, the player won't be blocked at the
 // new position.
 Fixed32 StepGravity(Player* player, Fixed32 gravity) {
-	int16_t rows = F32I(gravity);
+	int16_t rows = gravity.integer;
 	Fixed32 posY;
 
 	if (rows < 1) {
 		// Step for sub-1G gravity.
-		posY = player->activePos[1] - gravity;
+		posY.value = player->activePos[1].value - gravity.value;
 	}
 	else {
-		posY = player->activePos[1] - F32F(gravity);
-		if (!Blocked(player, F32I(player->activePos[0]), F32I(posY), player->activeRotation)) {
+		posY.value = player->activePos[1].value - gravity.fraction;
+		if (!Blocked(player, player->activePos[0].integer, posY.integer, player->activeRotation)) {
 			// Stepping by the fractional amount succeeded.
 
 			// Step by whole rows, until a step is blocked.
 			for (; rows > 0; rows--) {
-				if (Blocked(player, F32I(player->activePos[0]), F32I(posY) - 1, player->activeRotation)) {
+				if (Blocked(player, player->activePos[0].integer, posY.integer - 1, player->activeRotation)) {
 					rows = 0;
 				}
 				else {
-					F32I(posY)--;
+					posY.integer--;
 				}
 			}
 		}
@@ -1728,7 +1728,7 @@ void UpdatePlayActive(Player* player) {
 			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
-			F16I(Grades[player->num].currentGrade) = GradeLevels[PLAYERGRADE_S8];
+			Grades[player->num].currentGrade.integer = GradeLevels[PLAYERGRADE_S8];
 			player->mGradeFlags |= MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT2 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS;
 		}
 
@@ -1738,7 +1738,7 @@ void UpdatePlayActive(Player* player) {
 			player->level = 899u;
 			player->mGradeSectionTime = TIME(1, 0, 0);
 			player->miscFlags |= MISC_SKILLCLEARS3;
-			F16I(Grades[player->num].currentGrade) = GradeLevels[PLAYERGRADE_S9];
+			Grades[player->num].currentGrade.integer = GradeLevels[PLAYERGRADE_S9];
 			player->mGradeFlags |= MGRADE_CHECKPOINT1 | MGRADE_CHECKPOINT2 | MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS | MGRADE_S9GRADE;
 		}
 
@@ -1757,17 +1757,17 @@ void UpdatePlayActive(Player* player) {
 
 	if (
 			(ROTATED_LEFT(GameButtonsNew[player->num]) || (player->itemMiscFlags & ITEMMISC_ROTATE)) &&
-			!RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), ROTATE_LEFT(player->activeRotation))) {
+			!RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, ROTATE_LEFT(player->activeRotation))) {
 		if (player->activeBlock & BLOCK_TRANSFORM) {
 			Block oldActiveBlock = player->activeBlock;
 			player->activeBlock &= ~BLOCK_TYPE;
 			player->activeBlock |= TOBLOCKTYPE(Rand(7u));
-			if (RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
+			if (RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, player->activeRotation)) {
 				player->activeBlock = oldActiveBlock;
 			}
 
 			Rotation newRotation = ROTATE_LEFT(player->activeRotation);
-			if (!RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), newRotation)) {
+			if (!RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, newRotation)) {
 				player->activeRotation = newRotation;
 			}
 		}
@@ -1778,17 +1778,17 @@ void UpdatePlayActive(Player* player) {
 	}
 	if (
 			ROTATED_RIGHT(GameButtonsNew[player->num]) &&
-			!RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), ROTATE_RIGHT(player->activeRotation))) {
+			!RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, ROTATE_RIGHT(player->activeRotation))) {
 		if (player->activeBlock & BLOCK_TRANSFORM) {
 			Block oldActiveBlock = player->activeBlock;
 			player->activeBlock &= ~BLOCK_TYPE;
 			player->activeBlock |= TOBLOCKTYPE(Rand(7u));
-			if (RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
+			if (RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, player->activeRotation)) {
 				player->activeBlock = oldActiveBlock;
 			}
 
 			Rotation newRotation = ROTATE_RIGHT(player->activeRotation);
-			if (!RotationBlockedCheckKick(player, F32I(player->activePos[0]), F32I(player->activePos[1]), newRotation)) {
+			if (!RotationBlockedCheckKick(player, player->activePos[0].integer, player->activePos[1].integer, newRotation)) {
 				player->activeRotation = newRotation;
 			}
 		}
@@ -1807,14 +1807,14 @@ void UpdatePlayActive(Player* player) {
 	player->gravity = gravity;
 
 	if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_DOWN) {
-		if (F32I(gravity) < 1u) {
+		if (gravity.integer < 1u) {
 			gravity = F32(1, 0x0000);
 		}
 		NumFastDropRows[player->num]++;
 	}
 	else if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_UP) {
 		gravity = F32(20, 0x0000);
-		int16_t droppedRows = F32I(player->activePos[1]) - F32IRVALUE(StepGravity(player, gravity));
+		int16_t droppedRows = player->activePos[1].integer - StepGravity(player, gravity).integer;
 		if (droppedRows < 0) {
 			droppedRows = 0;
 		}
@@ -1870,8 +1870,8 @@ void LockActiveBlock(Player* player, LockType lockType) {
 		return;
 	}
 
-	const int16_t activeCol = F32I(player->activePos[0]);
-	const int16_t activeRow = F32I(player->activePos[1]);
+	const int16_t activeCol = player->activePos[0].integer;
+	const int16_t activeRow = player->activePos[1].integer;
 	const Rotation activeRotation = player->activeRotation;
 	const BlockType activeBlockType = player->activeBlock & BLOCK_TYPE;
 
@@ -2202,8 +2202,8 @@ void UpdatePlayClear(Player* player) {
 				if (
 					(GameFlags & GAME_DOUBLES) &&
 					player->otherPlayer->play.state == PLAYSTATE_ACTIVE &&
-					Blocked(player->otherPlayer, F32I(player->otherPlayer->activePos[0]), F32I(player->otherPlayer->activePos[1]), player->otherPlayer->activeRotation)) {
-					player->otherPlayer->activePos[1] -= F32(1, 0x0000);
+					Blocked(player->otherPlayer, player->otherPlayer->activePos[0].integer, player->otherPlayer->activePos[1].integer, player->otherPlayer->activeRotation)) {
+					player->otherPlayer->activePos[1].value -= F32(1, 0x0000).value;
 				}
 				// Remove collapsed row from the line flags then shift the flags a row down.
 				lineFlags = (lineFlags & ~(1 << collapseRow)) >> 1;
@@ -2452,7 +2452,7 @@ void UpdatePlayNext(Player* player) {
 	}
 	player->activePos[0] = activeCol;
 	if (player->modeFlags & MODE_BIG) {
-		F32I(player->activePos[0])++;
+		player->activePos[0].integer++;
 	}
 	player->activePos[1] = ENTRYPOS_Y;
 
@@ -2467,14 +2467,14 @@ void UpdatePlayNext(Player* player) {
 		}
 		player->numActiveRotations++;
 
-		if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), initialRotation)) {
+		if (!Blocked(player, player->activePos[0].integer, player->activePos[1].integer, initialRotation)) {
 			player->activeRotation = initialRotation;
 			PlaySoundEffect(SOUNDEFFECT_IRS);
 		}
 	}
 
 	// Entry of next block.
-	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
+	if (Blocked(player, player->activePos[0].integer, player->activePos[1].integer, player->activeRotation)) {
 		// Entering block is blocked. Game over, unless only blocked by other player's active block in doubles.
 		if (GameFlags & GAME_DOUBLES) {
 			if (entry->numMatrixBlockings == 0) {
@@ -2550,7 +2550,7 @@ void UpdatePlayNext(Player* player) {
 		}
 
 		// Apply initial drop, if 1G or higher.
-		if (F32I(gravity) >= 1) {
+		if (gravity.integer >= 1) {
 			player->activePos[1] = StepGravity(player, gravity);
 		}
 
@@ -2571,7 +2571,7 @@ void UpdatePlayNext(Player* player) {
 
 void UpdatePlayBlockedEntry(Player* player) {
 	TEMPPTR(EntryData, entry);
-	if (Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), player->activeRotation)) {
+	if (Blocked(player, player->activePos[0].integer, player->activePos[1].integer, player->activeRotation)) {
 		if (entry->numMatrixBlockings == 0) {
 			// Blocked by other player's active block and no matrix squares.
 			// So wait until the other player is out of the way.
@@ -2603,7 +2603,7 @@ void UpdatePlayBlockedEntry(Player* player) {
 				newRotation = ROTATE_RIGHT(player->activeRotation);
 			}
 			player->numActiveRotations++;
-			if (!Blocked(player, F32I(player->activePos[0]), F32I(player->activePos[1]), newRotation)) {
+			if (!Blocked(player, player->activePos[0].integer, player->activePos[1].integer, newRotation)) {
 				player->activeRotation = newRotation;
 				PlaySoundEffect(SOUNDEFFECT_IRS);
 			}
@@ -2613,7 +2613,7 @@ void UpdatePlayBlockedEntry(Player* player) {
 		if ((player->modeFlags & MODE_20G) || ((player->nowFlags & NOW_STAFF) && (player->modeFlags & MODE_NORMAL))) {
 			gravity = F32(20, 0x0000);
 		}
-		if (F32I(gravity) >= 1) {
+		if (gravity.integer >= 1) {
 			player->activePos[1] = StepGravity(player, gravity);
 		}
 		NextPlayActive(player);
