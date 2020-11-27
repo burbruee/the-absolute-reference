@@ -159,8 +159,8 @@ static SDL_Renderer* Renderer = NULL;
 static SDL_Texture* FramebufferTexture = NULL;
 
 #define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
-static double PreviousFrameTime;
-static Uint64 PreviousCounter;
+static Uint64 CurrentTime;
+static Uint64 TimeAccumulator;
 
 static SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];
 
@@ -434,9 +434,6 @@ bool PlatformInit() {
 		}
 	}
 
-	PreviousCounter = SDL_GetPerformanceCounter();
-	PreviousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-
 	Window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	Renderer = SDL_CreateRenderer(Window, 0, SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(Renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
@@ -582,6 +579,9 @@ bool PlatformInit() {
 	}
 	atexit(ExitHandler);
 
+	CurrentTime = SDL_GetPerformanceCounter();
+	TimeAccumulator = 0u;
+
 	// TAP initialization.
 	// TODO: Implement more of the initialization like the original, such as ROM checks.
 	UNK_602ACB0();
@@ -704,41 +704,63 @@ void PlatformUpdateInputs() {
 
 void PlatformFrame() {
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
-	const Uint64 currentCounter = SDL_GetPerformanceCounter();
-	RandScale += (uint32_t)(currentCounter - PreviousCounter);
-	PreviousCounter = currentCounter;
+	RandScale += (uint32_t)SDL_GetPerformanceCounter();
+
 	NumVblanks++;
-	SDL_Delay(1);
+
+	SDL_Delay(0);
 }
 
 static Color framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
-	Render(framebuffer, TileData);
-	void* pixels;
-	int pitch;
-	SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
-	for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
-		// Being able to use memcpy here is why the code uses the Color typedef and
-		// COLOR* macros. The game code and frontend have matching pixel formats, so we
-		// don't have to do any conversion. The SDL2 texture rows *might* be longer than
-		// VIDEO_WIDTH though, so we can't optimize it to a whole-framebuffer copy, but
-		// this is pretty good. We also can't directly pass the texture pixels pointer
-		// to the Render function, because the Render function has to read the
-		// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
-		// locked texture.
-		// -Brandon McGriff
-		memcpy(&((uint8_t*)pixels)[y * pitch], framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
-	}
-	SDL_UnlockTexture(FramebufferTexture);
+	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());
+	bool firstFrame = true;
 
-	do {
+	goto nextFrame;
+	while (true) {
+		{
+			Uint64 newTime = SDL_GetPerformanceCounter();
+			Uint64 renderFrameDuration = newTime - CurrentTime;
+			if (renderFrameDuration > SDL_GetPerformanceFrequency() / 4u) {
+				renderFrameDuration = SDL_GetPerformanceFrequency() / 4u;
+			}
+			CurrentTime = newTime;
+
+			TimeAccumulator += renderFrameDuration;
+		}
+
+		nextFrame:
+		if (TimeAccumulator >= gameFrameDuration) {
+			TimeAccumulator -= gameFrameDuration;
+			return;
+		}
+
+		if (firstFrame) {
+			Render(framebuffer, TileData);
+			void* pixels;
+			int pitch;
+			SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
+			for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
+				// Being able to use memcpy here is why the code uses the Color typedef and
+				// COLOR* macros. The game code and frontend have matching pixel formats, so we
+				// don't have to do any conversion. The SDL2 texture rows *might* be longer than
+				// VIDEO_WIDTH though, so we can't optimize it to a whole-framebuffer copy, but
+				// this is pretty good. We also can't directly pass the texture pixels pointer
+				// to the Render function, because the Render function has to read the
+				// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
+				// locked texture.
+				// -Brandon McGriff
+				memcpy(&((uint8_t*)pixels)[y * pitch], framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
+			}
+			SDL_UnlockTexture(FramebufferTexture);
+			firstFrame = false;
+		}
+
 		SDL_RenderClear(Renderer);
 
 		SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL);
 
 		SDL_RenderPresent(Renderer);
 		SDL_Delay(1);
-	} while (((double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()) - PreviousFrameTime < FRAME_DURATION);
-
-	PreviousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+	}
 }
