@@ -39,7 +39,7 @@ struct ini_t {
 static int strcmpci(const char *a, const char *b) {
   for (;;) {
     int d = tolower(*a) - tolower(*b);
-    if (d != 0 || !*a) {
+    if (d != 0 || !*a || !*b) {
       return d;
     }
     a++, b++;

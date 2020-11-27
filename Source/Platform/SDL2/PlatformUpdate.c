@@ -25,11 +25,18 @@
 #include "SDL.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <time.h>
 #include <assert.h>
 
 static ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
 static ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
+
+static int strcmp_nocase(const char *a, const char *b) {
+	int cmp;
+	while ((cmp = tolower(*a) - tolower(*b)) == 0 && *a++ && *b++);
+	return cmp;
+}
 
 void InitVideo() {
 	UNK_2405FFEA = 0x20u;
@@ -145,41 +152,92 @@ static const size_t BgMapRomOffsets[] = {
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
 
-static ini_t* config = NULL;
+static ini_t* Config = NULL;
 
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
-static SDL_Texture* framebufferTexture = NULL;
+static SDL_Window* Window = NULL;
+static SDL_Renderer* Renderer = NULL;
+static SDL_Texture* FramebufferTexture = NULL;
 
 #define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
-static double previousFrameTime;
-static Uint64 previousCounter;
+static double PreviousFrameTime;
+static Uint64 PreviousCounter;
 
-static SDL_Keycode inputConfigKeyboard[NUMINPUTS][8];
+static SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];
+
+static SDL_Joystick* Joysticks[NUMPLAYERS];
+static int InputConfigJoystickButtons[NUMPLAYERS][NUMINPUTS][8] = {
+	{
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 }
+	},
+	{
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 },
+		{ -1, -1, -1, -1, -1, -1, -1, -1 }
+	}
+};
+static int InputConfigJoystickAxes[NUMPLAYERS][NUMINPUTS][8][2] = {
+	{
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } }
+	},
+	{
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } },
+		{ { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 }, { -1, 0 } }
+	}
+};
+static int InputConfigJoystickHats[NUMPLAYERS][NUMINPUTS][8][2] = {
+	{
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } }
+	},
+	{
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } },
+		{ { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } }
+	}
+};
 
 void ExitHandler(void) {
-	ini_free(config);
+	ini_free(Config);
 	free(TileData);
 
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(Renderer);
+	SDL_DestroyWindow(Window);
+	for (PlayerNum i = PLAYER1; i < lengthof(Joysticks); i++) {
+		if (Joysticks[i] && SDL_JoystickGetAttached(Joysticks[i])) {
+			SDL_JoystickClose(Joysticks[i]);
+		}
+	}
 	SDL_Quit();
 }
 
 bool PlatformInit() {
 	// Non-TAP, platform initialization.
-	config = ini_load("taref.ini");
-	if (!config) {
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+
+	Config = ini_load("taref.ini");
+	if (!Config) {
 		exit(EXIT_FAILURE);
 	}
 
 	{
 		const char* value;
-		#define GET_KEY(input, button, i) \
+#define GET_KEY(input, button, i) \
 		do { \
-			value = ini_get(config, #input "_KEYBOARD", #button); \
+			value = ini_get(Config, #input "_KEYBOARD", #button); \
 			if (value) { \
-				inputConfigKeyboard[input][i] = SDL_GetKeyFromName(value); \
+				InputConfigKeyboard[input][i] = SDL_GetKeyFromName(value); \
 			} \
 		} while (0)
 
@@ -208,20 +266,186 @@ bool PlatformInit() {
 		GET_KEY(INPUT_SERVICE, SERVICE_TILT, 6);
 	}
 
-	SDL_Init(SDL_INIT_VIDEO);
+	if (SDL_NumJoysticks() > 0) {
+		int deviceIndex;
+		const char* const joystickSections[NUMPLAYERS] = {
+			"INPUT_JOYSTICK1P",
+			"INPUT_JOYSTICK2P"
+		};
+		for (int i = 0; i < SDL_NumJoysticks(); i++) {
+			SDL_Joystick* joystick = SDL_JoystickOpen(i);
+			bool joystickUsed = false;
+			if (!joystick) {
+				continue;
+			}
+			for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
+				const char* name = NULL;
+				if (!Joysticks[playerNum] && (name = ini_get(Config, joystickSections[playerNum], "DEVICE_NAME")) && !strcmp(SDL_JoystickName(joystick), name)) {
+					Joysticks[playerNum] = joystick;
+					joystickUsed = true;
+					break;
+				}
+			}
+			if (!joystickUsed) {
+				SDL_JoystickClose(joystick);
+			}
+		}
+		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
+			if (!Joysticks[playerNum] && ini_sget(Config, joystickSections[playerNum], "DEVICE_INDEX", "%d", &deviceIndex) && deviceIndex >= 0 && deviceIndex < SDL_NumJoysticks()) {
+				Joysticks[playerNum] = SDL_JoystickOpen(deviceIndex);
+			}
+		}
 
-	previousCounter = SDL_GetPerformanceCounter();
-	previousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+		const char* const inputSections[NUMINPUTS] = {
+			"INPUT_BUTTONS1P_JOYSTICK",
+			"INPUT_BUTTONS2P_JOYSTICK",
+			"INPUT_UNUSED_JOYSTICK",
+			"INPUT_SERVICE_JOYSTICK"
+		};
+		const char* const inputKeys[NUMINPUTS][8] = {
+			{
+				"BUTTON_START",
+				"BUTTON_3",
+				"BUTTON_2",
+				"BUTTON_1",
+				"BUTTON_LEFT",
+				"BUTTON_RIGHT",
+				"BUTTON_DOWN",
+				"BUTTON_UP"
+			},
+			{
+				"BUTTON_START",
+				"BUTTON_3",
+				"BUTTON_2",
+				"BUTTON_1",
+				"BUTTON_LEFT",
+				"BUTTON_RIGHT",
+				"BUTTON_DOWN",
+				"BUTTON_UP"
+			},
+			{
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				""
+			},
+			{
+				"SERVICE_COIN1",
+				"SERVICE_COIN2",
+				"SERVICE_ADDSERVICE",
+				"",
+				"",
+				"SERVICE_TEST",
+				"SERVICE_TILT"
+				"",
+				""
+			}
+		};
+		const char* const devicePlayers[NUMPLAYERS] = {
+			"1P",
+			"2P"
+		};
+		for (size_t i = 0u; i < NUMINPUTS; i++) {
+			for (size_t j = 0u; j < 8u; j++) {
+				const char* const value = ini_get(Config, inputSections[i], inputKeys[i][j]);
+				if (value) {
+					const size_t len = strlen(value);
+					char* fields[4];
+					for (size_t i = 0u; i < lengthof(fields); i++) {
+						fields[i] = malloc(len + 1u);
+						assert(fields[i] != NULL);
+					}
+					const int fieldsRead = sscanf(value, "%s %s %s %s", fields[0], fields[1], fields[2], fields[3]);
 
-	window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
-	SDL_RenderSetLogicalSize(renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
-	SDL_SetRenderDrawColor(renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(renderer);
-	SDL_RenderPresent(renderer);
+					bool playerNumSet = false;
+					PlayerNum playerNum;
+					if (fieldsRead >= 1) {
+						for (PlayerNum i = PLAYER1; i < NUMPLAYERS; i++) {
+							if (!strcmp_nocase(fields[0], devicePlayers[i])) {
+								playerNum = i;
+								playerNumSet = true;
+								break;
+							}
+						}
+					}
+					if (playerNumSet && fieldsRead >= 2) {
+						if (!strcmp_nocase(fields[1], "Button") && fieldsRead >= 3) {
+							int button;
+							if (sscanf(fields[2], "%d", &button) == 1 && button >= 0) {
+								InputConfigJoystickButtons[playerNum][i][j] = button;
+							}
+						}
+						else if (!strcmp_nocase(fields[1], "Axis") && fieldsRead >= 4) {
+							int num;
+							float minpos;
+							if (sscanf(fields[2], "%d", &num) == 1 && num >= 0 && sscanf(fields[3], "%f%%", &minpos) == 1 && minpos <= 100.0f && minpos >= -100.0f) {
+								InputConfigJoystickAxes[playerNum][i][j][0] = num;
+								InputConfigJoystickAxes[playerNum][i][j][1] = (Sint16)((minpos / 100.0f) * 32767.0f);
+							}
+						}
+						else if (!strcmp_nocase(fields[1], "Hat") && fieldsRead >= 4) {
+							int num;
+							if (sscanf(fields[2], "%d", &num) == 1 && num >= 0) {
+								if (!strcmp_nocase(fields[3], "Up")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_UP;
+								}
+								else if (!strcmp_nocase(fields[3], "Right")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHT;
+								}
+								else if (!strcmp_nocase(fields[3], "Down")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_DOWN;
+								}
+								else if (!strcmp_nocase(fields[3], "Left")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFT;
+								}
+								else if (!strcmp_nocase(fields[3], "Rightup")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHTUP;
+								}
+								else if (!strcmp_nocase(fields[3], "Rightdown")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHTDOWN;
+								}
+								else if (!strcmp_nocase(fields[3], "Leftup")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFTUP;
+								}
+								else if (!strcmp_nocase(fields[3], "Leftdown")) {
+									InputConfigJoystickHats[playerNum][i][j][0] = num;
+									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFTDOWN;
+								}
+							}
+						}
+					}
 
-	framebufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING, VIDEO_WIDTH, VIDEO_HEIGHT);
-	SDL_SetTextureBlendMode(framebufferTexture, SDL_BLENDMODE_NONE);
+					for (size_t i = 0u; i < lengthof(fields); i++) {
+						free(fields[i]);
+					}
+				}
+			}
+		}
+	}
+
+	PreviousCounter = SDL_GetPerformanceCounter();
+	PreviousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+
+	Window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	Renderer = SDL_CreateRenderer(Window, 0, SDL_RENDERER_ACCELERATED);
+	SDL_RenderSetLogicalSize(Renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
+	SDL_SetRenderDrawColor(Renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(Renderer);
+	SDL_RenderPresent(Renderer);
+
+	FramebufferTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING, VIDEO_WIDTH, VIDEO_HEIGHT);
+	SDL_SetTextureBlendMode(FramebufferTexture, SDL_BLENDMODE_NONE);
 
 	{
 		TileData = malloc(NUMTILEROMS * TILEROM_SIZE);
@@ -419,20 +643,60 @@ bool PlatformInit() {
 
 void PlatformUpdateInputs() {
 	SDL_PumpEvents();
+
 	if (SDL_QuitRequested()) {
 		exit(EXIT_SUCCESS);
 	}
+
+	bool pressed[NUMINPUTS][8] = { 0 };
 	const Uint8* const keyboardState = SDL_GetKeyboardState(NULL);
-	for (size_t i = 0u; i < lengthof(inputConfigKeyboard); i++) {
-		for (size_t j = 0u; j < lengthof(*inputConfigKeyboard); j++) {
-			if (inputConfigKeyboard[i][j] != SDLK_UNKNOWN) {
-				SDL_Scancode scancode = SDL_GetScancodeFromKey(inputConfigKeyboard[i][j]);
+	for (size_t i = 0u; i < NUMINPUTS; i++) {
+		for (size_t j = 0u; j < 8u; j++) {
+			if (InputConfigKeyboard[i][j] != SDLK_UNKNOWN) {
+				SDL_Scancode scancode = SDL_GetScancodeFromKey(InputConfigKeyboard[i][j]);
 				if (keyboardState[scancode]) {
-					INPUTS[i] &= ~(1 << j);
+					pressed[i][j] = true;
 				}
-				else {
-					INPUTS[i] |= 1 << j;
+			}
+		}
+	}
+
+	for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
+		if (Joysticks[playerNum]) {
+			for (size_t i = 0u; i < NUMINPUTS; i++) {
+				for (size_t j = 0u; j < 8u; j++) {
+					if (InputConfigJoystickButtons[playerNum][i][j] >= 0) {
+						if (SDL_JoystickGetButton(Joysticks[playerNum], InputConfigJoystickButtons[playerNum][i][j])) {
+							pressed[i][j] = true;
+						}
+					}
+					if (InputConfigJoystickAxes[playerNum][i][j][0] >= 0) {
+						int minpos = InputConfigJoystickAxes[playerNum][i][j][1];
+						int position = SDL_JoystickGetAxis(Joysticks[playerNum], InputConfigJoystickAxes[playerNum][i][j][0]);
+						if (minpos > 0 && position > 0 && position >= minpos) {
+							pressed[i][j] = true;
+						}
+						else if (minpos < 0 && position < 0 && position <= minpos) {
+							pressed[i][j] = true;
+						}
+					}
+					if (InputConfigJoystickHats[playerNum][i][j][0] >= 0) {
+						if (SDL_JoystickGetHat(Joysticks[playerNum], InputConfigJoystickHats[playerNum][i][j][0]) == InputConfigJoystickHats[playerNum][i][j][1]) {
+							pressed[i][j] = true;
+						}
+					}
 				}
+			}
+		}
+	}
+
+	for (size_t i = 0u; i < NUMINPUTS; i++) {
+		for (size_t j = 0u; j < 8u; j++) {
+			if (pressed[i][j]) {
+				INPUTS[i] &= ~(1 << j);
+			}
+			else {
+				INPUTS[i] |= 1 << j;
 			}
 		}
 	}
@@ -441,8 +705,8 @@ void PlatformUpdateInputs() {
 void PlatformFrame() {
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
 	const Uint64 currentCounter = SDL_GetPerformanceCounter();
-	RandScale += (uint32_t)(currentCounter - previousCounter);
-	previousCounter = currentCounter;
+	RandScale += (uint32_t)(currentCounter - PreviousCounter);
+	PreviousCounter = currentCounter;
 	NumVblanks++;
 	SDL_Delay(1);
 }
@@ -452,7 +716,7 @@ void PlatformFinishUpdate() {
 	Render(framebuffer, TileData);
 	void* pixels;
 	int pitch;
-	SDL_LockTexture(framebufferTexture, NULL, &pixels, &pitch);
+	SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
 	for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
 		// Being able to use memcpy here is why the code uses the Color typedef and
 		// COLOR* macros. The game code and frontend have matching pixel formats, so we
@@ -465,16 +729,16 @@ void PlatformFinishUpdate() {
 		// -Brandon McGriff
 		memcpy(&((uint8_t*)pixels)[y * pitch], framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
 	}
-	SDL_UnlockTexture(framebufferTexture);
+	SDL_UnlockTexture(FramebufferTexture);
 
 	do {
-		SDL_RenderClear(renderer);
+		SDL_RenderClear(Renderer);
 
-		SDL_RenderCopy(renderer, framebufferTexture, NULL, NULL);
+		SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL);
 
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(Renderer);
 		SDL_Delay(1);
-	} while (((double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()) - previousFrameTime < FRAME_DURATION);
+	} while (((double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()) - PreviousFrameTime < FRAME_DURATION);
 
-	previousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+	PreviousFrameTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 }
