@@ -208,6 +208,17 @@ static int InputConfigJoystickHats[NUMPLAYERS][NUMINPUTS][8][2] = {
 	}
 };
 
+typedef enum DisplayMode {
+	DISPLAY_WINDOW,
+	DISPLAY_FULLSCREENEXCLUSIVE,
+	DISPLAY_FULLSCREENDESKTOP
+} DisplayMode;
+static DisplayMode DisplayModeSetting;
+
+static int DisplayDimensions[2];
+
+static int Vsync;
+
 void ExitHandler(void) {
 	ini_free(Config);
 	free(TileData);
@@ -232,12 +243,11 @@ bool PlatformInit() {
 	}
 
 	{
-		const char* value;
 #define GET_KEY(input, button, i) \
 		do { \
-			value = ini_get(Config, #input "_KEYBOARD", #button); \
-			if (value) { \
-				InputConfigKeyboard[input][i] = SDL_GetKeyFromName(value); \
+			const char* const keyName = ini_get(Config, #input "_KEYBOARD", #button); \
+			if (keyName) { \
+				InputConfigKeyboard[input][i] = SDL_GetKeyFromName(keyName); \
 			} \
 		} while (0)
 
@@ -351,15 +361,15 @@ bool PlatformInit() {
 		};
 		for (size_t i = 0u; i < NUMINPUTS; i++) {
 			for (size_t j = 0u; j < 8u; j++) {
-				const char* const value = ini_get(Config, inputSections[i], inputKeys[i][j]);
-				if (value) {
-					const size_t len = strlen(value);
+				const char* const inputSetting = ini_get(Config, inputSections[i], inputKeys[i][j]);
+				if (inputSetting) {
+					const size_t len = strlen(inputSetting);
 					char* fields[4];
 					for (size_t i = 0u; i < lengthof(fields); i++) {
 						fields[i] = malloc(len + 1u);
 						assert(fields[i] != NULL);
 					}
-					const int fieldsRead = sscanf(value, "%s %s %s %s", fields[0], fields[1], fields[2], fields[3]);
+					const int fieldsRead = sscanf(inputSetting, "%s %s %s %s", fields[0], fields[1], fields[2], fields[3]);
 
 					bool playerNumSet = false;
 					PlayerNum playerNum;
@@ -434,10 +444,140 @@ bool PlatformInit() {
 		}
 	}
 
-	Window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, VIDEO_WIDTH, VIDEO_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	Renderer = SDL_CreateRenderer(Window, 0, SDL_RENDERER_ACCELERATED);
+	{
+		const char* const displayMode = ini_get(Config, "VIDEO", "DISPLAY_MODE");
+		if (displayMode) {
+			const size_t len = strlen(displayMode);
+			char* fields[3];
+			for (size_t i = 0u; i < lengthof(fields); i++) {
+				fields[i] = malloc(len + 1);
+				assert(fields[i] != NULL);
+			}
+			const int fieldsRead = sscanf(displayMode, "%s %s %s", fields[0], fields[1], fields[2]);
+
+			if (fieldsRead >= 1 && !strcmp_nocase("Window", fields[0])) {
+				DisplayModeSetting = DISPLAY_WINDOW;
+				if (fieldsRead >= 2 && sscanf(fields[1], "%dx%d", &DisplayDimensions[0], &DisplayDimensions[1]) == 2) {
+					if (DisplayDimensions[0] <= VIDEO_WIDTH || DisplayDimensions[1] <= VIDEO_HEIGHT) {
+						DisplayDimensions[0] = VIDEO_WIDTH;
+						DisplayDimensions[1] = VIDEO_HEIGHT;
+					}
+				}
+				else {
+					DisplayDimensions[0] = VIDEO_WIDTH;
+					DisplayDimensions[1] = VIDEO_HEIGHT;
+				}
+			}
+			else if (fieldsRead >= 2 && !strcmp_nocase("Fullscreen", fields[0])) {
+				if (!strcmp_nocase("Exclusive", fields[1])) {
+					if (fieldsRead >= 3 && sscanf(fields[2], "%dx%d", &DisplayDimensions[0], &DisplayDimensions[1]) == 2) {
+						if (DisplayDimensions[0] <= VIDEO_WIDTH || DisplayDimensions[1] <= VIDEO_HEIGHT) {
+							DisplayModeSetting = DISPLAY_WINDOW;
+							DisplayDimensions[0] = VIDEO_WIDTH;
+							DisplayDimensions[1] = VIDEO_HEIGHT;
+						}
+						else {
+							DisplayModeSetting = DISPLAY_WINDOW;
+							int readDimensions[2] = { DisplayDimensions[0], DisplayDimensions[1] };
+							DisplayDimensions[0] = VIDEO_WIDTH;
+							DisplayDimensions[1] = VIDEO_HEIGHT;
+
+							const int num = SDL_GetNumDisplayModes(0);
+							for (int i = 0; i < num; i++) {
+								SDL_DisplayMode mode;
+								if (SDL_GetDisplayMode(0, i, &mode) == 0 && mode.w == readDimensions[0] && mode.h == readDimensions[1]) {
+									DisplayModeSetting = DISPLAY_FULLSCREENEXCLUSIVE;
+									DisplayDimensions[0] = readDimensions[0];
+									DisplayDimensions[1] = readDimensions[1];
+									break;
+								}
+							}
+						}
+					}
+					else {
+						SDL_DisplayMode mode;
+						if (SDL_GetDesktopDisplayMode(0, &mode) == 0) {
+							DisplayModeSetting = DISPLAY_FULLSCREENEXCLUSIVE;
+							DisplayDimensions[0] = mode.w;
+							DisplayDimensions[1] = mode.h;
+						}
+						else {
+							DisplayModeSetting = DISPLAY_WINDOW;
+							DisplayDimensions[0] = VIDEO_WIDTH;
+							DisplayDimensions[1] = VIDEO_HEIGHT;
+						}
+					}
+				}
+				else if (!strcmp_nocase("Desktop", fields[1])) {
+					SDL_DisplayMode mode;
+					if (SDL_GetDesktopDisplayMode(0, &mode) == 0) {
+						DisplayModeSetting = DISPLAY_FULLSCREENDESKTOP;
+						DisplayDimensions[0] = mode.w;
+						DisplayDimensions[1] = mode.h;
+					}
+					else {
+						DisplayModeSetting = DISPLAY_WINDOW;
+						DisplayDimensions[0] = VIDEO_WIDTH;
+						DisplayDimensions[1] = VIDEO_HEIGHT;
+					}
+				}
+				else {
+					DisplayModeSetting = DISPLAY_WINDOW;
+					DisplayDimensions[0] = VIDEO_WIDTH;
+					DisplayDimensions[1] = VIDEO_HEIGHT;
+				}
+			}
+			else {
+				DisplayModeSetting = DISPLAY_WINDOW;
+				DisplayDimensions[0] = VIDEO_WIDTH;
+				DisplayDimensions[1] = VIDEO_HEIGHT;
+			}
+
+			for (size_t i = 0u; i < lengthof(fields); i++) {
+				free(fields[i]);
+			}
+		}
+		else {
+			DisplayModeSetting = DISPLAY_WINDOW;
+			DisplayDimensions[0] = VIDEO_WIDTH;
+			DisplayDimensions[1] = VIDEO_HEIGHT;
+		}
+	}
+
+	{
+		if (ini_sget(Config, "VIDEO", "VSYNC", "%d", &Vsync)) {
+			Vsync = !!Vsync;
+		}
+		else {
+			Vsync = 0;
+		}
+	}
+
+	Uint32 windowFlags = SDL_WINDOW_SHOWN;
+	switch (DisplayModeSetting) {
+	default:
+	case DISPLAY_WINDOW:
+		windowFlags |= SDL_WINDOW_RESIZABLE;
+		break;
+
+	case DISPLAY_FULLSCREENEXCLUSIVE:
+		windowFlags |= SDL_WINDOW_FULLSCREEN;
+		break;
+
+	case DISPLAY_FULLSCREENDESKTOP:
+		windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		break;
+	}
+	if (!(Window = SDL_CreateWindow("The Absolute Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DisplayDimensions[0], DisplayDimensions[1], windowFlags))) {
+		exit(EXIT_FAILURE);
+	}
+	if (!(Renderer = SDL_CreateRenderer(Window, 0, SDL_RENDERER_ACCELERATED | (Vsync ? SDL_RENDERER_PRESENTVSYNC : 0u)))) {
+		exit(EXIT_FAILURE);
+	}
 	SDL_RenderSetLogicalSize(Renderer, VIDEO_WIDTH, VIDEO_HEIGHT);
+	// TODO: Make the whole-display clearing match the backdrop line colors set in the game code.
 	SDL_SetRenderDrawColor(Renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE);
+
 	SDL_RenderClear(Renderer);
 	SDL_RenderPresent(Renderer);
 
@@ -761,6 +901,8 @@ void PlatformFinishUpdate() {
 		SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL);
 
 		SDL_RenderPresent(Renderer);
-		SDL_Delay(1);
+		if (!Vsync) {
+			SDL_Delay(1);
+		}
 	}
 }
