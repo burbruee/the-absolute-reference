@@ -2755,6 +2755,7 @@ void UpdateTgmPlusGarbage(Player* player) {
 	// minTgmPlusBlocks = (player->level >= 900u) ? 4u : 13u - player->level / 100u;
 
 	if (player->numTgmPlusBlocks >= minTgmPlusBlocks) {
+		player->numTgmPlusBlocks = 0u;
 		// Shift field up a row, to make room for the garbage row entering at the bottom.
 		for (int16_t row = MATRIX_HEIGHT - 1; row > 1; row--) {
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
@@ -2769,7 +2770,7 @@ void UpdateTgmPlusGarbage(Player* player) {
 			MATRIX(player, 1, col).brightness = 0u;
 		}
 
-		player->tgmPlusGarbageIndex = ((size_t)player->tgmPlusGarbageIndex + 1u) % (sizeof(TgmPlusGarbage) / FIELD_SINGLEWIDTH);
+		player->tgmPlusGarbageIndex = ((size_t)player->tgmPlusGarbageIndex + 1u) % (lengthof(TgmPlusGarbage) / FIELD_SINGLEWIDTH);
 		PlaySoundEffect(SOUNDEFFECT_IRS);
 	}
 }
