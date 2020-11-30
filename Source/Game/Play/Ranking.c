@@ -32,7 +32,7 @@ static RankingFlag RankingFlags;
 NewRankingData NewRankings[NUMPLAYERS];
 
 #define CHAROBJECT(i) &OBJECTTABLE_RANKINGCHARS[i]
-static const ObjectData* ObjectTableRankingChars[61] = {
+static const ObjectData* const ObjectTableRankingChars[61] = {
 	CHAROBJECT( 0), CHAROBJECT( 1), CHAROBJECT( 2), CHAROBJECT( 3), CHAROBJECT( 4),
 	CHAROBJECT( 5), CHAROBJECT( 6), CHAROBJECT( 7), CHAROBJECT( 8), CHAROBJECT( 9),
 	CHAROBJECT(10), CHAROBJECT(11), CHAROBJECT(12), CHAROBJECT(13), CHAROBJECT(14),
@@ -49,7 +49,10 @@ static const ObjectData* ObjectTableRankingChars[61] = {
 };
 #undef CHAROBJECT
 
-static const char* NameEntryChars[42] = {
+#define NAMEENTRYCHARS_ENTERABLE 40
+#define NAMEENTRYCHARS_BACKSPACE (NAMEENTRYCHARS_ENTERABLE + 0)
+#define NAMEENTRYCHARS_END       (NAMEENTRYCHARS_ENTERABLE + 1)
+static const char* const NameEntryChars[NAMEENTRYCHARS_END + 1] = {
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
 	"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
 	"U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3",
@@ -57,10 +60,9 @@ static const char* NameEntryChars[42] = {
 	"\\", "["
 };
 
-static const char* DefaultName = "ARK";
+static const char DefaultName[] = { 'A', 'R', 'K', '\0' };
 
-#define NUMINVALIDNAMES 20
-static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
+static const char* const InvalidNames[] = {
 	"   ", "A  ", "AA ", "AAA", "666",
 	"AHO", "ASS", "AUM", "DIE", "ETA",
 	"FUC", "FUK", "HIV", "IRA", "KKK",
@@ -68,7 +70,7 @@ static const char* InvalidNames[NUMINVALIDNAMES + 1] = {
 	"end"
 };
 
-static const ObjectData* ObjectTableRankingPlaces[NUMRANKINGPLACES + 1] = {
+static const ObjectData* const ObjectTableRankingPlaces[NUMRANKINGPLACES + 1] = {
 	&OBJECTTABLE_RANKINGPLACES[1],
 	&OBJECTTABLE_RANKINGPLACES[2],
 	&OBJECTTABLE_RANKINGPLACES[3],
@@ -948,14 +950,14 @@ void InitNameEntry(NameEntryData* nameEntry, Player* player) {
 	nameEntry->autoshiftFrames = CS(20);
 	nameEntry->waitFrames = CS(50);
 
-	nameEntry->name[3] = *NameEntryChars[39];
-	nameEntry->name[2] = *NameEntryChars[39];
-	nameEntry->name[1] = *NameEntryChars[39];
-	nameEntry->name[0] = *NameEntryChars[39];
+	nameEntry->name[3] = *NameEntryChars[NAMEENTRYCHARS_ENTERABLE - 1];
+	nameEntry->name[2] = *NameEntryChars[NAMEENTRYCHARS_ENTERABLE - 1];
+	nameEntry->name[1] = *NameEntryChars[NAMEENTRYCHARS_ENTERABLE - 1];
+	nameEntry->name[0] = *NameEntryChars[NAMEENTRYCHARS_ENTERABLE - 1];
 	nameEntry->name[4] = '\0';
 }
 
-// TODO: Replace numeric literals assigned to charIndex with defined constants.
+#define NAMEENTRY_AUTOSHIFTFRAMES 12
 bool UpdateNameEntry(NameEntryData* nameEntry) {
 	bool done = false;
 
@@ -963,72 +965,74 @@ bool UpdateNameEntry(NameEntryData* nameEntry) {
 		nameEntry->waitFrames--;
 	}
 
-	ButtonInput buttonsDown = GameButtonsDown[nameEntry->player->num];
-	ButtonInput buttonsNew = GameButtonsNew[nameEntry->player->num];
+	const ButtonInput buttonsDown = GameButtonsDown[nameEntry->player->num];
+	const ButtonInput buttonsNew = GameButtonsNew[nameEntry->player->num];
 	switch (nameEntry->numChars) {
 	case 0:
 	case 1:
 	case 2:
 		if (buttonsNew & BUTTON_RIGHT) {
 			nameEntry->charIndex++;
-			nameEntry->charIndex %= 42;
-			if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
-				nameEntry->charIndex = 41;
+			nameEntry->charIndex %= lengthof(NameEntryChars);
+			if (nameEntry->numChars == 0 && nameEntry->charIndex == NAMEENTRYCHARS_BACKSPACE) {
+				nameEntry->charIndex = NAMEENTRYCHARS_END;
 			}
-			nameEntry->autoshiftFrames = 12;
+			nameEntry->autoshiftFrames = NAMEENTRY_AUTOSHIFTFRAMES;
 		}
 
 		if (buttonsNew & BUTTON_LEFT) {
 			if (nameEntry->charIndex-- == 0) {
-				nameEntry->charIndex = 41;
+				nameEntry->charIndex = NAMEENTRYCHARS_END;
 			}
-			if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
-				nameEntry->charIndex = 39;
+			if (nameEntry->numChars == 0 && nameEntry->charIndex == NAMEENTRYCHARS_BACKSPACE) {
+				nameEntry->charIndex = NAMEENTRYCHARS_ENTERABLE - 1;
 			}
-			nameEntry->autoshiftFrames = 12;
+			nameEntry->autoshiftFrames = NAMEENTRY_AUTOSHIFTFRAMES;
 		}
 
-		if (buttonsDown & (BUTTON_LEFT | BUTTON_RIGHT)) {
-			if (nameEntry->autoshiftFrames-- == 0) {
-				if (buttonsDown & BUTTON_RIGHT) {
-					nameEntry->charIndex++;
-					nameEntry->charIndex %= 42;
-					if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
-						nameEntry->charIndex = 41;
-					}
-				}
-				else {
-					if (nameEntry->charIndex-- == 0) {
-						nameEntry->charIndex = 41;
-					}
-					if (nameEntry->numChars == 0 && nameEntry->charIndex == 40) {
-						nameEntry->charIndex = 39;
-					}
+		if ((buttonsDown & (BUTTON_LEFT | BUTTON_RIGHT)) && nameEntry->autoshiftFrames-- == 0) {
+			if (buttonsDown & BUTTON_RIGHT) {
+				nameEntry->charIndex++;
+				nameEntry->charIndex %= lengthof(NameEntryChars);
+				if (nameEntry->numChars == 0 && nameEntry->charIndex == NAMEENTRYCHARS_BACKSPACE) {
+					nameEntry->charIndex = NAMEENTRYCHARS_END;
 				}
 			}
-			nameEntry->autoshiftFrames = 12;
+			else {
+				if (nameEntry->charIndex-- == 0) {
+					nameEntry->charIndex = NAMEENTRYCHARS_END;
+				}
+				if (nameEntry->numChars == 0 && nameEntry->charIndex == NAMEENTRYCHARS_BACKSPACE) {
+					nameEntry->charIndex = NAMEENTRYCHARS_ENTERABLE - 1;
+				}
+			}
+			nameEntry->autoshiftFrames = NAMEENTRY_AUTOSHIFTFRAMES;
 		}
 
 		if ((buttonsNew & BUTTON_1) && nameEntry->waitFrames == 0) {
 			PlaySoundEffect(SOUNDEFFECT_SELECT);
-			if (nameEntry->charIndex == 40) {
+			switch (nameEntry->charIndex) {
+			case NAMEENTRYCHARS_BACKSPACE:
 				if (nameEntry->numChars != 0) {
 					nameEntry->name[--nameEntry->numChars] = ' ';
 					if (nameEntry->numChars == 0) {
 						nameEntry->charIndex = 0;
 					}
 				}
-			}
-			else if (nameEntry->charIndex == 41) {
+				break;
+
+			case NAMEENTRYCHARS_END:
 				done = true;
 				nameEntry->numChars = 4;
-				nameEntry->charIndex = 39;
-			}
-			else {
+				nameEntry->charIndex = NAMEENTRYCHARS_ENTERABLE - 1;
+				break;
+
+			default:
 				nameEntry->name[nameEntry->numChars] = *NameEntryChars[nameEntry->charIndex];
 				if (++nameEntry->numChars == 3) {
-					nameEntry->charIndex = 41;
+					nameEntry->charIndex = NAMEENTRYCHARS_END;
 				}
+				break;
 			}
 		}
 		else if (buttonsNew & BUTTON_2) {
@@ -1043,21 +1047,21 @@ bool UpdateNameEntry(NameEntryData* nameEntry) {
 		break;
 
 	case 3:
-		if ((buttonsNew & BUTTON_RIGHT) && nameEntry->charIndex++ == 41) {
-			nameEntry->charIndex = 40;
+		if ((buttonsNew & BUTTON_RIGHT) && nameEntry->charIndex++ == NAMEENTRYCHARS_END) {
+			nameEntry->charIndex = NAMEENTRYCHARS_BACKSPACE;
 		}
-		if ((buttonsNew & BUTTON_LEFT) && nameEntry->charIndex-- == 40) {
-			nameEntry->charIndex = 41;
+		if ((buttonsNew & BUTTON_LEFT) && nameEntry->charIndex-- == NAMEENTRYCHARS_BACKSPACE) {
+			nameEntry->charIndex = NAMEENTRYCHARS_END;
 		}
 		if (buttonsNew & BUTTON_1) {
 			PlaySoundEffect(SOUNDEFFECT_SELECT);
-			if (nameEntry->charIndex == 40) {
+			if (nameEntry->charIndex == NAMEENTRYCHARS_BACKSPACE) {
 				nameEntry->name[--nameEntry->numChars] = ' ';
 			}
 			else {
 				done = true;
 				nameEntry->numChars = 4;
-				nameEntry->charIndex = 39;
+				nameEntry->charIndex = NAMEENTRYCHARS_ENTERABLE - 1;
 			}
 		}
 		else if (buttonsNew & BUTTON_2) {
@@ -1073,13 +1077,13 @@ bool UpdateNameEntry(NameEntryData* nameEntry) {
 
 	if (--nameEntry->timeoutFrames == 0) {
 		done = true;
-		nameEntry->charIndex = 39;
+		nameEntry->charIndex = NAMEENTRYCHARS_ENTERABLE - 1;
 	}
 
 	if (done) {
-		for (size_t i = 0; StringNCompare(InvalidNames[i], InvalidNames[NUMINVALIDNAMES], 3) != 0; i++) {
-			if (StringNCompare(InvalidNames[i], nameEntry->name, 3) == 0) {
-				MemCopy(sizeof(char) * 4, nameEntry->name, DefaultName);
+		for (size_t i = 0u; StringNCompare(InvalidNames[i], InvalidNames[lengthof(InvalidNames) - 1], 3u) != 0; i++) {
+			if (StringNCompare(InvalidNames[i], nameEntry->name, 3u) == 0) {
+				MemCopy(sizeof(DefaultName), nameEntry->name, DefaultName);
 				break;
 			}
 		}

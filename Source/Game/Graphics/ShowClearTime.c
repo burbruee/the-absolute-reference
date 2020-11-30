@@ -41,7 +41,7 @@ void UpdateEntityClearTime(Entity* entity) {
 	DisplayObject(ObjectTableRankingDigits[minutes / 10u], y, x, 0u, 110u); // 11 wide.
 	DisplayObject(ObjectTableRankingDigits[minutes % 10u], y, x + 11, 0u, 110u); // 9 wide.
 
-	DisplayObject(OBJECT_RANKINGTIMECOLON, y, x + 20, 0u, 110u); // 7 wide.
+	DisplayObject(OBJECT_RANKINGTIMECOLON, y, x + 22, 0u, 110u); // 7 wide.
 
 	DisplayObject(ObjectTableRankingDigits[seconds / 10u], y, x + 27, 0u, 110u); // 11 wide.
 	DisplayObject(ObjectTableRankingDigits[seconds % 10u], y, x + 38, 0u, 110u); // 11 wide.
