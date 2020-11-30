@@ -1,14 +1,19 @@
 list(APPEND EXECUTABLE_SOURCES
+	"../Util/Config.c"
+	"../Util/Data.c"
 	"../Util/HwData.c"
 	"../Util/ini.c"
 	"../Util/Render.c"
 	"../Util/RomData.c"
 
+	"Display.c"
 	"EepromAccess.c"
 	"PlatformUpdate.c"
 )
 list(APPEND EXECUTABLE_HEADERS
 	"../Util/Color.h"
+	"../Util/Config.h"
+	"../Util/Data.h"
 	"../Util/HwData.h"
 	"../Util/ini.h"
 	"../Util/Macros.h"
@@ -19,6 +24,8 @@ list(APPEND EXECUTABLE_HEADERS
 	"PlatformSupport/HwData.h"
 	"PlatformSupport/PlatformUpdate.h"
 	"PlatformSupport/PlatformTypes.h"
+
+	"Display.h"
 )
 
 add_executable("${EXECUTABLE_NAME}" ${EXECUTABLE_SOURCES} ${EXECUTABLE_HEADERS})
