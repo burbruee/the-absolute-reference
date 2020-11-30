@@ -188,25 +188,25 @@ void UpdateComboMedal(Player* player) {
 }
 
 void UpdateSectionTimeMedal(Player* player, uint32_t sectionTime, uint32_t bestSectionTime) {
-	MedalColor awardedMedalColor = MEDALCOLOR_NULL;
+	MedalColor awardedMedalColor;
+	uint32_t currentSectionTime = bestSectionTime + TIME(0, 10, 0);
 	for (
-		uint32_t currentSectionTime = bestSectionTime + TIME(0, 10, 0);
-		currentSectionTime <= sectionTime;
-		awardedMedalColor++, currentSectionTime += TIME(0, 5, 0)
+		awardedMedalColor = MEDALCOLOR_NULL;
+		awardedMedalColor < NUMMEDALCOLORS && currentSectionTime > sectionTime;
+		awardedMedalColor++, currentSectionTime -= TIME(0, 5, 0)
 	);
+
 	if (awardedMedalColor != MEDALCOLOR_NULL) {
 		Medals[player->num][MEDALTYPE_ST].color = awardedMedalColor;
 		Medals[player->num][MEDALTYPE_ST].state = MEDALSTATE_AWARDED;
 		if (player->medalColors[MEDALTYPE_ST] < awardedMedalColor) {
 			player->medalColors[MEDALTYPE_ST] = awardedMedalColor;
 		}
-		if (awardedMedalColor == NUMMEDALCOLORS) {
-			if (player->modeFlags == MODE_MASTER) {
-				BestMasterSectionTimes[player->section] = sectionTime;
-			}
-			if (player->modeFlags == MODE_TADEATH) {
-				BestTaDeathSectionTimes[player->section] = sectionTime;
-			}
+		if (awardedMedalColor == MEDALCOLOR_GOLD && player->modeFlags == MODE_MASTER) {
+			BestMasterSectionTimes[player->section] = sectionTime;
+		}
+		if (awardedMedalColor == MEDALCOLOR_GOLD && player->modeFlags == MODE_TADEATH) {
+			BestTaDeathSectionTimes[player->section] = sectionTime;
 		}
 	}
 }
