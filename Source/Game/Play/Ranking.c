@@ -1092,7 +1092,7 @@ bool UpdateNameEntry(NameEntryData* nameEntry) {
 bool UpdatePlayRanking(Player* player) {
 	NewRankingData* newRanking = &NewRankings[player->num];
 
-	if ((GameFlags & GAME_TWIN) && ROTATED_ANY(GameButtonsDown[player->num])) {
+	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {
 		player->nowFlags |= NOW_SHOWRANKINGCODE;
 	}
 
