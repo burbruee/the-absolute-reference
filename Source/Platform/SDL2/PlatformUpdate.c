@@ -61,7 +61,7 @@ void InitVideo() {
 		SCALERAM[i] = InitScaleRam[i];
 	}
 
-	for (size_t i = 0u; i < 0x100u; i++) {
+	for (size_t i = 0u; i < NUMPALS; i++) {
 		for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
 			PALRAM[i * NUMPALCOLORS_4BPP + j] = 0xFFFFFFFFu;
 		}
@@ -164,6 +164,7 @@ void PlatformUpdateInputs() {
 	}
 
 	bool pressed[NUMINPUTS][8] = { 0 };
+
 	const Uint8* const keyboardState = SDL_GetKeyboardState(NULL);
 	for (size_t i = 0u; i < NUMINPUTS; i++) {
 		for (size_t j = 0u; j < 8u; j++) {
@@ -231,48 +232,28 @@ void PlatformFrame() {
 static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
 	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());
-	bool firstFrame = true;
 
-	goto nextFrame;
-	while (true) {
-		{
-			Uint64 newTime = SDL_GetPerformanceCounter();
-			Uint64 renderFrameDuration = newTime - CurrentTime;
-			if (renderFrameDuration > SDL_GetPerformanceFrequency() / 4u) {
-				renderFrameDuration = SDL_GetPerformanceFrequency() / 4u;
-			}
-			CurrentTime = newTime;
-
-			TimeAccumulator += renderFrameDuration;
+	if (TimeAccumulator < gameFrameDuration) {
+		Render(Framebuffer, TileData);
+		void* pixels;
+		int pitch;
+		SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
+		for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
+			// Being able to use memcpy here is why the code uses the Color typedef and
+			// COLOR* macros. The game code and frontend have matching pixel formats, so we
+			// don't have to do any conversion. The SDL2 texture rows *might* be longer than
+			// VIDEO_WIDTH though, so we can't optimize it to a whole-framebuffer copy, but
+			// this is pretty good. We also can't directly pass the texture pixels pointer
+			// to the Render function, because the Render function has to read the
+			// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
+			// locked texture.
+			// -Brandon McGriff
+			memcpy((uint8_t*)pixels + y * pitch, Framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
 		}
+		SDL_UnlockTexture(FramebufferTexture);
+	}
 
-		nextFrame:
-		if (TimeAccumulator >= gameFrameDuration) {
-			TimeAccumulator -= gameFrameDuration;
-			return;
-		}
-
-		if (firstFrame) {
-			Render(Framebuffer, TileData);
-			void* pixels;
-			int pitch;
-			SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
-			for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
-				// Being able to use memcpy here is why the code uses the Color typedef and
-				// COLOR* macros. The game code and frontend have matching pixel formats, so we
-				// don't have to do any conversion. The SDL2 texture rows *might* be longer than
-				// VIDEO_WIDTH though, so we can't optimize it to a whole-framebuffer copy, but
-				// this is pretty good. We also can't directly pass the texture pixels pointer
-				// to the Render function, because the Render function has to read the
-				// framebuffer for alpha blending, and SDL2 doesn't let us read the pixels of a
-				// locked texture.
-				// -Brandon McGriff
-				memcpy((uint8_t*)pixels + y * pitch, Framebuffer + y * VIDEO_WIDTH, sizeof(Color) * VIDEO_WIDTH);
-			}
-			SDL_UnlockTexture(FramebufferTexture);
-			firstFrame = false;
-		}
-
+	while (TimeAccumulator < gameFrameDuration) {
 		SDL_RenderClear(Renderer);
 
 		SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL);
@@ -281,5 +262,16 @@ void PlatformFinishUpdate() {
 		if (!Vsync) {
 			SDL_Delay(1);
 		}
+
+		Uint64 newTime = SDL_GetPerformanceCounter();
+		Uint64 renderFrameDuration = newTime - CurrentTime;
+		if (renderFrameDuration > SDL_GetPerformanceFrequency() / 4u) {
+			renderFrameDuration = SDL_GetPerformanceFrequency() / 4u;
+		}
+		CurrentTime = newTime;
+
+		TimeAccumulator += renderFrameDuration;
 	}
+
+	TimeAccumulator -= gameFrameDuration;
 }
