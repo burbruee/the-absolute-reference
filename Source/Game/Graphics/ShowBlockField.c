@@ -226,7 +226,7 @@ void ShowField(Player* player) {
 		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
 			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
 			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
-				BlockBorder blockBorders = BLOCKBORDER_NONE;
+				uint8_t blockBorders = BLOCKBORDER_NONE;
 				if (row != 0 && MATRIX(player, player->matrixHeight - row - 2, col).block == NULLBLOCK) {
 					blockBorders = BLOCKBORDER_BOTTOM;
 				}
@@ -360,7 +360,7 @@ void ShowFieldPlus(Player* player) {
 		for (int16_t col = 0, displayX = x - (player->matrixWidth / 2) * 8; col < player->matrixWidth; col++, displayX += 8) {
 			Block block = MATRIX(player, player->matrixHeight - row - 1, col).block;
 			if ((block & BLOCK_TYPE) && (block & BLOCK_TYPE) != BLOCKTYPE_WALL) {
-				BlockBorder blockBorders = BLOCKBORDER_NONE;
+				uint8_t blockBorders = BLOCKBORDER_NONE;
 				if (row != 0 && MATRIX(player, player->matrixHeight - row - 2, col).block == NULLBLOCK) {
 					blockBorders |= BLOCKBORDER_BOTTOM;
 				}
@@ -436,7 +436,7 @@ void ShowFieldPlus(Player* player) {
 							palNum = (uint8_t)PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType) + 5u];
 						}
 						const ItemType itemType = player->itemPlayer->activeItemType;
-						if (itemType == ITEMTYPE_COLORBLOCK || itemType == NUMITEMTYPES) {
+						if (itemType == ITEMTYPE_COLORBLOCK || itemType == ITEMTYPE_DARKBLOCK) {
 							int8_t brightness = MATRIX(player, row, col).brightness;
 							palNum = 137u;
 							if (brightness > -1 && brightness < 9) {
@@ -454,7 +454,7 @@ void ShowFieldPlus(Player* player) {
 						}
 						else if (block & BLOCK_FADING) {
 							if (MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames == 0) {
-								MATRIX(player, player->matrixHeight - row - 1, col).block = MATRIX(player, player->matrixHeight - row - 1, col).block | BLOCK_INVISIBLE;
+								MATRIX(player, player->matrixHeight - row - 1, col).block |= BLOCK_INVISIBLE;
 								palNum = (uint8_t)PalNumTableNormalBlocks[blockNum];
 							}
 							else if (--MATRIX(player, player->matrixHeight - row - 1, col).visibleFrames < 10) {
