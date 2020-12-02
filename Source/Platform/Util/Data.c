@@ -3,6 +3,7 @@
 #include "Main/GameLoop.h"
 #include "Main/DemoReplayInput.h"
 #include "Video/Pal.h"
+#include "physfs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -16,27 +17,32 @@ ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
 #define TILEDATA_SIZE (TILEROM_SIZE * NUMTILEROMS)
 
 uint8_t* TileData;
-static const char * TileRomFileNames[NUMTILEROMS] = {
-    "Roms/81ts_3l.u6",
-    "Roms/82ts_3h.u14",
-    "Roms/83ts_4l.u7",
-    "Roms/84ts_4h.u15",
-    "Roms/85ts_5l.u8",
-    "Roms/86ts_5h.u16",
-    "Roms/87ts_6l.u1",
-    "Roms/88ts_6h.u2",
-    "Roms/89ts_7l.u19",
-    "Roms/90ts_7h.u20",
-    "Roms/91ts_8l.u28",
-    "Roms/92ts_8h.u29",
-    "Roms/93ts_9l.u41",
-    "Roms/94ts_9h.u42",
-    "Roms/95ts_10l.u58",
-    "Roms/96ts_10h.u59"
+static const char* const TileRomFileNames[NUMTILEROMS] = {
+    "roms/tgm2/81ts_3l.u6",
+    "roms/tgm2/82ts_3h.u14",
+    "roms/tgm2/83ts_4l.u7",
+    "roms/tgm2/84ts_4h.u15",
+    "roms/tgm2/85ts_5l.u8",
+    "roms/tgm2/86ts_5h.u16",
+    "roms/tgm2/87ts_6l.u1",
+    "roms/tgm2/88ts_6h.u2",
+    "roms/tgm2/89ts_7l.u19",
+    "roms/tgm2/90ts_7h.u20",
+    "roms/tgm2/91ts_8l.u28",
+    "roms/tgm2/92ts_8h.u29",
+    "roms/tgm2/93ts_9l.u41",
+    "roms/tgm2/94ts_9h.u42",
+    "roms/tgm2/95ts_10l.u58",
+    "roms/tgm2/96ts_10h.u59"
 };
 
 #define PROGRAMROM_SIZE 0x80000
 #define NUMPROGRAMROMS 2
+
+static const char* const ProgramRomFileNames[NUMPROGRAMROMS] = {
+	"roms/tgm2p/1b.u22",
+	"roms/tgm2p/2b.u21"
+};
 
 #define ROMOFFSET_DEMOREPLAYINPUTTWIN    0x33F87u
 #define ROMOFFSET_DEMOREPLAYINPUTDOUBLES 0x3495Fu
@@ -80,7 +86,134 @@ static const size_t BgMapRomOffsets[] = {
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
 
+static bool mount(const char* locationNoExtension) {
+	if (!locationNoExtension) {
+		return false;
+	}
+
+	const char* const dirSeparator = PHYSFS_getDirSeparator();
+	const size_t dirSeparatorLen = strlen(dirSeparator);
+	char* location = NULL;
+	PHYSFS_Stat stat;
+	if (PHYSFS_stat(locationNoExtension, &stat) && stat.filetype == PHYSFS_FILETYPE_DIRECTORY) {
+		const char* realDir = PHYSFS_getRealDir(locationNoExtension);
+		if (!realDir) {
+			return false;
+		}
+
+		size_t locationSize = strlen(realDir);
+		for (size_t i = 0u; locationNoExtension[i] != '\0'; i++) {
+			if (locationNoExtension[i] != '/') {
+				locationSize++;
+			}
+			else {
+				locationSize += dirSeparatorLen;
+			}
+		}
+		locationSize++;
+		location = malloc(locationSize);
+		assert(location != NULL);
+		if (location == NULL) {
+			return false;
+		}
+
+		strcpy(location, realDir);
+		char c[2] = { 0 };
+		for (size_t i = 0u; locationNoExtension[i] != '\0'; i++) {
+			if (locationNoExtension[i] != '/') {
+				c[0] = locationNoExtension[i];
+				strcat(location, c);
+			}
+			else {
+				strcat(location, dirSeparator);
+			}
+		}
+	}
+	else {
+		const size_t locationWithExtensionLen = strlen(locationNoExtension) + strlen(".zip");
+		assert(locationWithExtensionLen >= 5u);
+		if (locationWithExtensionLen < 5u) {
+			return false;
+		}
+		char* locationWithExtension = malloc(locationWithExtensionLen + 1u);
+		assert(locationWithExtension != NULL);
+		if (locationWithExtension == NULL) {
+			return false;
+		}
+		const size_t sprintfLen = sprintf(locationWithExtension, "%s%s", locationNoExtension, ".zip");
+		if (sprintfLen != locationWithExtensionLen) {
+			free(locationWithExtension);
+			return false;
+		}
+
+		if (!PHYSFS_stat(locationWithExtension, &stat) || stat.filetype != PHYSFS_FILETYPE_REGULAR) {
+			free(locationWithExtension);
+			fprintf(stderr, "Failed finding location of \"%s\" to mount.\n\n", locationNoExtension);
+			return false;
+		}
+
+		const char* realDir = PHYSFS_getRealDir(locationWithExtension);
+		if (!realDir) {
+			return false;
+		}
+
+		size_t locationSize = strlen(realDir);
+		for (size_t i = 0u; locationWithExtension[i] != '\0'; i++) {
+			if (locationWithExtension[i] != '/') {
+				locationSize++;
+			}
+			else {
+				locationSize += dirSeparatorLen;
+			}
+		}
+		locationSize++;
+		location = malloc(locationSize);
+		assert(location != NULL);
+		if (location == NULL) {
+			return false;
+		}
+
+		strcpy(location, realDir);
+		char c[2] = { 0 };
+		for (size_t i = 0u; locationWithExtension[i] != '\0'; i++) {
+			if (locationWithExtension[i] != '/') {
+				c[0] = locationWithExtension[i];
+				strcat(location, c);
+			}
+			else {
+				strcat(location, dirSeparator);
+			}
+		}
+
+		free(locationWithExtension);
+	}
+
+	if (!PHYSFS_mount(location, locationNoExtension, 1)) {
+		fprintf(stderr, "Failed mounting \"%s\" at \"%s\".\n\n", location, locationNoExtension);
+		free(location);
+		return false;
+	}
+	printf("Mounted \"%s\" at \"%s\".\n\n", location, locationNoExtension);
+	free(location);
+
+	return true;
+}
+
 void OpenData() {
+	mount("roms/tgm2");
+	printf("Files in mount location \"roms/tgm2\":\n");
+	for (char** files = PHYSFS_enumerateFiles("roms/tgm2"); files != NULL && *files != NULL; files++) {
+		printf("roms/tgm2/%s\n", *files);
+	}
+	printf("\n");
+
+	mount("roms/tgm2p");
+	printf("Files in mount location \"roms/tgm2p\":\n");
+	for (char** files = PHYSFS_enumerateFiles("roms/tgm2p"); files != NULL && *files != NULL; files++) {
+		printf("roms/tgm2p/%s\n", *files);
+	}
+	printf("\n");
+
 	{
 		TileData = malloc(TILEDATA_SIZE);
 		if (!TileData) {
@@ -91,12 +224,15 @@ void OpenData() {
 			exit(EXIT_FAILURE);
 		}
 		for (size_t i = 0u; i < NUMTILEROMS; i++) {
-			FILE* const file = fopen(TileRomFileNames[i], "rb");
-			if (!file) {
+			PHYSFS_File* const tileFile = PHYSFS_openRead(TileRomFileNames[i]);
+			if (!tileFile || PHYSFS_readBytes(tileFile, &tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE) != TILEROM_SIZE) {
+				if (tileFile) {
+					PHYSFS_close(tileFile);
+				}
+				fprintf(stderr, "Failed opening tile ROM file \"%s\"\n", TileRomFileNames[i]);
 				exit(EXIT_FAILURE);
 			}
-			fread(&tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE, 1u, file);
-			fclose(file);
+			PHYSFS_close(tileFile);
 		}
 		uint8_t* tilePtr = TileData;
 		for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
@@ -121,18 +257,31 @@ void OpenData() {
 		if (!programTemp) {
 			exit(EXIT_FAILURE);
 		}
-		FILE* programHighFile = fopen("Roms/2b.u21", "rb");
-		if (!programHighFile) {
+		PHYSFS_File* const programHighFile = PHYSFS_openRead(ProgramRomFileNames[1]);
+		if (!programHighFile || PHYSFS_readBytes(programHighFile, &programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
+			fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[1]);
+			if (programHighFile) {
+				PHYSFS_close(programHighFile);
+			}
+			free(programTemp);
+			free(programData);
 			exit(EXIT_FAILURE);
 		}
-		FILE* programLowFile = fopen("Roms/1b.u22", "rb");
-		if (!programLowFile) {
+		PHYSFS_File* const programLowFile = PHYSFS_openRead(ProgramRomFileNames[0]);
+		if (!programLowFile || PHYSFS_readBytes(programLowFile, &programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
+			fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[0]);
+			if (programLowFile) {
+				PHYSFS_close(programLowFile);
+			}
+			if (programHighFile) {
+				PHYSFS_close(programHighFile);
+			}
+			free(programTemp);
+			free(programData);
 			exit(EXIT_FAILURE);
 		}
-		fread(&programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE, 1u, programHighFile);
-		fread(&programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE, 1u, programLowFile);
-		fclose(programHighFile);
-		fclose(programLowFile);
+		PHYSFS_close(programLowFile);
+		PHYSFS_close(programHighFile);
 		uint8_t* programPtr = programData;
 		uint8_t* programHigh = &programTemp[PROGRAMROM_SIZE * 0];
 		uint8_t* programLow = &programTemp[PROGRAMROM_SIZE * 1];
@@ -214,6 +363,8 @@ void OpenData() {
 
 		free(programData);
 	}
+
+	printf("Successfully loaded data from ROMs.\n\n");
 }
 
 void CloseData() {

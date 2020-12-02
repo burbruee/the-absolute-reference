@@ -7,4 +7,4 @@
 
 #include "Platform/Util/Color.h"
 
-#define MAIN_RETURNTYPE void
+#define MAIN_DECLARATION int main()

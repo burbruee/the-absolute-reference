@@ -2,5 +2,4 @@
 /*.kdev4
 /.kdev4
 /build*
-/Roms/**
 CMakeLists.txt.user

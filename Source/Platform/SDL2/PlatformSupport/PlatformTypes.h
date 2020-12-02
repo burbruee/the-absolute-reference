@@ -25,4 +25,4 @@ typedef Uint32 Color;
 #define COLOR_SETB(color, b) ((color) = ((color) & 0xFFFF00FFu) | ((Color)((b) & 0xFFu) <<  8))
 #define COLOR_SETA(color, a) ((color) = ((color) & 0xFFFFFF00u) | ((Color)((a) & 0xFFu) <<  0))
 
-#define MAIN_RETURNTYPE int
+#define MAIN_DECLARATION int main(const int argc, const char* const* const argv)

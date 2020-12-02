@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-bool PlatformInit();
-#define PLATFORM_INIT() do { if (!PlatformInit()) { return EXIT_FAILURE; } } while (false)
+bool PlatformInit(const int argc, const char* const* const argv);
+#define PLATFORM_INIT() do { if (!PlatformInit(argc, argv)) { return EXIT_FAILURE; } } while (false)
 
 void PlatformUpdateInputs();
 #define PLATFORM_UPDATEINPUTS() PlatformUpdateInputs()

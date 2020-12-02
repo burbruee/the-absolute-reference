@@ -2,8 +2,10 @@
 
 #include "Input/InputTypes.h"
 #include "SDL.h"
+#include <stdbool.h>
 
-void OpenConfig(const char* const fileName);
+bool OpenConfig(const char* const fileName);
+void SaveConfig(const char* const fileName);
 void CloseConfig();
 
 extern SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];

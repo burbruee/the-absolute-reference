@@ -176,22 +176,17 @@ static void split_data(ini_t *ini) {
 
 ini_t* ini_load(const char *filename) {
   ini_t *ini = NULL;
+  char *data = NULL;
   FILE *fp = NULL;
   size_t n, sz;
 
-  /* Init ini struct */
-  ini = malloc(sizeof(*ini));
-  if (!ini) {
-    goto fail;
-  }
-  memset(ini, 0, sizeof(*ini));
-
-  /* Open file or create empty ini struct when no file is requested */
+  /* Create empty ini struct when no file is requested */
   if (!filename || !strcmp(filename, "")) {
-    ini->data = calloc(1, 1);
-	ini->end = ini->data;
+    ini = ini_create(NULL, 0u);
     return ini;
   }
+
+  /* Open file */
   fp = fopen(filename, "rb");
   if (!fp) {
     goto fail;
@@ -202,20 +197,18 @@ ini_t* ini_load(const char *filename) {
   sz = ftell(fp);
   rewind(fp);
 
-  /* Load file content into memory, null terminate, init end var */
-  ini->data = malloc(sz + 1);
-  if (!ini->data) {
+  /* Load file content into memory */
+  data = malloc(sz + 1u);
+  if (!data) {
     return NULL;
   }
-  ini->data[sz] = '\0';
-  ini->end = ini->data  + sz;
-  n = fread(ini->data, 1, sz, fp);
+  n = fread(data, 1, sz, fp);
   if (n != sz) {
     goto fail;
   }
 
-  /* Prepare data */
-  split_data(ini);
+  /* Create ini struct with data read from file */
+  ini = ini_create(data, sz + 1u);
 
   /* Clean up and return */
   fclose(fp);
@@ -223,6 +216,56 @@ ini_t* ini_load(const char *filename) {
 
 fail:
   if (fp) fclose(fp);
+  if (ini) ini_free(ini);
+  return NULL;
+}
+
+
+ini_t* ini_create(char *data, size_t sz_with_null) {
+  ini_t *ini = NULL;
+
+  /* Create ini struct with passed in data */
+  if (data && sz_with_null > 0u) {
+    /* Init ini struct */
+    ini = calloc(1u, sizeof(*ini));
+    if (!ini) {
+      goto fail;
+    }
+
+    /* Set pointers and null terminate */
+    ini->data = data;
+    if (!ini->data) {
+      goto fail;
+    }
+    ini->data[sz_with_null] = '\0';
+    ini->end = ini->data + sz_with_null;
+  }
+  /* Create empty ini */
+  else if (!data && sz_with_null == 0u) {
+    /* Init ini struct */
+    ini = calloc(1u, sizeof(*ini));
+    if (!ini) {
+      goto fail;
+    }
+
+    /* Set pointers and null terminate */
+    ini->data = calloc(1u, 1u);
+    if (!ini->data) {
+      goto fail;
+    }
+    ini->end = ini->data;
+  }
+  else {
+    goto fail;
+  }
+
+  /* Prepare data */
+  split_data(ini);
+
+  /* Return */
+  return ini;
+
+fail:
   if (ini) ini_free(ini);
   return NULL;
 }
@@ -329,7 +372,7 @@ int ini_sget(
   }
   if (scanfmt) {
     vsscanf(val, scanfmt, args_list);
-	return 1;
+    return 1;
   } else {
     return 0;
   }
@@ -342,7 +385,7 @@ static int replace(ini_t *ini, char *dst, const char *src, size_t dstsz, size_t 
   /* Best case, where we can just overwrite the old value with no change in data size */
   if (dstsz == srcsz) {
     memcpy(dst, src, srcsz);
-	return 1;
+    return 1;
   }
   /* Memmove the data after the old value right after where the new value goes, put in the new value, then realloc down to the new size */
   else if (dstsz > srcsz) {

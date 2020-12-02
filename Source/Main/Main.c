@@ -3,7 +3,7 @@
 #include "PlatformUpdate.h"
 #include "PlatformTypes.h"
 
-MAIN_RETURNTYPE main() {
+MAIN_DECLARATION {
 	PLATFORM_INIT();
 
 	Screen = SCREEN_COPYRIGHT;

@@ -2,6 +2,7 @@
 #include "Platform/Util/ini.h"
 #include "Video/Video.h"
 #include "Lib/Macros.h"
+#include "physfs.h"
 #include <assert.h>
 #include <stdbool.h>
 
@@ -57,13 +58,13 @@ int DisplayDimensions[2];
 
 int Vsync;
 
-static int strcmp_nocase(const char *a, const char *b) {
+static int strcmp_nocase(const char* a, const char* b) {
 	int cmp;
 	while ((cmp = tolower(*a) - tolower(*b)) == 0 && *a++ && *b++);
 	return cmp;
 }
 
-void OpenConfig(const char* const fileName) {
+bool OpenConfig(const char* const fileName) {
 	for (size_t i = 0u; i < lengthof(InputConfigKeyboard); i++) {
 		for (size_t j = 0u; j < lengthof(*InputConfigKeyboard); j++) {
 			InputConfigKeyboard[i][j] = SDLK_UNKNOWN;
@@ -107,10 +108,45 @@ void OpenConfig(const char* const fileName) {
 
 	Vsync = 0;
 
-	ini_t* const config = ini_load(fileName);
+	const char* writeDir = PHYSFS_getWriteDir();
+	if (!writeDir) {
+		fprintf(stderr, "Failed to get write directory.\n\n");
+		return false;
+	}
+	printf("Write directory at \"%s\".\n\n", writeDir);
+
+	PHYSFS_Stat iniStat;
+	if (!PHYSFS_stat(fileName, &iniStat) || iniStat.filesize < 0) {
+		fprintf(stderr, "Failed to get information about file \"%s\".\n\n", fileName);
+	}
+	const size_t iniSize = iniStat.filesize;
+
+	PHYSFS_File* const iniFile = PHYSFS_openRead(fileName);
+	if (!iniFile) {
+		fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", fileName);
+		return false;
+	}
+	char* iniData = malloc(iniSize + 1u);
+	assert(iniData != NULL);
+	if (iniData == NULL) {
+		return false;
+	}
+
+	if (PHYSFS_readBytes(iniFile, iniData, iniSize) != iniSize) {
+		fprintf(stderr, "Error while reading \"%s\".\n\n", fileName);
+		free(iniData);
+		return false;
+	}
+	iniData[iniSize] = '\0';
+
+	ini_t* const config = ini_create(iniData, iniSize + 1u);
 	if (!config) {
+		fprintf(stderr, "Failed loading config from \"%s\".\n\n", fileName);
+		free(iniData);
 		exit(EXIT_FAILURE);
 	}
+
+	printf("Opened \"%s\".\n\n", fileName);
 
 	{
 #define GET_KEY(input, button, i) \
@@ -424,6 +460,10 @@ void OpenConfig(const char* const fileName) {
 			Vsync = 0;
 		}
 	}
+	return true;
+}
+
+void SaveConfig(const char* const fileName) {
 }
 
 void CloseConfig() {

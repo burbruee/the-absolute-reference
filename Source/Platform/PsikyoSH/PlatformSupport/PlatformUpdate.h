@@ -382,4 +382,4 @@ static inline void PlatformFrame() {
 }
 #define PLATFORM_FRAME() PlatformFrame()
 
-#define PLATFORM_QUIT() while (true)
+#define PLATFORM_QUIT() while (true); return 0

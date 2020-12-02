@@ -13,9 +13,10 @@
 typedef struct ini_t ini_t;
 
 ini_t*      ini_load(const char *filename);
+ini_t*      ini_create(char *data, size_t sz_with_null);
 int         ini_save(ini_t *ini, const char *filename);
 void        ini_free(ini_t *ini);
-const char* ini_get ( ini_t* ini, const char* section, const char* key );
+const char* ini_get(ini_t *ini, const char *section, const char *key );
 int         ini_sget(ini_t *ini, const char *section, const char *key, const char *scanfmt, ...);
 int         ini_set(ini_t *ini, const char *section, const char *key, const char *val);
 int         ini_pset(ini_t *ini, const char *section, const char *key, const char *printfmt, ...);

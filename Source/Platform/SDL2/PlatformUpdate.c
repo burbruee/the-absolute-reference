@@ -25,6 +25,7 @@
 #include "PlatformTypes.h"
 #include "HwData.h"
 #include "SDL.h"
+#include "physfs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -77,19 +78,40 @@ void SetSystemGraphicDataPtr() {
 }
 
 void ExitHandler(void) {
+	printf("Starting shutdown.\n\n");
 	CloseDisplay();
 	CloseData();
 	CloseConfig();
+	PHYSFS_deinit();
 	SDL_Quit();
+	printf("Exiting.\n");
 }
 
 static Uint64 CurrentTime;
 static Uint64 TimeAccumulator;
 
-bool PlatformInit() {
+bool PlatformInit(const int argc, const char* const* const argv) {
 	// Non-TAP, platform initialization.
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-	OpenConfig("taref.ini");
+
+	if (!PHYSFS_init(argv[0])) {
+		return false;
+	}
+
+	if (!PHYSFS_setSaneConfig("nightmareci", "taref", "ZIP", 0, 0)) {
+		return false;
+	}
+
+	printf("Search path directories:\n");
+	for (char** searchPath = PHYSFS_getSearchPath(); searchPath != NULL && *searchPath != NULL; searchPath++) {
+		printf("%s\n", *searchPath);
+	}
+	printf("\n");
+
+	if (!OpenConfig("taref.ini")) {
+		return false;
+	}
+
 	OpenData();
 	OpenDisplay();
 	atexit(ExitHandler);
