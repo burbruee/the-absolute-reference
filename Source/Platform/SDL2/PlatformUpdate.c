@@ -84,7 +84,7 @@ void ExitHandler(void) {
 	CloseConfig();
 	PHYSFS_deinit();
 	SDL_Quit();
-	printf("Exiting.\n");
+	printf("Finished shutdown, exiting.\n");
 }
 
 static Uint64 CurrentTime;
@@ -92,6 +92,7 @@ static Uint64 TimeAccumulator;
 
 bool PlatformInit(const int argc, const char* const* const argv) {
 	// Non-TAP, platform initialization.
+	printf("Starting SDL2 platform init.\n\n");
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
 	if (!PHYSFS_init(argv[0])) {
@@ -119,8 +120,11 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	CurrentTime = SDL_GetPerformanceCounter();
 	TimeAccumulator = 0u;
 
+	printf("Finished SDL2 platform init.\n\n");
+
 	// TAP initialization.
 	// TODO: Implement more of the initialization like the original, such as ROM checks.
+	printf("Starting game init.\n\n");
 	UNK_602ACB0();
 	ScreenTime = 0u;
 	NumVideoSetters = 0u;
@@ -172,6 +176,8 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	UNK_6029814(0x0000, 0x0000, 0, 0xFF);
 	SetPal(80u, 1u, PALPTR(0x1E1));
 	UpdateFrame();
+
+	printf("Finished game init.\n\n");
 
 	// TODO: Return init success status, such as returning false if ROMs have
 	// the wrong checksum.

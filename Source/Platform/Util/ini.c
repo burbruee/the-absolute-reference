@@ -237,8 +237,8 @@ ini_t* ini_create(char *data, size_t sz_with_null) {
     if (!ini->data) {
       goto fail;
     }
-    ini->data[sz_with_null] = '\0';
-    ini->end = ini->data + sz_with_null;
+    ini->data[sz_with_null - 1u] = '\0';
+    ini->end = ini->data + sz_with_null - 1u;
   }
   /* Create empty ini */
   else if (!data && sz_with_null == 0u) {

@@ -6,6 +6,7 @@
 #include "physfs.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
@@ -86,6 +87,48 @@ static const size_t BgMapRomOffsets[] = {
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
 
+static char* locationToNativeFormat(const char* const locationInPortableFormat) {
+	assert(locationInPortableFormat);
+	if (!locationInPortableFormat) {
+		return NULL;
+	}
+
+	const char* const sep = PHYSFS_getDirSeparator();
+	const size_t sepLen = strlen(sep);
+
+	size_t locationSize = 0u;
+	for (const char* c = locationInPortableFormat; *c != '\0'; c++) {
+		if (*c != '/') {
+			locationSize++;
+		}
+		else {
+			locationSize += sepLen;
+		}
+	}
+	locationSize++;
+
+	char* location = malloc(locationSize);
+	assert(location);
+	if (!location) {
+		return NULL;
+	}
+
+	location[0] = '\0';
+	char cat[2] = { '\0', '\0' };
+	for (const char* c = locationInPortableFormat; *c != '\0'; c++) {
+		if (*c != '/') {
+			cat[0] = *c;
+			strcat(location, cat);
+		}
+		else {
+			strcat(location, sep);
+		}
+	}
+	assert(strlen(location) + 1u == locationSize);
+
+	return location;
+}
+
 static bool mount(const char* locationNoExtension) {
 	if (!locationNoExtension) {
 		return false;
@@ -101,47 +144,31 @@ static bool mount(const char* locationNoExtension) {
 			return false;
 		}
 
-		size_t locationSize = strlen(realDir);
-		for (size_t i = 0u; locationNoExtension[i] != '\0'; i++) {
-			if (locationNoExtension[i] != '/') {
-				locationSize++;
-			}
-			else {
-				locationSize += dirSeparatorLen;
-			}
-		}
-		locationSize++;
-		location = malloc(locationSize);
-		assert(location != NULL);
-		if (location == NULL) {
+		char* locationCat = locationToNativeFormat(locationNoExtension);
+		assert(locationCat);
+		if (!locationCat) {
 			return false;
 		}
 
-		strcpy(location, realDir);
-		char c[2] = { 0 };
-		for (size_t i = 0u; locationNoExtension[i] != '\0'; i++) {
-			if (locationNoExtension[i] != '/') {
-				c[0] = locationNoExtension[i];
-				strcat(location, c);
-			}
-			else {
-				strcat(location, dirSeparator);
-			}
+		const size_t locationSize = (size_t)snprintf(NULL, 0u, "%s%s", realDir, locationCat) + 1u;
+		location = malloc(locationSize);
+		assert(location);
+		if (!location) {
+			free(locationCat);
+			return false;
 		}
+
+		if (snprintf(location, locationSize, "%s%s", realDir, locationCat) != locationSize - 1u) {
+			free(locationCat);
+			free(location);
+			return false;
+		}
+		free(locationCat);
 	}
 	else {
-		const size_t locationWithExtensionLen = strlen(locationNoExtension) + strlen(".zip");
-		assert(locationWithExtensionLen >= 5u);
-		if (locationWithExtensionLen < 5u) {
-			return false;
-		}
-		char* locationWithExtension = malloc(locationWithExtensionLen + 1u);
-		assert(locationWithExtension != NULL);
-		if (locationWithExtension == NULL) {
-			return false;
-		}
-		const size_t sprintfLen = sprintf(locationWithExtension, "%s%s", locationNoExtension, ".zip");
-		if (sprintfLen != locationWithExtensionLen) {
+		const size_t locationWithExtensionSize = (size_t)snprintf(NULL, 0u, "%s%s", locationNoExtension, ".zip") + 1u;
+		char* locationWithExtension = malloc(locationWithExtensionSize);
+		if (snprintf(locationWithExtension, locationWithExtensionSize, "%s%s", locationNoExtension, ".zip") != locationWithExtensionSize - 1u) {
 			free(locationWithExtension);
 			return false;
 		}
@@ -157,35 +184,27 @@ static bool mount(const char* locationNoExtension) {
 			return false;
 		}
 
-		size_t locationSize = strlen(realDir);
-		for (size_t i = 0u; locationWithExtension[i] != '\0'; i++) {
-			if (locationWithExtension[i] != '/') {
-				locationSize++;
-			}
-			else {
-				locationSize += dirSeparatorLen;
-			}
-		}
-		locationSize++;
-		location = malloc(locationSize);
-		assert(location != NULL);
-		if (location == NULL) {
+		char* locationCat = locationToNativeFormat(locationWithExtension);
+		free(locationWithExtension);
+		assert(locationCat);
+		if (!locationCat) {
 			return false;
 		}
 
-		strcpy(location, realDir);
-		char c[2] = { 0 };
-		for (size_t i = 0u; locationWithExtension[i] != '\0'; i++) {
-			if (locationWithExtension[i] != '/') {
-				c[0] = locationWithExtension[i];
-				strcat(location, c);
-			}
-			else {
-				strcat(location, dirSeparator);
-			}
+		const size_t locationSize = (size_t)snprintf(NULL, 0u, "%s%s", realDir, locationCat) + 1u;
+		location = malloc(locationSize);
+		assert(location);
+		if (!location) {
+			free(locationCat);
+			return false;
 		}
 
-		free(locationWithExtension);
+		if (snprintf(location, locationSize, "%s%s", realDir, locationCat) != locationSize - 1u) {
+			free(locationCat);
+			free(location);
+			return false;
+		}
+		free(locationCat);
 	}
 
 	if (!PHYSFS_mount(location, locationNoExtension, 1)) {

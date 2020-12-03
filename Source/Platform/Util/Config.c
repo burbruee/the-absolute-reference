@@ -103,8 +103,8 @@ bool OpenConfig(const char* const fileName) {
 
 	DisplayModeSetting = DISPLAY_WINDOW;
 
-	DisplayDimensions[0] = 0;
-	DisplayDimensions[1] = 0;
+	DisplayDimensions[0] = VIDEO_WIDTH;
+	DisplayDimensions[1] = VIDEO_HEIGHT;
 
 	Vsync = 0;
 
@@ -116,8 +116,8 @@ bool OpenConfig(const char* const fileName) {
 	printf("Write directory at \"%s\".\n\n", writeDir);
 
 	PHYSFS_Stat iniStat;
-	if (!PHYSFS_stat(fileName, &iniStat) || iniStat.filesize < 0) {
-		fprintf(stderr, "Failed to get information about file \"%s\".\n\n", fileName);
+	if (!PHYSFS_stat(fileName, &iniStat) || iniStat.filetype != PHYSFS_FILETYPE_REGULAR || iniStat.filesize < 0) {
+		fprintf(stderr, "INI file \"%s\" is invalid.\n\n", fileName);
 	}
 	const size_t iniSize = iniStat.filesize;
 
@@ -351,7 +351,6 @@ bool OpenConfig(const char* const fileName) {
 			}
 		}
 	}
-
 	{
 		const char* const displayMode = ini_get(config, "VIDEO", "DISPLAY_MODE");
 		if (displayMode) {
@@ -460,10 +459,13 @@ bool OpenConfig(const char* const fileName) {
 			Vsync = 0;
 		}
 	}
+
+	printf("Finished reading configuration.\n\n");
 	return true;
 }
 
 void SaveConfig(const char* const fileName) {
+	// TODO: Implement once settings can be changed in-game.
 }
 
 void CloseConfig() {

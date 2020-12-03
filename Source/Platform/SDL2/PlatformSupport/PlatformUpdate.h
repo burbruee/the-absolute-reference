@@ -5,7 +5,15 @@
 #include <stdbool.h>
 
 bool PlatformInit(const int argc, const char* const* const argv);
-#define PLATFORM_INIT() do { if (!PlatformInit(argc, argv)) { return EXIT_FAILURE; } } while (false)
+#define PLATFORM_INIT() \
+do { \
+	if (!PlatformInit(argc, argv)) { \
+		return EXIT_FAILURE; \
+	} \
+	else { \
+		printf("Starting game.\n\n"); \
+	} \
+} while (false)
 
 void PlatformUpdateInputs();
 #define PLATFORM_UPDATEINPUTS() PlatformUpdateInputs()
