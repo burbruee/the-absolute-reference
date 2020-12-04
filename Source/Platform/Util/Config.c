@@ -126,7 +126,7 @@ bool OpenConfig(const char* const fileName) {
 		fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", fileName);
 		return false;
 	}
-	char* iniData = malloc(iniSize + 1u);
+	char* const iniData = malloc(iniSize);
 	assert(iniData != NULL);
 	if (iniData == NULL) {
 		return false;
@@ -137,16 +137,15 @@ bool OpenConfig(const char* const fileName) {
 		free(iniData);
 		return false;
 	}
-	iniData[iniSize] = '\0';
 
-	ini_t* const config = ini_create(iniData, iniSize + 1u);
+	ini_t* const config = ini_create(iniData, iniSize);
+	free(iniData);
 	if (!config) {
 		fprintf(stderr, "Failed loading config from \"%s\".\n\n", fileName);
-		free(iniData);
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Opened \"%s\".\n\n", fileName);
+	printf("Opened configuration INI \"%s\".\n\n", fileName);
 
 	{
 #define GET_KEY(input, button, i) \

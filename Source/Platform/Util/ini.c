@@ -198,7 +198,7 @@ ini_t* ini_load(const char *filename) {
   rewind(fp);
 
   /* Load file content into memory */
-  data = malloc(sz + 1u);
+  data = malloc(sz);
   if (!data) {
     return NULL;
   }
@@ -208,24 +208,26 @@ ini_t* ini_load(const char *filename) {
   }
 
   /* Create ini struct with data read from file */
-  ini = ini_create(data, sz + 1u);
+  ini = ini_create(data, sz);
 
   /* Clean up and return */
+  free(data);
   fclose(fp);
   return ini;
 
 fail:
+  if (data) free(data);
   if (fp) fclose(fp);
   if (ini) ini_free(ini);
   return NULL;
 }
 
 
-ini_t* ini_create(char *data, size_t sz_with_null) {
+ini_t* ini_create(const char *data, const size_t sz) {
   ini_t *ini = NULL;
 
   /* Create ini struct with passed in data */
-  if (data && sz_with_null > 0u) {
+  if (data) {
     /* Init ini struct */
     ini = calloc(1u, sizeof(*ini));
     if (!ini) {
@@ -233,15 +235,18 @@ ini_t* ini_create(char *data, size_t sz_with_null) {
     }
 
     /* Set pointers and null terminate */
-    ini->data = data;
-    if (!ini->data) {
+    char *new_data = malloc(sz + 1u);
+    if (!new_data) {
       goto fail;
     }
-    ini->data[sz_with_null - 1u] = '\0';
-    ini->end = ini->data + sz_with_null - 1u;
+    memcpy(new_data, data, sz);
+    new_data[sz] = '\0';
+
+    ini->data = new_data;
+    ini->end = new_data + sz;
   }
   /* Create empty ini */
-  else if (!data && sz_with_null == 0u) {
+  else if (!data) {
     /* Init ini struct */
     ini = calloc(1u, sizeof(*ini));
     if (!ini) {
