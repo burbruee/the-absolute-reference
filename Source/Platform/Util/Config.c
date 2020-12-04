@@ -52,11 +52,39 @@ int InputConfigJoystickHats[NUMPLAYERS][NUMINPUTS][8][2] = {
 	}
 };
 
-DisplayMode DisplayModeSetting;
+DisplayMode DisplayModeSetting = DISPLAY_WINDOW;
 
-int DisplayDimensions[2];
+int DisplayDimensions[2] = { VIDEO_WIDTH, VIDEO_HEIGHT };
 
-int Vsync;
+int Vsync = 0;
+
+const char* const DefaultConfig =
+"[INPUT_BUTTONS1P_KEYBOARD]\n"
+"BUTTON_START = Return\n"
+"BUTTON_3 = ;\n"
+"BUTTON_2 = L\n"
+"BUTTON_1 = K\n"
+"BUTTON_LEFT = A\n"
+"BUTTON_RIGHT = D\n"
+"BUTTON_DOWN = S\n"
+"BUTTON_UP = W\n"
+"\n"
+"[INPUT_BUTTONS2P_KEYBOARD]\n"
+"BUTTON_START = Keypad Enter\n"
+"BUTTON_3 = Keypad 3\n"
+"BUTTON_2 = Keypad 2\n"
+"BUTTON_1 = Keypad 1\n"
+"BUTTON_LEFT = Keypad 4\n"
+"BUTTON_RIGHT = Keypad 6\n"
+"BUTTON_DOWN = Keypad 5\n"
+"BUTTON_UP = Keypad 8\n"
+"\n"
+"[INPUT_SERVICE_KEYBOARD]\n"
+"SERVICE_COIN1 = Right Shift\n"
+"SERVICE_COIN2 = Keypad +\n"
+"SERVICE_ADDSERVICE = Tab\n"
+"SERVICE_TEST = Escape\n"
+"SERVICE_TILT = Backspace\n";
 
 static int strcmp_nocase(const char* a, const char* b) {
 	int cmp;
@@ -64,7 +92,7 @@ static int strcmp_nocase(const char* a, const char* b) {
 	return cmp;
 }
 
-bool OpenConfig(const char* const fileName) {
+bool OpenConfig(const char* const iniFileName) {
 	for (size_t i = 0u; i < lengthof(InputConfigKeyboard); i++) {
 		for (size_t j = 0u; j < lengthof(*InputConfigKeyboard); j++) {
 			InputConfigKeyboard[i][j] = SDLK_UNKNOWN;
@@ -116,36 +144,46 @@ bool OpenConfig(const char* const fileName) {
 	printf("Write directory at \"%s\".\n\n", writeDir);
 
 	PHYSFS_Stat iniStat;
-	if (!PHYSFS_stat(fileName, &iniStat) || iniStat.filetype != PHYSFS_FILETYPE_REGULAR || iniStat.filesize < 0) {
-		fprintf(stderr, "INI file \"%s\" is invalid.\n\n", fileName);
-	}
-	const size_t iniSize = iniStat.filesize;
+	ini_t* config = NULL;
+	if (!PHYSFS_stat(iniFileName, &iniStat) || iniStat.filetype != PHYSFS_FILETYPE_REGULAR || iniStat.filesize < 0) {
+		fprintf(stderr, "INI file \"%s\" is invalid, using default configuration.\n\n", iniFileName);
+		config = ini_create(DefaultConfig, strlen(DefaultConfig));
 
-	PHYSFS_File* const iniFile = PHYSFS_openRead(fileName);
-	if (!iniFile) {
-		fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", fileName);
-		return false;
+		if (!config) {
+			fprintf(stderr, "Failed creating default configuration.\n\n");
+			exit(EXIT_FAILURE);
+		}
+		printf("Created default configuration.\n\n");
 	}
-	char* const iniData = malloc(iniSize);
-	assert(iniData != NULL);
-	if (iniData == NULL) {
-		return false;
-	}
+	else {
+		const size_t iniSize = iniStat.filesize;
 
-	if (PHYSFS_readBytes(iniFile, iniData, iniSize) != iniSize) {
-		fprintf(stderr, "Error while reading \"%s\".\n\n", fileName);
+		PHYSFS_File* const iniFile = PHYSFS_openRead(iniFileName);
+		if (!iniFile) {
+			fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", iniFileName);
+			return false;
+		}
+		char* const iniData = malloc(iniSize);
+		assert(iniData != NULL);
+		if (iniData == NULL) {
+			return false;
+		}
+
+		if (PHYSFS_readBytes(iniFile, iniData, iniSize) != iniSize) {
+			fprintf(stderr, "Error while reading \"%s\".\n\n", iniFileName);
+			free(iniData);
+			return false;
+		}
+		config = ini_create(iniData, iniSize);
 		free(iniData);
-		return false;
+
+		if (!config) {
+			fprintf(stderr, "Failed loading configuration from \"%s\".\n\n", iniFileName);
+			exit(EXIT_FAILURE);
+		}
+		printf("Opened configuration INI \"%s\".\n\n", iniFileName);
 	}
 
-	ini_t* const config = ini_create(iniData, iniSize);
-	free(iniData);
-	if (!config) {
-		fprintf(stderr, "Failed loading config from \"%s\".\n\n", fileName);
-		exit(EXIT_FAILURE);
-	}
-
-	printf("Opened configuration INI \"%s\".\n\n", fileName);
 
 	{
 #define GET_KEY(input, button, i) \
@@ -184,11 +222,11 @@ bool OpenConfig(const char* const fileName) {
 	}
 
 	if (SDL_NumJoysticks() > 0) {
-		int deviceIndex;
 		const char* const joystickSections[NUMPLAYERS] = {
 			"INPUT_JOYSTICK1P",
 			"INPUT_JOYSTICK2P"
 		};
+
 		for (int i = 0; i < SDL_NumJoysticks(); i++) {
 			SDL_Joystick* joystick = SDL_JoystickOpen(i);
 			bool joystickUsed = false;
@@ -207,6 +245,8 @@ bool OpenConfig(const char* const fileName) {
 				SDL_JoystickClose(joystick);
 			}
 		}
+
+		int deviceIndex;
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
 			if (!Joysticks[playerNum] && ini_sget(config, joystickSections[playerNum], "DEVICE_INDEX", "%d", &deviceIndex) && deviceIndex >= 0 && deviceIndex < SDL_NumJoysticks()) {
 				Joysticks[playerNum] = SDL_JoystickOpen(deviceIndex);
@@ -463,7 +503,7 @@ bool OpenConfig(const char* const fileName) {
 	return true;
 }
 
-void SaveConfig(const char* const fileName) {
+void SaveConfig(const char* const iniFileName) {
 	// TODO: Implement once settings can be changed in-game.
 }
 

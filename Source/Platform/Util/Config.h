@@ -4,8 +4,8 @@
 #include "SDL.h"
 #include <stdbool.h>
 
-bool OpenConfig(const char* const fileName);
-void SaveConfig(const char* const fileName);
+bool OpenConfig(const char* const iniFileName);
+void SaveConfig(const char* const iniFileName);
 void CloseConfig();
 
 extern SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];
