@@ -60,7 +60,15 @@ if(PKG_CONFIG_FOUND)
 	endfunction()
 
 	add_pkg_module("${EXECUTABLE_NAME}" sdl2)
-	add_pkg_module("${EXECUTABLE_NAME}" physfs)
+	find_package(PhysFS REQUIRED)
+	target_link_libraries(${EXECUTABLE_NAME}
+		PRIVATE
+			${PHYSFS_LIBRARY}
+	)
+	target_include_directories(${EXECUTABLE_NAME}
+		PRIVATE
+			${PHYSFS_INCLUDE_DIR}
+	)
 elseif(VCPKG_TOOLCHAIN)
 	set(VCPKG_CRT_LINKAGE dynamic)
 	set(VCPKG_LIBRARY_LINKAGE dynamic)
@@ -68,7 +76,7 @@ elseif(VCPKG_TOOLCHAIN)
 	find_package(SDL2 REQUIRED)
 	find_package(PhysFS REQUIRED)
 	target_link_libraries(${EXECUTABLE_NAME}
-		PUBLIC
+		PRIVATE
 			SDL2::SDL2
 			SDL2::SDL2main
 			${PHYSFS_LIBRARY}
