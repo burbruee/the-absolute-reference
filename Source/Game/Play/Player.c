@@ -234,7 +234,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->lineFlags = LINEFLAG_NONE;
 	player->numBlocks = 0;
 	player->numLines = 0;
-	player->level = 0;
+	player->level = 0u;
 	player->gravity = F32(0, 0x0000);
 	player->normalItemIndex = 0;
 	player->combo = 1;
@@ -3360,7 +3360,7 @@ Fixed32 CurrentGravity(Player* player) {
 
 void UpdatePlayStaffTransition(Player* player) {
 	player->miscFlags &= ~MISC_RECOVERING;
-	if (++player->values[0] % 6) {
+	if ((++player->values[0] % 6) == 0) {
 		ShowStaffClear(player, player->values[1]);
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			MATRIX(player, player->values[1], col).block = NULLBLOCK;

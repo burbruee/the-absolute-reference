@@ -260,7 +260,23 @@ void ShowStaffClear(Player* player, int16_t row) {
 
 			if (odd) {
 				data->objectTables[col - 1] = ObjectTablesBlockExplosions[explosionSeed % 8];
-				data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE)];
+
+				// BUG: When the matrix block type is empty, the original code
+				// would end up accessing the uint16_t located four bytes
+				// behind where PalNumTableNormalBlocks is in memory. The code
+				// would also access the uint16_t two bytes behind, if the
+				// block type is a wall, though that case doesn't occur. The
+				// original behavior is reimplemented here, without any
+				// undefined behavior.
+				uint16_t invalidPalNums[2] = { 0x000Au, 0x785Cu };
+				const size_t blockType = MATRIX(player, row, col).block & BLOCK_TYPE;
+				if (blockType < BLOCKTYPE_I) {
+					data->palNums[col - 1] = *(&invalidPalNums[2] + (int16_t)blockType - 2);
+				}
+				else {
+					assert(TOBLOCKNUM(blockType) < lengthof(PalNumTableNormalBlocks));
+					data->palNums[col - 1] = PalNumTableNormalBlocks[TOBLOCKNUM(blockType)];
+				}
 			}
 			else {
 				data->objectTables[col - 1] = NULL;
