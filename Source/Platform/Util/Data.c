@@ -396,6 +396,7 @@ bool OpenData() {
 	}
 
 	printf("Successfully loaded data from ROMs.\n\n");
+	return true;
 }
 
 void CloseData() {

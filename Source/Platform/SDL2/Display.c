@@ -56,6 +56,7 @@ bool OpenDisplay() {
 		return false;
 	}
 
+	printf("Successfully opened display.\n\n");
 	return true;
 }
 
