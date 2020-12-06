@@ -86,7 +86,7 @@ const char* const DefaultConfig =
 "SERVICE_TEST = Escape\n"
 "SERVICE_TILT = Backspace\n";
 
-static int strcmp_nocase(const char* a, const char* b) {
+static int StringCompareNoCase(const char* a, const char* b) {
 	int cmp;
 	while ((cmp = tolower(*a) - tolower(*b)) == 0 && *a++ && *b++);
 	return cmp;
@@ -151,7 +151,7 @@ bool OpenConfig(const char* const iniFileName) {
 
 		if (!config) {
 			fprintf(stderr, "Failed creating default configuration.\n\n");
-			exit(EXIT_FAILURE);
+			return false;
 		}
 		printf("Created default configuration.\n\n");
 	}
@@ -179,7 +179,7 @@ bool OpenConfig(const char* const iniFileName) {
 
 		if (!config) {
 			fprintf(stderr, "Failed loading configuration from \"%s\".\n\n", iniFileName);
-			exit(EXIT_FAILURE);
+			return false;
 		}
 		printf("Opened configuration INI \"%s\".\n\n", iniFileName);
 	}
@@ -322,7 +322,7 @@ bool OpenConfig(const char* const iniFileName) {
 					PlayerNum playerNum;
 					if (fieldsRead >= 1) {
 						for (PlayerNum i = PLAYER1; i < NUMPLAYERS; i++) {
-							if (!strcmp_nocase(fields[0], devicePlayers[i])) {
+							if (!StringCompareNoCase(fields[0], devicePlayers[i])) {
 								playerNum = i;
 								playerNumSet = true;
 								break;
@@ -330,13 +330,13 @@ bool OpenConfig(const char* const iniFileName) {
 						}
 					}
 					if (playerNumSet && fieldsRead >= 2) {
-						if (!strcmp_nocase(fields[1], "Button") && fieldsRead >= 3) {
+						if (!StringCompareNoCase(fields[1], "Button") && fieldsRead >= 3) {
 							int button;
 							if (sscanf(fields[2], "%d", &button) == 1 && button >= 0) {
 								InputConfigJoystickButtons[playerNum][i][j] = button;
 							}
 						}
-						else if (!strcmp_nocase(fields[1], "Axis") && fieldsRead >= 4) {
+						else if (!StringCompareNoCase(fields[1], "Axis") && fieldsRead >= 4) {
 							int num;
 							float minpos;
 							if (sscanf(fields[2], "%d", &num) == 1 && num >= 0 && sscanf(fields[3], "%f%%", &minpos) == 1 && minpos <= 100.0f && minpos >= -100.0f) {
@@ -344,38 +344,38 @@ bool OpenConfig(const char* const iniFileName) {
 								InputConfigJoystickAxes[playerNum][i][j][1] = (Sint16)((minpos / 100.0f) * 32767.0f);
 							}
 						}
-						else if (!strcmp_nocase(fields[1], "Hat") && fieldsRead >= 4) {
+						else if (!StringCompareNoCase(fields[1], "Hat") && fieldsRead >= 4) {
 							int num;
 							if (sscanf(fields[2], "%d", &num) == 1 && num >= 0) {
-								if (!strcmp_nocase(fields[3], "Up")) {
+								if (!StringCompareNoCase(fields[3], "Up")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_UP;
 								}
-								else if (!strcmp_nocase(fields[3], "Right")) {
+								else if (!StringCompareNoCase(fields[3], "Right")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHT;
 								}
-								else if (!strcmp_nocase(fields[3], "Down")) {
+								else if (!StringCompareNoCase(fields[3], "Down")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_DOWN;
 								}
-								else if (!strcmp_nocase(fields[3], "Left")) {
+								else if (!StringCompareNoCase(fields[3], "Left")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFT;
 								}
-								else if (!strcmp_nocase(fields[3], "Rightup")) {
+								else if (!StringCompareNoCase(fields[3], "Rightup")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHTUP;
 								}
-								else if (!strcmp_nocase(fields[3], "Rightdown")) {
+								else if (!StringCompareNoCase(fields[3], "Rightdown")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_RIGHTDOWN;
 								}
-								else if (!strcmp_nocase(fields[3], "Leftup")) {
+								else if (!StringCompareNoCase(fields[3], "Leftup")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFTUP;
 								}
-								else if (!strcmp_nocase(fields[3], "Leftdown")) {
+								else if (!StringCompareNoCase(fields[3], "Leftdown")) {
 									InputConfigJoystickHats[playerNum][i][j][0] = num;
 									InputConfigJoystickHats[playerNum][i][j][1] = SDL_HAT_LEFTDOWN;
 								}
@@ -401,7 +401,7 @@ bool OpenConfig(const char* const iniFileName) {
 			}
 			const int fieldsRead = sscanf(displayMode, "%s %s %s", fields[0], fields[1], fields[2]);
 
-			if (fieldsRead >= 1 && !strcmp_nocase("Window", fields[0])) {
+			if (fieldsRead >= 1 && !StringCompareNoCase("Window", fields[0])) {
 				DisplayModeSetting = DISPLAY_WINDOW;
 				if (fieldsRead >= 2 && sscanf(fields[1], "%dx%d", &DisplayDimensions[0], &DisplayDimensions[1]) == 2) {
 					if (DisplayDimensions[0] <= VIDEO_WIDTH || DisplayDimensions[1] <= VIDEO_HEIGHT) {
@@ -414,8 +414,8 @@ bool OpenConfig(const char* const iniFileName) {
 					DisplayDimensions[1] = VIDEO_HEIGHT;
 				}
 			}
-			else if (fieldsRead >= 2 && !strcmp_nocase("Fullscreen", fields[0])) {
-				if (!strcmp_nocase("Exclusive", fields[1])) {
+			else if (fieldsRead >= 2 && !StringCompareNoCase("Fullscreen", fields[0])) {
+				if (!StringCompareNoCase("Exclusive", fields[1])) {
 					if (fieldsRead >= 3 && sscanf(fields[2], "%dx%d", &DisplayDimensions[0], &DisplayDimensions[1]) == 2) {
 						if (DisplayDimensions[0] <= VIDEO_WIDTH || DisplayDimensions[1] <= VIDEO_HEIGHT) {
 							DisplayModeSetting = DISPLAY_WINDOW;
@@ -454,7 +454,7 @@ bool OpenConfig(const char* const iniFileName) {
 						}
 					}
 				}
-				else if (!strcmp_nocase("Desktop", fields[1])) {
+				else if (!StringCompareNoCase("Desktop", fields[1])) {
 					SDL_DisplayMode mode;
 					if (SDL_GetDesktopDisplayMode(0, &mode) == 0) {
 						DisplayModeSetting = DISPLAY_FULLSCREENDESKTOP;

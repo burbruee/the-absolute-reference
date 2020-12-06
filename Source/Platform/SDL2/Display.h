@@ -1,8 +1,9 @@
 #pragma once
 
 #include "SDL.h"
+#include <stdbool.h>
 
-void OpenDisplay();
+bool OpenDisplay();
 void CloseDisplay();
 
 extern SDL_Window* Window;

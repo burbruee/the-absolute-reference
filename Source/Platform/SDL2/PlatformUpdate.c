@@ -82,7 +82,9 @@ void ExitHandler(void) {
 	CloseDisplay();
 	CloseData();
 	CloseConfig();
-	PHYSFS_deinit();
+	if (!PHYSFS_deinit()) {
+		fprintf(stderr, "Failed PhysicsFS deinit: %s\n", PHYSFS_getLastError());
+	}
 	SDL_Quit();
 	printf("Finished shutdown, exiting.\n");
 }
@@ -93,13 +95,19 @@ static Uint64 TimeAccumulator;
 bool PlatformInit(const int argc, const char* const* const argv) {
 	// Non-TAP, platform initialization.
 	printf("Starting SDL2 platform init.\n\n");
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+	
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+		fprintf(stderr, "Error with SDL_Init: %s\n", SDL_GetError());
+		return false;
+	}
 
 	if (!PHYSFS_init(argv[0])) {
+		fprintf(stderr, "Error with PHYSFS_init: %s\n", PHYSFS_getLastError());
 		return false;
 	}
 
 	if (!PHYSFS_setSaneConfig("nightmareci", "taref", "ZIP", 0, 0)) {
+		fprintf(stderr, "Error setting sane PhysicsFS config: %s\n", PHYSFS_getLastError());
 		return false;
 	}
 
@@ -110,11 +118,20 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	printf("\n");
 
 	if (!OpenConfig("taref.ini")) {
+		fprintf(stderr, "Failed opening INI \"taref.ini\"\n");
 		return false;
 	}
 
-	OpenData();
-	OpenDisplay();
+	if (!OpenData()) {
+		fprintf(stderr, "Failed opening data\n");
+		return false;
+	}
+
+	if (!OpenDisplay()) {
+		fprintf(stderr, "Failed opening display\n");
+		return false;
+	}
+
 	atexit(ExitHandler);
 
 	CurrentTime = SDL_GetPerformanceCounter();
@@ -265,7 +282,10 @@ void PlatformFinishUpdate() {
 		Render(Framebuffer, TileData);
 		void* pixels;
 		int pitch;
-		SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch);
+		if (SDL_LockTexture(FramebufferTexture, NULL, &pixels, &pitch) < 0) {
+			fprintf(stderr, "Failed locking framebuffer texture: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
 		for (size_t y = 0u; y < VIDEO_HEIGHT; y++) {
 			// Being able to use memcpy here is why the code uses the Color typedef and
 			// COLOR* macros. The game code and frontend have matching pixel formats, so we
@@ -282,9 +302,15 @@ void PlatformFinishUpdate() {
 	}
 
 	while (TimeAccumulator < gameFrameDuration) {
-		SDL_RenderClear(Renderer);
+		if (SDL_RenderClear(Renderer) < 0) {
+			fprintf(stderr, "Failed clearing screen: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
 
-		SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL);
+		if (SDL_RenderCopy(Renderer, FramebufferTexture, NULL, NULL) < 0) {
+			fprintf(stderr, "Failed copying frame buffer texture to the screen: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
 
 		SDL_RenderPresent(Renderer);
 		if (!Vsync) {

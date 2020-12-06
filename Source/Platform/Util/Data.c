@@ -129,7 +129,7 @@ static char* locationToNativeFormat(const char* const locationInPortableFormat) 
 	return location;
 }
 
-static bool mount(const char* locationNoExtension) {
+static bool Mount(const char* locationNoExtension) {
 	if (!locationNoExtension) {
 		return false;
 	}
@@ -218,15 +218,21 @@ static bool mount(const char* locationNoExtension) {
 	return true;
 }
 
-void OpenData() {
-	mount("roms/tgm2");
+bool OpenData() {
+	if (!Mount("roms/tgm2")) {
+		fprintf(stderr, "Failed to mount location \"roms\/tgm2\"\n");
+		return false;
+	}
 	printf("Files in mount location \"roms/tgm2\":\n");
 	for (char** files = PHYSFS_enumerateFiles("roms/tgm2"); files != NULL && *files != NULL; files++) {
 		printf("roms/tgm2/%s\n", *files);
 	}
 	printf("\n");
 
-	mount("roms/tgm2p");
+	if (!Mount("roms/tgm2p")) {
+		fprintf(stderr, "Failed to mount location \"roms\/tgm2p\"\n");
+		return false;
+	}
 	printf("Files in mount location \"roms/tgm2p\":\n");
 	for (char** files = PHYSFS_enumerateFiles("roms/tgm2p"); files != NULL && *files != NULL; files++) {
 		printf("roms/tgm2p/%s\n", *files);
@@ -236,11 +242,13 @@ void OpenData() {
 	{
 		TileData = malloc(TILEDATA_SIZE);
 		if (!TileData) {
-			exit(EXIT_FAILURE);
+			fprintf(stderr, "Failed allocating memory for tile data\n");
+			return false;
 		}
 		uint8_t* const tileDataTemp = malloc(NUMTILEROMS * TILEROM_SIZE);
 		if (!tileDataTemp) {
-			exit(EXIT_FAILURE);
+			fprintf(stderr, "Failed allocating memory for tile data temporary storage\n");
+			return false;
 		}
 		for (size_t i = 0u; i < NUMTILEROMS; i++) {
 			PHYSFS_File* const tileFile = PHYSFS_openRead(TileRomFileNames[i]);
@@ -249,9 +257,11 @@ void OpenData() {
 					PHYSFS_close(tileFile);
 				}
 				fprintf(stderr, "Failed opening tile ROM file \"%s\"\n", TileRomFileNames[i]);
-				exit(EXIT_FAILURE);
+				return false;
 			}
-			PHYSFS_close(tileFile);
+			else {
+				PHYSFS_close(tileFile);
+			}
 		}
 		uint8_t* tilePtr = TileData;
 		for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
@@ -270,11 +280,13 @@ void OpenData() {
 	{
 		uint8_t* programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
 		if (!programData) {
-			exit(EXIT_FAILURE);
+			fprintf(stderr, "Failed allocating program data\n");
+			return false;
 		}
 		uint8_t* programTemp = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
 		if (!programTemp) {
-			exit(EXIT_FAILURE);
+			fprintf(stderr, "Failed allocating program data temporary storage\n");
+			return false;
 		}
 		PHYSFS_File* const programHighFile = PHYSFS_openRead(ProgramRomFileNames[1]);
 		if (!programHighFile || PHYSFS_readBytes(programHighFile, &programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
@@ -284,7 +296,7 @@ void OpenData() {
 			}
 			free(programTemp);
 			free(programData);
-			exit(EXIT_FAILURE);
+			return false;
 		}
 		PHYSFS_File* const programLowFile = PHYSFS_openRead(ProgramRomFileNames[0]);
 		if (!programLowFile || PHYSFS_readBytes(programLowFile, &programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
@@ -297,7 +309,7 @@ void OpenData() {
 			}
 			free(programTemp);
 			free(programData);
-			exit(EXIT_FAILURE);
+			return false;
 		}
 		PHYSFS_close(programLowFile);
 		PHYSFS_close(programHighFile);

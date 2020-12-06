@@ -4,7 +4,7 @@
 #include "Video/Video.h"
 #include <stdint.h>
 
-void OpenData();
+bool OpenData();
 void CloseData();
 
 extern ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
