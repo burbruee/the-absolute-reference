@@ -25,3 +25,5 @@ extern DisplayMode DisplayModeSetting;
 extern int DisplayDimensions[2];
 
 extern int Vsync;
+
+extern int VsyncUpdateRate;

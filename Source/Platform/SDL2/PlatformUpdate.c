@@ -278,7 +278,7 @@ static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
 	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());
 
-	if (TimeAccumulator < gameFrameDuration) {
+	if (TimeAccumulator < gameFrameDuration || VsyncUpdateRate) {
 		Render(Framebuffer, TileData);
 		void* pixels;
 		int pitch;
@@ -301,7 +301,7 @@ void PlatformFinishUpdate() {
 		SDL_UnlockTexture(FramebufferTexture);
 	}
 
-	while (TimeAccumulator < gameFrameDuration) {
+	while (TimeAccumulator < gameFrameDuration || VsyncUpdateRate) {
 		if (SDL_RenderClear(Renderer) < 0) {
 			fprintf(stderr, "Failed clearing screen: %s\n", SDL_GetError());
 			exit(EXIT_FAILURE);
@@ -315,6 +315,10 @@ void PlatformFinishUpdate() {
 		SDL_RenderPresent(Renderer);
 		if (!Vsync) {
 			SDL_Delay(1);
+		}
+
+		if (VsyncUpdateRate) {
+			return;
 		}
 
 		Uint64 newTime = SDL_GetPerformanceCounter();

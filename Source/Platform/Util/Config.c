@@ -58,6 +58,8 @@ int DisplayDimensions[2] = { VIDEO_WIDTH, VIDEO_HEIGHT };
 
 int Vsync = 0;
 
+int VsyncUpdateRate = 0;
+
 const char* const DefaultConfig =
 "[INPUT_BUTTONS1P_KEYBOARD]\n"
 "BUTTON_START = Return\n"
@@ -135,6 +137,8 @@ bool OpenConfig(const char* const iniFileName) {
 	DisplayDimensions[1] = VIDEO_HEIGHT;
 
 	Vsync = 0;
+
+	VsyncUpdateRate = 0;
 
 	const char* writeDir = PHYSFS_getWriteDir();
 	if (!writeDir) {
@@ -496,6 +500,15 @@ bool OpenConfig(const char* const iniFileName) {
 		}
 		else {
 			Vsync = 0;
+		}
+
+		// Checking for this option must happen after vsync, to ensure vsync gets enabled if this option is enabled.
+		if (ini_sget(config, "VIDEO", "VSYNC_UPDATE_RATE", "%d", &VsyncUpdateRate)) {
+			VsyncUpdateRate = !!VsyncUpdateRate;
+			Vsync = 1;
+		}
+		else {
+			VsyncUpdateRate = 0;
 		}
 	}
 
