@@ -220,7 +220,7 @@ static bool Mount(const char* locationNoExtension) {
 
 bool OpenData() {
 	if (!Mount("roms/tgm2")) {
-		fprintf(stderr, "Failed to mount location \"roms\/tgm2\"\n");
+		fprintf(stderr, "Failed to mount location \"roms/tgm2\"\n");
 		return false;
 	}
 	printf("Files in mount location \"roms/tgm2\":\n");
@@ -230,7 +230,7 @@ bool OpenData() {
 	printf("\n");
 
 	if (!Mount("roms/tgm2p")) {
-		fprintf(stderr, "Failed to mount location \"roms\/tgm2p\"\n");
+		fprintf(stderr, "Failed to mount location \"roms/tgm2p\"\n");
 		return false;
 	}
 	printf("Files in mount location \"roms/tgm2p\":\n");
