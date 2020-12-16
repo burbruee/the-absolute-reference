@@ -28,14 +28,19 @@ static const uint32_t AlphaTable[0x100] = {
 	0x3Cu, 0x38u, 0x34u, 0x30u, 0x2Cu, 0x28u, 0x24u, 0x20u, 0x1Cu, 0x18u, 0x14u, 0x10u, 0x0Cu, 0x08u, 0x04u, 0x00u
 };
 
-void Render(Color* const framebuffer, const uint8_t* const tileData) {
-	// TODO: Implement line drawing to replace this.
-	for (size_t i = 0u; i < VIDEO_HEIGHT; i++) {
-		for (size_t j = 0u; j < VIDEO_WIDTH; j++) {
-			framebuffer[i * VIDEO_WIDTH + j] = COLOR(128u, 128u, 128u, 0u);
+static void RenderClearRasters(Color* const framebuffer) {
+	RAMDATA Color* const clearRasters = ClearRasters;
+
+	for (int16_t y = 0; y < VIDEO_HEIGHT; y++) {
+		for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+			framebuffer[y * VIDEO_WIDTH + x] = clearRasters[y];
 		}
 	}
+}
 
+#define GETSPRITEPRIORITY(priority) ((SpritePriority[(priority) / 2u] >> (4u * (((priority) + 1u) % 2u))) & 0xFu)
+
+static void RenderSprites(Color* const framebuffer, const uint8_t* const tileData, const uint8_t priority) {
 	if (!(SpriteNames[0] & SPRITENAME_TERMINATE) && !(SpriteNames[1] & SPRITENAME_TERMINATE)) {
 		for (size_t i = SPRITE_FIRST; i < MAXSPRITES; i++) {
 			const SpriteData* const sprite = &Sprites[SpriteNames[i] & ~SPRITENAME_TERMINATE];
@@ -48,12 +53,22 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
 			const int32_t scaleY = SCALERAM[OBJECT_GETSCALEY(sprite)];
 			const bool flipX = OBJECT_GETFLIPX(sprite);
 			//const bool unknown1 = OBJECT_GETUNKNOWN1(sprite);
-			//const uint8_t bgPri = OBJECT_GETBGPRI(sprite);
+			const uint8_t bgPri = OBJECT_GETBGPRI(sprite);
 			const uint32_t w = OBJECT_GETW(sprite) + 1u;
 			const uint32_t scaleX = SCALERAM[OBJECT_GETSCALEX(sprite)];
 			const uint32_t palNum = OBJECT_GETPALNUM(sprite);
 			const Bpp bpp = OBJECT_GETBPP(sprite);
 			uint32_t alphaTemp = Alpha[OBJECT_GETALPHA(sprite)];
+
+			if (GETSPRITEPRIORITY(bgPri) != priority) {
+				if (SpriteNames[i] & SPRITENAME_TERMINATE) {
+					break;
+				}
+				else {
+					continue;
+				}
+			}
+
 			if (alphaTemp & 0x80u) {
 				alphaTemp = PIXELALPHA;
 			}
@@ -114,5 +129,42 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
                 break;
 			}
 		}
+	}
+}
+
+static void RenderOverlayRasters(Color* const framebuffer, const uint8_t priority) {
+	if ((UNK_2405FFEB & 0xFu) != priority) {
+		return;
+	}
+
+	RAMDATA Color* rasters = OverlayRasters;
+	for (int16_t y = 0; y < VIDEO_HEIGHT; y++) {
+		if (COLOR_GETA(rasters[y]) & 0x80u) {
+			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+				framebuffer[y * VIDEO_WIDTH + x] = rasters[y];
+			}
+		}
+		else if (COLOR_GETA(rasters[y]) & 0x7Fu) {
+			const uint32_t blendAlpha = (COLOR_GETA(rasters[y]) & 0x7Fu) * 2u;
+			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+				Color* const pixel = &framebuffer[y * VIDEO_WIDTH + x];
+				*pixel = COLOR(
+					((uint32_t)COLOR_GETR(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					((uint32_t)COLOR_GETG(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					((uint32_t)COLOR_GETB(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					0u
+				);
+			}
+		}
+	}
+}
+
+void Render(Color* const framebuffer, const uint8_t* const tileData) {
+	RenderClearRasters(framebuffer);
+	for (size_t priority = 0u; priority < 8u; priority++) {
+		RenderSprites(framebuffer, tileData, priority);
+		// TODO
+		//RenderBg(...);
+		RenderOverlayRasters(framebuffer, priority);
 	}
 }

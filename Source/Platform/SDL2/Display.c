@@ -36,7 +36,7 @@ bool OpenDisplay() {
 		return false;
 	}
 	// TODO: Make the whole-display clearing match the backdrop line colors set in the game code.
-	if (SDL_SetRenderDrawColor(Renderer, 128u, 128u, 128u, SDL_ALPHA_OPAQUE) < 0) {
+	if (SDL_SetRenderDrawColor(Renderer, 0u, 0u, 0u, SDL_ALPHA_OPAQUE) < 0) {
 		fprintf(stderr, "Failed setting render draw color: %s\n", SDL_GetError());
 		return false;
 	}

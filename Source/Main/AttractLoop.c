@@ -150,7 +150,7 @@ static ScreenState StartRankingScreen() {
 				SpritePriority[0] = 0x13u;
 				SpritePriority[1] = 0x66u;
 				UNK_6029498(6);
-				SetBackdropColor(0);
+				SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 				SetBgDarkness(CurrentGameBg.bgIndex, 24);
 				Alpha[4] = 0x1Fu;
 				UNK_6029546(0, 20, 0, 6);
@@ -206,7 +206,7 @@ static ScreenState StartCopyrightScreen() {
 			SpritePriority[0] = 0x13u;
 			SpritePriority[1] = 0x66u;
 			UNK_6029498(6);
-			SetBackdropColor(COLOR(0u, 0u, 0u, 0u));
+			SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 			Alpha[4] = 0x1Fu;
 			UNK_6029546(0, 0x14, 0, 6);
 
@@ -276,7 +276,7 @@ static ScreenState StartTitleScreen() {
 			SpritePriority[0] = 0x13;
 			SpritePriority[1] = 0x66;
 			UNK_6029498(6);
-			SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
+			SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 			Alpha[4] = 0x1Fu;
 			UNK_6029546(0, 20, 0, 6);
 
@@ -355,7 +355,7 @@ static ScreenState StartDeveloperScreen() {
 			SpritePriority[0] = 0x13;
 			SpritePriority[1] = 0x66;
 			UNK_6029498(6);
-			SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
+			SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 			Alpha[4] = 0x1Fu;
 			UNK_6029546(0, 20, 0, 6);
 
@@ -446,7 +446,7 @@ static ScreenState StartVersionTitleScreen() {
 	EnableSound();
 	UNK_602AA16();
 	UNK_6029498(6);
-	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
+	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	UNK_6029546(0, 20, 0, 6);
 	InitDebugCode();
 

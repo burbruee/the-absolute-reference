@@ -1321,7 +1321,7 @@ void SetScanlinesBank(uint8_t bankNum) {
 }
 
 void VideoSetScanlinesBank(void* unused0, void* unused1, void* unused2) {
-	ScanlinesBank[0] = 8u;
+	RastersBank = 8u;
 }
 
 void UNK_6029498(int16_t arg0) {
@@ -1334,31 +1334,33 @@ void UNK_60294C0(void* arg0, void* unused1, void* unused2) {
 	VIDEOREGS[0x0B] = (VIDEOREGS[0x0B] & 0xF8u) | ((uintptr_t)arg0 & 0x07u);
 }
 
-void SetBackdropColor(Color color) {
-	VideoSetters[NumVideoSetters].set = VideoSetBackdropColor;
+static void VideoSetOverlayRastersColor(void* color, void* unused1, void* unused2);
+
+void SetOverlayRastersColor(Color color) {
+	VideoSetters[NumVideoSetters].set = VideoSetOverlayRastersColor;
 	VideoSetters[NumVideoSetters++].args[0] = (void*)(uintptr_t)color;
 }
 
-void VideoSetBackdropColor(void* color, void* unused1, void* unused2) {
-	RAMDATA Color* backdropLineColor = BACKDROPRAM;
+static void VideoSetOverlayRastersColor(void* color, void* unused1, void* unused2) {
+	RAMDATA Color* rasters = OverlayRasters;
 	const Color colorLocal = (Color)(uintptr_t)color;
-	for (size_t i = 0; i < NUMBACKDROPLINES; i += 16u, backdropLineColor += 16u) {
-		backdropLineColor[0] = colorLocal;
-		backdropLineColor[1] = colorLocal;
-		backdropLineColor[2] = colorLocal;
-		backdropLineColor[3] = colorLocal;
-		backdropLineColor[4] = colorLocal;
-		backdropLineColor[5] = colorLocal;
-		backdropLineColor[6] = colorLocal;
-		backdropLineColor[7] = colorLocal;
-		backdropLineColor[8] = colorLocal;
-		backdropLineColor[9] = colorLocal;
-		backdropLineColor[10] = colorLocal;
-		backdropLineColor[11] = colorLocal;
-		backdropLineColor[12] = colorLocal;
-		backdropLineColor[13] = colorLocal;
-		backdropLineColor[14] = colorLocal;
-		backdropLineColor[15] = colorLocal;
+	for (size_t i = 0; i < NUMRASTERS; i += 16u, rasters += 16u) {
+		rasters[0] = colorLocal;
+		rasters[1] = colorLocal;
+		rasters[2] = colorLocal;
+		rasters[3] = colorLocal;
+		rasters[4] = colorLocal;
+		rasters[5] = colorLocal;
+		rasters[6] = colorLocal;
+		rasters[7] = colorLocal;
+		rasters[8] = colorLocal;
+		rasters[9] = colorLocal;
+		rasters[10] = colorLocal;
+		rasters[11] = colorLocal;
+		rasters[12] = colorLocal;
+		rasters[13] = colorLocal;
+		rasters[14] = colorLocal;
+		rasters[15] = colorLocal;
 	}
 }
 
@@ -1436,7 +1438,7 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 		}
 		UNK_6064750->UNK_28 = F32(0, 0x0000u);
 		UNK_6064750->UNK_28.integer = UNK_6064750->UNK_24;
-		SetBackdropColor(UNK_6064750->backdropColor);
+		SetOverlayRastersColor(UNK_6064750->backdropColor);
 	}
 	else if (UNK_6064750 != NULL) {
 		UNK_6024030(UNK_6064750);
@@ -1457,7 +1459,7 @@ static void UNK_602970C() {
 		return;
 	}
 	UNK_6064750->backdropColor = (UNK_6064750->backdropColor & ~0xFF) | UNK_6064750->UNK_28.integer;
-	SetBackdropColor(UNK_6064750->backdropColor);
+	SetOverlayRastersColor(UNK_6064750->backdropColor);
 }
 
 static void UNK_602975E() {
@@ -1473,7 +1475,7 @@ static void UNK_602975E() {
 	else {
 		UNK_6064750->backdropColor |= COLOR(0x00, 0x00, 0x00, 0xFF);
 	}
-	SetBackdropColor(UNK_6064750->backdropColor);
+	SetOverlayRastersColor(UNK_6064750->backdropColor);
 	UNK_6064750 = NULL;
 }
 
@@ -1825,12 +1827,12 @@ static void VideoSetPalList(void* palNumArg, void* palListArg, void* unused2) {
 
 void UNK_602AA16() {
 	UNK_60294C0((void*)(uintptr_t)7u, NULL, NULL);
-	VideoSetBackdropColor((void*)(uintptr_t)0u, NULL, NULL);
+	VideoSetOverlayRastersColor((void*)(uintptr_t)0u, NULL, NULL);
 }
 
 void UNK_602AA4C() {
 	UNK_60294C0((void*)(uintptr_t)0x07u, NULL, NULL);
-	VideoSetBackdropColor((void*)(uintptr_t)0x000000FFu, NULL, NULL);
+	VideoSetOverlayRastersColor((void*)(uintptr_t)0x000000FFu, NULL, NULL);
 }
 
 void UNK_602AA64() {

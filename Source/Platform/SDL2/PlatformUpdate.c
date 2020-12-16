@@ -52,7 +52,7 @@ void InitVideo() {
 	SpritePriority[0] = 0x35u;
 	SpritePriority[1] = 0x67u;
 	UNK_2405FFEB = 0x87u;
-	ScanlinesBank[0] = 0x08u;
+	RastersBank = 0x08u;
 
 	for (size_t i = 0u; i < NUMALPHAS; i++) {
 		Alpha[i] = 0x0u;
@@ -167,7 +167,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	SetPal(158u, 1u, PALPTR(0x20F));
 	SetPal(149u, 7u, PALPTR(0x207));
 	SetPal(156, 1u, PALPTR(0x204));
-	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
+	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0u);
 	UNK_602F8BC();
 	LoadPlayStatus();
@@ -188,7 +188,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	UpdateFrame();
 
 	InitSystemTextPal();
-	SetBackdropColor(COLOR(0x00, 0x00, 0x00, 0x00));
+	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetScanlinesBank(0);
 	UNK_6029814(0x0000, 0x0000, 0, 0xFF);
 	SetPal(80u, 1u, PALPTR(0x1E1));

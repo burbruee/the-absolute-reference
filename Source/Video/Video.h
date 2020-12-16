@@ -301,8 +301,7 @@ void VideoSetScanlinesBank(void*, void*, void*);
 void UNK_6029498(int16_t);
 // TODO
 void UNK_60294C0(void* arg0, void* unused1, void* unused2);
-void SetBackdropColor(Color color);
-void VideoSetBackdropColor(void* color, void*, void*);
+void SetOverlayRastersColor(Color color);
 void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
 // Runs all the video setters.
 void SetVideo();
