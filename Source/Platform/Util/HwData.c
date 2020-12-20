@@ -1,4 +1,4 @@
-#include "HwData.h"
+#include "Platform/Util/HwData.h"
 
 RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 RAMDATA uint8_t INPUTS[NUMINPUTS] = { 0xFFu, 0xFFu, 0xFFu, 0xFFu };

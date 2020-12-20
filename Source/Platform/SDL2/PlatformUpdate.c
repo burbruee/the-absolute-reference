@@ -168,7 +168,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	SetPal(149u, 7u, PALPTR(0x207));
 	SetPal(156, 1u, PALPTR(0x204));
 	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
-	SetScanlinesBank(0u);
+	SetRastersBank(0u);
 	UNK_602F8BC();
 	LoadPlayStatus();
 	LoadRankings();
@@ -189,7 +189,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 
 	InitSystemTextPal();
 	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
-	SetScanlinesBank(0);
+	SetRastersBank(0);
 	UNK_6029814(0x0000, 0x0000, 0, 0xFF);
 	SetPal(80u, 1u, PALPTR(0x1E1));
 	UpdateFrame();

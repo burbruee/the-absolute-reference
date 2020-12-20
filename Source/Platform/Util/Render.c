@@ -6,6 +6,7 @@
 #include "Lib/Macros.h"
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 #define PIXELALPHA (UINT32_C(~0))
 
@@ -132,6 +133,66 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 	}
 }
 
+// TODO: Implement remaining background features. Currently, this just renders the background in the simplest possible way that works for TAP.
+static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, const uint8_t priority) {
+	for (size_t layer = 0u; layer < 4u; layer++) {
+		const size_t bgBank = BgMapBank[layer] & 0x7Fu;
+		assert(0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t) < lengthof(GRAPHICSRAM));
+		const size_t bgPri    = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >> 24) & 0xFFu;
+		const size_t tileBank = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >>  0) & 0xFFu;
+		if (!(BgMapSetting[layer / 2] & (0x80u >> (layer % 2))) || bgPri != priority || tileBank < 0x0Au || tileBank > 0x20u) {
+			continue;
+		}
+
+		const size_t bpp = !!(BgMapSetting[layer / 2] & (0x40u >> (layer % 2)));
+		const size_t h = (BgMapSetting[layer / 2] & (0x10u >> (layer % 2))) ? 0x200u : 0x100u;
+
+		const bool pixelAlpha = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >> 15) & 0x01u;
+		uint32_t    alphaTemp = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >>  8) & 0x3Fu;
+		if (pixelAlpha) {
+			alphaTemp = PIXELALPHA;
+		}
+		else {
+			alphaTemp = 0x3Fu - (alphaTemp & 0x3Fu);
+			alphaTemp = (alphaTemp << 2) | (alphaTemp >> 4);
+		}
+		const uint32_t alpha = alphaTemp;
+
+		assert(VIDEO_HEIGHT % 16u == 0u && VIDEO_WIDTH % 16u == 0u);
+		for (size_t tileY = 0u; tileY < VIDEO_HEIGHT / 16u; tileY++) {
+			for (size_t tileX = 0u; tileX < VIDEO_WIDTH / 16u; tileX++) {
+				const uint32_t bgTile = GRAPHICSRAM[(tileBank * 0x800u) / sizeof(uint32_t) + (((tileY & 0x1Fu) << 5) | (tileX & 0x1Fu))];
+				const size_t tile = bgTile & 0x7FFFFu;
+				assert(tile >= 0xC000u * (bpp + 1u));
+				const size_t palNum = bgTile >> 24;
+
+				if (tile == 0u) {
+					continue;
+				}
+
+				for (size_t tileOffsetY = 0u; tileOffsetY < 16u; tileOffsetY++) {
+					for (size_t tileOffsetX = 0u; tileOffsetX < 16u; tileOffsetX++) {
+						const size_t palOffset = tileData[(tile * 0x100u) - 0xC00000u + tileOffsetY * 16u + tileOffsetX];
+						if (palOffset == 0u) {
+							continue;
+						}
+
+						const Color color = PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
+						uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
+						Color* const pixel = &framebuffer[(tileY * 16u + tileOffsetY) * VIDEO_WIDTH + tileX * 16u + tileOffsetX];
+						*pixel = COLOR(
+							((uint32_t)COLOR_GETR(color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							((uint32_t)COLOR_GETG(color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							((uint32_t)COLOR_GETB(color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+							0u
+						);
+					}
+				}
+			}
+		}
+	}
+}
+
 static void RenderOverlayRasters(Color* const framebuffer, const uint8_t priority) {
 	if ((UNK_2405FFEB & 0xFu) != priority) {
 		return;
@@ -163,8 +224,7 @@ void Render(Color* const framebuffer, const uint8_t* const tileData) {
 	RenderClearRasters(framebuffer);
 	for (size_t priority = 0u; priority < 8u; priority++) {
 		RenderSprites(framebuffer, tileData, priority);
-		// TODO
-		//RenderBg(...);
+		RenderBg(framebuffer, tileData, priority);
 		RenderOverlayRasters(framebuffer, priority);
 	}
 }

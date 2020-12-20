@@ -138,7 +138,7 @@ extern STRUCT_607D218* UNK_6064750;
 // SH-2: sizeof(STRUCT_60AD228) == 0x68
 typedef struct STRUCT_60AD228 {
 	uint16_t UNK_0;
-	uint32_t* UNK_4[2];
+	RAMDATA uint32_t* UNK_4[2];
 	uint16_t UNK_C[2];
 	STRUCT_GameBg_0* UNK_10;
 	int32_t UNK_14;
@@ -288,7 +288,6 @@ void UNK_6026530(int16_t, void*, int16_t, int16_t, int16_t);
 void UNK_6026698(int16_t bgNum, void**, void*, int16_t, int16_t, int16_t, int16_t, int16_t);
 void UNK_60267E4(int16_t bgIndex, int32_t);
 void UNK_602682A(int16_t, int16_t, int16_t, bool);
-void UNK_6026870(int16_t, int16_t, int16_t);
 STRUCT_GameBg_0* UNK_6026AAC(int16_t, int16_t, int16_t*, int16_t*);
 // TODO
 void UNK_6026FCA(int16_t bgIndex, int16_t arg1);
@@ -296,8 +295,8 @@ void UNK_6026FDC(int16_t, int16_t);
 // TODO
 void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 // TODO
-void SetScanlinesBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't use it. -Brandon McGriff
-void VideoSetScanlinesBank(void*, void*, void*);
+void SetRastersBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't use it. -Brandon McGriff
+void VideoSetRastersBank(void*, void*, void*);
 void UNK_6029498(int16_t);
 // TODO
 void UNK_60294C0(void* arg0, void* unused1, void* unused2);

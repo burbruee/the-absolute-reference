@@ -1043,59 +1043,56 @@ void UNK_602523C() {
 	}
 }
 
+static inline BgSet(const uint8_t bgIndex, uint8_t* const tilemapBank, uint8_t* const tilemapSettings) {
+	if (Bgs[bgIndex].UNK_0 == 1 && Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] >= 0) {
+		const int16_t spriteAdderName = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
+		const int16_t palNum = UNK_60AD228[spriteAdderName].UNK_54;
+		const int16_t i = Bgs[bgIndex].UNK_8;
+		uint16_t tilemapBankIndex;
+		if (UNK_60AD228[spriteAdderName].UNK_56 == 0) {
+			tilemapBankIndex = (palNum + 1) % 2;
+		}
+		else {
+			UNK_60AD228[spriteAdderName].UNK_54 = (palNum + 1) % 2;
+			UNK_60AD228[spriteAdderName].UNK_56 = 0;
+			tilemapBankIndex = palNum;
+		}
+		*tilemapBank = UNK_60AD228[i].UNK_C[tilemapBankIndex] & 0xFFu;
+		if (Bgs[bgIndex].UNK_10 == 0) {
+			UNK_60AD228[i].UNK_4[tilemapBankIndex][0xFCu + bgIndex] =
+				(UNK_60AD228[spriteAdderName].UNK_18[palNum] << 16) |
+				(UNK_60AD228[spriteAdderName].UNK_20[palNum] & 0x1FFu);
+			UNK_60AD228[i].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] =
+				((uint32_t)Bgs[bgIndex].UNK_A << 24) |
+				UNK_60AD228[spriteAdderName].UNK_C[tilemapBankIndex] |
+				(Bgs[bgIndex].darkness << 8) |
+				(Bgs[bgIndex].UNK_C << 15);
+		}
+		else {
+			*tilemapBank |= 0x80u;
+			uint32_t* var3 = UNK_60AD228[i].UNK_4[tilemapBankIndex];
+			UNK_60251B8(1, var3, var3 + 0x100u);
+		}
+		if (!(UNK_60AD228[spriteAdderName].UNK_10->UNK_0->header.tileInfo & BGMAPTILEINFO_BIT21)) {
+			*tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u);
+		}
+		if (Bgs[bgIndex].UNK_2 != 0) {
+			*tilemapSettings |= 0x80u >> ((bgIndex % 2u) * 4u);
+		}
+	}
+	else {
+		*tilemapBank = 10u;
+	}
+}
+
 void UNK_602526A(void* unused0, void* unused1, void* unused2) {
 	uint8_t bgMapBank0, bgMapBank1, bgMapBank2, bgMapBank3;
 	uint8_t bgMapSettings01 = 0u, bgMapSettings23 = 0u;
 
-#define BGSET(bgIndex, tilemapBank, tilemapSettings) \
-	do { \
-		if (Bgs[bgIndex].UNK_0 == 1 && Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] >= 0) { \
-			const int16_t spriteAdderName = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6]; \
-			const int16_t palNum = UNK_60AD228[spriteAdderName].UNK_54; \
-			const int16_t i = Bgs[bgIndex].UNK_8; \
-			uint16_t tilemapBankIndex; \
-			if (UNK_60AD228[spriteAdderName].UNK_56 == 0) { \
-				tilemapBankIndex = (palNum + 1) % 2; \
-			} \
-			else { \
-				UNK_60AD228[spriteAdderName].UNK_54 = (palNum + 1) % 2; \
-				UNK_60AD228[spriteAdderName].UNK_56 = 0; \
-				tilemapBankIndex = palNum; \
-			} \
-			tilemapBank = (UNK_60AD228[i].UNK_C[tilemapBankIndex] >> 8) & 0xFFu; \
-			if (Bgs[bgIndex].UNK_10 == 0) { \
-				UNK_60AD228[i].UNK_4[tilemapBankIndex][0xFCu + bgIndex] = \
-					(UNK_60AD228[spriteAdderName].UNK_18[palNum] << 16) | \
-					(UNK_60AD228[spriteAdderName].UNK_20[palNum] & 0x1FFu); \
-				UNK_60AD228[i].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] = \
-					((uint32_t)Bgs[bgIndex].UNK_A << 24) | \
-					UNK_60AD228[spriteAdderName].UNK_C[tilemapBankIndex] | \
-					(Bgs[bgIndex].darkness << 8) | \
-					(Bgs[bgIndex].UNK_C << 15); \
-			} \
-			else { \
-				tilemapBank |= 0x80u; \
-				uint32_t* var3 = UNK_60AD228[i].UNK_4[tilemapBankIndex]; \
-				UNK_60251B8(1, var3, var3 + 0x100u); \
-			} \
-			if (!(UNK_60AD228[spriteAdderName].UNK_10->UNK_0->header.tileInfo & BGMAPTILEINFO_BIT21)) { \
-				tilemapSettings |= 0x40u >> ((bgIndex % 2u) * 4u); \
-			} \
-			if (Bgs[bgIndex].UNK_2 != 0) { \
-				tilemapSettings |= 0x80u >> ((bgIndex % 2u) * 4u); \
-			} \
-		} \
-		else { \
-			tilemapBank = 10u; \
-		} \
-	} while (false)
-
-	BGSET(0u, bgMapBank0, bgMapSettings01);
-	BGSET(1u, bgMapBank1, bgMapSettings01);
-	BGSET(2u, bgMapBank2, bgMapSettings23);
-	BGSET(3u, bgMapBank3, bgMapSettings23);
-
-#undef BGSET
+	BgSet(0u, &bgMapBank0, &bgMapSettings01);
+	BgSet(1u, &bgMapBank1, &bgMapSettings01);
+	BgSet(2u, &bgMapBank2, &bgMapSettings23);
+	BgSet(3u, &bgMapBank3, &bgMapSettings23);
 
 	BgMapBank[0] = bgMapBank0;
 	BgMapBank[1] = bgMapBank1;
@@ -1195,6 +1192,8 @@ void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
 	UNK_60AD228[var0].UNK_50 += arg3;
 }
 
+static void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2);
+
 void UNK_60267E4(int16_t bgIndex, int32_t arg1) {
 	const int16_t var0 = Bgs[bgIndex].UNK_6;
 	const int16_t var1 = Bgs[bgIndex].UNK_18[var0];
@@ -1214,23 +1213,23 @@ void UNK_602682A(int16_t arg0, int16_t arg1, int16_t arg2, bool arg3) {
 	}
 }
 
-void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
+static void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t bank) {
 	const int16_t var1 = Bgs[bgIndex].UNK_18[arg1];
 	if (var1 != -1) {
 		UNK_60AD228[var1].UNK_56 = 1;
-		const int32_t var2 = (-UNK_60AD228[var1].UNK_18[arg2] - 16) / 16;
-		const int32_t var3 = (-UNK_60AD228[var1].UNK_20[arg2] - 16) / 16;
+		const int32_t var2 = (-UNK_60AD228[var1].UNK_18[bank] - 16) / 16;
+		const int32_t var3 = (-UNK_60AD228[var1].UNK_20[bank] - 16) / 16;
 		const int32_t var5 =
-			(-UNK_60AD228[var1].UNK_18[arg2] - 16) / 16 - UNK_60AD228[var1].UNK_4C / 16;
+			(-UNK_60AD228[var1].UNK_18[bank] - 16) / 16 - UNK_60AD228[var1].UNK_4C / 16;
 		int32_t var6 =
-			(-UNK_60AD228[var1].UNK_28[arg2] - 16) / 16 - UNK_60AD228[var1].UNK_50 / 16;
+			(-UNK_60AD228[var1].UNK_28[bank] - 16) / 16 - UNK_60AD228[var1].UNK_50 / 16;
 
 		arg1 = 1;
 		if (arg1) {
 			int16_t var0 = 0;
 			int16_t var4 = 0;
 			for (int32_t i = 0; i < 32; i++, var6++) {
-				uint32_t* var7 = &UNK_60AD228[var1].UNK_4[arg2][(i + var3) & 0x1Fu];
+				RAMDATA uint32_t* var7 = &UNK_60AD228[var1].UNK_4[bank][(i + var3) & 0x1Fu];
 				const STRUCT_GameBg_0* var8 = UNK_6026AAC(bgIndex, var6, &var4, &var0);
 				if (var8->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
 					const BgMap32* const bgMap32 = (const BgMap32* const)var8->UNK_0;
@@ -1259,8 +1258,8 @@ void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2) {
 			}
 		}
 
-		UNK_60AD228[var1].UNK_38[arg2] %= 16;
-		UNK_60AD228[var1].UNK_3C[arg2] %= 16;
+		UNK_60AD228[var1].UNK_38[bank] %= 16;
+		UNK_60AD228[var1].UNK_3C[bank] %= 16;
 	}
 }
 
@@ -1316,11 +1315,11 @@ void SetBgDarkness(int16_t bgIndex, int16_t darkness) {
 	Bgs[bgIndex].darkness = darkness;
 }
 
-void SetScanlinesBank(uint8_t bankNum) {
-	VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
+void SetRastersBank(uint8_t bankNum) {
+	VideoSetters[NumVideoSetters++].set = VideoSetRastersBank;
 }
 
-void VideoSetScanlinesBank(void* unused0, void* unused1, void* unused2) {
+void VideoSetRastersBank(void* unused0, void* unused1, void* unused2) {
 	RastersBank = 8u;
 }
 
@@ -1387,7 +1386,7 @@ void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3) {
 		UNK_6064750->UNK_2C = F32(0, 0x0000);
 		UNK_6064750->UNK_2C.integer = 0x80;
 		UNK_6064750->UNK_2C.value /= arg1;
-		VideoSetters[NumVideoSetters++].set = VideoSetScanlinesBank;
+		VideoSetters[NumVideoSetters++].set = VideoSetRastersBank;
 		if ((arg3 & 7) != 0) {
 			UNK_6029498(arg3 & 7);
 		}
