@@ -973,8 +973,8 @@ void UNK_6024ED8() {
 	BgMapBank[2] = 14u;
 	BgMapBank[3] = 16u;
 
-	BgMapSetting[0] = 0u;
-	BgMapSetting[1] = 0u;
+	BgMapSettings[0] = 0u;
+	BgMapSettings[1] = 0u;
 
 	UNK_2405FFEB |= 0x40u;
 
@@ -1098,8 +1098,8 @@ void UNK_602526A(void* unused0, void* unused1, void* unused2) {
 	BgMapBank[1] = bgMapBank1;
 	BgMapBank[2] = bgMapBank2;
 	BgMapBank[3] = bgMapBank3;
-	BgMapSetting[0] = bgMapSettings01;
-	BgMapSetting[1] = bgMapSettings23;
+	BgMapSettings[0] = bgMapSettings01;
+	BgMapSettings[1] = bgMapSettings23;
 }
 
 // TODO: Could be AllocBg(); returns the background index allocated or -1 on

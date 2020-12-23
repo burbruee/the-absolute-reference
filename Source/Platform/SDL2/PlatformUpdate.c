@@ -47,8 +47,8 @@ void InitVideo() {
 	UNK_2405FFF4 = 0x83u;
 	UNK_2405FFF5 = 0xFFu;
 	UNK_2405FFF7 = 0x0Eu;
-	BgMapSetting[0] = 0x00u;
-	BgMapSetting[1] = 0x00u;
+	BgMapSettings[0] = 0x00u;
+	BgMapSettings[1] = 0x00u;
 	SpritePriority[0] = 0x35u;
 	SpritePriority[1] = 0x67u;
 	UNK_2405FFEB = 0x87u;

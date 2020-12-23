@@ -43,7 +43,14 @@ void GraphicsCheckSetBank(size_t i, uint8_t value);
 #define UNK_2405FFF7 (VIDEOREGS[0x17])
 #define BgMapBank (&VIDEOREGS[0x18])
 #define RastersBank (VIDEOREGS[0x1C])
-#define BgMapSetting (&VIDEOREGS[0x1E])
+
+typedef enum BgMapSetting {
+	BGMAPSETTING_SIZE    = 1 << 0,
+	BGMAPSETTING_BPP     = 1 << 2,
+	BGMAPSETTING_ENABLED = 1 << 3
+} BgMapSetting;
+#define BgMapSettings (&VIDEOREGS[0x1E])
+#define GETBGMAPSETTING(layer, setting) ((BgMapSettings[((layer) / 2) % 2] >> ((((layer) + 1) % 2) * 4)) & (setting) & 0xFu)
 
 extern RAMDATA uint32_t GRAPHICSRAM[0x10000 / sizeof(uint32_t)];
 #define SPRITERAM ((RAMDATA uint16_t*)&GRAPHICSRAM[0x00000 / sizeof(uint32_t)])

@@ -133,22 +133,29 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 	}
 }
 
-// TODO: Implement remaining background features. Currently, this just renders the background in the simplest possible way that works for TAP.
+// TODO: Implement remaining background features.
 static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, const uint8_t priority) {
 	for (size_t layer = 0u; layer < 4u; layer++) {
 		const size_t bgBank = BgMapBank[layer] & 0x7Fu;
-		assert(0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t) < lengthof(GRAPHICSRAM));
-		const size_t bgPri    = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >> 24) & 0xFFu;
-		const size_t tileBank = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >>  0) & 0xFFu;
-		if (!(BgMapSetting[layer / 2] & (0x80u >> (layer % 2))) || bgPri != priority || tileBank < 0x0Au || tileBank > 0x20u) {
+		const uint32_t* const layerData = &GRAPHICSRAM[(bgBank * 0x800u + layer * 4u) / sizeof(uint32_t)];
+
+		const uint32_t bgPriTileBank = layerData[0x7F0u / sizeof(uint32_t)];
+		const size_t bgPri    = (bgPriTileBank >> 24) & 0xFFu;
+		const size_t tileBank = (bgPriTileBank >>  0) & 0xFFu;
+		if (!GETBGMAPSETTING(layer, BGMAPSETTING_ENABLED) || bgPri != priority || tileBank < 0x0Au || tileBank > 0x20u) {
 			continue;
 		}
 
-		const size_t bpp = !!(BgMapSetting[layer / 2] & (0x40u >> (layer % 2)));
-		const size_t h = (BgMapSetting[layer / 2] & (0x10u >> (layer % 2))) ? 0x200u : 0x100u;
+		const size_t bpp = !!GETBGMAPSETTING(layer, BGMAPSETTING_BPP);
+		const size_t heightMask = !!GETBGMAPSETTING(layer, BGMAPSETTING_SIZE) ? 0x1Fu : 0xFu;
 
-		const bool pixelAlpha = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >> 15) & 0x01u;
-		uint32_t    alphaTemp = (GRAPHICSRAM[0x7F0u / sizeof(uint32_t) + (bgBank * 0x800u) / sizeof(uint32_t) + (layer * 4u) / sizeof(uint32_t)] >>  8) & 0x3Fu;
+		const uint32_t scroll = layerData[0x3F0u / sizeof(uint32_t)];
+		const int16_t scrollY = (int16_t)(((scroll & 0x03FF0000u) >> 16) | ((scroll & 0x02000000u) ? 0xFC00u : 0x0000u));
+		const uint32_t scrollX = (int16_t)(((scroll & 0x000001FFu) >> 0) | ((scroll & 0x00000100u) ? 0xFF00u : 0x0000u));
+
+		const uint32_t pixelInfo = layerData[0x7F0u / sizeof(uint32_t)];
+		const bool pixelAlpha = (pixelInfo >> 15) & 0x01u;
+		uint32_t   alphaTemp  = (pixelInfo >>  8) & 0x3Fu;
 		if (pixelAlpha) {
 			alphaTemp = PIXELALPHA;
 		}
@@ -159,35 +166,26 @@ static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, co
 		const uint32_t alpha = alphaTemp;
 
 		assert(VIDEO_HEIGHT % 16u == 0u && VIDEO_WIDTH % 16u == 0u);
-		for (size_t tileY = 0u; tileY < VIDEO_HEIGHT / 16u; tileY++) {
-			for (size_t tileX = 0u; tileX < VIDEO_WIDTH / 16u; tileX++) {
-				const uint32_t bgTile = GRAPHICSRAM[(tileBank * 0x800u) / sizeof(uint32_t) + (((tileY & 0x1Fu) << 5) | (tileX & 0x1Fu))];
+		for (int16_t y = 0; y < VIDEO_HEIGHT; y++) {
+			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+				const uint32_t bgTile = GRAPHICSRAM[(tileBank * 0x800u) / sizeof(uint32_t) + (((((y - scrollY) >> 4) & heightMask) << 5) | (((x - scrollX) >> 4) & 0x1Fu))];
 				const size_t tile = bgTile & 0x7FFFFu;
-				assert(tile >= 0xC000u * (bpp + 1u));
-				const size_t palNum = bgTile >> 24;
-
 				if (tile == 0u) {
 					continue;
 				}
+				assert((tile << bpp) >= 0x18000u);
 
-				for (size_t tileOffsetY = 0u; tileOffsetY < 16u; tileOffsetY++) {
-					for (size_t tileOffsetX = 0u; tileOffsetX < 16u; tileOffsetX++) {
-						const size_t palOffset = tileData[(tile * 0x100u) - 0xC00000u + tileOffsetY * 16u + tileOffsetX];
-						if (palOffset == 0u) {
-							continue;
-						}
-
-						const Color color = PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
-						uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
-						Color* const pixel = &framebuffer[(tileY * 16u + tileOffsetY) * VIDEO_WIDTH + tileX * 16u + tileOffsetX];
-						*pixel = COLOR(
-							((uint32_t)COLOR_GETR(color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							((uint32_t)COLOR_GETG(color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							((uint32_t)COLOR_GETB(color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							0u
-						);
-					}
-				}
+				const size_t palNum = bgTile >> 24;
+				const size_t palOffset = tileData[((tile << bpp) - 0x18000u) * 0x80u + ((((y - scrollY) & 0xFu) << 4) + ((x - scrollX) & 0xFu)) >> (1 - bpp)];
+				const Color color = PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
+				uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
+				Color* const pixel = &framebuffer[y * VIDEO_WIDTH + x];
+				*pixel = COLOR(
+					((uint32_t)COLOR_GETR(color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					((uint32_t)COLOR_GETG(color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					((uint32_t)COLOR_GETB(color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+					0u
+				);
 			}
 		}
 	}
