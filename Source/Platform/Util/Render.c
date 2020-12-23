@@ -176,7 +176,7 @@ static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, co
 				assert((tile << bpp) >= 0x18000u);
 
 				const size_t palNum = bgTile >> 24;
-				const size_t palOffset = tileData[((tile << bpp) - 0x18000u) * 0x80u + ((((y - scrollY) & 0xFu) << 4) + ((x - scrollX) & 0xFu)) >> (1 - bpp)];
+				const size_t palOffset = tileData[((tile << bpp) - 0x18000u) * 0x80u + (((((y - scrollY) & 0xFu) << 4) + ((x - scrollX) & 0xFu)) >> (1 - bpp))];
 				const Color color = PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
 				uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
 				Color* const pixel = &framebuffer[y * VIDEO_WIDTH + x];

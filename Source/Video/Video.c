@@ -198,7 +198,7 @@ bool UNK_6023A0E(STRUCT_607D218* arg0, void (*arg1)(), uint32_t arg2, uint32_t a
 	}
 	else {
 		var0 = arg0->UNK_300[4 * 14 + 3];
-		size_t i;
+		size_t i = 0u;
 		if (arg0->UNK_18 != 0) {
 			var1 = *var0;
 			for (i = 0u; i < arg0->UNK_18 && var1 != UNK_602378C; i++, var0 -= 4, var1 = *var0) {
@@ -1043,7 +1043,7 @@ void UNK_602523C() {
 	}
 }
 
-static inline BgSet(const uint8_t bgIndex, uint8_t* const tilemapBank, uint8_t* const tilemapSettings) {
+static inline void BgSet(const uint8_t bgIndex, uint8_t* const tilemapBank, uint8_t* const tilemapSettings) {
 	if (Bgs[bgIndex].UNK_0 == 1 && Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] >= 0) {
 		const int16_t spriteAdderName = Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6];
 		const int16_t palNum = UNK_60AD228[spriteAdderName].UNK_54;

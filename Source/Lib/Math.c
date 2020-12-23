@@ -175,7 +175,7 @@ uint32_t Rand(uint32_t upperBound) {
 
 	// TODO: For SH-2 ports, change this part to generate result using inline
 	// SH-2 assembly.
-	uint32_t m, n;
+	int32_t m, n;
 	m = Cos(RandSeed).value;
 	n = RandSeed;
 	dmuls(&m, &n);

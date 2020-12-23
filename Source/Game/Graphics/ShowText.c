@@ -6,6 +6,7 @@
 #include "Video/Video.h"
 #include "Video/VideoDefs.h"
 #include "Video/Pal.h"
+#include <stddef.h>
 
 // TODO: Replace this with a pointer that can be changed to an array of the
 // widths for the font in use, but using this array for TAP's font.
@@ -51,7 +52,7 @@ static const ObjectData* ObjectTableChars[0x80] = {
 int16_t TextWidth(const char* text) {
 	int16_t textWidth = 0;
 	for (const char* c = text; *c != '\0'; c++) {
-		textWidth += CharWidths[*c];
+		textWidth += CharWidths[(size_t)*c];
 	}
 	return textWidth;
 }
@@ -76,8 +77,8 @@ void ShowSystemText(int16_t x, int16_t y, const char* text, bool alpha) {
 			charX += TEXT_SPACEWIDTH;
 		}
 		else {
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_SYSTEMTEXT, 125u, UNSCALED, UNSCALED, alpha);
-			charX += CharWidths[*c];
+			ShowObjectEx(ObjectTableChars[(size_t)*c], charY, charX, PALNUM_SYSTEMTEXT, 125u, UNSCALED, UNSCALED, alpha);
+			charX += CharWidths[(size_t)*c];
 		}
 	}
 }
@@ -93,8 +94,8 @@ void ShowText(int16_t x, int16_t y, const char* text, uint8_t palNum, bool alpha
 			charX += TEXT_SPACEWIDTH;
 		}
 		else {
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, palNum, 124u, UNSCALED, UNSCALED, alpha);
-			charX += CharWidths[*c];
+			ShowObjectEx(ObjectTableChars[(size_t)*c], charY, charX, palNum, 124u, UNSCALED, UNSCALED, alpha);
+			charX += CharWidths[(size_t)*c];
 		}
 	}
 }
@@ -206,13 +207,13 @@ void ShowPalCycleText(int16_t x, int16_t y, const char* text, bool normalSize) {
 			charX += TEXT_SPACEWIDTH;
 		}
 		else if (normalSize) {
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_PALCYCLETEXT, 124u, UNSCALED, UNSCALED, false);
-			charX += CharWidths[*c];
+			ShowObjectEx(ObjectTableChars[(size_t)*c], charY, charX, PALNUM_PALCYCLETEXT, 124u, UNSCALED, UNSCALED, false);
+			charX += CharWidths[(size_t)*c];
 		}
 		else {
 			// TODO: Change 0x5F to something like "150", as 0x5F is a 150% scale.
-			ShowObjectEx(ObjectTableChars[*c], charY, charX, PALNUM_PALCYCLETEXT, 125u, 0x5F, 0x5F, false);
-			charX += (CharWidths[*c] * 3) / 2;
+			ShowObjectEx(ObjectTableChars[(size_t)*c], charY, charX, PALNUM_PALCYCLETEXT, 125u, 0x5F, 0x5F, false);
+			charX += (CharWidths[(size_t)*c] * 3) / 2;
 		}
 	}
 }

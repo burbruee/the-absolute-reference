@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Input/Button.h"
 #include "PlatformTypes.h"
 #include "Lib/Macros.h"

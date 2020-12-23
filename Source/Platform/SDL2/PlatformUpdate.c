@@ -83,7 +83,7 @@ void ExitHandler(void) {
 	CloseData();
 	CloseConfig();
 	if (!PHYSFS_deinit()) {
-		fprintf(stderr, "Failed PhysicsFS deinit: %s\n", PHYSFS_getLastError());
+		fprintf(stderr, "Failed PhysicsFS deinit: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
 	}
 	SDL_Quit();
 	printf("Finished shutdown, exiting.\n");
@@ -102,12 +102,12 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	}
 
 	if (!PHYSFS_init(argv[0])) {
-		fprintf(stderr, "Error with PHYSFS_init: %s\n", PHYSFS_getLastError());
+		fprintf(stderr, "Error with PHYSFS_init: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
 		return false;
 	}
 
 	if (!PHYSFS_setSaneConfig("nightmareci", "taref", "ZIP", 0, 0)) {
-		fprintf(stderr, "Error setting sane PhysicsFS config: %s\n", PHYSFS_getLastError());
+		fprintf(stderr, "Error setting sane PhysicsFS config: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
 		return false;
 	}
 

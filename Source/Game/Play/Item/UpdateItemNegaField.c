@@ -96,7 +96,7 @@ void UpdateItemNegaField(Item* item) {
 							square->block = NULLBLOCK;
 						}
 						else {
-							square->block = TOBLOCKTYPE(item->negaRow % 7);
+							square->block = (Block)TOBLOCKTYPE(item->negaRow % 7);
 							if (activatingPlayer->modeFlags & MODE_INVISIBLE) {
 								square->block |= BLOCK_FADING;
 							}

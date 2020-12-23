@@ -254,7 +254,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->play = (PlayData) { .flags = PLAYFLAG_NONE, .state = PLAYSTATE_START };
 
 	// Active block.
-	player->activeBlock = BLOCKTYPE_I;
+	player->activeBlock = (Block)BLOCKTYPE_I;
 	player->activeRotation = ROTATION_ENTRY;
 	player->activePos[1] = ENTRYPOS_Y;
 	if (GameFlags & GAME_DOUBLES) {
@@ -325,7 +325,7 @@ void InitPlayer(PlayerNum playerNum) {
 			}
 		}
 	}
-	player->nextBlock = TOBLOCKTYPE(nextBlockNum);
+	player->nextBlock = (Block)TOBLOCKTYPE(nextBlockNum);
 	size_t historyIndex = 0u;
 	for (; historyIndex < lengthoffield(Player, history) / 2; historyIndex++) {
 		player->history[historyIndex] = TOBLOCKNUM(BLOCKTYPE_Z);
@@ -362,10 +362,10 @@ void InitPlayer(PlayerNum playerNum) {
 		for (size_t row = 0u; row < player->matrixHeight; row++) {
 			for (size_t col = 0u; col < player->matrixWidth; col++) {
 				if (row == 0u) {
-					MATRIX(player, row, col).block = BLOCKTYPE_WALL;
+					MATRIX(player, row, col).block = (Block)BLOCKTYPE_WALL;
 				}
 				else if (col == 0u || col == player->matrixWidth - 1u) {
-					MATRIX(player, row, col).block = BLOCKTYPE_WALL;
+					MATRIX(player, row, col).block = (Block)BLOCKTYPE_WALL;
 				}
 				else {
 					MATRIX(player, row, col).block = NULLBLOCK;
@@ -2423,7 +2423,7 @@ void UpdatePlayNext(Player* player) {
 		player->history[historyIndex] = player->history[historyIndex - 1];
 	}
 	player->history[0] = nextBlockNum;
-	player->nextBlock = TOBLOCKTYPE(nextBlockNum);
+	player->nextBlock = (Block)TOBLOCKTYPE(nextBlockNum);
 
 	// Item/big mode.
 	if ((player->modeFlags & MODE_BIG) || (player->itemMiscFlags & ITEMMISC_DEATHBLOCK)) {
@@ -2765,7 +2765,7 @@ void UpdateTgmPlusGarbage(Player* player) {
 
 		// Copy a TGM+ garbage sequence row into the entering garbage row.
 		for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-			MATRIX(player, 1, col).block = TgmPlusGarbage[player->tgmPlusGarbageIndex * FIELD_SINGLEWIDTH + col - 1] ? BLOCKTYPE_GARBAGE : BLOCKTYPE_EMPTY;
+			MATRIX(player, 1, col).block = TgmPlusGarbage[player->tgmPlusGarbageIndex * FIELD_SINGLEWIDTH + col - 1] ? (Block)BLOCKTYPE_GARBAGE : (Block)BLOCKTYPE_EMPTY;
 			MATRIX(player, 1, col).itemType = ITEMTYPE_NULL;
 			MATRIX(player, 1, col).brightness = 0u;
 		}
