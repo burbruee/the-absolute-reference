@@ -80,8 +80,8 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 			const uint32_t alpha = alphaTemp;
 			const uint32_t tile = OBJECT_GETTILE(sprite);
 
-			const int16_t renderW = (((w << 24) / scaleX) + 512) >> 10;
-			const int16_t renderH = (((h << 24) / scaleY) + 512) >> 10;
+			const int16_t renderW = (((w << 24) / scaleX) + 0x200) >> 10;
+			const int16_t renderH = (((h << 24) / scaleY) + 0x200) >> 10;
 			for (int16_t offsetY = 0; offsetY < renderH; offsetY++) {
 				for (int16_t offsetX = 0; offsetX < renderW; offsetX++) {
 					// Skip offscreen pixels.
@@ -94,20 +94,18 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 						continue;
 					}
 
-					const int32_t sourceX = ((flipX ? renderW - 1 - offsetX : offsetX) * scaleX) / 1024;
-					const int32_t sourceY = ((flipY ? renderH - 1 - offsetY : offsetY) * scaleY) / 1024;
+					const int32_t sourceX = ((flipX ? renderW - 1 - offsetX : offsetX) * scaleX) >> 10;
+					const int32_t sourceY = ((flipY ? renderH - 1 - offsetY : offsetY) * scaleY) >> 10;
 					const int32_t tileX = sourceX / 16;
 					const int32_t tileY = sourceY / 16;
 					const int32_t tileOffsetX = sourceX % 16;
 					const int32_t tileOffsetY = sourceY % 16;
 					uint8_t palOffset = (
 						tileData[
-							((tile + w * tileY) * 0x80u * (bpp + 1)) -
-							0xC00000u +
-							(tileOffsetX / (2 - bpp)) +
-							(tileX * 0x80u * (bpp + 1u)) +
-							(tileOffsetY * 8u * (bpp + 1u))
-						] >> ((4 - ((tileOffsetX & 1) * 4)) * (1u - bpp))
+							((((tile + w * tileY) + tileX) << bpp) - 0x18000u) * 0x80u +
+							(tileOffsetX >> (1 - bpp)) +
+							(tileOffsetY << (3 + bpp))
+						] >> (4 * !(tileOffsetX & 1) * !bpp)
 					) & ((0xF0u * bpp) | 0x0Fu);
 
 					if (palOffset == 0u) {
@@ -151,7 +149,7 @@ static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, co
 
 		const uint32_t scroll = layerData[0x3F0u / sizeof(uint32_t)];
 		const int16_t scrollY = (int16_t)(((scroll & 0x03FF0000u) >> 16) | ((scroll & 0x02000000u) ? 0xFC00u : 0x0000u));
-		const uint32_t scrollX = (int16_t)(((scroll & 0x000001FFu) >> 0) | ((scroll & 0x00000100u) ? 0xFF00u : 0x0000u));
+		const int16_t scrollX = (int16_t)(((scroll & 0x000001FFu) >> 0) | ((scroll & 0x00000100u) ? 0xFF00u : 0x0000u));
 
 		const uint32_t pixelInfo = layerData[0x7F0u / sizeof(uint32_t)];
 		const bool pixelAlpha = (pixelInfo >> 15) & 0x01u;
