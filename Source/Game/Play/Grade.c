@@ -5,6 +5,7 @@
 #include "Sound/Sound.h"
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Setting.h"
+#include <assert.h>
 
 Grade Grades[NUMPLAYERS];
 
@@ -124,6 +125,7 @@ void InitGrade(Player* player) {
 }
 
 void UpdateGrade(Player* player, uint8_t numLogicalLines) {
+	assert(numLogicalLines <= 4u);
 	Grade* grade = &Grades[player->num];
 
 	if (numLogicalLines == 0u) {
@@ -146,20 +148,40 @@ void UpdateGrade(Player* player, uint8_t numLogicalLines) {
 		if (level > GRADELEVEL_MAX) {
 			level = GRADELEVEL_MAX;
 		}
-		uint32_t newProgress = (uint32_t)GradeProgressions[level].progress[(numLogicalLines - 1) % 4] * (uint32_t)GradeProgressScales[player->numComboClears][numLogicalLines];
+
+		// BUG: GradeProgressScales[player->numComboClears][numLogicalLines] can be an out-of-bounds access. This implements the behavior of the original code, in the case of out-of-bounds array access.
+		uint32_t newProgress;
+		// Well-defined case. Still bugged. This is what the original code was.
+		if (player->numComboClears < lengthof(GradeProgressScales) && numLogicalLines < lengthof(*GradeProgressScales)) {
+			newProgress = (uint32_t)GradeProgressions[level].progress[((int32_t)numLogicalLines - 1) % lengthoffield(GradeProgress, progress)] * (uint32_t)GradeProgressScales[player->numComboClears][numLogicalLines];
+		}
+		// One or both of the indices into GradeProgressScales is out-of-bounds, so calculate the correct index here. This case is for when the calculated index is still in the bounds of the entire GradeProgressScales array.
+		else if (player->numComboClears * lengthof(*GradeProgressScales) + numLogicalLines < lengthof(GradeProgressScales) * lengthof(*GradeProgressScales)) {
+			size_t i = player->numComboClears * lengthof(*GradeProgressScales) + numLogicalLines;
+			newProgress = (uint32_t)GradeProgressions[level].progress[((int32_t)numLogicalLines - 1) % lengthoffield(GradeProgress, progress)] * (uint32_t)GradeProgressScales[i / lengthof(*GradeProgressScales)][i % lengthof(*GradeProgressScales)];
+		}
+		// Access is beyond the bounds of the GradeProgressScales array. The original code ends up accessing values in the GradeLevels array, due to that array being right after the GradeProgressScales array in memory.
+		// Just for the sake of keeping this code relatively simple, but still having it behave as the original code would, only accesses within the GradeLevels array are assumed to ever occur.
+		// But, if it's found the assertion here ever fails, then more data beyond GradeLevels will have to be used here.
+		else {
+			size_t i = player->numComboClears * lengthof(*GradeProgressScales) + numLogicalLines - lengthof(GradeProgressScales) * lengthof(*GradeProgressScales);
+			assert(i < lengthof(GradeLevels));
+			newProgress = GradeLevels[i];
+		}
+
 		if (newProgress % 10u != 0u) {
 			newProgress += 10u;
 		}
 		newProgress /= 10u;
 		newProgress *= (player->level / 250u) + 1u;
-		uint8_t progress = grade->currentGrade.fraction + newProgress;
-		if (progress >= 100u) {
+		newProgress += grade->currentGrade.fraction;
+		if (newProgress >= 100u) {
 			grade->currentGrade.integer++;
 			grade->currentGrade.fraction = 0u;
 			grade->decayFrames = 0u;
 		}
 		else {
-			grade->currentGrade.fraction = progress;
+			grade->currentGrade.fraction = newProgress;
 		}
 
 		if (player->combo > player->comboBefore && numLogicalLines > 1u) {

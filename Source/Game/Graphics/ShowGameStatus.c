@@ -185,8 +185,13 @@ const ObjectData* ObjectTableGrades[NUMPLAYERGRADES] = {
 	&OBJECTTABLE_GRADES[PLAYERGRADE_S7],
 	&OBJECTTABLE_GRADES[PLAYERGRADE_S8],
 	&OBJECTTABLE_GRADES[PLAYERGRADE_S9],
-	&OBJECTTABLE_GRADES[PLAYERGRADE_M],
-	&OBJECTTABLE_GRADES[PLAYERGRADE_GM],
+	// NOTE: For some reason, grade M and GM objects appear to be swapped with
+	// respect to PlayerGrade values used as indices into OBJECTTABLE_GRADES,
+	// so I chose to just add the offset to S9 here instead of having the code
+	// look wrong if the M and GM constants were used here.
+	// -Brandon McGriff
+	&OBJECTTABLE_GRADES[PLAYERGRADE_S9 + 2],
+	&OBJECTTABLE_GRADES[PLAYERGRADE_S9 + 1],
 };
 
 void ShowGrade(Player* player, uint8_t palNum) {

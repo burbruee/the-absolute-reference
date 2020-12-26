@@ -226,7 +226,7 @@ void InitPlayer(PlayerNum playerNum) {
 		player->clearTime = (NextSectionLevels[Settings[SETTING_MAXVERSUSSECTION]] / 100) * TIME(1, 20, 0);
 	}
 	else {
-		player->clearTime = 0;
+		player->clearTime = 0u;
 	}
 
 	// Advancement.
@@ -2231,8 +2231,8 @@ void UpdatePlayClear(Player* player) {
 							numBonusSeconds++;
 						}
 						player->score += numBonusSeconds * 1253u;
-						if (player->score > 999999) {
-							player->score = 999999;
+						if (player->score > 999999u) {
+							player->score = 999999u;
 						}
 					}
 				}
@@ -2939,6 +2939,7 @@ uint32_t PointsBaseValue(Player* player, uint8_t numLines) {
 			!player->passedMGradeCheckpoint &&
 			player->clearTime <= TIME(3, 25, 0)) {
 			player->passedMGradeCheckpoint = true;
+			player->grade = PLAYERGRADE_M;
 			PlaySoundEffect(SOUNDEFFECT_GRANDMASTER);
 		}
 		CheckNextSection(player);

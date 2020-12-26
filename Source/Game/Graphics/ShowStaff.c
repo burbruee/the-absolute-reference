@@ -299,7 +299,7 @@ static void UpdateEntityStaff(Entity* entity) {
 		}
 	}
 	else if (entity->scrollY >= 2220) {
-		player->nowFlags &= NOW_NOUPDATE;
+		player->nowFlags &= ~NOW_NOUPDATE;
 		if (!(player->nowFlags & NOW_STOPPED)) {
 			player->miscFlags |= MISC_ORANGELINE;
 			LockActiveBlock(player, LOCKTYPE_GAMEOVER);
