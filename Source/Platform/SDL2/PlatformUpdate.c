@@ -272,7 +272,7 @@ void PlatformFrame() {
 	SDL_Delay(0);
 }
 
-#define FRAME_DURATION (1.0 / 50.0)//(1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
+#define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
 
 static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
