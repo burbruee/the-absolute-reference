@@ -17,7 +17,7 @@ typedef struct GradeProgress {
 // GRADELEVEL_MAX - 1, accessing data beyond the bounds of the intended array.
 // The data that it accesses in that case has been added to the intended array,
 // for accurate behavior, and to prevent memory access errors.
-static GradeProgress GradeProgressions[GRADELEVEL_MAX + 1] = {
+static const GradeProgress GradeProgressions[GRADELEVEL_MAX + 1] = {
 	{ { 10u, 20u, 40u, 50u }, 125u },
 	{ { 10u, 20u, 30u, 40u },  80u },
 	{ { 10u, 20u, 30u, 40u },  80u },
