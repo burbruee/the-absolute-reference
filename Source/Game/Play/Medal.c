@@ -188,13 +188,15 @@ void UpdateComboMedal(Player* player) {
 }
 
 void UpdateSectionTimeMedal(Player* player, uint32_t sectionTime, uint32_t bestSectionTime) {
-	MedalColor awardedMedalColor;
+	MedalColor awardedMedalColor = MEDALCOLOR_NULL;
 	uint32_t currentSectionTime = bestSectionTime + TIME(0, 10, 0);
-	for (
-		awardedMedalColor = MEDALCOLOR_NULL;
-		awardedMedalColor < NUMMEDALCOLORS && currentSectionTime > sectionTime;
-		awardedMedalColor++, currentSectionTime -= TIME(0, 5, 0)
-	);
+	while (currentSectionTime > sectionTime) {
+		awardedMedalColor++;
+		currentSectionTime -= TIME(0, 5, 0);
+		if (awardedMedalColor >= MEDALCOLOR_GOLD) {
+			break;
+		}
+	}
 
 	if (awardedMedalColor != MEDALCOLOR_NULL) {
 		Medals[player->num][MEDALTYPE_ST].color = awardedMedalColor;

@@ -417,16 +417,19 @@ static void UpdateEntityRetryForGrandMaster(Entity* entity) {
 		player->nowFlags |= NOW_SHOWRANKINGCODE;
 	}
 	if (player->modeFlags & (MODE_20G | MODE_BIG | MODE_ITEM | MODE_TLS)) {
-		player->nowFlags |= ~NOW_SHOWRANKINGCODE;
+		player->nowFlags &= ~NOW_SHOWRANKINGCODE;
 	}
 
 	DisplayObject(OBJECTPTR(0x2FB), 100, player->screenPos[0], 0u, 125u);
 	DisplayObject(OBJECT_RETRYFORGRANDMASTER, 140, player->screenPos[0], 0u, 125u);
 
-	if (CurrentPauseMode < PAUSEMODE_GAME && --entity->frames == 0) {
-		player->nowFlags &= ~NOW_NOUPDATE;
-		NextPlayGameOver(player);
-		FreeEntity(entity);
+	if (CurrentPauseMode < PAUSEMODE_GAME) {
+		UpdateStaffFireworks(entity, player, 30u);
+		if (--entity->frames == 0) {
+			player->nowFlags &= ~NOW_NOUPDATE;
+			NextPlayGameOver(player);
+			FreeEntity(entity);
+		}
 	}
 }
 
@@ -434,7 +437,6 @@ static void UpdateEntityNormalComplete(Entity* entity) {
 	Player* player = entity->data.unionData.player;
 
 	player->nowFlags |= NOW_NOUPDATE;
-
 
 	UpdateStaffFireworks(entity, player, 15u);
 

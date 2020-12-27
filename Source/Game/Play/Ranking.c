@@ -1119,6 +1119,7 @@ bool UpdatePlayRanking(Player* player) {
 				case NEWRANKING_INIT:
 					newRanking->state++;
 					newRanking->labelScaleFrames = 18u;
+					newRanking->labelScaleX = 0x04u;
 					player->nowFlags |= NOW_NAMEENTRY;
 					if (newRanking->player->modeFlags & MODE_DOUBLES) {
 						InitNameEntry(&newRanking->nameEntries[PLAYER1], &Players[PLAYER1]);
