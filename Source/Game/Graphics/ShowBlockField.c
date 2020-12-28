@@ -433,7 +433,7 @@ void ShowFieldPlus(Player* player) {
 							palNum = 137u;
 						}
 						if (block & BLOCK_ITEM) {
-							palNum = (uint8_t)PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType) + 5u];
+							palNum = (uint8_t)PalNumTableItemBlocks[TOITEMNUM(MATRIX(player, player->matrixHeight - row - 1, col).itemType)] + 5u;
 						}
 						const ItemType itemType = player->itemPlayer->activeItemType;
 						if (itemType == ITEMTYPE_COLORBLOCK || itemType == ITEMTYPE_DARKBLOCK) {
