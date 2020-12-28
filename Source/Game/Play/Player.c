@@ -1396,13 +1396,13 @@ void UpdateAutoshift(Player* player) {
 // where one of the squares is outside the matrix, and that rotated block isn't
 // blocked by any matrix squares.
 
-static inline void CountBlockings(const Player* player, const int16_t col, const int16_t row, const Rotation rotation, const int16_t size, EntryData* entry) {
+static inline void CountBlockings(const Player* const player, const int16_t col, const int16_t row, const Rotation rotation, const int16_t size, EntryData* const entry) {
 	BlockDefSquare* blockDef = BLOCKDEF(player->activeBlock & BLOCK_TYPE);
 	for (int16_t blockRow = 0; blockRow < size; blockRow++) {
 		int16_t matrixRow = row - blockRow;
 		if (matrixRow < player->matrixHeight) {
 			MatrixBlock* matrixBlock = &MATRIX(player, matrixRow, col);
-			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, blockRow);
+			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, rotation, blockRow / (size / 4));
 			for (int16_t blockCol = 0; blockCol < size; blockCol++, matrixBlock++) { 
 				if (col + blockCol >= 0 && blockDefRow[blockCol / (size / 4)] != DEFBLOCK_EMPTY && (matrixBlock->block & ~BLOCK_INVISIBLE)) {
 					if (matrixBlock->block & BLOCK_BLOCKING) {
@@ -1460,9 +1460,9 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 				for (int16_t defCol = 0; defCol < 8; defCol++) {
 					if (
 						col + defCol >= 0 &&
-						col + defCol <= player->matrixWidth - 1 &&
+						col + defCol <= (int8_t)player->matrixWidth - 1 &&
 						DEFBLOCKBIG(player->activeBlock & BLOCK_TYPE, rotation, defRow, defCol) != DEFBLOCK_EMPTY &&
-						MATRIX(player, (row + 1) - defRow, col + defCol).block != NULLBLOCK) {
+						(MATRIX(player, (row + 1) - defRow, col + defCol).block & ~BLOCK_INVISIBLE) != NULLBLOCK) {
 						// The active block is blocked in the current
 						// position/rotation.
 
@@ -1503,7 +1503,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 						col + defCol >= 0 &&
 						col + defCol <= player->matrixWidth - 1 &&
 						DEFBLOCK(player->activeBlock & BLOCK_TYPE, rotation, defRow, defCol) != DEFBLOCK_EMPTY &&
-						MATRIX(player, row - defRow, col + defCol).block != NULLBLOCK) {
+						(MATRIX(player, row - defRow, col + defCol).block & ~BLOCK_INVISIBLE) != NULLBLOCK) {
 						// The active block is blocked in the current
 						// position/rotation.
 
@@ -1540,6 +1540,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 
 void CheckShiftActiveBlock(Player* player) {
 	int16_t shiftCol = player->activePos[0].integer;
+	int16_t row = player->activePos[1].integer;
 
 	uint8_t shiftDelay;
 	if (player->modeFlags & MODE_TGMPLUS) {
@@ -1601,21 +1602,21 @@ void CheckShiftActiveBlock(Player* player) {
 
 	if (shiftDirection & BUTTON_LEFT) {
 		if (player->modeFlags & MODE_BIG) {
-			if (!Blocked(player, player->activePos[0].integer - 2, player->activePos[1].integer, player->activeRotation)) {
+			if (!Blocked(player, shiftCol - 2, row, player->activeRotation)) {
 				shiftCol -= 2;
 			}
 		}
-		else if (!Blocked(player, player->activePos[0].integer - 1, player->activePos[1].integer, player->activeRotation)) {
+		else if (!Blocked(player, shiftCol - 1, row, player->activeRotation)) {
 			shiftCol--;
 		}
 	}
 	if (shiftDirection & BUTTON_RIGHT) {
 		if (player->modeFlags & MODE_BIG) {
-			if (!Blocked(player, player->activePos[0].integer + 2, player->activePos[1].integer, player->activeRotation)) {
+			if (!Blocked(player, shiftCol + 2, row, player->activeRotation)) {
 				shiftCol += 2;
 			}
 		}
-		else if (!Blocked(player, player->activePos[0].integer + 1, player->activePos[1].integer, player->activeRotation)) {
+		else if (!Blocked(player, shiftCol + 1, row, player->activeRotation)) {
 			shiftCol++;
 		}
 	}
@@ -1830,14 +1831,14 @@ void UpdatePlayActive(Player* player) {
 	LandActiveBlock(player, gravity);
 }
 
-static inline void WriteBlockToMatrix(Player* player, const LockType lockType, const BlockType lockBlockType, const int16_t lockCol, const int16_t lockRow, const Rotation lockRotation, const int16_t lockBlockSize, int16_t visibleFrames) {
+static inline void WriteBlockToMatrix(Player* const player, const LockType lockType, const BlockType lockBlockType, const int16_t lockCol, const int16_t lockRow, const Rotation lockRotation, const int16_t lockBlockSize, const int16_t visibleFrames) {
 	BlockDefSquare* blockDef = BLOCKDEF(lockBlockType);
 	for (int16_t blockRow = 0; blockRow < lockBlockSize; blockRow++) {
 		int16_t matrixRow = lockRow - blockRow;
 		if (matrixRow < player->matrixHeight) {
-			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, lockRotation, blockRow);
+			BlockDefSquare* blockDefRow = BLOCKDEFROW(blockDef, lockRotation, blockRow / (lockBlockSize / 4u));
 			for (int16_t blockCol = 0; blockCol < lockBlockSize; blockCol++) {
-				if (BLOCKDEFCOL(blockDefRow, blockCol) != DEFBLOCK_EMPTY) {
+				if (BLOCKDEFCOL(blockDefRow, blockCol / (lockBlockSize / 4u)) != DEFBLOCK_EMPTY) {
 					if (lockType != LOCKTYPE_GAMEOVER) {
 						MATRIX(player, matrixRow, lockCol + blockCol).block = player->activeBlock | BLOCK_FLASH | TOBLOCKFLASHFRAMES(2u);
 					}
@@ -1888,7 +1889,7 @@ void LockActiveBlock(Player* player, LockType lockType) {
 	}
 
 	if (player->activeBlock & BLOCK_BIG) {
-		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol - 2, activeRow, activeRotation, 8, visibleFrames);
+		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol - 2, activeRow + 1, activeRotation, 8, visibleFrames);
 	}
 	else {
 		WriteBlockToMatrix(player, lockType, activeBlockType, activeCol, activeRow, activeRotation, 4, visibleFrames);

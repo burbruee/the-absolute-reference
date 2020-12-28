@@ -21,10 +21,8 @@ void UpdateItemDeathBlock(Item* item) {
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
 		case STATE_START:
-			if (
-				!(itemPlayer->nowFlags & NOW_LOCKING) &&
-				!(activatingPlayer->activeItemType == ITEMTYPE_NULL) &&
-				!ItemGood(itemPlayer)) {
+			RemoveItems(activatingPlayer);
+			if (!(itemPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL && !ItemGood(itemPlayer)) {
 				activatingPlayer->activeItemType = ITEMTYPE_DEATHBLOCK;
 				SetFieldBorderColor(itemPlayer, ITEMTYPE_DEATHBLOCK);
 				ShowItemWarningDeathBlock(itemPlayer);
@@ -32,7 +30,10 @@ void UpdateItemDeathBlock(Item* item) {
 
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
-				itemPlayer->frames = 98u;
+				item->frames = 98u;
+			}
+			else {
+				return;
 			}
 
 		case STATE_NEXT:

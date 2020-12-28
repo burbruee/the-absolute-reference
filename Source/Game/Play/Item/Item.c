@@ -25,6 +25,10 @@ void RemoveItems(Player* player) {
 bool CheckDeactivateItem(Item* item) {
 	if (!(GameFlags & GAME_ITEMSNOUSE)) {
 		Player* activatingPlayer = item->activatingPlayer;
+		if (!(activatingPlayer->nowFlags & NOW_STOPPED) && activatingPlayer->play.state != PLAYSTATE_STAFFTRANSITION && !(activatingPlayer->miscFlags & MISC_ORANGELINE)) {
+			return false;
+		}
+
 		for (int16_t i = 0; i < lengthoffield(Player, screenOffset); i++) {
 			activatingPlayer->screenOffset[i] = 0;
 		}
@@ -32,8 +36,8 @@ bool CheckDeactivateItem(Item* item) {
 		Player* itemPlayer = item->activatingPlayer->itemPlayer;
 		for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-				if (item->activatingPlayer->modeFlags & MODE_INVISIBLE) {
-					MATRIX(itemPlayer, row, col).block &= BLOCK_INVISIBLE;
+				if (!(item->activatingPlayer->modeFlags & MODE_INVISIBLE)) {
+					MATRIX(itemPlayer, row, col).block &= ~BLOCK_INVISIBLE;
 				}
 				MATRIX(itemPlayer, row, col).brightness = 1;
 			}
@@ -43,15 +47,12 @@ bool CheckDeactivateItem(Item* item) {
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 		}
 
-		SetFieldBorderColor(activatingPlayer, ITEMTYPE_NULL);
+		SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
 		itemPlayer->nextBlock &= ~BLOCK_ROLLROLL;
 		itemPlayer->nextBlock &= ~BLOCK_TRANSFORM;
 		DeactivateItem(item);
-		return true;
 	}
-	else {
-		return false;
-	}
+	return true;
 }
 
 
