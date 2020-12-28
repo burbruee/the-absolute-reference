@@ -49,6 +49,7 @@ void UpdateItemNegaField(Item* item) {
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 				item->initRowFrames = 60;
+				item->states[0]++;
 			}
 			break;
 
@@ -61,11 +62,11 @@ void UpdateItemNegaField(Item* item) {
 		case STATE_INIT:
 			// Erase top row.
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-				MatrixBlock* square = &MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col);
-				square->block = NULLBLOCK;
-				square->itemType = ITEMTYPE_NULL;
+				MatrixBlock* matrixBlock = &MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col);
+				matrixBlock->block = NULLBLOCK;
+				matrixBlock->itemType = ITEMTYPE_NULL;
 			}
-			// Find highest row with squares, for the next nega row.
+			// Find highest row with blocks, for the next nega row.
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 					if ((MATRIX(activatingPlayer, row, col).block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
@@ -75,7 +76,7 @@ void UpdateItemNegaField(Item* item) {
 			}
 
 			if (data->topNegaRow < 1) {
-				item->values[1] = 40;
+				item->deactivateFrames = 40;
 				item->states[0] = STATE_DELAYDEACTIVATE;
 			}
 			else {
@@ -90,21 +91,21 @@ void UpdateItemNegaField(Item* item) {
 			if (item->negaRowFrames % 4 == 0) {
 				PlaySoundEffect(SOUNDEFFECT_SELECT);
 				for(int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					MatrixBlock* square = &MATRIX(itemPlayer, data->topNegaRow, col);
-					if (!(square->block & BLOCK_ITEM)) {
-						if ((square->block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
-							square->block = NULLBLOCK;
+					MatrixBlock* matrixBlock = &MATRIX(itemPlayer, item->negaRow, col);
+					if (!(matrixBlock->block & BLOCK_ITEM)) {
+						if ((matrixBlock->block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
+							matrixBlock->block = NULLBLOCK;
 						}
 						else {
-							square->block = (Block)TOBLOCKTYPE(item->negaRow % 7);
+							matrixBlock->block = (Block)TOBLOCKTYPE(item->negaRow % 7);
 							if (activatingPlayer->modeFlags & MODE_INVISIBLE) {
-								square->block |= BLOCK_FADING;
+								matrixBlock->block |= BLOCK_FADING;
 							}
 							if (activatingPlayer->grade == PLAYERGRADE_M) {
-								square->visibleFrames = 45;
+								matrixBlock->visibleFrames = 45;
 							}
 							else {
-								square->visibleFrames = 300;
+								matrixBlock->visibleFrames = 300;
 							}
 						}
 					}
@@ -150,7 +151,7 @@ void UpdateItemNegaField(Item* item) {
 				NextPlayLock(itemPlayer);
 			}
 			item->states[0]++;
-			itemPlayer->activeItemType = ITEMTYPE_NULL;
+			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
 			DeactivateItem(item);
 			break;
