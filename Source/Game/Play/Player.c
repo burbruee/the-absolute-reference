@@ -1644,6 +1644,7 @@ void LandActiveBlock(Player* player, Fixed32 gravityStep) {
 				player->lockFrames--;
 			}
 
+			player->activePos[1].fraction = 0xFFFFu;
 			if ((GameButtonsDown[player->num] & BUTTON_ALLDIRECTIONS) == BUTTON_DOWN) {
 				if (player->modeFlags & MODE_TADEATH) {
 					if (player->level >= 0u) {
@@ -2324,10 +2325,10 @@ void NextBagItem(Player* player, uint8_t itemNum) {
 const uint8_t NormalItemNums[3] = {TOITEMNUM(ITEMTYPE_FREEFALL), TOITEMNUM(ITEMTYPE_DELEVEN), TOITEMNUM(ITEMTYPE_DELEVEN)};
 
 // TODO: Verify the refactored version is correct, then delete this.
-#if 0
+#if 1
 void NextItem(Player* player) {
 	if ((player->modeFlags & MODE_NORMAL) && !(player->modeFlags & MODE_VERSUS) && !(player->nowFlags & NOW_STAFF)) {
-	       if (player->level >= ((player->normalItemIndex + 1) / 100)) {
+	       if (player->level >= ((player->normalItemIndex + 1) * 100)) {
 		       const uint8_t itemNum = NormalItemNums[player->normalItemIndex];
 		       const uint32_t itemBagFlag = 1 << itemNum;
 		       if (player->normalItemBag & itemBagFlag) {
@@ -2344,8 +2345,7 @@ void NextItem(Player* player) {
 		GenNextItem(player);
 	}
 }
-#endif
-
+#else
 void NextItem(Player* player) {
 	if (
 		(player->modeFlags & MODE_NORMAL) &&
@@ -2367,6 +2367,7 @@ void NextItem(Player* player) {
 		GenNextItem(player);
 	}
 }
+#endif
 
 static const SoundEffect NextSoundEffects[7] = {
 	SOUNDEFFECT_IBLOCK,

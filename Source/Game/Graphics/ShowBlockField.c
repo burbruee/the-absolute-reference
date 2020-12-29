@@ -293,7 +293,7 @@ void ShowField(Player* player) {
 						if (player->itemPlayer->activeItemType == ITEMTYPE_COLORBLOCK) {
 							int8_t brightness = MATRIX(player, row, col).brightness;
 							palNum = 137u;
-							if (brightness > -1 && brightness < 9) {
+							if (brightness >= 0 && brightness < 10) {
 								palNum = blockPalNum + MATRIX(player, row, col).brightness - 1;
 							}
 						}
@@ -439,7 +439,7 @@ void ShowFieldPlus(Player* player) {
 						if (itemType == ITEMTYPE_COLORBLOCK || itemType == ITEMTYPE_DARKBLOCK) {
 							int8_t brightness = MATRIX(player, row, col).brightness;
 							palNum = 137u;
-							if (brightness > -1 && brightness < 9) {
+							if (brightness >= 0 && brightness < 10) {
 								if (block & BLOCK_HARD) {
 									palNum = 128u;
 								}

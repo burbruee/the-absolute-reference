@@ -15,7 +15,7 @@ void RemoveItems(Player* player) {
 	}
 
 	if (player->nextBlock & BLOCK_ITEM) {
-		player->nextBlock &= BLOCK_ITEM;
+		player->nextBlock &= ~BLOCK_ITEM;
 		player->numItemBarBlocks = 0u;
 	}
 	player->nextBlockItemType = ITEMTYPE_NULL;

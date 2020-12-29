@@ -65,10 +65,10 @@ void UpdateItemColorBlock(Item* item) {
 			switch (activatingPlayer->numBlocks % 3) {
 			case 0:
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					int16_t(*brightnessesRow)[MATRIX_SINGLEWIDTH] = &data->matrixBrightnesses[MATRIX_HEIGHT / 2];
+					int16_t(*brightnessesRow)[MATRIX_SINGLEWIDTH] = &data->matrixBrightnesses[FIELD_HEIGHT - 1];
 					for (int16_t row = 1, topRow = FIELD_HEIGHT - 1, brightness = col; row < FIELD_HEIGHT / 2; row++, brightnessesRow++, brightness += col, topRow++) {
 						data->matrixBrightnesses[row][col] = (row * col) % 10;
-						data->matrixBrightnesses[row + 9][col] = (row * col) % 10;
+						data->matrixBrightnesses[row + FIELD_HEIGHT / 2 - 1][col] = (row * col) % 10;
 						if (topRow <= FIELD_HEIGHT) {
 							(*brightnessesRow)[col] = brightness % 10;
 						}
@@ -107,7 +107,8 @@ void UpdateItemColorBlock(Item* item) {
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			data->numBlocks++;
-			data->numStartBlocks = activatingPlayer->numBlocks;
+			data->numStartBlocks = itemPlayer->numBlocks;
+			item->states[0]++;
 			break;
 
 		case STATE_COLORBLOCK:
@@ -116,7 +117,7 @@ void UpdateItemColorBlock(Item* item) {
 					itemPlayer->nowFlags |= NOW_NOGARBAGE;
 				}
 
-				if (item->animIndex > 0) {
+				if (item->frames > 0) {
 					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 						for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 							MATRIX(itemPlayer, row, col).block &= ~BLOCK_INVISIBLE;
@@ -135,7 +136,7 @@ void UpdateItemColorBlock(Item* item) {
 				if (itemPlayer->play.state != PLAYSTATE_GARBAGECHECK || data->numStartBlocks == itemPlayer->numBlocks) {
 					itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 				}
-				else if (item->frames > 600 || data->numBlocks >= 3) {
+				else if (item->frames > TIME(0, 6, 0) || data->numBlocks >= 3) {
 					data->stopAnim = true;
 				}
 				else {
