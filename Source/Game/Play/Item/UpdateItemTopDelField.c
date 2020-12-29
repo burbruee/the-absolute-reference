@@ -47,9 +47,10 @@ void UpdateItemTopDelField(Item* item) {
 					data->delayDel = true;
 				}
 
-				if (!ItemGood(itemPlayer)) {
+				if (!ItemBad(itemPlayer)) {
 					activatingPlayer->activeItemType = ITEMTYPE_TOPDELFIELD;
 					SetFieldBorderColor(activatingPlayer, ITEMTYPE_TOPDELFIELD);
+					activatingPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 
 					if (data->delayDel) {
 						item->states[0]++;
@@ -163,7 +164,7 @@ void UpdateItemTopDelField(Item* item) {
 		default:
 			activatingPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			activatingPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
-			item->startDelCol = 0;
+			data->delayDel = false;
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(activatingPlayer, ITEMTYPE_NULL);
 			DeactivateItem(item);
