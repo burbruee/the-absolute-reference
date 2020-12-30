@@ -3253,15 +3253,10 @@ void GenNextItem(Player* player) {
 			if (itemNum == NUMITEMTYPES) {
 				break;
 			}
-#if 0
 			if (player->itemBag & (1 << itemNum)) {
 				NextBagItem(player, (uint8_t)itemNum);
 				retry = false;
 			}
-#else
-			NextBagItem(player, TOITEMNUM(ITEMTYPE_DELEVEN));
-			retry = false;
-#endif
 		}
 	}
 }
