@@ -40,7 +40,6 @@ void UpdateItemBottomDelField(Item* item) {
 			item->states[0]++;
 		case STATE_CHECKDELAY:
 			RemoveItems(activatingPlayer);
-
 			if (!(activatingPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL) {
 				if (ItemConfusing(itemPlayer)) {
 					data->delayDel = true;

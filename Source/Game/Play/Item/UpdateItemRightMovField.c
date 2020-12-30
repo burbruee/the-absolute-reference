@@ -38,7 +38,7 @@ void UpdateItemRightMovField(Item* item) {
 			item->states[0]++;
 		case STATE_CHECKDELAY:
 			RemoveItems(activatingPlayer);
-			if (activatingPlayer->activeItemType == ITEMTYPE_NULL) {
+			if (!(activatingPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL) {
 				if (ItemConfusing(itemPlayer)) {
 					data->delayRightMov = true;
 				}

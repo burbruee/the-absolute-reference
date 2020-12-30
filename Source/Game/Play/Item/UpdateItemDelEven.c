@@ -71,8 +71,7 @@ void UpdateItemDelEven(Item* item) {
 		case STATE_INIT:
 			data->delRow = MATRIX_HEIGHT - 1;
 			for (bool check = true; check;) {
-				data->delRow--;
-				if (data->delRow == 1) {
+				if (--data->delRow == 1) {
 					break;
 				}
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
@@ -87,7 +86,7 @@ void UpdateItemDelEven(Item* item) {
 				MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col).itemType = ITEMTYPE_NULL;
 			}
 
-			if (data->delRow > 1) {
+			if (data->delRow >= 2) {
 				item->frames = 0;
 				item->states[0]++;
 			}
@@ -109,10 +108,11 @@ void UpdateItemDelEven(Item* item) {
 					MATRIX(activatingPlayer, data->delRow, col).itemType = ITEMTYPE_NULL;
 				}
 
-				if ((data->delRow -= 2) < 1) {
+				if (data->delRow - 2 < 1) {
 					item->states[0]++;
 					item->frames = 25;
 				}
+				data->delRow -= 2;
 			}
 			break;
 
