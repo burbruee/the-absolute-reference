@@ -15,7 +15,7 @@ uint32_t Mod32u(uint32_t denom, uint32_t numer);
 
 #ifdef USESTDC
 #include <string.h>
-#define MemCopy(n, dst, src) ((void)memcpy(dst, src, n))
+#define MemCopy(n, dst, src) ((void)memcpy((dst), (src), (n)))
 #else
 void MemCopy(size_t n, void* dst, void* src);
 #endif
@@ -32,7 +32,7 @@ int16_t Mod16s(int16_t denom, int16_t numer);
 
 #ifdef USESTDC
 #include <string.h>
-#define MemSet(s, c, n) memset(s, c, n)
+#define MemSet(s, c, n) memset((s), (c), (n))
 #else
 void* MemSet(void* s, int c, size_t n);
 #endif
