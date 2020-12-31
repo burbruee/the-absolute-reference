@@ -2,4 +2,4 @@
 
 #include "Game/Play/Item/Item.h"
 
-void UpdateItemHardBlock(Item* item);
+void UpdateItemDarkBlock(Item* item);

@@ -279,7 +279,7 @@ static void (* const ItemUpdaters[NUMITEMTYPES])(Item*) = {
 	UpdateItemXRay,
 	UpdateItemExchgField,
 	UpdateItemMirrorBlock,
-	UpdateItemHardBlock
+	UpdateItemDarkBlock
 };
 
 #if 0
