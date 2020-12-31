@@ -30,7 +30,7 @@ void UpdateItemHardBlock(Item* item) {
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 				item->frames = 99;
-				itemPlayer->subStates[0]++;
+				item->states[0]++;
 			}
 			break;
 
@@ -50,6 +50,7 @@ void UpdateItemHardBlock(Item* item) {
 
 		case STATE_DEACTIVATE:
 			itemPlayer->itemMiscFlags &= ~ITEMMISC_BIT10; // TODO: BIT10 is HARDBLOCK?
+			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
