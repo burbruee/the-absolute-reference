@@ -46,9 +46,20 @@ void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 		data->x = player->screenPos[0] + 8 * col - 8 * (player->matrixWidth / 2);
 		data->y = player->screenPos[1] - 8 * row - 6;
 		data->objectTable = ObjectTablesBlockExplosions[Rand(8u) % 8];
-		const uint8_t blockNum = TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE);
-		assert(blockNum < lengthof(PalNumTableNormalBlocks));
-		data->palNum = PalNumTableNormalBlocks[blockNum];
+		uint8_t blockNum = TOBLOCKNUM(MATRIX(player, row, col).block & BLOCK_TYPE);
+		// BUG: The SHOTGUN! item calls this function after setting matrix
+		// blocks to empty, resulting in this function reading BLOCKTYPE_EMPTY
+		// from the matrix, which then results in an out-of-bounds access of
+		// PalNumTableNormalBlocks. It ends up using palette 10 in that case,
+		// reading that number from somewhere in memory, and this fix
+		// reproduces that behavior.
+		if ((MATRIX(player, row, col).block & BLOCK_TYPE) == BLOCKTYPE_EMPTY) {
+			data->palNum = 10u;
+		}
+		else {
+			assert(blockNum < lengthof(PalNumTableNormalBlocks));
+			data->palNum = PalNumTableNormalBlocks[blockNum];
+		}
 	}
 }
 

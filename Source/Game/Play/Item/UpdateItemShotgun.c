@@ -18,9 +18,9 @@ enum ShotgunState {
 	STATE_DEACTIVATE
 };
 typedef struct ShotgunData {
-	Block matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH];
-	int16_t shotColumns[MATRIX_HEIGHT];
-	int16_t numShots;
+	Block matrix[MATRIX_HEIGHT][MATRIX_SINGLEWIDTH]; // 0x0
+	int16_t shotColumns[MATRIX_HEIGHT]; // 0x210
+	int16_t numShots; // 0x23C
 } ShotgunData;
 
 // STATE_*
@@ -64,7 +64,8 @@ void UpdateItemShotgun(Item* item) {
 		case STATE_INIT:
 			for (int16_t row = 0; row < MATRIX_HEIGHT; row++) {
 				for (int16_t col = 0; col < MATRIX_SINGLEWIDTH; col++) {
-					data->matrix[row][col] = MATRIX(itemPlayer, row, col).block;
+					// BUG: This uses the activating player's matrix width, when it should probably use item player's.
+					data->matrix[row][col] = itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block;
 				}
 			}
 
@@ -73,10 +74,10 @@ void UpdateItemShotgun(Item* item) {
 			}
 
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-				int16_t col = (Rand(64u) & 0xF) + 1;
-				if (col >= MATRIX_SINGLEWIDTH - 1) {
-					continue;
-				}
+				int16_t col;
+				do {
+					col = (Rand(64u) & 0xF) + 1;
+				} while (col > FIELD_SINGLEWIDTH);
 
 				if (MATRIX(itemPlayer, row, col).block != NULLBLOCK) {
 					data->shotColumns[row] = col;
@@ -91,20 +92,22 @@ void UpdateItemShotgun(Item* item) {
 			for (int16_t row = 0; row < MATRIX_HEIGHT - 1; row++) {
 				if (data->shotColumns[row] != 0) {
 					Block indicatorBlock = NULLBLOCK;
-					if ((item->frames & 1) == 0) {
+					if ((item->frames % 2) == 0) {
 						indicatorBlock |= BLOCKTYPE_O;
 					}
 					else {
 						indicatorBlock |= BLOCKTYPE_Z;
 					}
-					MATRIX(itemPlayer, row, data->shotColumns[row]).block = indicatorBlock;
+					// BUG: This uses the activating player's matrix width, when it should probably use item player's.
+					itemPlayer->matrix[row * activatingPlayer->matrixWidth + data->shotColumns[row]].block = indicatorBlock;
 				}
 			}
 
 			if (++item->frames >= 30) {
 				for (int16_t row = 0; row < MATRIX_HEIGHT; row++) {
 					for (int16_t col = 0; col < MATRIX_SINGLEWIDTH; col++) {
-						MATRIX(itemPlayer, row, col).block = data->matrix[row][col];
+						// BUG: This uses the activating player's matrix width, when it should probably use item player's.
+						itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block = data->matrix[row][col];
 					}
 				}
 
@@ -127,10 +130,13 @@ void UpdateItemShotgun(Item* item) {
 				itemPlayer->screenOffset[1] = (item->frames & 2) == 0 ? 3 : -3;
 				if (data->shotColumns[item->frames] != 0) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-						ShowFieldBlockExplosion(itemPlayer, row, data->shotColumns[row]);
+						if (data->shotColumns[row] != 0) {
+							ShowFieldBlockExplosion(itemPlayer, row, data->shotColumns[row]);
+						}
 					}
-					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).block = NULLBLOCK;
-					MATRIX(itemPlayer, item->frames, data->shotColumns[item->frames]).itemType = ITEMTYPE_NULL;
+					// BUG: This uses the activating player's matrix width, when it should probably use item player's.
+					itemPlayer->matrix[item->frames * activatingPlayer->matrixWidth + data->shotColumns[item->frames]].block = NULLBLOCK;
+					itemPlayer->matrix[item->frames * activatingPlayer->matrixWidth + data->shotColumns[item->frames]].itemType = ITEMTYPE_NULL;
 					if (item->delayDelSoundFrames == 0) {
 						PlaySoundEffect(SOUNDEFFECT_19);
 						item->delayDelSoundFrames++;
@@ -152,6 +158,7 @@ void UpdateItemShotgun(Item* item) {
 		case STATE_DEACTIVATE:
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
+			activatingPlayer->activeItemType = ITEMTYPE_NULL;
 			SetFieldBorderColor(itemPlayer, ITEMTYPE_NULL);
 			DeactivateItem(item);
 			break;

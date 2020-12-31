@@ -39,7 +39,6 @@ void UpdateItemFlipField(Item* item) {
 		switch (item->states[0]) {
 		case STATE_START:
 			RemoveItems(activatingPlayer);
-
 			if (!(itemPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL && !ItemGood(itemPlayer)) {
 				SetFieldBorderColor(itemPlayer, ITEMTYPE_FLIPFIELD);
 				PlaySoundEffect(SOUNDEFFECT_BADITEM);
@@ -113,7 +112,7 @@ void UpdateItemFlipField(Item* item) {
 		case STATE_INITFLIPFIELD:
 			item->flipFrames = 1;
 			data->topFlipRow = 1;
-			data->flipDelay = data->topRow + data->numFlipRows / 2;
+			data->flipDelay = (data->topRow / 2) / 7;
 			item->states[0]++;
 			break;
 
@@ -124,17 +123,17 @@ void UpdateItemFlipField(Item* item) {
 
 			if (data->numFlipRows < 2 * FIELD_HEIGHT - 1 && item->flipFrames >= data->flipDelay) {
 				item->flipFrames = 0;
-				data->flipDelay = ((data->numFlipRows >= FIELD_HEIGHT ? 2 * FIELD_HEIGHT - data->numFlipRows : data->numFlipRows) >> 1) / 7;
+				data->flipDelay = ((FIELD_HEIGHT - (data->numFlipRows - FIELD_HEIGHT < 0 ? FIELD_HEIGHT - data->numFlipRows : data->numFlipRows - FIELD_HEIGHT)) / 2) / 7;
 
 				for (int16_t copyRow = 1, flipRow = data->topFlipRow; flipRow < data->numFlipRows + 2; flipRow++) {
-					int16_t row = flipRow >= FIELD_HEIGHT ? 2 * FIELD_HEIGHT - flipRow : flipRow;
+					const int16_t row = flipRow - FIELD_HEIGHT < 0 ? FIELD_HEIGHT - flipRow : flipRow - FIELD_HEIGHT;
 					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 						if (flipRow == data->topFlipRow) {
-							MATRIX(itemPlayer, row, col).block = NULLBLOCK;
-							MATRIX(itemPlayer, row, col).itemType = ITEMTYPE_NULL;
+							MATRIX(itemPlayer, FIELD_HEIGHT - row, col).block = NULLBLOCK;
+							MATRIX(itemPlayer, FIELD_HEIGHT - row, col).itemType = ITEMTYPE_NULL;
 						}
 						else {
-							MATRIX(itemPlayer, row, col) = data->matrix[copyRow * MATRIX_SINGLEWIDTH + col];
+							MATRIX(itemPlayer, FIELD_HEIGHT - row, col) = data->matrix[copyRow * MATRIX_SINGLEWIDTH + col];
 						}
 					}
 
