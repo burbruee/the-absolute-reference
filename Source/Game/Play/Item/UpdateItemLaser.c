@@ -128,13 +128,13 @@ void UpdateItemLaser(Item* item) {
 				if (ROTATED_ANY(GameButtonsNew[itemPlayer->num])) {
 					data->numRotations[NUMROTATIONS_ITEMPLAYER]++;
 				}
-				if (ROTATED_ANY(GameButtonsNew[activatingPlayer->num])) {
+				if (ROTATED_ANY(GameButtonsNew[activatingPlayer->num]) && !(activatingPlayer->modeFlags & MODE_ITEM)) {
 					data->numRotations[NUMROTATIONS_ACTIVATINGPLAYER]++;
 				}
 			}
 
-			if (data->numRotations[NUMROTATIONS_ITEMPLAYER] / 10 - data->numRotations[NUMROTATIONS_ACTIVATINGPLAYER] / 15 > 0) {
-				data->laserWidth = data->numRotations[NUMROTATIONS_ITEMPLAYER] / 10 - data->numRotations[NUMROTATIONS_ACTIVATINGPLAYER] / 15 + 1;
+			if ((data->numRotations[NUMROTATIONS_ITEMPLAYER] / 10) - (data->numRotations[NUMROTATIONS_ACTIVATINGPLAYER] / 15) > 0) {
+				data->laserWidth = (data->numRotations[NUMROTATIONS_ITEMPLAYER] / 10) - (data->numRotations[NUMROTATIONS_ACTIVATINGPLAYER] / 15) + 1;
 			}
 			else {
 				data->laserWidth = 1;
@@ -153,13 +153,11 @@ void UpdateItemLaser(Item* item) {
 				9, -9,
 				-1
 			};
-			if (data->laserWidth > 0) {
-				for (int16_t i = 0, col = 0; col < data->laserWidth; i++) {
-					if (data->laserCenterColumn + columnOffsets[i] > 0 && data->laserCenterColumn + columnOffsets[i] < MATRIX_SINGLEWIDTH - 1) {
-						ShowLaserReticle(itemPlayer, 20, columnOffsets[i] + data->laserCenterColumn, data->laserFrames / 5);
-						data->laserColumns[col] = data->laserCenterColumn + columnOffsets[i];
-						col++;
-					}
+			for (int16_t i = 0, col = 0; col < data->laserWidth; i++) {
+				if (data->laserCenterColumn + columnOffsets[i] > 0 && data->laserCenterColumn + columnOffsets[i] < MATRIX_SINGLEWIDTH - 1) {
+					ShowLaserReticle(itemPlayer, FIELD_HEIGHT, columnOffsets[i] + data->laserCenterColumn, data->laserFrames / 5);
+					data->laserColumns[col] = data->laserCenterColumn + columnOffsets[i];
+					col++;
 				}
 			}
 
@@ -182,12 +180,10 @@ void UpdateItemLaser(Item* item) {
 			break;
 
 		case STATE_LASER:
-			if (data->laserWidth > 0) {
-				for (int16_t i = 0; i < data->laserWidth; i++) {
-					ShowLaserReticle(itemPlayer, 20, data->laserColumns[i], 0);
-					if (item->frames == 0) {
-						ShowLaser(itemPlayer, 20, data->laserColumns[i]);
-					}
+			for (int16_t i = 0; i < data->laserWidth; i++) {
+				ShowLaserReticle(itemPlayer, FIELD_HEIGHT, data->laserColumns[i], 0);
+				if (item->frames == 0) {
+					ShowLaser(itemPlayer, FIELD_HEIGHT, data->laserColumns[i]);
 				}
 			}
 			if (item->frames == 0) {
@@ -195,14 +191,15 @@ void UpdateItemLaser(Item* item) {
 			}
 
 			if (++item->frames < FIELD_HEIGHT - 1) {
+				const int16_t topRow = item->delRow;
 				item->delRow -= 2;
 				for (int16_t i = 0; i < data->laserWidth; i++) {
-					for (int16_t numDelRows = 0, row = item->delRow; numDelRows < 2; row--, numDelRows++) {
-						MatrixBlock* square = &MATRIX(itemPlayer, row, data->laserColumns[i]);
-						if (square->block != NULLBLOCK && row > 0 && row < MATRIX_SINGLEWIDTH - 1) {
+					for (int16_t numDelRows = 0, row = topRow; numDelRows < 2; row--, numDelRows++) {
+						MatrixBlock* matrixBlock = &itemPlayer->matrix[row * activatingPlayer->matrixWidth + data->laserColumns[i]];
+						if (matrixBlock->block != NULLBLOCK && row > 0 && row < MATRIX_SINGLEWIDTH - 1) {
 							ShowFieldBlockExplosion(itemPlayer, row, data->laserColumns[i]);
-							square->block = NULLBLOCK;
-							square->itemType = ITEMTYPE_NULL;
+							matrixBlock->block = NULLBLOCK;
+							matrixBlock->itemType = ITEMTYPE_NULL;
 							PlaySoundEffect(SOUNDEFFECT_19);
 						}
 					}
