@@ -22,7 +22,7 @@ typedef struct RollRollData {
 
 // STATE_ROLLROLL
 #define rollRollFrames values[0]
-#define numBlocks values[1]
+#define numRollRollBlocks values[1]
 
 void UpdateItemRollRoll(Item* item) {
 	Player* activatingPlayer = item->activatingPlayer;
@@ -41,7 +41,7 @@ void UpdateItemRollRoll(Item* item) {
 				ShowItemWarningRollRoll(itemPlayer);
 				PlaySoundEffect(SOUNDEFFECT_BADITEM);
 				item->frames = 100;
-				item->numBlocks = 0;
+				item->numRollRollBlocks = 0;
 				item->states[0]++;
 			}
 			break;
@@ -53,13 +53,13 @@ void UpdateItemRollRoll(Item* item) {
 			break;
 
 		case STATE_INIT:
-			if (item->numBlocks < 3 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_ROLLROLL) {
+			if (item->numRollRollBlocks < 3 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_ROLLROLL) {
 				itemPlayer->nextBlock |= BLOCK_ROLLROLL;
 			}
 
 			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
-			item->numBlocks++;
+			item->numRollRollBlocks++;
 			data->numStartBlocks = itemPlayer->numBlocks;
 			item->rollRollFrames = 0;
 			data->rollRollDelay = 30;
@@ -71,7 +71,7 @@ void UpdateItemRollRoll(Item* item) {
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 			}
 
-			if (item->numBlocks <= 2 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_ROLLROLL) {
+			if (item->numRollRollBlocks < 3 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_ROLLROLL) {
 				itemPlayer->nextBlock |= BLOCK_ROLLROLL;
 			}
 
@@ -82,7 +82,7 @@ void UpdateItemRollRoll(Item* item) {
 			item->rollRollFrames++;
 
 			if (itemPlayer->play.state == PLAYSTATE_GARBAGECHECK && itemPlayer->numBlocks != data->numStartBlocks && itemPlayer->numGarbageRows == 0) {
-				if (item->numBlocks < 3) {
+				if (item->numRollRollBlocks < 3) {
 					item->states[0] = STATE_INIT;
 				}
 				else {
@@ -90,13 +90,13 @@ void UpdateItemRollRoll(Item* item) {
 				}
 			}
 			else {
-				itemPlayer->nowFlags &= NOW_NOGARBAGE;
+				itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			}
 			break;
 
 		case STATE_DEACTIVATE:
 			itemPlayer->itemMiscFlags &= ~ITEMMISC_ROTATE;
-			itemPlayer->play.flags &= PLAYFLAG_FORCEENTRY;
+			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			if (!NoDisableGarbage(item)) {
 				itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			}
