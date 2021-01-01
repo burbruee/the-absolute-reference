@@ -51,8 +51,8 @@ void UpdateItemTransform(Item* item) {
 			break;
 
 		case STATE_INIT:
-			itemPlayer->play.flags &= PLAYFLAG_FORCEENTRY;
-			itemPlayer->nowFlags &= NOW_NOGARBAGE;
+			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
+			itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			item->numTransformBlocks++;
 			data->numStartBlocks = itemPlayer->numBlocks;
 			item->states[0]++;
@@ -63,7 +63,7 @@ void UpdateItemTransform(Item* item) {
 				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 			}
 
-			if (item->numTransformBlocks <= 2 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_TRANSFORM) {
+			if (item->numTransformBlocks < 3 && (itemPlayer->nextBlock & (BLOCK_TRANSFORM | BLOCK_BIG | BLOCK_HARD | BLOCK_ROLLROLL)) != BLOCK_TRANSFORM) {
 				itemPlayer->nextBlock |= BLOCK_TRANSFORM;
 			}
 
@@ -85,7 +85,7 @@ void UpdateItemTransform(Item* item) {
 
 		case STATE_DEACTIVATE:
 		default:
-			itemPlayer->play.flags &= PLAYFLAG_FORCEENTRY;
+			itemPlayer->play.flags &= ~PLAYFLAG_FORCEENTRY;
 			if (!NoDisableGarbage(item)) {
 				itemPlayer->nowFlags &= ~NOW_NOGARBAGE;
 			}
