@@ -2,6 +2,7 @@
 #include "Game/Play/Player.h"
 #include "Game/Play/Matrix.h"
 #include "Game/Graphics/ShowBlockField.h"
+#include "Game/Graphics/ShowGameStatus.h"
 #include "Video/Video.h"
 #include "Video/Pal.h"
 #include "Main/Frame.h"
@@ -392,11 +393,8 @@ void UpdateItems() {
 				break;
 			}
 		}
-		// TODO
-#if 0
 		if (ItemHeapHead != NULL) {
 			ShowOtherItemDescriptions(ItemHeapHead);
 		}
-#endif
 	}
 }
