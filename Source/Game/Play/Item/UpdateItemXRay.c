@@ -48,10 +48,10 @@ void UpdateItemXRay(Item* item) {
 
 		case STATE_INIT:
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-				MATRIX(itemPlayer, MATRIX_HEIGHT - 1, col).block = NULLBLOCK;
+				itemPlayer->matrix[(MATRIX_HEIGHT - 1) * activatingPlayer->matrixWidth + col].block = NULLBLOCK;
 			}
 
-			item->frames = 100;
+			item->frames = 300;
 			item->visibleColumn = 0;
 			item->states[0]++;
 			break;
@@ -60,11 +60,13 @@ void UpdateItemXRay(Item* item) {
 			if (--item->frames > 0) {
 				for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-						if (item->visibleColumn % 60 == col) {
-							MATRIX(itemPlayer, row, col).block &= ~BLOCK_INVISIBLE;
-						}
-						else {
-							MATRIX(itemPlayer, row, col).block |= BLOCK_INVISIBLE;
+						if ((itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
+							if (item->visibleColumn % 60 == col) {
+								itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block &= ~BLOCK_INVISIBLE;
+							}
+							else {
+								itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block |= BLOCK_INVISIBLE;
+							}
 						}
 					}
 				}
@@ -83,7 +85,9 @@ void UpdateItemXRay(Item* item) {
 		case STATE_SETVISIBLE:
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					MATRIX(itemPlayer, row, col).block &= ~BLOCK_INVISIBLE;
+					if ((itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block & BLOCK_TYPE) != BLOCKTYPE_EMPTY && !(activatingPlayer->modeFlags & MODE_INVISIBLE)) {
+						itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block &= ~BLOCK_INVISIBLE;
+					}
 				}
 			}
 			item->states[0]++;
