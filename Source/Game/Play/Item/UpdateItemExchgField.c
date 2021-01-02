@@ -56,20 +56,24 @@ void UpdateItemExchgField(Item* item) {
 			break;
 
 		case STATE_EXCHGFIELD:
-			if (data->exchgFrames++ & 1) {
+			if (data->exchgFrames++ % 2) {
 				ShowColumnMarker(itemPlayer, item->exchgCol);
 				for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-					if (!(MATRIX(itemPlayer, row, item->exchgCol).block & BLOCK_ITEM)) {
-						MATRIX(itemPlayer, row, item->exchgCol) = MATRIX(activatingPlayer, row, item->exchgCol);
+					const Block block = itemPlayer->matrix[row * activatingPlayer->matrixWidth + item->exchgCol].block;
+					if (!(block & BLOCK_ITEM)) {
+						itemPlayer->matrix[row * activatingPlayer->matrixWidth + item->exchgCol] =
+							activatingPlayer->matrix[row * activatingPlayer->matrixWidth + item->exchgCol];
 					}
-					MATRIX(activatingPlayer, row, item->exchgCol).block &= ~BLOCK_ITEM;
+					MATRIX(activatingPlayer, row, item->exchgCol).block = block & ~BLOCK_ITEM;
 				}
 				item->exchgCol++;
 			}
 
 			for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-				MATRIX(itemPlayer, MATRIX_HEIGHT - 1, col).block = NULLBLOCK;
-				MATRIX(itemPlayer, MATRIX_HEIGHT - 1, col).itemType = ITEMTYPE_NULL;
+				itemPlayer->matrix[(MATRIX_HEIGHT - 1) * activatingPlayer->matrixWidth + col].block = NULLBLOCK;
+				itemPlayer->matrix[(MATRIX_HEIGHT - 1) * activatingPlayer->matrixWidth + col].itemType = ITEMTYPE_NULL;
+				MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col).block = NULLBLOCK;
+				MATRIX(activatingPlayer, MATRIX_HEIGHT - 1, col).itemType = ITEMTYPE_NULL;
 			}
 
 			if (item->exchgCol == MATRIX_SINGLEWIDTH - 1) {
