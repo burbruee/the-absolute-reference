@@ -6,8 +6,8 @@
 #include "Lib/Math.h"
 
 enum FreeFallState {
+	STATE_INIT,
 	STATE_START,
-	STATE_CHECKDELAY,
 	STATE_DELAY,
 	STATE_INITSLAM,
 	STATE_DELAYSLAM,
@@ -39,11 +39,12 @@ void UpdateItemFreeFall(Item* item) {
 
 	if (!CheckDeactivateItem(item)) {
 		switch (item->states[0]) {
-		case STATE_START:
+		case STATE_INIT:
 			data->waitForEntry = false;
 			data->numSlams = 0;
 			data->numLines = 0;
-		case STATE_CHECKDELAY:
+			item->states[0]++;
+		case STATE_START:
 			RemoveItems(activatingPlayer);
 			if (!(activatingPlayer->nowFlags & NOW_LOCKING) && activatingPlayer->activeItemType == ITEMTYPE_NULL) {
 				if (ItemConfusing(itemPlayer)) {
@@ -110,7 +111,7 @@ void UpdateItemFreeFall(Item* item) {
 		case STATE_NEXT:
 			if (++data->numSlams >= 2) {
 				activatingPlayer->screenOffset[1] = 0;
-				item->frames = 0;
+				item->frames = 4;
 				item->states[0]++;
 			}
 			else {
@@ -155,34 +156,34 @@ void UpdateItemFreeFall(Item* item) {
 
 		case STATE_GARBAGE:
 			FreeFall(activatingPlayer);
+			bool lastLineFound = false;
 			for (numLines = 1; numLines < MATRIX_HEIGHT - 1; numLines++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 					if ((MATRIX(activatingPlayer, numLines, col).block & BLOCK_TYPE) == BLOCKTYPE_EMPTY) {
-						break;
+						goto lastLineFound;
 					}
 				}
 			}
+			lastLineFound:
 			numLines--;
 
 			if ((GameFlags & GAME_VERSUS) || (activatingPlayer->modeFlags & MODE_ITEM)) {
 				int16_t sentGarbageRows = 0;
-				int16_t garbageHoleCol = (Rand(1192u) + 1) % 10;
-				if (numLines != 0) {
-					for (int16_t row = numLines; row != 0; row--) {
-						ShowLineClear(activatingPlayer, row);
-						for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-							if (itemPlayer->numGarbageRows + sentGarbageRows < GARBAGEHEIGHT) {
-								if (col == garbageHoleCol) {
-									itemPlayer->garbage[(itemPlayer->numGarbageRows + sentGarbageRows) * MATRIX_SINGLEWIDTH + col - 1] = NULLBLOCK;
-								}
-								else {
-									itemPlayer->garbage[(itemPlayer->numGarbageRows + sentGarbageRows) * MATRIX_SINGLEWIDTH + col - 1] = MATRIX(activatingPlayer, row, col).block;
-								}
+				int16_t garbageHoleCol = (Rand(1192u) % 10u) + 1;
+				for (int16_t row = numLines; row != 0; row--, sentGarbageRows++) {
+					ShowLineClear(activatingPlayer, row);
+					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
+						if (itemPlayer->numGarbageRows + sentGarbageRows < GARBAGEHEIGHT) {
+							if (col == garbageHoleCol) {
+								itemPlayer->garbage[(itemPlayer->numGarbageRows + sentGarbageRows) * MATRIX_SINGLEWIDTH + col - 1] = NULLBLOCK;
 							}
-
-							MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
-							MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
+							else {
+								itemPlayer->garbage[(itemPlayer->numGarbageRows + sentGarbageRows) * MATRIX_SINGLEWIDTH + col - 1] = MATRIX(activatingPlayer, row, col).block;
+							}
 						}
+
+						MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
+						MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
 					}
 				}
 
@@ -195,13 +196,11 @@ void UpdateItemFreeFall(Item* item) {
 				}
 			}
 			else {
-				if (numLines != 0) {
-					for (int16_t row = numLines; row != 0; row--) {
-						ShowLineClear(activatingPlayer, row);
-						for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-							MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
-							MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
-						}
+				for (int16_t row = numLines; row != 0; row--) {
+					ShowLineClear(activatingPlayer, row);
+					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
+						MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
+						MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
 					}
 				}
 				if (numLines > 1) {
@@ -215,7 +214,7 @@ void UpdateItemFreeFall(Item* item) {
 				item->states[0]++;
 			}
 			else {
-				item->frames = 25;
+				item->frames = 40;
 				item->states[0] = STATE_DEACTIVATE;
 			}
 			break;
