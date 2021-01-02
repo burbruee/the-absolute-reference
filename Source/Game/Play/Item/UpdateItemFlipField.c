@@ -31,6 +31,8 @@ typedef struct FlipFieldData {
 #define flipFrames values[1]
 
 void UpdateItemFlipField(Item* item) {
+	STATIC_ASSERT(sizeof(FlipFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	FlipFieldData* data = (FlipFieldData*)item->data;

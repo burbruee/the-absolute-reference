@@ -31,6 +31,8 @@ typedef struct TopDelFieldData {
 #define startDelCol values[1]
 
 void UpdateItemTopDelField(Item* item) {
+	STATIC_ASSERT(sizeof(TopDelFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	TopDelFieldData* data = (TopDelFieldData*)item->data;

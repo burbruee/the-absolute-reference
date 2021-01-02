@@ -36,6 +36,8 @@ typedef struct MirrorBlockData {
 #define firstBlockFrames values[1]
 
 void UpdateItemMirrorBlock(Item* item) {
+	STATIC_ASSERT(sizeof(MirrorBlockData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	MirrorBlockData* data = (MirrorBlockData*)item->data;
@@ -65,16 +67,16 @@ void UpdateItemMirrorBlock(Item* item) {
 			break;
 
 		case STATE_INIT:
-			for (int16_t row = 1; row < MATRIX_HEIGHT; row++) {
-				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-					data->matrix[row][col] = MATRIX(itemPlayer, row, MATRIX_SINGLEWIDTH - 1 - col);
+			for (size_t row = 1; row < MATRIX_HEIGHT; row++) {
+				for (size_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
+					data->matrix[row][col] = itemPlayer->matrix[row * activatingPlayer->matrixWidth + MATRIX_SINGLEWIDTH - 1 - col];
 				}
 			}
 
 			data->topRow = 0;
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-					if (MATRIX(itemPlayer, row, col).block != NULLBLOCK) {
+				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
+					if ((itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block & BLOCK_TYPE) != BLOCKTYPE_EMPTY) {
 						data->topRow = row;
 					}
 				}
@@ -93,7 +95,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			if (item->frames > 0) {
 				if (item->mirrorColumn < MATRIX_SINGLEWIDTH - 1) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
+						itemPlayer->matrix[row * activatingPlayer->matrixWidth + item->mirrorColumn] = data->matrix[row][item->mirrorColumn];
 					}
 					ShowColumnMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;
@@ -126,14 +128,14 @@ void UpdateItemMirrorBlock(Item* item) {
 		case STATE_INITNEXT:
 			for (int16_t row = 1; row < MATRIX_HEIGHT; row++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-					data->matrix[row][col] = MATRIX(itemPlayer, row, MATRIX_SINGLEWIDTH - 1 - col);
+					data->matrix[row][col] = itemPlayer->matrix[row * activatingPlayer->matrixWidth + MATRIX_SINGLEWIDTH - 1 - col];
 				}
 			}
 
 			data->topRow = 0;
 			for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH; col++) {
-					if (MATRIX(itemPlayer, row, col).block != NULLBLOCK) {
+					if (itemPlayer->matrix[row * activatingPlayer->matrixWidth + col].block != NULLBLOCK) {
 						data->topRow = row;
 					}
 				}
@@ -153,7 +155,7 @@ void UpdateItemMirrorBlock(Item* item) {
 			if (item->frames > 0) {
 				if (item->mirrorColumn < MATRIX_SINGLEWIDTH - 1) {
 					for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
-						MATRIX(itemPlayer, row, item->mirrorColumn) = data->matrix[row][item->mirrorColumn];
+						itemPlayer->matrix[row * activatingPlayer->matrixWidth + item->mirrorColumn] = data->matrix[row][item->mirrorColumn];
 					}
 					ShowColumnMarker(itemPlayer, item->mirrorColumn);
 					item->mirrorColumn++;

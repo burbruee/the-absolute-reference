@@ -32,6 +32,8 @@ typedef struct FreeFallData {
 #define frames values[1]
 
 void UpdateItemFreeFall(Item* item) {
+	STATIC_ASSERT(sizeof(FreeFallData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	int16_t numLines;

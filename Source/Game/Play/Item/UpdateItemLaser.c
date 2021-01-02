@@ -48,6 +48,8 @@ typedef enum NumRotations {
 static int16_t LaserCenterColumn(Player* player);
 
 void UpdateItemLaser(Item* item) {
+	STATIC_ASSERT(sizeof(LaserData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	LaserData* data = (LaserData*)item->data;

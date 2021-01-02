@@ -33,6 +33,8 @@ typedef struct ShotgunData {
 #define delayDelSoundFrames values[1]
 
 void UpdateItemShotgun(Item* item) {
+	STATIC_ASSERT(sizeof(ShotgunData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	ShotgunData* data = (ShotgunData*)item->data;

@@ -392,5 +392,11 @@ void UpdateItems() {
 				break;
 			}
 		}
+		// TODO
+#if 0
+		if (ItemHeapHead != NULL) {
+			ShowOtherItemDescriptions(ItemHeapHead);
+		}
+#endif
 	}
 }

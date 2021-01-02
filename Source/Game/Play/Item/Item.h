@@ -84,7 +84,13 @@ struct Item {
 
 	int16_t values[3];
 	uint8_t states[4];
-	DATA(data, 0x800);
+	// NOTE: The data store was originally 0x800 bytes in the SH-2 code, and
+	// that worked because data is pretty tightly packed in that version, but I
+	// found MatrixBlock is 16 bytes with x64 builds created by Visual Studio
+	// 2019, so the data store needs expansion to work there. The need for
+	// expanded storage came up while I was working on the mirror block item.
+	// -Brandon McGriff
+	DATA(data, 0x1000);
 
 	struct Player* activatingPlayer;
 

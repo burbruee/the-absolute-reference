@@ -40,3 +40,6 @@
 // in centiseconds instead of frames for the third argument.
 #define TIME(minutes, seconds, frames) ((((uint32_t)(minutes) * 60u + (uint32_t)(seconds)) * 60u) + (uint32_t)(frames))
 #define CS(centiseconds) (((uint32_t)(centiseconds) * 60u) / 100u)
+
+// Using this allows checking conditions at compile time, such as whether structures are big enough. A better option than this is available in C11, but the code is written to only require C99, so this alternative has to be used.
+#define STATIC_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))

@@ -29,6 +29,8 @@ typedef struct DelEvenData {
 #define frames values[0]
 
 void UpdateItemDelEven(Item* item) {
+	STATIC_ASSERT(sizeof(DelEvenData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	DelEvenData* data = (DelEvenData*)item->data;

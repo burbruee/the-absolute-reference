@@ -27,6 +27,8 @@ typedef struct RightMovFieldData {
 #define frames values[0]
 
 void UpdateItemRightMovField(Item* item) {
+	STATIC_ASSERT(sizeof(RightMovFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	RightMovFieldData* data = (RightMovFieldData*)item->data;

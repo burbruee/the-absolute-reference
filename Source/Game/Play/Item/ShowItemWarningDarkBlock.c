@@ -15,7 +15,9 @@ void ShowItemWarningDarkBlock(Player* player) {
 		ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 		entity->warningFrames = 0;
 		data->x = 4;
-		data->x = player->screenPos[0] + player->screenOffset[0] - (player->matrixWidth / 2) * 8;
+		data->x =
+			player->screenPos[0] + player->screenOffset[0] -
+			(player->matrixWidth / 2) * 8 + (data->x + 2) * 8;
 		data->y = player->screenPos[1] + player->screenOffset[1] - 96;
 		data->objectTable = OBJECTTABLE_ITEMWARNINGDARKBLOCK;
 		data->palNum = 190u;

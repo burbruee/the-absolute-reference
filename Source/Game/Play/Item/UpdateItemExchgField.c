@@ -23,6 +23,8 @@ typedef struct ExchgFieldData {
 #define exchgCol values[1]
 
 void UpdateItemExchgField(Item* item) {
+	STATIC_ASSERT(sizeof(ExchgFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	ExchgFieldData* data = (ExchgFieldData*)item->data;

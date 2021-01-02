@@ -27,6 +27,8 @@ typedef struct LeftMovFieldData {
 #define frames values[0]
 
 void UpdateItemLeftMovField(Item* item) {
+	STATIC_ASSERT(sizeof(LeftMovFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	LeftMovFieldData* data = (LeftMovFieldData*)item->data;

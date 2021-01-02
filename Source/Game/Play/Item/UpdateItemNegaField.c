@@ -33,6 +33,8 @@ typedef struct NegaFieldData {
 #define forceLockBlock values[0]
 
 void UpdateItemNegaField(Item* item) {
+	STATIC_ASSERT(sizeof(NegaFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	NegaFieldData* data = (NegaFieldData*)item->data;

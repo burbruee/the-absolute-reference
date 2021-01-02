@@ -22,6 +22,8 @@ typedef struct TransformData {
 #define frames values[2]
 
 void UpdateItemTransform(Item* item) {
+	STATIC_ASSERT(sizeof(TransformData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	TransformData* data = (TransformData*)item->data;

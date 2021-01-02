@@ -37,7 +37,7 @@ void SetFieldBorderColor(Player* player, ItemType itemType) {
 	uint8_t palNum = player->num == PLAYER1 ? 16u : 32u;
 
 	if (itemType != ITEMTYPE_NULL) {
-		SetPal(palNum, 16u, PalTableItemFieldBorder[itemType]);
+		SetPal(palNum, 16u, PalTableItemFieldBorder[TOITEMNUM(itemType)]);
 	}
 	else if (GameFlags & GAME_DOUBLES) {
 		SetPal(palNum, 16u, PAL_DOUBLESFIELDBORDER);

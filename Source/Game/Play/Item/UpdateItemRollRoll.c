@@ -25,6 +25,8 @@ typedef struct RollRollData {
 #define numRollRollBlocks values[1]
 
 void UpdateItemRollRoll(Item* item) {
+	STATIC_ASSERT(sizeof(RollRollData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	RollRollData* data = (RollRollData*)item->data;

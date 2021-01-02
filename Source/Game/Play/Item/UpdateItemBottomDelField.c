@@ -29,6 +29,8 @@ typedef struct BottomDelFieldData {
 #define delCol values[1]
 
 void UpdateItemBottomDelField(Item* item) {
+	STATIC_ASSERT(sizeof(BottomDelFieldData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	BottomDelFieldData* data = (BottomDelFieldData*)item->data;

@@ -28,6 +28,8 @@ typedef struct ColorBlockData {
 #define animIndex values[1]
 
 void UpdateItemColorBlock(Item* item) {
+	STATIC_ASSERT(sizeof(ColorBlockData) <= sizeoffield(Item, data));
+
 	Player* activatingPlayer = item->activatingPlayer;
 	Player* itemPlayer = activatingPlayer->itemPlayer;
 	ColorBlockData* data = (ColorBlockData*)item->data;
