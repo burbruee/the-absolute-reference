@@ -44,7 +44,7 @@ uint16_t NumVideoSetters = 0u;
 VideoSetter VideoSetters[MAXVIDEOSETTERS];
 
 typedef struct STRUCT_6064550 {
-	Color* src;
+	const Color* src;
 	RAMDATA Color* dst;
 	int16_t delay;
 	int16_t frames;
@@ -538,7 +538,7 @@ void UNK_6024244() {
 			while (CurrentPauseMode < PAUSEMODE_BG && --var2->UNK_34 <= 0) {
 				int16_t var3;
 				var2->UNK_34 = var2->UNK_36;
-				if (!(var2->UNK_2C & 0x800)) {
+				if (!(var2->UNK_2C & 0x800u)) {
 					if (var2->animFrame < var2->UNK_28 - 1) {
 						var3 = var2->animFrame + 1;
 					}
@@ -650,25 +650,25 @@ void UNK_60243E8(AddSpriteData* arg0) {
 		}
 		else if (CurrentPauseMode == PAUSEMODE_NOPAUSE && (arg0->UNK_2C & 3u) != 0 && arg0->UNK_30 == 0) {
 			var1 = true;
-			arg0->UNK_30 = UNK_60356C8[arg0->UNK_2C & 3];
+			arg0->UNK_30 = UNK_60356C8[arg0->UNK_2C & 3u];
 		}
 	}
 	object += (size_t)numSprites - 1;
 	for (int16_t i = 0; i < numSprites; i++, object--) {
-		if (((*object)[0] & 0x8000u) == 0 || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0 ) {
+		if (((*object)[0] & 0x8000u) == 0u || ((ScreenTimeOdd + 1) & arg0->UNK_2F) == 0u ) {
 			int16_t offsetY = OBJECT_GETY(object);
 			int16_t offsetX = OBJECT_GETX(object);
 
 			// verticalHorizontal at least has flags indicating if the object should be
 			// flipped horizontally (0x0080) and/or vertically (0x8000); there
 			// could be more flags in it.
-			if (arg0->verticalHorizontal & 0x8000) {
+			if (arg0->verticalHorizontal & 0x8000u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
 				offsetY = (OBJECT_GETH(object) + 1) * -16 - offsetY;
 			}
-			if (arg0->verticalHorizontal & 0x0080) {
+			if (arg0->verticalHorizontal & 0x0080u) {
 				// BUG: The original did a "& 0xFu" on the height-plus-one
 				// value, but that's not strictly correct; for a 16-tile sized
 				// sprite, that'd result in a 0-tile flipping offset applied.
@@ -682,17 +682,17 @@ void UNK_60243E8(AddSpriteData* arg0) {
 			uint8_t bgPri = (arg0->flipXBgPri << 4) & 0x30u;
 			uint8_t bgPriHorizontal = (bgPri | horizontal) & 0xCFu;
 
-			if (arg0->verticalHorizontal & 0x8000) {
-				if (sprPriVertical & 0x80) {
-					sprPriVertical &= 0x7f;
+			if (arg0->verticalHorizontal & 0x8000u) {
+				if (sprPriVertical & 0x80u) {
+					sprPriVertical &= 0x7Fu;
 				}
 				else {
-					sprPriVertical |= 0x80;
+					sprPriVertical |= 0x80u;
 				}
 			}
 			UNK_6061932.tempSprite[2] = (((uint16_t)sprPriVertical) << 8) | arg0->scaleY;
-			if (arg0->verticalHorizontal & 0x80) {
-				if (horizontal & 0x80) {
+			if (arg0->verticalHorizontal & 0x80u) {
+				if (horizontal & 0x80u) {
 					bgPriHorizontal &= 0x4Fu;
 				}
 				else {
@@ -701,7 +701,7 @@ void UNK_60243E8(AddSpriteData* arg0) {
 			}
 			UNK_6061932.tempSprite[3] = (((uint16_t)bgPriHorizontal) << 8) | arg0->scaleX;
 			if (var0) {
-				if (OBJECT_GETSPRPRI(object) & 2) {
+				if (OBJECT_GETSPRPRI(object) & 2u) {
 					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 16u);
 				}
 				else if (arg0->palNum == 0) {
@@ -712,11 +712,11 @@ void UNK_60243E8(AddSpriteData* arg0) {
 				}
 			}
 			else if (var1) {
-				if (OBJECT_GETSPRPRI(object) & 2) {
+				if (OBJECT_GETSPRPRI(object) & 2u) {
 					OBJECT_SETPALNUM(&UNK_6061932.tempSprite, 32u);
 				}
 				else {
-					if (arg0->palNum == 0) {
+					if (arg0->palNum == 0u) {
 						OBJECT_SETPALNUM(&UNK_6061932.tempSprite, OBJECT_GETPALNUM(object));
 					}
 					else {
