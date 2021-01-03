@@ -450,7 +450,6 @@ static GameLoopState GameStartDoubles() {
 	case 0u:
 		Game.state = 1u;
 		UNK_6029546(2, 20, 0, 6);
-		break;
 
 	case 1u:
 		while (UNK_6064750 != NULL) {
