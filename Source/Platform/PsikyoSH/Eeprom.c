@@ -13,8 +13,10 @@
 
 // TODO: Remove the return statements at the start of these functions and get EEP-ROM support to work.
 
-void PushEepromBit(bool bit) {
-	return;
+static uint8_t ReadEepromByte(uint8_t offset);
+static void WriteEepromByte(uint8_t offset, uint8_t data);
+
+static void PushEepromBit(bool bit) {
 	EEPROM_WRITE_ACCESS(0u, ((uint8_t)bit << 5) | 0x82u);
 	for (uint8_t i = 0u; i < 3u; i++);
 
@@ -28,8 +30,7 @@ void PushEepromBit(bool bit) {
 	for (uint8_t i = 0u; i < 3u; i++);
 }
 
-void UNK_602F704() {
-	return;
+static void StartEepromWrite() {
 	EEPROM_WRITE_ACCESS(0u, 0xA2u);
 	for (uint32_t i = 0u; i < 3u; i++);
 
@@ -55,8 +56,7 @@ void UNK_602F704() {
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
-void UNK_602F7DC() {
-	return;
+static void FinishEepromWrite() {
 	EEPROM_WRITE_ACCESS(0u, 0xA2u);
 	for (uint32_t i = 0u; i < 3u; i++);
 
@@ -82,8 +82,7 @@ void UNK_602F7DC() {
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
-void UNK_602F8BC() {
-	return;
+void ReadSettings() {
 	for (uint8_t i = 0u; i < lengthof(Settings); i++) {
 		EEPROM_WRITE_ACCESS(0u, 0xA2u);
 		for (uint8_t j = 0u; j < 3u; j++);
@@ -125,8 +124,7 @@ void UNK_602F8BC() {
 }
 
 void UNK_602FA7E() {
-	return;
-	UNK_602F704();
+	StartEepromWrite();
 
 	EEPROM_WRITE_ACCESS(0u, 0xA2u);
 	for (uint8_t i = 0u; i < 3u; i++);
@@ -164,12 +162,11 @@ void UNK_602FA7E() {
 	}
 	EEPROM_WRITE_ACCESS(0u, 0x42u);
 
-	UNK_602F7DC();
+	FinishEepromWrite();
 }
 
 void WriteSettings() {
-	return;
-    UNK_602F704();
+    StartEepromWrite();
 
 	for (uint32_t i = 0u; i < lengthof(Settings); i++) {
 		EEPROM_WRITE_ACCESS(0u, 0xA2u);
@@ -210,11 +207,10 @@ void WriteSettings() {
 		EEPROM_WRITE_ACCESS(0u, 0x42u);
     }
 
-    UNK_602F7DC();
+    FinishEepromWrite();
 }
 
 uint8_t ReadEepromByte(uint8_t offset) {
-	return 0u;
 	EEPROM_WRITE_ACCESS(0u, 0xA2u);
 	for (uint8_t i = 0u; i < 3u; i++);
 	EEPROM_WRITE_ACCESS(0u, 0xE2u);
@@ -257,7 +253,6 @@ uint8_t ReadEepromByte(uint8_t offset) {
 }
 
 void ReadEeprom(uint8_t offset, void* destination, size_t size) {
-	return;
 	assert(size < EEPROM_SIZE);
     uint8_t* dstPtr = destination;
 	for (uint8_t i = 0u; i < size; i++) {
@@ -266,8 +261,7 @@ void ReadEeprom(uint8_t offset, void* destination, size_t size) {
 }
 
 void WriteEepromByte(uint8_t offset, uint8_t data) {
-	return;
-	UNK_602F704();
+	StartEepromWrite();
 
 	EEPROM_WRITE_ACCESS(0u, 0xA2u);
 	for (uint8_t i = 0u; i < 3u; i++);
@@ -306,11 +300,10 @@ void WriteEepromByte(uint8_t offset, uint8_t data) {
 	while (!(EEPROM_READ_ACCESS(0u) & 0x10u));
 	EEPROM_WRITE_ACCESS(0u, 0x42u);
 
-	UNK_602F7DC();
+	FinishEepromWrite();
 }
 
 void WriteEeprom(uint8_t offset, void* source, size_t size) {
-	return;
 	assert(size < EEPROM_SIZE);
 	uint8_t* srcPtr = source;
     for (uint8_t i = 0; i < size; i++) {

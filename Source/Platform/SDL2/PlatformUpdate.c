@@ -18,10 +18,11 @@
 #include "Game/Graphics/ShowText.h"
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
-#include "Platform/SDL2/Display.h"
+#include "Platform/Util/AccessEeprom.h"
+#include "Platform/Util/AccessConfig.h"
+#include "Platform/Util/AccessData.h"
+#include "Platform/SDL2/AccessDisplay.h"
 #include "Platform/Util/Render.h"
-#include "Platform/Util/Config.h"
-#include "Platform/Util/Data.h"
 #include "PlatformTypes.h"
 #include "HwData.h"
 #include "SDL.h"
@@ -80,6 +81,7 @@ void SetSystemGraphicDataPtr() {
 void ExitHandler(void) {
 	printf("Starting shutdown.\n\n");
 	CloseDisplay();
+	SaveEeprom();
 	CloseData();
 	CloseConfig();
 	if (!PHYSFS_deinit()) {
@@ -117,13 +119,18 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	}
 	printf("\n");
 
-	if (!OpenConfig("taref.ini")) {
-		fprintf(stderr, "Failed opening INI \"taref.ini\"\n");
+	if (!OpenConfig()) {
+		fprintf(stderr, "Failed opening configuration\n");
 		return false;
 	}
 
 	if (!OpenData()) {
 		fprintf(stderr, "Failed opening data\n");
+		return false;
+	}
+
+	if (!OpenEeprom()) {
+		fprintf(stderr, "Failed openining EEP-ROM save data\n");
 		return false;
 	}
 
@@ -169,11 +176,11 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	SetPal(156, 1u, PALPTR(0x204));
 	SetOverlayRastersColor(COLOR(0x00, 0x00, 0x00, 0x00));
 	SetRastersBank(0u);
-	UNK_602F8BC();
+	ReadSettings();
 	LoadPlayStatus();
 	LoadRankings();
 	for (size_t section = 0u; section < 10u; section++) {
-		BestMasterSectionTimes[section] = RANKINGDATA_GETVALUE(Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data);
+		BestMasterSectionTimes[section] = RANKINGDATA_GETVALUE(Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES + section].data);
 		BestTaDeathSectionTimes[section] = TIME(0, 42, 0);
 	}
 
@@ -181,7 +188,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 		VideoSetting[0] |= 0xC0u; // Set horizontal/vertical screen flip.
 	}
 
-	Save->programChecksum = 0u; // TODO: Actually load and check this with LoadProgramChecksum.
+	Save.programChecksum = 0u; // TODO: Actually load and check this with LoadProgramChecksum.
 	SetPal(0u, 1, PalSmallText);
 	SetPal(PALNUM_CHECKSUMNG, 1, Pal1);
 	SetPal(PALNUM_SYSTEMTEXT, 1, PAL_SYSTEMTEXT);

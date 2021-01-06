@@ -379,7 +379,7 @@ GameLoopState UNK_6008516() {
 
 				uint32_t* sectionTime = BestMasterSectionTimes;
 				for (int16_t section = 0; section < 10; section++, sectionTime++) {
-					*sectionTime = Save->rankings[section].data;
+					*sectionTime = Save.rankings[section].data;
 				}
 				if (playerCompletedVersus || otherPlayerCompletedVersus) {
 					PlayerNum versusLoser;

@@ -1,31 +1,34 @@
 list(APPEND EXECUTABLE_SOURCES
-	"../Util/Config.c"
-	"../Util/Data.c"
+	"../Util/AccessConfig.c"
+	"../Util/AccessData.c"
+	"../Util/AccessEeprom.c"
+	"../Util/Eeprom.c"
+	"../Util/EepromData.c"
 	"../Util/HwData.c"
 	"../Util/ini.c"
 	"../Util/Render.c"
 	"../Util/RomData.c"
 
-	"Display.c"
-	"EepromAccess.c"
+	"AccessDisplay.c"
 	"PlatformUpdate.c"
 )
 list(APPEND EXECUTABLE_HEADERS
+	"../Util/AccessConfig.h"
+	"../Util/AccessData.h"
+	"../Util/AccessEeprom.h"
 	"../Util/Color.h"
-	"../Util/Config.h"
-	"../Util/Data.h"
+	"../Util/EepromData.h"
 	"../Util/HwData.h"
 	"../Util/ini.h"
 	"../Util/Macros.h"
 	"../Util/Render.h"
 
 	"PlatformSupport/Config.h"
-	"PlatformSupport/EepromAccess.h"
 	"PlatformSupport/HwData.h"
 	"PlatformSupport/PlatformUpdate.h"
 	"PlatformSupport/PlatformTypes.h"
 
-	"Display.h"
+	"AccessDisplay.h"
 )
 
 add_executable("${EXECUTABLE_NAME}" ${EXECUTABLE_SOURCES} ${EXECUTABLE_HEADERS})

@@ -8,18 +8,8 @@ extern uint32_t CoinCount;
 
 // TODO: UNK_6065644 ... UNK_606564C. Might be save-related.
 
-// This save data code isn't directly equivalent to TAP's code, because this
-// code is guaranteed to place the save data at the end of the struct. Since
-// the C standard allows the compiler to reorder struct fields, there's no
-// guarantee that the save data would be at the end of the struct if there was
-// a header space placed before the fields, which wouldn't guarantee the sort
-// of memory layout that's compatible with the PsikyoSH. For example, the
-// PsikyoSH appears to store a region setting at the start of EEPROM, which
-// must be guaranteed to not clash with the game's save data.
-//
-// TAP directly stores the save data in a 256-byte chunk of memory, accessing
-// offsets in it, instead of the pointer indirection used here.
 typedef struct SaveData {
+	uint32_t header[44 / sizeof(uint32_t)]; // TODO: Investigate what length the header should be. For now, this is the entirety of data that precedes the first field of the save data struct.
 	uint32_t coinCount;
 	uint32_t demoWaitTime;
 	uint32_t gameTime;
@@ -34,13 +24,11 @@ typedef struct SaveData {
 	uint16_t rankingsChecksum;
 	uint16_t programChecksum;
 } SaveData;
-extern SaveData* const Save;
-
-#define offsetofSaveData(m) (offsetof(SaveData, m) + 0x100 - sizeof(void*) * ((sizeof(SaveData) / sizeof(void*)) + (sizeof(SaveData) % sizeof(void*) != 0)))
+extern SaveData Save;
 
 // When accessing EEP-ROM to read/write save data, use these.
-#define WriteSave(m) WriteEeprom((uint8_t)offsetofSaveData(m), &Save->m, sizeof(Save->m));
-#define ReadSave(m) ReadEeprom((uint8_t)offsetofSaveData(m), &Save->m, sizeof(Save->m));
+#define WriteSave(m) WriteEeprom((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
+#define ReadSave(m) ReadEeprom((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
 
 extern uint32_t BestMasterSectionTimes[10];
 extern uint32_t BestTaDeathSectionTimes[10];

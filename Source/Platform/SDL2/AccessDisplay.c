@@ -1,6 +1,6 @@
-#include "Platform/SDL2/Display.h"
-#include "Platform/Util/Config.h"
-#include "Platform/Util/Data.h"
+#include "Platform/SDL2/AccessDisplay.h"
+#include "Platform/Util/AccessConfig.h"
+#include "Platform/Util/AccessData.h"
 #include "Video/Video.h"
 
 SDL_Window* Window;

@@ -15,8 +15,6 @@ extern RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 
 extern RAMDATA uint8_t INPUTS[NUMINPUTS];
 
-extern RAMDATA uint8_t EEPROM[4];
-
 extern RAMDATA uint8_t SOUNDCTRL[8];
 
 uint8_t SoundControlRead(size_t i);

@@ -656,7 +656,7 @@ void StartChallenger(Player* player) {
 		for (int16_t i = 0; i < lengthof(*SelectScales); i++) {
 			SelectScales[player->num][i] = i * -30;
 		}
-		Save->twinCount++;
+		Save.twinCount++;
 		PlaySoundEffect(SOUNDEFFECT_START);
 	}
 	else if (player->values[0] == CHALLENGE_INVALID) {
@@ -692,7 +692,7 @@ void StartDoubles(Player* player) {
 
 	StartPlayer(player);
 	StartPlayer(player->otherPlayer);
-	Save->versusCount++;
+	Save.versusCount++;
 	PlaySoundEffect(SOUNDEFFECT_START);
 }
 

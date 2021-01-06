@@ -526,8 +526,8 @@ static ScreenState StartVersionTitleScreen() {
 				return SCREEN_TESTMODE;
 			}
 		}
-		if (Save->demoWaitTime < DemoWaitTime) {
-			Save->demoWaitTime = DemoWaitTime;
+		if (Save.demoWaitTime < DemoWaitTime) {
+			Save.demoWaitTime = DemoWaitTime;
 		}
 		return SCREEN_GAME;
 	}

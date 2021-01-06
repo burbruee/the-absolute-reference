@@ -218,7 +218,7 @@ static void RenderOverlayRasters(Color* const framebuffer, const uint8_t priorit
 
 void Render(Color* const framebuffer, const uint8_t* const tileData) {
 	RenderClearRasters(framebuffer);
-	for (size_t priority = 0u; priority < 8u; priority++) {
+	for (uint8_t priority = 0u; priority < 8u; priority++) {
 		RenderSprites(framebuffer, tileData, priority);
 		RenderBg(framebuffer, tileData, priority);
 		RenderOverlayRasters(framebuffer, priority);

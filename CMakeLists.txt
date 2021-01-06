@@ -10,7 +10,6 @@ set(EXECUTABLE_SOURCES
 	"../../BuildData/BuildData.c"
 	"../../BuildData/Checksum.c"
 
-	"../../Eeprom/Eeprom.c"
 	"../../Eeprom/Setting.c"
 
 	"../../Game/RegionWarning.c"

@@ -6,10 +6,7 @@
 
 uint32_t CoinCount;
 
-static DATA(SaveMemory, 0x100);
-// Place save data at the end of save memory, while guaranteeing alignment for
-// any type in the SaveData struct.
-SaveData* const Save = (SaveData*)&SaveMemory[lengthof(SaveMemory) - (sizeof(SaveData) / sizeof(void*)) - (sizeof(SaveData) % sizeof(void*) != 0)];
+SaveData Save;
 
 uint32_t BestMasterSectionTimes[10];
 uint32_t BestTaDeathSectionTimes[10];
@@ -17,41 +14,39 @@ uint32_t BestTaDeathSectionTimes[10];
 uint32_t InitSeed;
 
 uint32_t PlayStatusChecksum() {
-	assert(sizeof(SaveData) <= sizeof(SaveMemory));
-
-	Save->coinCount = CoinCount & 0xFFFF;
+	Save.coinCount = CoinCount & 0xFFFF;
 
 	return
 		(CoinCount & 0xFFFF) +
-		Save->demoWaitTime +
-		Save->gameTime +
-		Save->playCount +
-		Save->twinCount +
-		Save->versusCount +
-		Save->initSeed + 1;
+		Save.demoWaitTime +
+		Save.gameTime +
+		Save.playCount +
+		Save.twinCount +
+		Save.versusCount +
+		Save.initSeed + 1;
 }
 
 void InitPlayStatus() {
 	CoinCount = 0u;
-	Save->coinCount = 0u;
-	Save->gameTime = 0u;
-	Save->demoWaitTime = 0u;
-	Save->versusCount = 0u;
-	Save->twinCount = 0u;
-	Save->playCount = 0u;
+	Save.coinCount = 0u;
+	Save.gameTime = 0u;
+	Save.demoWaitTime = 0u;
+	Save.versusCount = 0u;
+	Save.twinCount = 0u;
+	Save.playCount = 0u;
 	InitSeed += Rand(1192u) + ScreenTime;
-	Save->initSeed = InitSeed;
+	Save.initSeed = InitSeed;
 }
 
 void AddGameTime(uint32_t gameTime) {
-	if (Save->playCount < 0xEFFF) {
-		Save->playCount++;
-		Save->gameTime += gameTime;
+	if (Save.playCount < 0xEFFF) {
+		Save.playCount++;
+		Save.gameTime += gameTime;
 	}
 }
 
 void SavePlayStatus() {
-	Save->coinCount = CoinCount;
+	Save.coinCount = CoinCount;
 
 	WriteSave(coinCount);
 	WriteSave(demoWaitTime);
@@ -59,9 +54,9 @@ void SavePlayStatus() {
 	WriteSave(playCount);
 	WriteSave(twinCount);
 	WriteSave(versusCount);
-	Save->initSeed = InitSeed;
+	Save.initSeed = InitSeed;
 	WriteSave(initSeed);
-	Save->playStatusChecksum = PlayStatusChecksum();
+	Save.playStatusChecksum = PlayStatusChecksum();
 	WriteSave(playStatusChecksum);
 }
 
@@ -74,11 +69,11 @@ bool LoadPlayStatus() {
 	ReadSave(versusCount);
 
 	ReadSave(initSeed);
-	InitSeed = Save->initSeed;
+	InitSeed = Save.initSeed;
 
 	ReadSave(playStatusChecksum);
 	uint16_t playStatusChecksum = PlayStatusChecksum();
-	bool checksumMatch = Save->playStatusChecksum == playStatusChecksum;
+	bool checksumMatch = Save.playStatusChecksum == playStatusChecksum;
 	if (!checksumMatch) {
 		InitPlayStatus();
 		SavePlayStatus();
@@ -87,11 +82,11 @@ bool LoadPlayStatus() {
 }
 
 void SaveProgramChecksum(uint16_t programChecksum) {
-	Save->programChecksum = programChecksum;
+	Save.programChecksum = programChecksum;
 	WriteSave(programChecksum);
 }
 
 bool LoadProgramChecksum(uint16_t programChecksum) {
 	ReadSave(programChecksum);
-	return programChecksum == Save->programChecksum;
+	return programChecksum == Save.programChecksum;
 }

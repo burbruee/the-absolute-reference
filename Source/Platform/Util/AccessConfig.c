@@ -1,4 +1,4 @@
-#include "Platform/Util/Config.h"
+#include "Platform/Util/AccessConfig.h"
 #include "Platform/Util/ini.h"
 #include "Video/Video.h"
 #include "Lib/Macros.h"
@@ -94,7 +94,9 @@ static int StringCompareNoCase(const char* a, const char* b) {
 	return cmp;
 }
 
-bool OpenConfig(const char* const iniFileName) {
+static const char* const IniFileName = "taref.ini";
+
+bool OpenConfig() {
 	for (size_t i = 0u; i < lengthof(InputConfigKeyboard); i++) {
 		for (size_t j = 0u; j < lengthof(*InputConfigKeyboard); j++) {
 			InputConfigKeyboard[i][j] = SDLK_UNKNOWN;
@@ -147,10 +149,10 @@ bool OpenConfig(const char* const iniFileName) {
 	}
 	printf("Write directory at \"%s\".\n\n", writeDir);
 
-	PHYSFS_Stat iniStat;
 	ini_t* config = NULL;
-	if (!PHYSFS_stat(iniFileName, &iniStat) || iniStat.filetype != PHYSFS_FILETYPE_REGULAR || iniStat.filesize < 0) {
-		fprintf(stderr, "INI file \"%s\" is invalid, using default configuration.\n\n", iniFileName);
+	PHYSFS_Stat iniStat;
+	if (!PHYSFS_stat(IniFileName, &iniStat) || iniStat.filetype != PHYSFS_FILETYPE_REGULAR || iniStat.filesize < 0) {
+		fprintf(stderr, "INI file \"%s\" is invalid, using default configuration.\n\n", IniFileName);
 		config = ini_create(DefaultConfig, strlen(DefaultConfig));
 
 		if (!config) {
@@ -162,9 +164,9 @@ bool OpenConfig(const char* const iniFileName) {
 	else {
 		const size_t iniSize = iniStat.filesize;
 
-		PHYSFS_File* const iniFile = PHYSFS_openRead(iniFileName);
+		PHYSFS_File* const iniFile = PHYSFS_openRead(IniFileName);
 		if (!iniFile) {
-			fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", iniFileName);
+			fprintf(stderr, "Failed opening \"%s\" for reading.\n\n", IniFileName);
 			return false;
 		}
 		char* const iniData = malloc(iniSize);
@@ -174,18 +176,20 @@ bool OpenConfig(const char* const iniFileName) {
 		}
 
 		if (PHYSFS_readBytes(iniFile, iniData, iniSize) != iniSize) {
-			fprintf(stderr, "Error while reading \"%s\".\n\n", iniFileName);
+			fprintf(stderr, "Error while reading \"%s\".\n\n", IniFileName);
+			PHYSFS_close(iniFile);
 			free(iniData);
 			return false;
 		}
+		PHYSFS_close(iniFile);
 		config = ini_create(iniData, iniSize);
 		free(iniData);
 
 		if (!config) {
-			fprintf(stderr, "Failed loading configuration from \"%s\".\n\n", iniFileName);
+			fprintf(stderr, "Failed loading configuration from \"%s\".\n\n", IniFileName);
 			return false;
 		}
-		printf("Opened configuration INI \"%s\".\n\n", iniFileName);
+		printf("Opened configuration INI \"%s\".\n\n", IniFileName);
 	}
 
 
@@ -516,7 +520,7 @@ bool OpenConfig(const char* const iniFileName) {
 	return true;
 }
 
-void SaveConfig(const char* const iniFileName) {
+void SaveConfig() {
 	// TODO: Implement once settings can be changed in-game.
 }
 

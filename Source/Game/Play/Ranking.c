@@ -205,15 +205,15 @@ static const Ranking DefaultDoublesTodaysBestLevelRankings[NUMRANKINGPLACES] = {
 void InitRankings() {
 	RankingFlags = RANKINGFLAG_NONE;
 	for (size_t i = 0u; i < NUMRANKINGS; i++) {
-		Save->rankings[i] = DefaultRankings[i];
+		Save.rankings[i] = DefaultRankings[i];
 	}
 
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		Save->doublesLevelRankings[place] = DefaultDoublesLevelRankings[place];
+		Save.doublesLevelRankings[place] = DefaultDoublesLevelRankings[place];
 	}
 
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		Save->masterMedalRankings[place] = 0u;
+		Save.masterMedalRankings[place] = 0u;
 	}
 }
 
@@ -483,7 +483,7 @@ void ShowRankings(RankingScreenState rankingScreen) {
 	switch (rankingScreen) {
 	case RANKINGSCREEN_MASTER:
 		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
-			ShowRanking(&Save->rankings[RANKINGINDEX_MASTER + place], &Save->masterMedalRankings[place], y, 0, place + 1u, RANKINGSCREEN_MASTER, showDelay, 90);
+			ShowRanking(&Save.rankings[RANKINGINDEX_MASTER + place], &Save.masterMedalRankings[place], y, 0, place + 1u, RANKINGSCREEN_MASTER, showDelay, 90);
 		}
 		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
 			ShowRanking(&MasterTodaysBestRankings[place], &MasterTodaysBestMedalRankings[place], y, 0, place + 1u, 0, showDelay, 90);
@@ -492,7 +492,7 @@ void ShowRankings(RankingScreenState rankingScreen) {
 
 	case RANKINGSCREEN_NORMAL:
 		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
-			ShowRanking(&Save->rankings[RANKINGINDEX_NORMAL + place], NULL, y, 0, place + 1u, RANKINGSCREEN_NORMAL, showDelay, 90);
+			ShowRanking(&Save.rankings[RANKINGINDEX_NORMAL + place], NULL, y, 0, place + 1u, RANKINGSCREEN_NORMAL, showDelay, 90);
 		}
 		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
 			ShowRanking(&NormalTodaysBestRankings[place], NULL, y, 0, place + 1u, RANKINGSCREEN_NORMAL, showDelay, 90);
@@ -501,13 +501,13 @@ void ShowRankings(RankingScreenState rankingScreen) {
 
 	case RANKINGSCREEN_SECTIONTIME:
 		for (int16_t section = 0, y = 54, showDelay = 0; section < 10; section++, y += 19, showDelay += 12) {
-			ShowRanking(&Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES + section], NULL, y, 0, section, RANKINGSCREEN_SECTIONTIME, showDelay, 138);
+			ShowRanking(&Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES + section], NULL, y, 0, section, RANKINGSCREEN_SECTIONTIME, showDelay, 138);
 		}
 		break;
 
 	case RANKINGSCREEN_DOUBLES:
 		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
-			ShowRanking(&Save->rankings[place], &Save->doublesLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
+			ShowRanking(&Save.rankings[place], &Save.doublesLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
 		}
 		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
 			ShowRanking(&DoublesTodaysBestTimeRankings[place], &DoublesTodaysBestLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
@@ -609,7 +609,7 @@ static uint32_t RankingsChecksum() {
 	uint32_t checksum = 0u;
 
 	for (size_t i = 0u; i < NUMRANKINGS; i++) {
-		Ranking* ranking = &Save->rankings[i];
+		Ranking* ranking = &Save.rankings[i];
 		checksum += (uint32_t)ranking->name[0] << 8 | ranking->name[1];
 		checksum += (uint32_t)ranking->name[2] << 8 | ranking->name[3];
 		checksum += ranking->data >> 16;
@@ -617,7 +617,7 @@ static uint32_t RankingsChecksum() {
 	}
 
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		Ranking* ranking = &Save->doublesLevelRankings[place];
+		Ranking* ranking = &Save.doublesLevelRankings[place];
 		checksum += (uint32_t)ranking->name[0] << 8 | ranking->name[1];
 		checksum += (uint32_t)ranking->name[2] << 8 | ranking->name[3];
 		checksum += ranking->data >> 16;
@@ -625,7 +625,7 @@ static uint32_t RankingsChecksum() {
 	}
 
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		checksum += Save->masterMedalRankings[place];
+		checksum += Save.masterMedalRankings[place];
 	}
 
 	return ++checksum;
@@ -634,7 +634,7 @@ static uint32_t RankingsChecksum() {
 void CheckSaveRankings() {
 	if (!Debug && RankingFlags) {
 		uint16_t checksum = RankingsChecksum();
-		Save->rankingsChecksum = checksum;
+		Save.rankingsChecksum = checksum;
 		WriteSave(rankingsChecksum);
 
 		UpdateFrame();
@@ -668,8 +668,8 @@ void SaveRankings() {
 bool LoadRankings() {
 	uint16_t checksum;
 
-	ReadEeprom(offsetofSaveData(rankingsChecksum), &checksum, sizeof(uint16_t));
-	Save->rankingsChecksum = checksum;
+	ReadEeprom(offsetof(SaveData, rankingsChecksum), &checksum, sizeoffield(SaveData, rankingsChecksum));
+	Save.rankingsChecksum = checksum;
 
 	for (size_t i = 0u; i < NUMRANKINGS; i++) {
 		ReadSave(rankings[i]);
@@ -761,7 +761,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 	if (player->modeFlags & MODE_DOUBLES) {
 		RankingPlace place;
 	
-		place = DoublesRankingPlace(Players[PLAYER1].level + Players[PLAYER2].level, player->clearTime, &Save->rankings[RANKINGINDEX_DOUBLES], Save->doublesLevelRankings, NUMRANKINGPLACES);
+		place = DoublesRankingPlace(Players[PLAYER1].level + Players[PLAYER2].level, player->clearTime, &Save.rankings[RANKINGINDEX_DOUBLES], Save.doublesLevelRankings, NUMRANKINGPLACES);
 		if (place >= RANKINGPLACE_FIRST) {
 			newRankingFlags |= 1 << (place + RANKINGINDEX_DOUBLES);
 			newRanking->place = place;
@@ -776,7 +776,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 	else if (player->modeFlags & MODE_MASTER) {
 		RankingPlace place;
 
-		place = MasterRankingPlace(player, &Save->rankings[RANKINGINDEX_MASTER], NUMRANKINGPLACES);
+		place = MasterRankingPlace(player, &Save.rankings[RANKINGINDEX_MASTER], NUMRANKINGPLACES);
 		if (place >= RANKINGPLACE_FIRST) {
 			newRankingFlags |= 1 << (place + RANKINGINDEX_MASTER);
 			newRanking->place = place;
@@ -788,9 +788,9 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 			newRanking->todaysBestPlace = place;
 		}
 
-		Ranking* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
+		Ranking* ranking = &Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES];
 		uint32_t* sectionTime = Grades[player->num].sectionTimes;
-		for (int16_t section = 0; section < 10; section++) {
+		for (int16_t section = 0; section < 10; ranking++, section++, sectionTime++) {
 			if (*sectionTime != 0u && *sectionTime < RANKINGDATA_GETVALUE(ranking->data)) {
 				newRankingFlags |= 1 << (section + RANKINGINDEX_MASTERSECTIONTIMES);
 			}
@@ -799,7 +799,7 @@ static RankingFlag NewRankingFlags(Player* player, NewRankingData* newRanking) {
 	else if (player->modeFlags & MODE_NORMAL) {
 		RankingPlace place;
 
-		place = NormalRankingPlace(player, &Save->rankings[RANKINGINDEX_NORMAL], NUMRANKINGPLACES);
+		place = NormalRankingPlace(player, &Save.rankings[RANKINGINDEX_NORMAL], NUMRANKINGPLACES);
 		if (place >= RANKINGPLACE_FIRST) {
 			newRankingFlags |= 1 << (place + RANKINGINDEX_NORMAL);
 			newRanking->place = place;
@@ -829,12 +829,13 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 	uint16_t* masterMedalRankings = (uint16_t*)rankingExtras;
 	Ranking* doublesLevelRankings = (Ranking*)rankingExtras;
 	RankingFlag rankingFlags = RANKINGFLAG_NONE;
-	RankingIndex rankingBit = rankingIndex + numRankings - 1;
+	RankingIndex rankingBit = rankingIndex + numRankings;
 	Player* player1 = &Players[PLAYER1];
 	Player* player2 = &Players[PLAYER2];
 	for (int16_t place = numRankings - 1; place >= RANKINGPLACE_FIRST; place--) {
-		rankingFlags |= 1 << rankingBit;
+		rankingFlags |= 1 << --rankingBit;
 		if (newRanking->flags & (1 << rankingBit)) {
+			MemCopy(sizeoffield(Ranking, name), rankings[place].name, newRanking->nameEntries->name);
 			switch (rankingMode) {
 				case RANKINGMODE_MASTER:
 					RANKINGDATA_SETVALUE(rankings[place].data, newRanking->player->masteringTime);
@@ -871,7 +872,7 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 					if (player1->miscFlags & MISC_ORANGELINE) {
 						RANKINGDATA_SETORANGELINE(rankings[place].data, true);
 					}
-					*(uint32_t*)doublesLevelRankings[place].name = *(uint32_t*)newRanking->nameEntries[PLAYER2].name;
+					MemCopy(sizeoffield(Ranking, name), doublesLevelRankings[place].name, newRanking->nameEntries[PLAYER2].name);
 					RANKINGDATA_SET1PLEVEL(doublesLevelRankings[place].data, player1->level);
 					RANKINGDATA_SET2PLEVEL(doublesLevelRankings[place].data, player2->level);
 					break;
@@ -879,6 +880,7 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 				default:
 					break;
 			}
+			break;
 		}
 		else if (place > RANKINGPLACE_FIRST) {
 			rankings[place] = rankings[place - 1];
@@ -903,31 +905,31 @@ static void AddNewRanking(NewRankingData* newRanking) {
 	newRanking->flags = NewRankingFlags(newRanking->player, NULL);
 
 	if (newRanking->flags & (7 << RANKINGINDEX_NORMAL)) {
-		RankingFlags |= AddNewModeRanking(newRanking, &Save->rankings[RANKINGINDEX_NORMAL], NULL, RANKINGINDEX_NORMAL, NUMRANKINGPLACES, RANKINGMODE_NORMAL);
+		RankingFlags |= AddNewModeRanking(newRanking, &Save.rankings[RANKINGINDEX_NORMAL], NULL, RANKINGINDEX_NORMAL, NUMRANKINGPLACES, RANKINGMODE_NORMAL);
 	}
 	if (newRanking->flags & (7 << RANKINGINDEX_NORMALTODAYSBEST)) {
 		AddNewModeRanking(newRanking, NormalTodaysBestRankings, NULL, RANKINGINDEX_NORMALTODAYSBEST, NUMRANKINGPLACES, RANKINGMODE_NORMAL);
 	}
 
 	if (newRanking->flags & (7 << RANKINGINDEX_MASTER)) {
-		RankingFlags |= AddNewModeRanking(newRanking, &Save->rankings[RANKINGINDEX_MASTER], Save->masterMedalRankings, RANKINGINDEX_MASTER, NUMRANKINGPLACES, RANKINGMODE_MASTER);
+		RankingFlags |= AddNewModeRanking(newRanking, &Save.rankings[RANKINGINDEX_MASTER], Save.masterMedalRankings, RANKINGINDEX_MASTER, NUMRANKINGPLACES, RANKINGMODE_MASTER);
 	}
 	if (newRanking->flags & (7 << RANKINGINDEX_MASTERTODAYSBEST)) {
 		AddNewModeRanking(newRanking, MasterTodaysBestRankings, MasterTodaysBestMedalRankings, RANKINGINDEX_MASTERTODAYSBEST, NUMRANKINGPLACES, RANKINGMODE_MASTER);
 	}
 
 	if (newRanking->flags & (7 << RANKINGINDEX_DOUBLES)) {
-		RankingFlags |= AddNewModeRanking(newRanking, &Save->rankings[RANKINGINDEX_DOUBLES], Save->doublesLevelRankings, RANKINGINDEX_DOUBLES, NUMRANKINGPLACES, RANKINGMODE_DOUBLES);
+		RankingFlags |= AddNewModeRanking(newRanking, &Save.rankings[RANKINGINDEX_DOUBLES], Save.doublesLevelRankings, RANKINGINDEX_DOUBLES, NUMRANKINGPLACES, RANKINGMODE_DOUBLES);
 	}
 	if (newRanking->flags & (7 << RANKINGINDEX_DOUBLESTODAYSBEST)) {
 		AddNewModeRanking(newRanking, DoublesTodaysBestTimeRankings, DoublesTodaysBestLevelRankings, RANKINGINDEX_DOUBLESTODAYSBEST, NUMRANKINGPLACES, RANKINGMODE_DOUBLES);
 	}
 
-	Ranking* ranking = &Save->rankings[RANKINGINDEX_MASTERSECTIONTIMES];
+	Ranking* ranking = &Save.rankings[RANKINGINDEX_MASTERSECTIONTIMES];
 	uint32_t* sectionTime = Grades[newRanking->player->num].sectionTimes;
-	for (uint16_t section = 0u; section < 10u; section++, sectionTime++) {
+	for (uint16_t section = 0u; section < 10u; sectionTime++, section++, ranking++) {
 		if (newRanking->flags & ((1 << section) << RANKINGINDEX_MASTERSECTIONTIMES)) {
-			*(uint32_t*)ranking->name = *(uint32_t*)newRanking->nameEntries->name;
+			MemCopy(sizeoffield(Ranking, name), ranking->name, newRanking->nameEntries->name);
 			RANKINGDATA_SETGRADE(ranking->data, newRanking->player->grade);
 			RANKINGDATA_SETVALUE(ranking->data, *sectionTime);
 			if (newRanking->player->level == 999u) {

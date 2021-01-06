@@ -244,7 +244,7 @@ ModeFlag UpdateSectionGrade(Player* player) {
 			grade->sectionLevelUps[player->section].fraction = currentGrade.fraction - grade->gradeLastSection.fraction;
 		}
 		grade->gradeLastSection = grade->currentGrade;
-
+		grade->sectionTimes[player->section] = player->clearTime - grade->timeLastSection;
 		grade->timeLastSection = player->clearTime;
 
 		uint8_t numSkillClears = player->miscFlags & MISC_NUMSKILLCLEARS;
