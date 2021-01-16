@@ -26,9 +26,9 @@ typedef struct SaveData {
 } SaveData;
 extern SaveData Save;
 
-// When accessing EEP-ROM to read/write save data, use these.
-#define WriteSave(m) WriteEeprom((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
-#define ReadSave(m) ReadEeprom((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
+// When accessing EEP-ROM to get/set save data, use these.
+#define SaveSet(m) EepromSet((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
+#define SaveGet(m) EepromGet((uint8_t)offsetof(SaveData, m), &Save.m, sizeoffield(SaveData, m))
 
 extern uint32_t BestMasterSectionTimes[10];
 extern uint32_t BestTaDeathSectionTimes[10];

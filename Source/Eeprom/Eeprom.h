@@ -27,5 +27,5 @@ typedef enum Region {
 void ReadSettings();
 void UNK_602FA7E();
 void WriteSettings();
-void ReadEeprom(uint8_t offset, void* destination, size_t size);
-void WriteEeprom(uint8_t offset, void* source, size_t size);
+void EepromGet(uint8_t offset, void* destination, size_t size);
+void EepromSet(uint8_t offset, void* source, size_t size);

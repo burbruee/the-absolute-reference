@@ -6,6 +6,7 @@
 #include "Sound/Sound.h"
 #include "Game/Graphics/ShowObject.h"
 #include "Game/Graphics/Layer.h"
+#include "SoundControl.h"
 #include "HwData.h"
 
 // TODO: Implement a way for the build system to calculate the checksums and
@@ -84,7 +85,7 @@ bool ChecksumPass() {
 			UNK_602EC6C();
 			SOUNDCTRL_WRITE(4, 6u);
 			for (size_t i = 0x400000u; i != 0u; i--) {
-				while (SOUNDCTRL_READ(0) & 1);
+				SOUNDCTRL_WAIT(1);
 				ChecksumDataDstPtr->data[2] += SOUNDCTRL_READ(5);
 			}
 			UNK_602EC6C();

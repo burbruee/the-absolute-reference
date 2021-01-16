@@ -25,9 +25,6 @@ extern RAMDATA uint8_t EEPROM[4];
 
 extern RAMDATA uint8_t SOUNDCTRL[8];
 
-#define SOUNDCTRL_READ(i) (SOUNDCTRL[(i)])
-#define SOUNDCTRL_WRITE(i, value) (SOUNDCTRL[(i)] = (value))
-
 extern RAMDATA uint32_t GRAPHICSRAM[0x10000 / sizeof(uint32_t)];
 
 #define SPRITERAM ((RAMDATA uint16_t*)&GRAPHICSRAM[0x00000 / sizeof(uint32_t)])

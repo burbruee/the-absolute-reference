@@ -100,7 +100,7 @@ void WriteSettings() {
 	}
 }
 
-void ReadEeprom(uint8_t offset, void* destination, size_t size) {
+void EepromGet(uint8_t offset, void* destination, size_t size) {
 #define READEEPROM_CASE(m) \
 case offsetof(SaveData, m): \
 	assert(size == sizeoffield(SaveData, m)); \
@@ -142,7 +142,7 @@ else if (offset >= offsetof(SaveData, m) && offset < offsetof(SaveData, m) + siz
 	}
 }
 
-void WriteEeprom(uint8_t offset, void* source, size_t size) {
+void EepromSet(uint8_t offset, void* source, size_t size) {
 #define WRITEEEPROM_CASE(m) \
 case offsetof(SaveData, m): \
 	assert(size == sizeoffield(SaveData, m)); \

@@ -48,30 +48,30 @@ void AddGameTime(uint32_t gameTime) {
 void SavePlayStatus() {
 	Save.coinCount = CoinCount;
 
-	WriteSave(coinCount);
-	WriteSave(demoWaitTime);
-	WriteSave(gameTime);
-	WriteSave(playCount);
-	WriteSave(twinCount);
-	WriteSave(versusCount);
+	SaveSet(coinCount);
+	SaveSet(demoWaitTime);
+	SaveSet(gameTime);
+	SaveSet(playCount);
+	SaveSet(twinCount);
+	SaveSet(versusCount);
 	Save.initSeed = InitSeed;
-	WriteSave(initSeed);
+	SaveSet(initSeed);
 	Save.playStatusChecksum = PlayStatusChecksum();
-	WriteSave(playStatusChecksum);
+	SaveSet(playStatusChecksum);
 }
 
 bool LoadPlayStatus() {
-	ReadSave(coinCount);
-	ReadSave(demoWaitTime);
-	ReadSave(gameTime);
-	ReadSave(playCount);
-	ReadSave(twinCount);
-	ReadSave(versusCount);
+	SaveGet(coinCount);
+	SaveGet(demoWaitTime);
+	SaveGet(gameTime);
+	SaveGet(playCount);
+	SaveGet(twinCount);
+	SaveGet(versusCount);
 
-	ReadSave(initSeed);
+	SaveGet(initSeed);
 	InitSeed = Save.initSeed;
 
-	ReadSave(playStatusChecksum);
+	SaveGet(playStatusChecksum);
 	uint16_t playStatusChecksum = PlayStatusChecksum();
 	bool checksumMatch = Save.playStatusChecksum == playStatusChecksum;
 	if (!checksumMatch) {
@@ -83,10 +83,10 @@ bool LoadPlayStatus() {
 
 void SaveProgramChecksum(uint16_t programChecksum) {
 	Save.programChecksum = programChecksum;
-	WriteSave(programChecksum);
+	SaveSet(programChecksum);
 }
 
 bool LoadProgramChecksum(uint16_t programChecksum) {
-	ReadSave(programChecksum);
+	SaveGet(programChecksum);
 	return programChecksum == Save.programChecksum;
 }

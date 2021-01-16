@@ -11,6 +11,7 @@ list(APPEND EXECUTABLE_SOURCES
 
 	"AccessDisplay.c"
 	"PlatformUpdate.c"
+	"SoundControl.c"
 )
 list(APPEND EXECUTABLE_HEADERS
 	"../Util/AccessConfig.h"
@@ -27,6 +28,7 @@ list(APPEND EXECUTABLE_HEADERS
 	"PlatformSupport/HwData.h"
 	"PlatformSupport/PlatformUpdate.h"
 	"PlatformSupport/PlatformTypes.h"
+	"PlatformSupport/SoundControl.h"
 
 	"AccessDisplay.h"
 )

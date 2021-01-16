@@ -15,13 +15,6 @@ extern RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 
 extern RAMDATA uint8_t INPUTS[NUMINPUTS];
 
-extern RAMDATA uint8_t SOUNDCTRL[8];
-
-uint8_t SoundControlRead(size_t i);
-#define SOUNDCTRL_READ(i) SoundControlRead((i))
-void SoundControlWrite(size_t i, uint8_t value);
-#define SOUNDCTRL_WRITE(i, value) SoundControlWrite((i), (value))
-
 extern RAMDATA uint8_t VIDEOREGS[0x20];
 #define NUMALPHAS 8u
 #define Alpha (&VIDEOREGS[0x0])

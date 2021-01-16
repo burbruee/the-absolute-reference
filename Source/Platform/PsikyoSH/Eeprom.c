@@ -1,4 +1,3 @@
-// TODO: Change how EEP-ROM access is done in the code and move this to the PsikyoSH platform.
 #include "Eeprom/Eeprom.h"
 #include "Eeprom/Setting.h"
 #include "Lib/Macros.h"
@@ -11,33 +10,31 @@
 // PsikyoSH hardware probably requires some wait cycles between EEP-ROM
 // accesses for the hardware to update.
 
-// TODO: Remove the return statements at the start of these functions and get EEP-ROM support to work.
-
 static uint8_t ReadEepromByte(uint8_t offset);
 static void WriteEepromByte(uint8_t offset, uint8_t data);
 
 static void PushEepromBit(bool bit) {
-	EEPROM_WRITE_ACCESS(0u, ((uint8_t)bit << 5) | 0x82u);
+	EEPROM[0] = ((uint8_t)bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, ((uint8_t)bit << 5) | 0xC2u);
+	EEPROM[0] = ((uint8_t)bit << 5) | 0xC2u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, ((uint8_t)bit << 5) | 0x82u);
+	EEPROM[0] = ((uint8_t)bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, ((uint8_t)bit << 5) | 0x82u);
+	EEPROM[0] = ((uint8_t)bit << 5) | 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 }
 
 static void StartEepromWrite() {
-	EEPROM_WRITE_ACCESS(0u, 0xA2u);
+	EEPROM[0] = 0xA2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0xE2u);
+	EEPROM[0] = 0xE2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
 	PushEepromBit(0);
@@ -46,24 +43,24 @@ static void StartEepromWrite() {
 	PushEepromBit(1);
 
 	for (uint32_t i = 0u; i < 6u; i++) {
-		PushEepromBit(false);
+		PushEepromBit(0);
 	}
 
-	EEPROM_WRITE_ACCESS(0u, 0xC2u);
+	EEPROM[0] = 0xC2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0x02u);
+	EEPROM[0] = 0x02u;
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
 static void FinishEepromWrite() {
-	EEPROM_WRITE_ACCESS(0u, 0xA2u);
+	EEPROM[0] = 0xA2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0xE2u);
+	EEPROM[0] = 0xE2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
 	PushEepromBit(0);
@@ -75,62 +72,62 @@ static void FinishEepromWrite() {
 		PushEepromBit(0);
 	}
 
-	EEPROM_WRITE_ACCESS(0u, 0xC2u);
+	EEPROM[0] = 0xC2u;
 	for (uint32_t i = 0u; i < 3u; i++);
 
-	EEPROM_WRITE_ACCESS(0u, 0x02u);
+	EEPROM[0] = 0x02u;
 	for (uint32_t i = 0u; i < 3u; i++);
 }
 
 void ReadSettings() {
 	for (uint8_t i = 0u; i < lengthof(Settings); i++) {
-		EEPROM_WRITE_ACCESS(0u, 0xA2u);
+		EEPROM[0] = 0xA2u;
 		for (uint8_t j = 0u; j < 3u; j++);
-		EEPROM_WRITE_ACCESS(0u, 0xE2u);
+		EEPROM[0] = 0xE2u;
 		for (uint8_t j = 0u; j < 3u; j++);
-		EEPROM_WRITE_ACCESS(0u, 0x82u);
+		EEPROM[0] = 0x82u;
 		for (uint8_t j = 0u; j < 3u; j++);
 
-		PushEepromBit(1u);
-		PushEepromBit(0u);
-		PushEepromBit(0u);
+		PushEepromBit(1);
+		PushEepromBit(0);
+		PushEepromBit(0);
 		for (uint8_t j = 0u; j < 8u; j++) {
 			if ((i >> (7u - j)) & 1u) {
-				PushEepromBit(1u);
+				PushEepromBit(1);
 			}
 			else {
-				PushEepromBit(0u);
+				PushEepromBit(0);
 			}
 		}
 		Settings[i] = 0u;
 
-		EEPROM_WRITE_ACCESS(0u, 0x82u);
+		EEPROM[0] = 0x82u;
 		for (bool j = false; !j; j = true);
-		EEPROM_WRITE_ACCESS(0u, 0xC2u);
+		EEPROM[0] = 0xC2u;
 		for (bool j = false; !j; j = true);
 
 		for (uint8_t j = 0u; j < 8u; j++) {
-			if (EEPROM_READ_ACCESS(0u) & 0x10u) {
+			if (EEPROM[0] & 0x10u) {
 				Settings[i] |= 1 << (7u - j);
 			}
 
-			EEPROM_WRITE_ACCESS(0u, 0x82u);
+			EEPROM[0] = 0x82u;
 			for (bool k = false; !k; k = true);
-			EEPROM_WRITE_ACCESS(0u, 0xC2u);
+			EEPROM[0] = 0xC2u;
 			for (bool k = false; !k; k = true);
 		}
-		EEPROM_WRITE_ACCESS(0u, 0x42u);
+		EEPROM[0] = 0x42u;
 	}
 }
 
 void UNK_602FA7E() {
 	StartEepromWrite();
 
-	EEPROM_WRITE_ACCESS(0u, 0xA2u);
+	EEPROM[0] = 0xA2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0xE2u);
+	EEPROM[0] = 0xE2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
 	PushEepromBit(0);
@@ -151,16 +148,16 @@ void UNK_602FA7E() {
 		}
 	}
 
-	EEPROM_WRITE_ACCESS(0u, 0x42u);
+	EEPROM[0] = 0x42u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0x02u);
+	EEPROM[0] = 0x02u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0xC2u);
-	while (!(EEPROM_READ_ACCESS(0u) & 0x10)) {
-		EEPROM_WRITE_ACCESS(0u, EEPROM_READ_ACCESS(0u) | 0x82u);
+	EEPROM[0] = 0xC2u;
+	while (!(EEPROM[0] & 0x10)) {
+		EEPROM[0] |= 0x82u;
 		for (uint8_t i = 0u; i < 3u; i++);
 	}
-	EEPROM_WRITE_ACCESS(0u, 0x42u);
+	EEPROM[0] = 0x42u;
 
 	FinishEepromWrite();
 }
@@ -169,11 +166,11 @@ void WriteSettings() {
     StartEepromWrite();
 
 	for (uint32_t i = 0u; i < lengthof(Settings); i++) {
-		EEPROM_WRITE_ACCESS(0u, 0xA2u);
+		EEPROM[0] = 0xA2u;
 		for (uint8_t i = 0u; i < 3u; i++);
-		EEPROM_WRITE_ACCESS(0u, 0xE2u);
+		EEPROM[0] = 0xE2u;
 		for (uint8_t i = 0u; i < 3u; i++);
-		EEPROM_WRITE_ACCESS(0u, 0x82u);
+		EEPROM[0] = 0x82u;
 		for (uint8_t i = 0u; i < 3u; i++);
 
         PushEepromBit(0);
@@ -198,24 +195,24 @@ void WriteSettings() {
 			}
 		}
 
-		EEPROM_WRITE_ACCESS(0u, 0x42u);
+		EEPROM[0] = 0x42u;
 		for (uint8_t i = 0u; i < 3u; i++);
-		EEPROM_WRITE_ACCESS(0u, 0x02u);
+		EEPROM[0] = 0x02u;
 		for (uint8_t i = 0u; i < 3u; i++);
-		EEPROM_WRITE_ACCESS(0u, 0xC2u);
-		while (!(EEPROM_READ_ACCESS(0u) & 0x10u));
-		EEPROM_WRITE_ACCESS(0u, 0x42u);
+		EEPROM[0] = 0xC2u;
+		while (!(EEPROM[0] & 0x10u));
+		EEPROM[0] = 0x42u;
     }
 
     FinishEepromWrite();
 }
 
 uint8_t ReadEepromByte(uint8_t offset) {
-	EEPROM_WRITE_ACCESS(0u, 0xA2u);
+	EEPROM[0] = 0xA2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0xE2u);
+	EEPROM[0] = 0xE2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
 	PushEepromBit(1);
@@ -231,28 +228,28 @@ uint8_t ReadEepromByte(uint8_t offset) {
 		}
 	}
 
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (bool i = false; !i; i = true);
-	EEPROM_WRITE_ACCESS(0u, 0xC2u);
+	EEPROM[0] = 0xC2u;
 	for (bool i = false; !i; i = true);
 
 	uint8_t byte = 0x00u;
 	for (uint8_t i = 0u; i < 8u; i++) {
-		if ((EEPROM_READ_ACCESS(0u) & 0x10u)) {
+		if ((EEPROM[0] & 0x10u)) {
 			byte |= 1u << (7u - i);
 		}
 
-		EEPROM_WRITE_ACCESS(0u, 0x82u);
+		EEPROM[0] = 0x82u;
 		for (bool j = false; !j; j = true);
-		EEPROM_WRITE_ACCESS(0u, 0xC2u);
+		EEPROM[0] = 0xC2u;
 		for (bool j = false; !j; j = true);
 	}
-	EEPROM_WRITE_ACCESS(0u, 0x42u);
+	EEPROM[0] = 0x42u;
 
 	return byte;
 }
 
-void ReadEeprom(uint8_t offset, void* destination, size_t size) {
+void EepromGet(uint8_t offset, void* destination, size_t size) {
 	assert(size < EEPROM_SIZE);
     uint8_t* dstPtr = destination;
 	for (uint8_t i = 0u; i < size; i++) {
@@ -263,11 +260,11 @@ void ReadEeprom(uint8_t offset, void* destination, size_t size) {
 void WriteEepromByte(uint8_t offset, uint8_t data) {
 	StartEepromWrite();
 
-	EEPROM_WRITE_ACCESS(0u, 0xA2u);
+	EEPROM[0] = 0xA2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0xE2u);
+	EEPROM[0] = 0xE2u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0x82u);
+	EEPROM[0] = 0x82u;
 	for (uint8_t i = 0u; i < 3u; i++);
 
 	PushEepromBit(0);
@@ -292,18 +289,18 @@ void WriteEepromByte(uint8_t offset, uint8_t data) {
 		}
 	}
 
-	EEPROM_WRITE_ACCESS(0u, 0x42u);
+	EEPROM[0] = 0x42u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0x02u);
+	EEPROM[0] = 0x02u;
 	for (uint8_t i = 0u; i < 3u; i++);
-	EEPROM_WRITE_ACCESS(0u, 0xC2u);
-	while (!(EEPROM_READ_ACCESS(0u) & 0x10u));
-	EEPROM_WRITE_ACCESS(0u, 0x42u);
+	EEPROM[0] = 0xC2u;
+	while (!(EEPROM[0] & 0x10u));
+	EEPROM[0] = 0x42u;
 
 	FinishEepromWrite();
 }
 
-void WriteEeprom(uint8_t offset, void* source, size_t size) {
+void EepromSet(uint8_t offset, void* source, size_t size) {
 	assert(size < EEPROM_SIZE);
 	uint8_t* srcPtr = source;
     for (uint8_t i = 0; i < size; i++) {

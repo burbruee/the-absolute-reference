@@ -3,6 +3,7 @@
 #include "Main/GameLoop.h"
 #include "Main/DemoReplayInput.h"
 #include "Video/Pal.h"
+#include "Sound/Sound.h"
 #include "physfs.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,6 +87,8 @@ static const size_t BgMapRomOffsets[] = {
 };
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
+
+#define ROMOFFSET_MIDI 0x40088u
 
 static char* locationToNativeFormat(const char* const locationInPortableFormat) {
 	assert(locationInPortableFormat);
@@ -391,6 +394,29 @@ bool OpenData() {
 					           programData[ROMOFFSET_OBJECTDATA + sizeof(Objects.header) + i * sizeof(ObjectData) + j * sizeof(uint16_t) + 1u];
 			}
 		}
+
+		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_0); i++) {
+			Midi.UNK_0[i] = ((uint16_t)programData[ROMOFFSET_MIDI + sizeof(uint16_t) * i + 0u] << 8) | programData[ROMOFFSET_MIDI + sizeof(uint16_t) * i + 1u];
+		}
+		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_100); i++) {
+			STRUCT_MidiData_100* const data = &Midi.UNK_100[i];
+			data->UNK_0 =
+				((uint16_t)programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 0u] << 8) |
+				           programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 1u];
+			data->UNK_2[0] = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 2u];
+			data->UNK_2[1] = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 3u];
+		}
+		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_300); i++) {
+			STRUCT_40388* const data = &Midi.UNK_300[i];
+			data->UNK_0 =
+				((uint16_t)programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 0u] << 8) |
+				           programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 1u];
+			data->UNK_2 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 2u];
+			data->UNK_3 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 3u];
+			data->UNK_4 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 4u];
+			data->UNK_5 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 5u];
+		}
+		// TODO: Load data pointers into Midi.UNK_F00 here.
 
 		free(programData);
 	}

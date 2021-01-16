@@ -3,6 +3,7 @@
 #include "Video/Object.h"
 #include "Video/BgMap.h"
 #include "Game/Sequence.h"
+#include "Sound/Sound.h"
 #include "BuildData/Checksum.h"
 #include <stdint.h>
 
@@ -35,8 +36,7 @@ extern ROMDATA void** const SequenceDataTablePtr;
 
 extern ROMDATA ObjectData* const ObjectDataTablePtr;
 
-// TODO
-//extern const MidiData** MidiDataPtr;
+extern ROMDATA MidiData* const MidiPtr;
 
 // TODO
 //extern const RectData** RectDataTablePtr;

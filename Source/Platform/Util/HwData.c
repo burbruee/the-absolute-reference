@@ -3,15 +3,6 @@
 RAMDATA void* WORKRAM[0x100000 / sizeof(void*)];
 RAMDATA uint8_t INPUTS[NUMINPUTS] = { 0xFFu, 0xFFu, 0xFFu, 0xFFu };
 
-RAMDATA uint8_t SOUNDCTRL[8];
-uint8_t SoundControlRead(size_t i) {
-	// TODO
-	return 0u;
-}
-void SoundControlWrite(size_t i, uint8_t value) {
-	// TODO
-}
-
 RAMDATA uint32_t GRAPHICSRAM[0x10000 / sizeof(uint32_t)];
 RAMDATA Color PALRAM[NUMPALS * NUMPALCOLORS_4BPP];
 RAMDATA uint16_t SCALERAM[0x100];

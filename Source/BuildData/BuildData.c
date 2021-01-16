@@ -4,6 +4,7 @@
 #include "Lib/Macros.h"
 #include "Video/Pal.h"
 #include "Video/BgMap.h"
+#include "Sound/Sound.h"
 
 // TODO: Replace "NA" with the full year (2020, etc.). This is the build date
 // as defined in the original TAP ROM. UNK_40048 can be removed to make room for
@@ -36,8 +37,7 @@ ROMDATA BgMap* const BgMapsPtr = (ROMDATA BgMap*)&BgMapSection2;
 
 ROMDATA void** const SequenceDataTablePtr = SequenceDataTable;
 ROMDATA ObjectData* const ObjectDataTablePtr = Objects.data;
-// TODO
-//ROMDATA MidiData* const MidiPtr = &Midi;
+ROMDATA MidiData* const MidiPtr = &Midi;
 // TODO
 //ROMDATA RectData* const RectDataTablePtr = RectDataTable;
 const Color** const PalTableDataPtr = PalTable.data;

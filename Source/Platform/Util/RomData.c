@@ -2,6 +2,7 @@
 #include "Video/Pal.h"
 #include "Video/BgMap.h"
 #include "Main/DemoReplayInput.h"
+#include "Sound/Sound.h"
 #include "PlatformTypes.h"
 
 ROMDATA ObjectDataTable Objects;
@@ -23,3 +24,7 @@ ROMDATA BgMap16 BgMapVersus;
 ROMDATA ButtonInput DemoReplayInputTwin[DEMOREPLAY_LENGTH * NUMPLAYERS];
 ROMDATA ButtonInput DemoReplayInputDoubles[DEMOREPLAY_LENGTH * NUMPLAYERS];
 ROMDATA ButtonInput DemoReplayInputVersus[DEMOREPLAY_LENGTH * NUMPLAYERS];
+
+ROMDATA MidiData Midi;
+
+ROMDATA int16_t UNK_6035990[17][12];

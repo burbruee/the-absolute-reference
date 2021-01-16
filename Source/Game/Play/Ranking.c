@@ -635,7 +635,7 @@ void CheckSaveRankings() {
 	if (!Debug && RankingFlags) {
 		uint16_t checksum = RankingsChecksum();
 		Save.rankingsChecksum = checksum;
-		WriteSave(rankingsChecksum);
+		SaveSet(rankingsChecksum);
 
 		UpdateFrame();
 
@@ -644,14 +644,14 @@ void CheckSaveRankings() {
 			if (RankingFlags & rankingFlag) {
 				RankingFlags &= ~rankingFlag;
 
-				WriteSave(rankings[i]);
+				SaveSet(rankings[i]);
 
 				if (i >= RANKINGINDEX_DOUBLES) {
-					WriteSave(doublesLevelRankings[i - RANKINGINDEX_DOUBLES]);
+					SaveSet(doublesLevelRankings[i - RANKINGINDEX_DOUBLES]);
 				}
 
 				if (i >= RANKINGINDEX_MASTER && i < RANKINGINDEX_NORMAL) {
-					WriteSave(masterMedalRankings[i - RANKINGINDEX_MASTER]);
+					SaveSet(masterMedalRankings[i - RANKINGINDEX_MASTER]);
 				}
 
 				UpdateFrame();
@@ -668,17 +668,17 @@ void SaveRankings() {
 bool LoadRankings() {
 	uint16_t checksum;
 
-	ReadEeprom(offsetof(SaveData, rankingsChecksum), &checksum, sizeoffield(SaveData, rankingsChecksum));
+	EepromGet(offsetof(SaveData, rankingsChecksum), &checksum, sizeoffield(SaveData, rankingsChecksum));
 	Save.rankingsChecksum = checksum;
 
 	for (size_t i = 0u; i < NUMRANKINGS; i++) {
-		ReadSave(rankings[i]);
+		SaveGet(rankings[i]);
 	}
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		ReadSave(doublesLevelRankings[place]);
+		SaveGet(doublesLevelRankings[place]);
 	}
 	for (RankingPlace place = RANKINGPLACE_FIRST; place < NUMRANKINGPLACES; place++) {
-		ReadSave(masterMedalRankings[place]);
+		SaveGet(masterMedalRankings[place]);
 	}
 
 	if (checksum != (uint16_t)RankingsChecksum()) {
