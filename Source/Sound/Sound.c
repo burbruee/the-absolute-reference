@@ -9,7 +9,7 @@
 extern ROMDATA int16_t UNK_6035990[17][12];
 
 typedef struct STRUCT_60B1638 {
-	uint8_t UNK_0;
+	int8_t UNK_0;
 	uint8_t* UNK_4;
 	uint8_t* UNK_8;
 } STRUCT_60B1638;
@@ -47,7 +47,7 @@ static uint32_t UNK_60B1874;
 static uint32_t UNK_60B1878;
 static uint32_t UNK_60B187C;
 
-static void UNK_602DBE2(STRUCT_60B1638* arg0);
+static void UNK_602DBE2(STRUCT_60B1638* const arg0);
 
 void UNK_602DA38(uint32_t arg0) {
 	UNK_60B1870 = arg0;
@@ -98,24 +98,25 @@ void UNK_602DAD4() {
 	UNK_60B1878 = 0u;
 }
 
-static void UNK_602DBE2(STRUCT_60B1638* arg0) {
-	for (uint8_t var0 = UNK_60B1860; var0 != 0u;) {
+static void UNK_602DBE2(STRUCT_60B1638* const arg0) {
+	for (int8_t var0 = UNK_60B1860, var1; var0 != 0;) {
 		if (var0 < arg0->UNK_0) {
 			arg0->UNK_0 -= var0;
 			return;
 		}
 		var0 -= arg0->UNK_0;
-		for (uint8_t var1 = *arg0->UNK_4; var1 & 0x80u; var1 = *arg0->UNK_4) {
+
+		for (var1 = *arg0->UNK_4; var1 & 0x80u; var1 = *arg0->UNK_4) {
 			arg0->UNK_4++;
-			int8_t var2 = var1 & 0x0Fu;
+			uint8_t var2 = var1 & 0x0Fu;
 			uint8_t var3 = var1 & 0xF0u;
 			if (var3 == 0x80u) {
 				UNK_60B1865 = *arg0->UNK_4++;
 				UNK_60B1866 = *arg0->UNK_4++;
-				UNK_60B16F8[var1][1] = UNK_60B1866;
+				UNK_60B16F8[var2][1] = UNK_60B1866;
 				if (UNK_60B16F8[var2][2] == 0) {
 					UNK_60B186A = var2;
-					if (var2 == 9) {
+					if (var2 == 9u) {
 						UNK_602F480();
 					}
 					else {
@@ -125,7 +126,7 @@ static void UNK_602DBE2(STRUCT_60B1638* arg0) {
 			}
 			else if (var3 == 0x90u) {
 				UNK_60B1865 = *arg0->UNK_4++;
-				if (var2 == 9) {
+				if (var2 == 9u) {
 					UNK_602F57E();
 				}
 				else {
@@ -144,7 +145,7 @@ static void UNK_602DBE2(STRUCT_60B1638* arg0) {
 			}
 			else if (var3 == 0xB0u) {
 				arg0->UNK_4 = arg0->UNK_8;
-				if (var2 == 0x0Fu) {
+				if (var2 == lengthof(UNK_60B16F8) - 1) {
 					UNK_60B1878 = 1u;
 				}
 			}
@@ -155,6 +156,8 @@ static void UNK_602DBE2(STRUCT_60B1638* arg0) {
 				NumVblanks = 0u;
 			}
 		}
+		arg0->UNK_0 = var1;
+		arg0->UNK_4++;
 	}
 }
 
@@ -172,7 +175,7 @@ void PlayMusic(Music music) {
 	UNK_6064767 = music;
 	UNK_602EB4C();
 
-	for (int32_t i = 0; i < 16; i++) {
+	for (int32_t i = 0; i < lengthof(UNK_60B16F8); i++) {
 		UNK_60B16F8[i][0] = 0u;
 		UNK_60B16F8[i][1] = 0u;
 		UNK_60B1638[i].UNK_0 = 0u;
@@ -340,7 +343,7 @@ void StopMusic() {
 		UNK_602ECCA();
 	}
 
-	for (int32_t i = 0; i < 16; i++) {
+	for (int32_t i = 0; i < lengthof(UNK_60B1638); i++) {
 		UNK_60B1638[i].UNK_4 = NULL;
 	}
 

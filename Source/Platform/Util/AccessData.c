@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include <assert.h>
 
 ROMDATA Color Pal1[NUMPALCOLORS_4BPP];
@@ -88,7 +89,10 @@ static const size_t BgMapRomOffsets[] = {
 
 #define ROMOFFSET_OBJECTDATA 0xA5D00u
 
+uint8_t* MidiNotes;
 #define ROMOFFSET_MIDI 0x40088u
+#define ROMOFFSET_MIDINOTES 0x41788u
+#define MIDINOTES_LENGTH 0x12BCAu
 
 static char* locationToNativeFormat(const char* const locationInPortableFormat) {
 	assert(locationInPortableFormat);
@@ -395,28 +399,57 @@ bool OpenData() {
 			}
 		}
 
+		uint8_t* midiData = &programData[ROMOFFSET_MIDI];
+
 		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_0); i++) {
-			Midi.UNK_0[i] = ((uint16_t)programData[ROMOFFSET_MIDI + sizeof(uint16_t) * i + 0u] << 8) | programData[ROMOFFSET_MIDI + sizeof(uint16_t) * i + 1u];
+			Midi.UNK_0[i] = ((uint16_t)midiData[sizeof(uint16_t) * i + 0u] << 8) | midiData[sizeof(uint16_t) * i + 1u];
 		}
+		midiData += lengthoffield(MidiData, UNK_0) * sizeof(uint16_t);
+
 		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_100); i++) {
 			STRUCT_MidiData_100* const data = &Midi.UNK_100[i];
 			data->UNK_0 =
-				((uint16_t)programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 0u] << 8) |
-				           programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 1u];
-			data->UNK_2[0] = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 2u];
-			data->UNK_2[1] = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + (sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 3u];
+				((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 0u] << 8) |
+				           midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 1u];
+			data->UNK_2[0] = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 2u];
+			data->UNK_2[1] = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 3u];
 		}
+		midiData += lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2);
+
 		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_300); i++) {
 			STRUCT_40388* const data = &Midi.UNK_300[i];
 			data->UNK_0 =
-				((uint16_t)programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 0u] << 8) |
-				           programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 1u];
-			data->UNK_2 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 2u];
-			data->UNK_3 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 3u];
-			data->UNK_4 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 4u];
-			data->UNK_5 = programData[ROMOFFSET_MIDI + lengthoffield(MidiData, UNK_0) * sizeof(uint16_t) + lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2) + (sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 5u];
+				((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 0u] << 8) |
+				           midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 1u];
+			data->UNK_2 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 2u];
+			data->UNK_3 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 3u];
+			data->UNK_4 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 4u];
+			data->UNK_5 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 5u];
 		}
+		midiData += lengthoffield(MidiData, UNK_300) * (sizeof(uint16_t) + sizeof(uint8_t) * 4);
+
 		// TODO: Load data pointers into Midi.UNK_F00 here.
+		MidiNotes = malloc(MIDINOTES_LENGTH);
+		if (!MidiNotes) {
+			fprintf(stderr, "Failed allocating MIDI notes buffer\n");
+			return false;
+		}
+		memcpy(MidiNotes, &programData[ROMOFFSET_MIDINOTES], MIDINOTES_LENGTH);
+		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_F00); i++) {
+			for (size_t j = 0u; j < lengthoffield(MidiData, UNK_F00[0]); j++) {
+				uint32_t offset =
+					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 0u] << 24) |
+					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 1u] << 16) |
+					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 2u] <<  8) |
+					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 3u] <<  0);
+				if (offset == 0u) {
+					Midi.UNK_F00[i][j] = NULL;
+				}
+				else {
+					Midi.UNK_F00[i][j] = &MidiNotes[offset - ROMOFFSET_MIDINOTES];
+				}
+			}
+		}
 
 		free(programData);
 	}
@@ -427,4 +460,5 @@ bool OpenData() {
 
 void CloseData() {
 	free(TileData);
+	free(MidiNotes);
 }

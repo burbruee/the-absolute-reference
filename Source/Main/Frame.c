@@ -57,7 +57,7 @@ bool UpdateFrame() {
 	UpdateGameBg();
 	UNK_602C5C2();
 	WriteSpriteLayers();
-	UNK_602DAD4(); // TODO: Sound function.
+	UNK_602DAD4();
 	NumSprites = SPRITE_FIRST;
 
 	do {
@@ -104,7 +104,7 @@ bool UNK_602AECA() {
 	UNK_602523C();
 	UNK_602C5C2();
 	WriteSpriteLayers();
-	UNK_602DAD4(); // TODO: Sound function.
+	UNK_602DAD4();
 	NumSprites = SPRITE_FIRST;
 
 	do {
@@ -162,7 +162,7 @@ bool UpdateGame() {
 	Uptime++;
 	DemoWaitTime++;
 	UNK_602523C();
-	UNK_602DAD4(); // TODO: Sound function.
+	UNK_602DAD4();
 
 	do {
 		if (!PauseAllowed) {
@@ -230,7 +230,7 @@ bool UpdateDemo(ButtonInput* buttonsDown1p, ButtonInput* buttonsDown2p) {
 	Uptime++;
 	DemoWaitTime++;
 	UNK_602523C();
-	UNK_602DAD4(); // TODO: Sound function.
+	UNK_602DAD4();
 
 	do {
 		if (!PauseAllowed) {
