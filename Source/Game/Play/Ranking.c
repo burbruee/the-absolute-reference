@@ -485,8 +485,8 @@ void ShowRankings(RankingScreenState rankingScreen) {
 		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
 			ShowRanking(&Save.rankings[RANKINGINDEX_MASTER + place], &Save.masterMedalRankings[place], y, 0, place + 1u, RANKINGSCREEN_MASTER, showDelay, 90);
 		}
-		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
-			ShowRanking(&MasterTodaysBestRankings[place], &MasterTodaysBestMedalRankings[place], y, 0, place + 1u, 0, showDelay, 90);
+		for (RankingPlace place = RANKINGPLACE_FIRST, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
+			ShowRanking(&MasterTodaysBestRankings[place], &MasterTodaysBestMedalRankings[place], y, 0, place + 1u, RANKINGSCREEN_MASTER, showDelay, 90);
 		}
 		break;
 
@@ -846,10 +846,10 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 					if (newRanking->player->miscFlags & MISC_ORANGELINE) {
 						RANKINGDATA_SETORANGELINE(rankings[place].data, true);
 					}
-					int16_t medalRankingBit = 0;
+					uint16_t medalRankingBit = 0u;
 					MedalColor* medal = newRanking->player->medalColors;
-					for (size_t i = 0; i < NUMMEDALTYPES; i++, medalRankingBit += 2) {
-						masterMedalRankings[place] |= (*medal++ & 3) << medalRankingBit;
+					for (size_t i = 0u; i < NUMMEDALTYPES; i++, medalRankingBit += 2u, medal++) {
+						masterMedalRankings[place] |= ((uint16_t)*medal & 3u) << medalRankingBit;
 					}
 					break;
 
