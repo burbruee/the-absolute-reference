@@ -6,7 +6,7 @@
 #include "Sound/Sound.h"
 #include "Game/Graphics/ShowObject.h"
 #include "Game/Graphics/Layer.h"
-#include "SoundControl.h"
+#include "HwSound.h"
 #include "HwData.h"
 
 // TODO: Implement a way for the build system to calculate the checksums and
@@ -62,36 +62,36 @@ bool ChecksumPass() {
 	else {
 		// Sound ROM checksum calculation.
 		if (ChecksumDataSrcPtr->checksumFlags & CHECKSUM_LAST) {
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 2u);
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(5, 1u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 2u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(5, 1u);
 
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 3u);
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(5, 0u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 3u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(5, 0u);
 
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 4u);
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(5, 0u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 4u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(5, 0u);
 
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 5u);
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(5, 0u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 5u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(5, 0u);
 
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 6u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 6u);
 			for (size_t i = 0x400000u; i != 0u; i--) {
-				SOUNDCTRL_WAIT(1);
-				ChecksumDataDstPtr->data[2] += SOUNDCTRL_READ(5);
+				SNDCTRL_STATUSWAIT(1);
+				ChecksumDataDstPtr->data[2] += SNDCTRL_READ(5);
 			}
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(4, 2u);
-			UNK_602EC6C();
-			SOUNDCTRL_WRITE(5, 0u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(4, 2u);
+			SoundStatusWaitNotBusy();
+			SNDCTRL_WRITE(5, 0u);
 		}
 		else {
 			// Graphics ROM checksum calculation.

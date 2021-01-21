@@ -16,6 +16,6 @@ do { \
 
 #define SOUNDCTRL_STARTWAIT() for (int32_t delay = 0; delay < 64; delay++)
 	
-#define SOUNDCTRL_WAIT(bit) while (SOUNDCTRL[0] & (uint8_t)(bit))
+#define SOUNDCTRL_STATUSWAIT(bit) while (SOUNDCTRL[0] & (uint8_t)(bit))
 
 #define SOUNDCTRL_WRITE(i, value) (SOUNDCTRL[(uint8_t)(i)] = (uint8_t)(value))

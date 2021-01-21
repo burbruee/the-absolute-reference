@@ -1,12 +1,15 @@
 #include "HwData.h"
+#include "HwSound.h"
 #include "Sound/Sound.h"
+
+static uint8_t SoundWaveTableRegs[256];
 
 void SoundControlStartInit() {
 	UNK_60B181C = 14u;
 	UNK_60B186A = 0;
 }
 
-void SoundControlWait(const uint8_t bit) {
+void SoundControlStatusWait(const SoundStatusFlag flags) {
 
 }
 
