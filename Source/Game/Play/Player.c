@@ -302,6 +302,7 @@ void InitPlayer(PlayerNum playerNum) {
 	player->nextScaleA = F16(0, 0x0000);
 	player->nextScaleV = F16(0, 0x0000);
 	player->nextScale = F16(0, 0x0000);
+	player->mGradeFlags = MGRADE_SECTIONTIMES | MGRADE_SKILLCLEARS;
 	MedalColor* medal = player->medalColors;
 	for (uint8_t i = 0u; i < NUMMEDALTYPES; i++, medal++) {
 		*medal = MEDALCOLOR_NULL;
