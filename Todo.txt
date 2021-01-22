@@ -1,6 +1,6 @@
 Write up about PsikyoSH scaling, and how it works for TAP.
 
-Provide a test suite to compare gameplay recordings of TAR vs. running the
+Provide a test suite to compare gameplay recordings of TAREF vs. running the
 recording in a hacked TAP in MAME, with the recording written into TAP's ROM,
 and the end-game-state written as well, with comparison code added to TAP, that
 displays a "Replay Check: OK/FAIL" message. And vice versa.
