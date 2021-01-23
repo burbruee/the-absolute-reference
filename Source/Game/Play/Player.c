@@ -1287,7 +1287,7 @@ static int16_t SecretGradeScales[NUMPLAYERS];
 #define numSecretGradeRows values[3]
 
 void NextPlayGameOver(Player* player) {
-NewRankingData* newRanking = &NewRankings[player->num];
+	NewRankingData* newRanking = &NewRankings[player->num];
 
 	player->values[0] = TIME(0, 6, 0);
 	player->values[1] = 1;
@@ -2818,9 +2818,18 @@ void UpdatePlayGameOver(Player* player) {
 	}
 	else if (!(GameFlags & GAME_DOUBLES) && player->numSecretGradeRows >= 5) {
 		DisplayObject(OBJECT_SECRETGRADE, 158, player->screenPos[0] - 35, 2u, 110u);
-		int16_t y = -(int16_t)((SecretGradeScales[player->num] - UNSCALED) << 14) % UNSCALED;
-		int16_t x = -(int16_t)((SecretGradeScales[player->num] - UNSCALED) << 14) / UNSCALED;
-		DisplayObjectEx(ObjectTableGrades[player->numSecretGradeRows - 1], 170 + y, player->screenPos[0] + x, 1u, 110u, (SpriteScale)SecretGradeScales[player->num], (SpriteScale)SecretGradeScales[player->num], false);
+		int32_t offsetX = ((int32_t)(SecretGradeScales[player->num] - UNSCALED) * -0x4000) / UNSCALED;
+		int32_t offsetY = ((int32_t)(SecretGradeScales[player->num] - UNSCALED) * -0x4000) / UNSCALED;
+		DisplayObjectEx(
+			ObjectTableGrades[player->numSecretGradeRows - 1],
+			170 + (offsetY >> 10),
+			player->screenPos[0] - 13 + (offsetX >> 10),
+			1u,
+			110u,
+			(SpriteScale)SecretGradeScales[player->num],
+			(SpriteScale)SecretGradeScales[player->num],
+			false
+		);
 
 		SecretGradeScales[player->num] -= 2;
 		if (SecretGradeScales[player->num] < UNSCALED) {
@@ -3280,7 +3289,7 @@ void ThrowOutActiveBlock(Player* player) {
 // the secret grade ranking code too, though.
 uint8_t NumSecretGradeRows(Player* player) {
 	uint8_t numSecretGradeRows = 0u;
-	for (int16_t row = 0; row < player->matrixHeight - 1; row++) {
+	for (int16_t row = 1; row < player->matrixHeight - 1; row++) {
 		int16_t emptyBlocks = 0;
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
 			if (MATRIX(player, row, col).block == NULLBLOCK) {
