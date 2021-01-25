@@ -507,7 +507,7 @@ void ShowRankings(RankingScreenState rankingScreen) {
 
 	case RANKINGSCREEN_DOUBLES:
 		for (RankingPlace place = RANKINGPLACE_FIRST, y = 50, showDelay = 0; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
-			ShowRanking(&Save.rankings[place], &Save.doublesLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
+			ShowRanking(&Save.rankings[RANKINGINDEX_DOUBLES + place], &Save.doublesLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
 		}
 		for (RankingPlace place = 0, y = 170, showDelay = 36; place < NUMRANKINGPLACES; place++, y += 22, showDelay += 12) {
 			ShowRanking(&DoublesTodaysBestTimeRankings[place], &DoublesTodaysBestLevelRankings[place], y, 0, place + 1u, RANKINGSCREEN_DOUBLES, showDelay, 90);
