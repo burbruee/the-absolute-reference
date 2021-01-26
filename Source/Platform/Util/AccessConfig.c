@@ -159,6 +159,17 @@ bool OpenConfig() {
 			fprintf(stderr, "Failed creating default configuration.\n\n");
 			return false;
 		}
+
+		PHYSFS_file* iniFile = PHYSFS_openWrite(IniFileName);
+		if (!iniFile) {
+			fprintf(stderr, "Failed opening \"%s\" for writing.\n\n", IniFileName);
+			return false;
+		}
+		if (PHYSFS_write(iniFile, DefaultConfig, strlen(DefaultConfig), 1u) == 0u) {
+			fprintf(stderr, "Failed writing \"%s\".\n\n", IniFileName);
+			return false;
+		}
+
 		printf("Created default configuration.\n\n");
 	}
 	else {
