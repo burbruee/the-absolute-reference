@@ -211,5 +211,5 @@ set(EXECUTABLE_HEADERS
 	"../../Video/VideoDefs.h"
 )
 set(EXECUTABLE_NAME "taref")
-project("TheAbsoluteReference" VERSION 0.1.3 LANGUAGES C)
+project("TheAbsoluteReference" VERSION 0.1.4 LANGUAGES C)
 add_subdirectory("Source/Platform/${PLATFORM_NAME}")
