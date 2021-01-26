@@ -231,11 +231,11 @@ GameLoopState GameStartVersus() {
 }
 
 void GameStartVersusRound() {
-	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[1].nowFlags & NOW_WAITING)) {
+	if ((Players[PLAYER1].nowFlags & NOW_WAITING) && (Players[PLAYER2].nowFlags & NOW_WAITING)) {
 		Game.state = 0u;
 		GameFlags =
 			(GameFlags | GAME_VERSUS | GAME_BIT11) &
-			~(GAME_CHALLENGER1P | GAME_CHALLENGER2P | GAME_STARTWAITINGPLAYER);
+			~(GAME_TWIN | GAME_WINNER1P | GAME_WINNER2P | GAME_BIT10 | GAME_NEWVERSUSROUND);
 		Players[PLAYER1].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
 		Players[PLAYER2].nowFlags = NOW_PLAYING | NOW_STARTED | NOW_INIT | NOW_SHOWFIELD;
 		InitItems();
