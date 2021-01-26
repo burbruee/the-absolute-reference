@@ -850,6 +850,7 @@ static RankingFlag AddNewModeRanking(NewRankingData* newRanking, Ranking* rankin
 					}
 					uint16_t medalRankingBit = 0u;
 					MedalColor* medal = newRanking->player->medalColors;
+					masterMedalRankings[place] = 0u;
 					for (size_t i = 0u; i < NUMMEDALTYPES; i++, medalRankingBit += 2u, medal++) {
 						masterMedalRankings[place] |= ((uint16_t)*medal & 3u) << medalRankingBit;
 					}
