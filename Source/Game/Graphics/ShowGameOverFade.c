@@ -52,6 +52,8 @@ void ShowGameOverFade(Player* player) {
 }
 
 static void UpdateEntityGameOverFade(Entity* entity) {
+	STATIC_ASSERT(sizeof(GameOverFadeData) <= sizeoffield(Entity, buffer));
+
 	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(GameOverFadeData, data, entity);
 	if (CurrentPauseMode < PAUSEMODE_GAME) {

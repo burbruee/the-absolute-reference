@@ -64,6 +64,8 @@ void ShowFieldBlockExplosion(Player* player, int16_t row, int16_t col) {
 }
 
 static void UpdateEntityFieldBlockExplosion(Entity* entity) {
+	STATIC_ASSERT(sizeof(BlockExplosionData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(BlockExplosionData, data, entity);
 	DisplayObject(&data->objectTable[entity->frames], data->y, data->x, data->palNum + 9u, 115u);
 
@@ -95,6 +97,8 @@ void ShowFireworks(Player* player, int16_t row, int16_t col, uint32_t seed) {
 }
 
 static void UpdateEntityFireworks(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	data->palNum = PalNumTableFireworks[Rand(5u)];
 	int16_t scaleOffset = ((entity->frames + UNSCALED) * 32) / UNSCALED;
@@ -135,6 +139,8 @@ void ShowAllClear(Player* player, int16_t row, int16_t col, bool unused) {
 }
 
 static void UpdateEntityAllClear(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	data->palNum = PalNumTableFireworks[Rand(5u)];
@@ -187,6 +193,8 @@ void UNK_60173B4(Player* player, int16_t row, int16_t col) {
 }
 
 static void UNK_60174F8(Entity* entity) {
+	STATIC_ASSERT(sizeof(structUNK_60174F8) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(structUNK_60174F8, data, entity);
 
 	const ObjectData** objectTable = data->objectTables;
@@ -297,6 +305,8 @@ void ShowStaffClear(Player* player, int16_t row) {
 }
 
 static void UpdateEntitySingleClear(Entity* entity) {
+	STATIC_ASSERT(sizeof(SingleClearData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(SingleClearData, data, entity);
 	int16_t y = data->y;
 	int16_t x = entity->data.unionData.player->screenPos[0] - 40;
@@ -354,6 +364,8 @@ void ShowThrownOutActiveBlock(Player* player) {
 }
 
 static void UpdateEntityThrownOutActiveBlock(Entity* entity) {
+	STATIC_ASSERT(sizeof(ThrownOutActiveBlockData) <= sizeoffield(Entity, buffer));
+
 	Player* player = entity->data.unionData.player;
 	ENTITY_INST_DATA_PTR(ThrownOutActiveBlockData, data, entity);
 

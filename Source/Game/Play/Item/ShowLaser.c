@@ -25,6 +25,8 @@ void ShowLaser(Player* player, int16_t row, int16_t col) {
 }
 
 static void UpdateEntityLaser(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->laserAnimIndex], data->y, data->x, (uint8_t)data->palNum, 124u);
 

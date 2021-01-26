@@ -25,6 +25,8 @@ void ShowRowDel(Player* player, int16_t delRow) {
 }
 
 static void UpdateEntityRowDel(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->animFrame], data->y, data->x, (uint8_t)data->palNum, 124u);
 

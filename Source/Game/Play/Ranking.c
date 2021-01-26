@@ -360,6 +360,8 @@ static const ObjectData* UNK_3B0EC[20] = {
 };
 
 static void UpdateEntityRanking(Entity* entity) {
+	STATIC_ASSERT(sizeof(RankingInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(RankingInstanceData, data, entity);
 
 	if (entity->values[3] == 0) {

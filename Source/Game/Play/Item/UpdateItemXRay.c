@@ -33,7 +33,7 @@ void UpdateItemXRay(Item* item) {
 				ShowItemWarningXRay(itemPlayer);
 				PlaySoundEffect(SOUNDEFFECT_BADITEM);
 				itemPlayer->play.flags |= PLAYFLAG_FORCEENTRY;
-				activatingPlayer->nowFlags |= NOW_NOGARBAGE;
+				itemPlayer->nowFlags |= NOW_NOGARBAGE;
 				item->frames = 100;
 				item->states[0]++;
 			}

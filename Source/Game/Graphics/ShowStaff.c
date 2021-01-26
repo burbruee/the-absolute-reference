@@ -173,6 +173,8 @@ void UNK_6021E64() {
 }
 
 static void UpdateEntityStaff(Entity* entity) {
+	STATIC_ASSERT(sizeof(StaffData) <= sizeoffield(Entity, buffer));
+
 	Player* player = entity->data.unionData.player;
 
 	if ((GameFlags & GAME_TWIN) && GameButtonsDown[player->num] == (BUTTON_3 | BUTTON_2 | BUTTON_1)) {

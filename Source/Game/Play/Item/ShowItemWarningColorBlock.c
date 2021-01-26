@@ -23,6 +23,8 @@ void ShowItemWarningColorBlock(Player* player) {
 }
 
 static void UpdateEntityItemWarningColorBlock(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(&data->objectTable[entity->warningFrames], data->y, data->x, (uint8_t)data->palNum, 124u);
 

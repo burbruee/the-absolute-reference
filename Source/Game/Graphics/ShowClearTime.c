@@ -31,6 +31,8 @@ void ShowClearTime(uint32_t time, int16_t y, int16_t x) {
 }
 
 void UpdateEntityClearTime(Entity* entity) {
+	STATIC_ASSERT(sizeof(ClearTimeData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_INST_DATA_PTR(ClearTimeData, data, entity);
 	int16_t y = data->y;
 	int16_t x = data->x;

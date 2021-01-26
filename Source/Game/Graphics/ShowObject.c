@@ -18,6 +18,8 @@ void ShowObject(const ObjectData* object, int16_t y, int16_t x, uint8_t palNum, 
 }
 
 static void UpdateEntityObject(Entity* entity) {
+	STATIC_ASSERT(sizeof(BasicEntityInstanceData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_BUFFER_PTR(BasicEntityInstanceData, data, entity);
 	DisplayObject(data->objectTable, data->y, data->x, (uint8_t)data->palNum, data->layer);
 	FreeEntity(entity);

@@ -63,6 +63,8 @@ static const VersusReadyGoDisplay VersusReadyGoDisplays[6] = {
 #define frames values[0]
 
 static void UpdateEntityVersusReadyGo(Entity* entity) {
+	STATIC_ASSERT(sizeof(InstanceData) <= sizeoffield(Entity, buffer));
+
 	int32_t offsetX, offsetY;
 	ENTITY_INST_DATA_PTR(InstanceData, data, entity);
 	const VersusReadyGoDisplay* const display = &VersusReadyGoDisplays[data->numVersusRounds];

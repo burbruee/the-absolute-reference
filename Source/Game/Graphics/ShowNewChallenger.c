@@ -44,6 +44,8 @@ void ShowNewChallenger(Player* player) {
 
 
 static void UpdateEntityNewChallenger(Entity* entity) {
+	STATIC_ASSERT(sizeof(NewChallengerData) <= sizeoffield(Entity, buffer));
+
 	ENTITY_BUFFER_PTR(NewChallengerData, data, entity);
 	if (CurrentPauseMode < PAUSEMODE_GAME) {
 		switch (entity->states[0]) {
