@@ -2846,7 +2846,7 @@ void UpdatePlayGameOver(Player* player) {
 		DisplayObject(OBJECT_A6F14, 100, player->screenPos[0], 0u, 125u);
 		if (player->otherPlayer->refusingChallenges) {
 			ShowText(player->screenPos[0] - TextWidth("NO MORE") / 2, 65, "NO MORE", 15u, false);
-			ShowText(player->screenPos[0] - TextWidth("CHALLENGER"), 77, "CHALLENGER", 15u, false);
+			ShowText(player->screenPos[0] - TextWidth("CHALLENGER") / 2, 77, "CHALLENGER", 15u, false);
 		}
 	}
 
