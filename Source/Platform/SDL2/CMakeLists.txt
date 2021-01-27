@@ -87,5 +87,3 @@ elseif(VCPKG_TOOLCHAIN)
 			${PHYSFS_LIBRARY}
 	)
 endif()
-
-install(TARGETS "${EXECUTABLE_NAME}" RUNTIME)
