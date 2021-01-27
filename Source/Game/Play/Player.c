@@ -1491,6 +1491,7 @@ bool RotationBlockedCheckKick(Player* player, int16_t col, int16_t row, Rotation
 								return false;
 							}
 						}
+						return true;
 					}
 				}
 			}
