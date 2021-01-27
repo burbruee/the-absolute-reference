@@ -624,7 +624,7 @@ void ShowModeCodes(Player* player) {
 
 	if (!(player->modeFlags & MODE_DOUBLES)) {
 		ModeFlag modeCodeFlags = player->modeFlags;
-		if (!(player->nowFlags & NOW_ABSENT)) {
+		if ((player->modeFlags & MODE_TGMPLUS) && !(player->nowFlags & NOW_ABSENT)) {
 			modeCodeFlags &= ~MODE_BIG;
 		}
 
