@@ -34,31 +34,31 @@ typedef struct STRUCT_60B1638 {
 static STRUCT_60B1638 UNK_60B1638[16];
 static uint8_t UNK_60B16F8[16][3];
 
-static uint8_t UNK_60B1728[SND_NUMPCMCHANNELS][2];
-static int8_t UNK_60B1758[SND_NUMPCMCHANNELS];
-static uint8_t UNK_60B1770[SND_NUMPCMCHANNELS];
-static uint8_t UNK_60B1788[SND_NUMPCMCHANNELS];
-static uint16_t UNK_60B17A0[SND_NUMPCMCHANNELS];
-static uint16_t UNK_60B17D0[SND_NUMPCMCHANNELS];
-static uint8_t UNK_60B1800[SND_NUMPCMCHANNELS];
+static uint8_t UNK_60B1728[SNDPCM_NUMCHANNELS][2];
+static int8_t UNK_60B1758[SNDPCM_NUMCHANNELS];
+static uint8_t UNK_60B1770[SNDPCM_NUMCHANNELS];
+static uint8_t UNK_60B1788[SNDPCM_NUMCHANNELS];
+static uint16_t UNK_60B17A0[SNDPCM_NUMCHANNELS];
+static uint16_t UNK_60B17D0[SNDPCM_NUMCHANNELS];
+static uint8_t UNK_60B1800[SNDPCM_NUMCHANNELS];
 static uint8_t UNK_60B1818;
 bool NoSound;
 int16_t UNK_60B181C;
 static uint16_t UNK_60B181E;
-static int16_t UNK_60B1820[SND_NUMPCMCHANNELS];
+static int16_t UNK_60B1820[SNDPCM_NUMCHANNELS];
 static uint32_t UNK_60B1850;
 static uint32_t UNK_60B1858;
 static uint8_t UNK_60B1860;
 static uint16_t CurrentWaveTableNum;
 static uint8_t UNK_60B1865;
-static uint8_t UNK_60B1866;
+static uint8_t CurrentPcmTotalLevel;
 static uint8_t UNK_60B1867;
 static uint8_t UNK_60B1868;
 static uint8_t CurrentPcmChannel; // TODO: Appears voice numbers are assigned to this.
 int16_t UNK_60B186A;
 static uint16_t UNK_60B186C;
-static uint8_t UNK_60B186E;
-static uint8_t UNK_60B186F;
+static uint8_t PcmMixRight;
+static uint8_t PcmMixLeft;
 static uint32_t UNK_60B1870;
 static uint32_t UNK_60B1874;
 static uint32_t UNK_60B1878;
@@ -129,8 +129,8 @@ static void UNK_602DBE2(STRUCT_60B1638* const arg0) {
 			uint8_t var3 = var1 & 0xF0u;
 			if (var3 == 0x80u) {
 				UNK_60B1865 = *arg0->UNK_4++;
-				UNK_60B1866 = *arg0->UNK_4++;
-				UNK_60B16F8[var2][1] = UNK_60B1866;
+				CurrentPcmTotalLevel = *arg0->UNK_4++;
+				UNK_60B16F8[var2][1] = CurrentPcmTotalLevel;
 				if (UNK_60B16F8[var2][2] == 0) {
 					UNK_60B186A = var2;
 					if (var2 == 9u) {
@@ -216,22 +216,22 @@ void PlaySoundEffect(SoundEffect soundEffect) {
 	UNK_60B186C = soundEffect & 0x8000u;
 	const uint16_t soundEffectNum = soundEffect & 0x7FFFu;
 
-	for (int32_t i = UNK_60B181C; i < SND_NUMPCMCHANNELS; i++) {
+	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
 		if (UNK_60B17D0[i] == soundEffectNum) {
 			UNK_602E0FC(i, soundEffectNum);
 			return;
 		}
 	}
 
-	for (int32_t i = 0; i < SND_NUMPCMCHANNELS; i++) {
-		for (int32_t j = UNK_60B181C; j < SND_NUMPCMCHANNELS; j++) {
+	for (int32_t i = 0; i < SNDPCM_NUMCHANNELS; i++) {
+		for (int32_t j = UNK_60B181C; j < SNDPCM_NUMCHANNELS; j++) {
 			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] <= 0) {
 				UNK_602E0FC(j, soundEffectNum);
 				return;
 			}
 		}
 
-		for (int32_t j = UNK_60B181C; j < SND_NUMPCMCHANNELS; j++) {
+		for (int32_t j = UNK_60B181C; j < SNDPCM_NUMCHANNELS; j++) {
 			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] != 0) {
 				UNK_60B1758[j]--;
 			}
@@ -256,7 +256,7 @@ void UNK_602E0FC(uint8_t pcmChannelNum, uint16_t soundEffectNum) {
 }
 
 void UNK_602E166() {
-	for (int32_t i = UNK_60B181C; i < SND_NUMPCMCHANNELS; i++) {
+	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
 		if (UNK_60B17A0[i] == 0u) {
 			if (UNK_60B1820[i] != 0u) {
 				UNK_60B1820[i]--;
@@ -274,8 +274,8 @@ void UNK_602E166() {
 				UNK_60B1758[i] = 0;
 				return;
 			}
-			UNK_60B1758[i] = SND_NUMPCMCHANNELS - UNK_60B181C;
-			UNK_60B1866 = MidiPtr->UNK_300[var0].UNK_2;
+			UNK_60B1758[i] = SNDPCM_NUMCHANNELS - UNK_60B181C;
+			CurrentPcmTotalLevel = MidiPtr->UNK_300[var0].UNK_2;
 			UNK_60B1865 = MidiPtr->UNK_300[var0].UNK_5;
 			CurrentWaveTableNum = MidiPtr->UNK_300[var0].UNK_0;
 			UNK_60B1867 = MidiPtr->UNK_300[var0].UNK_3;
@@ -316,7 +316,7 @@ void UNK_602E30A() {
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (SoundFNumTable[UNK_60B186A][var2] << 1) | ((CurrentWaveTableNum >> 8) & 1));
 
 	// BUG: The intent was probably to check whether var3 is negative here, but the original code ended up doing an unsigned comparison. Unsigned comparisons are default when an unsigned value is in a comparison.
-	uint32_t var3 = UNK_60B1866;
+	uint32_t var3 = CurrentPcmTotalLevel;
 	if (var3 < 0) {
 		var3 += 3;
 	}
@@ -324,13 +324,13 @@ void UNK_602E30A() {
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentPcmChannel);
 	if (UNK_60B1818 != 0) {
-		UNK_60B1866 = ((var3 >> 2) + (UNK_60B1866 >> 1)) | 1;
+		CurrentPcmTotalLevel = ((var3 >> 2) + (CurrentPcmTotalLevel >> 1)) | 1;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(UNK_60B1866 << 1));
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentPcmTotalLevel << 1));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, CurrentPcmChannel + 8);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + CurrentPcmChannel);
 	UNK_60B1770[CurrentPcmChannel] = 0u;
 	if ((int8_t)CurrentPcmChannel < UNK_60B181C) {
 		UNK_60B1788[CurrentPcmChannel] = UNK_60B1868 | 0x87u;
@@ -339,7 +339,7 @@ void UNK_602E30A() {
 		UNK_60B1788[CurrentPcmChannel] = UNK_60B1868 | 0x89u;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWaveTableNum);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWaveTableNum & 0xFFu);
 }
 
 void UNK_602E560() {
@@ -356,7 +356,7 @@ void PlaySoundEffectCoin() {
 }
 
 void UNK_602E586() {
-	for (CurrentPcmChannel = (uint8_t)UNK_60B181C; CurrentPcmChannel < SND_NUMPCMCHANNELS - 2; CurrentPcmChannel++) {
+	for (CurrentPcmChannel = (uint8_t)UNK_60B181C; CurrentPcmChannel < SNDPCM_NUMCHANNELS - 2; CurrentPcmChannel++) {
 		SoundFadeOutPcmChannel();
 	}
 }
@@ -403,22 +403,22 @@ void UNK_602E6F4() {
 	}
 }
 
-void UNK_602E72A(uint8_t arg0) {
-	UNK_60B186E = (7 - (arg0 & 7)) * 8;
+void SetPcmVolumeRight(uint8_t volume) {
+	PcmMixRight = (7 - (volume & 7)) << 3;
 
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, 0xF9u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MIXCONTROLPCM);
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, UNK_60B186E | UNK_60B186F);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, PcmMixRight | PcmMixLeft);
 }
 
-void UNK_602E780(uint8_t arg0) {
-	UNK_60B186F = 7 - (arg0 & 7);
+void SetPcmVolumeLeft(uint8_t volume) {
+	PcmMixLeft = 7 - (volume & 7);
 
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, 0xF9u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MIXCONTROLPCM);
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, UNK_60B186E | UNK_60B186F);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, PcmMixRight | PcmMixLeft);
 }
 
 void InitSound() {
@@ -500,7 +500,7 @@ void InitSound() {
 		SoundStatusWaitNotBusy();
 		SNDCTRL_WRITE(SNDREGWR_SELECTFMREGA, SNDREGFM_TOTALLEVEL + i);
 		SoundStatusWaitNotBusy();
-		SNDCTRL_WRITE(SNDREGWR_WRITEFMREGA, 0x3Fu);
+		SNDCTRL_WRITE(SNDREGWR_WRITEFMREGA, SNDFM_TOTALLEVEL(0x3Fu));
 		SoundStatusWaitNotBusy();
 		SNDCTRL_WRITE(SNDREGWR_SELECTFMREGB, SNDREGFM_TOTALLEVEL + i);
 		SoundStatusWaitNotBusy();
@@ -508,15 +508,15 @@ void InitSound() {
 	}
 
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MEMMODE);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MEMSETTING);
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0u);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, SNDPCM_MEMSETTING(false, false, 0u));
 	SoundStatusWaitNotBusy();
 	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_UNUSED7);
 	SoundStatusWaitNotBusy();
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0u);
 
-	for (int8_t i = 0; i < SND_NUMPCMCHANNELS; i++) {
+	for (int8_t i = 0; i < SNDPCM_NUMCHANNELS; i++) {
 		CurrentPcmChannel = i;
 
 		SoundFadeOutPcmChannel();
@@ -540,12 +540,12 @@ void InitSound() {
 	}
 
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, 0xF8u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MIXCONTROLFM);
 	SoundStatusWaitNotBusy();
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0x3Fu);
 
 	SoundStatusWaitNotBusy();
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, 0xF9u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_MIXCONTROLPCM);
 	SoundStatusWaitNotBusy();
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0u);
 
@@ -555,13 +555,13 @@ void InitSound() {
 
 	UNK_60B1818 = 0u;
 	NoSound = false;
-	UNK_60B186E = 0u;
-	UNK_60B186F = 0u;
+	PcmMixRight = 0u;
+	PcmMixLeft = 0u;
 	UNK_60B187C = 0u;
 }
 
 void UNK_602EADC() {
-	for (int32_t i = UNK_60B181C; i < SND_NUMPCMCHANNELS; i++) {
+	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
 		UNK_60B1788[i] = 0u;
 		UNK_60B17A0[i] = 0u;
 		UNK_60B1758[i] = 0u;
@@ -589,7 +589,7 @@ void UNK_602EB84() {
 	UNK_60B1800[15] = 5u;
 	UNK_60B1800[14] = 5u;
 	UNK_60B181E = 0u;
-	for (int32_t i = UNK_60B181C; i < SND_NUMPCMCHANNELS; i++) {
+	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
 		UNK_60B1758[i] = 0;
 		UNK_60B17D0[i] = 0xFFFFu;
 		UNK_60B1728[i][0] = 0xFFu;
@@ -633,53 +633,62 @@ void SoundFadeOutPcmChannel() {
 }
 
 void UNK_602ED40() {
-	const int8_t var0 = CurrentPcmChannel;
+	const int8_t channel = CurrentPcmChannel;
 
+	// Set current channel's volume level to maximum.
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, CurrentPcmChannel + 0x50u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentPcmChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0xFFu);
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, CurrentPcmChannel + 0x68u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
+	// Write: 0011 1000
+	// Key On = 0, won't repeatedly play notes.
+	// Damp = 0, dampen channel volume according to the current dampening setting.
+	// LFO Reset = 1, deactivate and reset low frequency oscillator.
+	// Ch = 1, make the selected channel output without mixing with FM output.
+	// Panpot = 8, set output level of left/right channels to negative infinity (no output).
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0x30u);
 
-	const int32_t var1 = UNK_60B1865 / 12;
+	const int32_t octave = UNK_60B1865 / 12;
 	const int32_t var2 = UNK_60B1865 % 12;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, var0 + 0x38);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + channel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ((SoundFNumTable[UNK_60B186A][var2] >> 7) & 7) | ((var1 - 5) << 4));
+	// Set current PCM channel's upper three bits of the F number and the octave.
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ((SoundFNumTable[UNK_60B186A][var2] >> 7) & 7) | ((octave - 5) << 4));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, var0 + 0x20u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS2 + channel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
+	// Set current PCM channel's lower seven bits of the F number and upper bit of the wave table number.
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (SoundFNumTable[UNK_60B186A][var2] << 1) | ((CurrentWaveTableNum >> 8) & 1));
 
 	// BUG: The intent was probably to check whether var3 is negative here, but the original code ended up doing an unsigned comparison.
-	uint32_t var3 = UNK_60B1866;
+	uint32_t var3 = CurrentPcmTotalLevel;
 	if (var3 < 0) {
 		var3 += 3;
 	}
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, var0 + 0x50u);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_TOTALLEVEL + channel);
 	if (UNK_60B1818 != 0) {
-		UNK_60B1866 = (var3 >> 2) + (UNK_60B1866 >> 1);
+		CurrentPcmTotalLevel = (var3 >> 2) + (CurrentPcmTotalLevel >> 1);
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(UNK_60B1866 << 1));
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentPcmTotalLevel << 1));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, var0 + 8u);
-	UNK_60B1770[var0] = 0u;
-	if (var0 < UNK_60B181C) {
-		UNK_60B1788[var0] = UNK_60B1868 | 0x87u;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + channel);
+	UNK_60B1770[channel] = 0u;
+	if (channel < UNK_60B181C) {
+		UNK_60B1788[channel] = UNK_60B1868 | 0x87u;
 	}
 	else {
-		UNK_60B1788[var0] = UNK_60B1868 | 0x89u;
+		UNK_60B1788[channel] = UNK_60B1868 | 0x89u;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWaveTableNum & 0xFF);
@@ -687,42 +696,29 @@ void UNK_602ED40() {
 
 void UNK_602EF9C() {
 	SoundStatusWaitNotLoading();
-	uint8_t j = 0x68u;
-	int32_t i = 0;
-	while (i < SND_NUMPCMCHANNELS) {
-		if (UNK_60B1788[i] != 0u) {
+	for (uint8_t regNum = SNDREGPCM_CHANNELREGS5, channel = 0u; channel < SNDPCM_NUMCHANNELS; regNum++, channel++) {
+		if (UNK_60B1788[channel] != 0u) {
 			SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-			SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, j);
+			SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, regNum);
 			SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-			SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, UNK_60B1788[i]);
-			UNK_60B1788[i] = 0u;
+			SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, UNK_60B1788[channel]);
+			UNK_60B1788[channel] = 0u;
 		}
-		j++;
-		i++;
 	}
 }
 
 void UNK_602F026(uint8_t arg0) {
-	
-	int8_t var0 = CurrentPcmChannel;
-	uint8_t var1 = CurrentPcmChannel + 0x68u;
+	const int8_t channel = CurrentPcmChannel;
 	UNK_60B1728[CurrentPcmChannel][1] = 0xFFu;
-	UNK_60B1728[var0][0] = 0xFFu;
+	UNK_60B1728[channel][0] = 0xFFu;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, var1);
-	UNK_60B1758[var0] = 0;
-	UNK_60B1770[var0] = 1u;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
+	UNK_60B1758[channel] = 0;
+	UNK_60B1770[channel] = 1u;
 
-	uint8_t var2;
-	if (var0 < UNK_60B181C) {
-		var2 = arg0 | 7u;
-	}
-	else {
-		var2 = arg0 | 9u;
-	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, var2);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, channel < UNK_60B181C ? arg0 | SNDPCM_PANPOTRIGHT : arg0 | SNDPCM_PANPOTLEFT);
 }
 
 void UNK_602F0D2(uint8_t arg0) {

@@ -47,7 +47,7 @@ static void InitAttractLoop() {
 	FreePalCycles(FREEALLPALCYCLES);
 	InitSpriteAdders();
 	UNK_60169DC();
-	UNK_602E72A(0u);
+	SetPcmVolumeRight(0u);
 	InitPlayers();
 	InitModeCodes(&Players[PLAYER1]);
 	InitModeCodes(&Players[PLAYER2]);
@@ -579,7 +579,7 @@ static ScreenState StartDemoScreen() {
 			InitVideoSetters();
 			UNK_602E586();
 			StopMusic();
-			UNK_602E72A(7u);
+			SetPcmVolumeRight(7u);
 			UNK_602E560();
 			if (!Settings[SETTING_DEMOSOUND]) {
 				DisableSound();

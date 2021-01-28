@@ -497,7 +497,7 @@ static GameLoopState StartGameLoop() {
 	UNK_602E6B8();
 	UNK_602E586();
 	StopMusic();
-	UNK_602E72A(5);
+	SetPcmVolumeRight(5);
 	Game.music = -1;
 
 	InitEntities();
@@ -907,7 +907,7 @@ void UpdateGameMusic() {
 				UNK_6079296--;
 			}
 
-			UNK_602E72A(UNK_6079296);
+			SetPcmVolumeRight(UNK_6079296);
 		}
 		else {
 			UNK_607929A = 2u;
@@ -961,7 +961,7 @@ void UpdateGameMusic() {
 			}
 
 			Game.music = CurrentGameMusic;
-			UNK_602E72A(UNK_6079296);
+			SetPcmVolumeRight(UNK_6079296);
 		}
 		break;
 
@@ -979,7 +979,7 @@ void UpdateGameMusic() {
 			UNK_607929A = 0u;
 		}
 
-		UNK_602E72A(UNK_6079296);
+		SetPcmVolumeRight(UNK_6079296);
 		break;
 
 	default:

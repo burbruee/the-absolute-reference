@@ -20,6 +20,7 @@ list(APPEND EXECUTABLE_HEADERS
 	"../Util/Color.h"
 	"../Util/EepromData.h"
 	"../Util/HwData.h"
+	"../Util/HwSound.h"
 	"../Util/ini.h"
 	"../Util/Macros.h"
 	"../Util/Render.h"
