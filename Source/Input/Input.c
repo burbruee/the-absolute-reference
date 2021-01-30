@@ -138,7 +138,7 @@ void UpdateInputs() {
 		GameButtonsNew[PLAYER2] = GameButtonsDown[PLAYER2] & ~GameButtonsOld[PLAYER2];
 	}
 
-	if (AddService && (Settings[SETTING_COINMODE] != COINMODE_FREE)) {
+	if (AddService && (Settings[SETTING_COINMODE] != COINMODE_FREEPLAY)) {
 		if (Settings[SETTING_COINSLOT] == COINSLOT_INDIVIDUAL) {
 			Services++;
 		}
@@ -148,7 +148,7 @@ void UpdateInputs() {
 	}
 
 	serviceInput |= ~INPUTS[INPUT_SERVICE];
-	if (Settings[SETTING_COINMODE] != COINMODE_FREE) {
+	if (Settings[SETTING_COINMODE] != COINMODE_FREEPLAY) {
 		if (serviceInput & SERVICE_COIN1) {
 			AddCoin[PLAYER1] = true;
 		}
@@ -184,14 +184,14 @@ void UpdateInputs() {
 				PayCoins[PLAYER1]--;
 			}
 		}
-		else if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+		else if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 			Credits[PLAYER1] = 0u;
 		}
 	}
 
 	if (PayCoins[PLAYER2] != 0u) {
 		if (Settings[SETTING_COINSLOT] == COINSLOT_SAME) {
-			if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+			if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 				PayCoins[PLAYER2] = 0u;
 			}
 			else if (Settings[SETTING_COINMODE] == COINMODE_DOUBLE) {
@@ -204,7 +204,7 @@ void UpdateInputs() {
 				NormalCoinMode(Settings[SETTING_PRICE2P], Credits, &PayCoins[PLAYER2]);
 			}
 		}
-		else if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+		else if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 			PayCoins[PLAYER2] = 0u;
 		}
 		else if (Settings[SETTING_COINMODE] == COINMODE_DOUBLE) {
@@ -247,7 +247,7 @@ void UpdateInputs() {
 }
 
 bool CanStart(PlayerNum playerNum, bool noDouble) {
-	if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+	if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 		return true;
 	}
 	else {
@@ -315,7 +315,7 @@ bool CanStart(PlayerNum playerNum, bool noDouble) {
 }
 
 void CheckBuyGame(PlayerNum playerNum, bool oneCreditPerGame) {
-	if (Settings[SETTING_COINMODE] != COINMODE_FREE) {
+	if (Settings[SETTING_COINMODE] != COINMODE_FREEPLAY) {
 		// BUG: See the BUG comment in CanStart.
 		uint8_t noCredits[NUMPLAYERS] = { 0u, 0u };
 		uint8_t *credits = &noCredits[playerNum];

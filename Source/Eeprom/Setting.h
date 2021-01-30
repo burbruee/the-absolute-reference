@@ -4,7 +4,7 @@
 
 typedef enum ScreenMode {
 	SCREENMODE_NORMAL,
-	SCREENMODE_FLIP
+	SCREENMODE_REVERSE
 } ScreenMode;
 
 typedef enum CoinSlot {
@@ -19,7 +19,7 @@ typedef enum CoinMode {
 	// The CheckBuyGame function has an argument that can force normal coin
 	// mode if it's currently double coin mode.
 	COINMODE_DOUBLE,
-	COINMODE_FREE
+	COINMODE_FREEPLAY
 } CoinMode;
 
 typedef enum Setting {

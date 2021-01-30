@@ -1,5 +1,8 @@
 #include "Platform/Util/AccessConfig.h"
 #include "Platform/Util/ini.h"
+#include "Game/Screen.h"
+#include "Game/Play/Debug.h"
+#include "Eeprom/Setting.h"
 #include "Video/Video.h"
 #include "Lib/Macros.h"
 #include "physfs.h"
@@ -267,7 +270,7 @@ bool OpenConfig() {
 
 		int deviceIndex;
 		for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
-			if (!Joysticks[playerNum] && ini_sget(config, joystickSections[playerNum], "DEVICE_INDEX", "%d", &deviceIndex) && deviceIndex >= 0 && deviceIndex < SDL_NumJoysticks()) {
+			if (!Joysticks[playerNum] && ini_sget(config, joystickSections[playerNum], "DEVICE_INDEX", "%d", &deviceIndex) == 1 && deviceIndex >= 0 && deviceIndex < SDL_NumJoysticks()) {
 				Joysticks[playerNum] = SDL_JoystickOpen(deviceIndex);
 			}
 		}
@@ -510,7 +513,7 @@ bool OpenConfig() {
 	}
 
 	{
-		if (ini_sget(config, "VIDEO", "VSYNC", "%d", &Vsync)) {
+		if (ini_sget(config, "VIDEO", "VSYNC", "%d", &Vsync) == 1) {
 			Vsync = !!Vsync;
 		}
 		else {
@@ -518,7 +521,7 @@ bool OpenConfig() {
 		}
 
 		// Checking for this option must happen after vsync, to ensure vsync gets enabled if this option is enabled.
-		if (ini_sget(config, "VIDEO", "VSYNC_UPDATE_RATE", "%d", &VsyncUpdateRate)) {
+		if (ini_sget(config, "VIDEO", "VSYNC_UPDATE_RATE", "%d", &VsyncUpdateRate) == 1) {
 			VsyncUpdateRate = !!VsyncUpdateRate;
 			Vsync = 1;
 		}
@@ -526,6 +529,146 @@ bool OpenConfig() {
 			VsyncUpdateRate = 0;
 		}
 	}
+
+	{
+		bool updateSave = false;
+
+		const char* const screenSetting = ini_get(config, "GAME_SETTING", "SCREEN");
+		if (screenSetting) {
+			if (!StringCompareNoCase(screenSetting, "Normal")) {
+				Settings[SETTING_SCREENMODE] = SCREENMODE_NORMAL;
+				updateSave = true;
+			}
+			if (!StringCompareNoCase(screenSetting, "Reverse")) {
+				Settings[SETTING_SCREENMODE] = SCREENMODE_REVERSE;
+				updateSave = true;
+			}
+		}
+
+		int versusRoundSetting;
+		if (ini_sget(config, "GAME_SETTING", "VS_ROUND", "%d", &versusRoundSetting) == 1) {
+			switch (versusRoundSetting) {
+			case 1:
+				Settings[SETTING_NUMVERSUSROUNDS] = 0u;
+				updateSave = true;
+				break;
+			case 3:
+				Settings[SETTING_NUMVERSUSROUNDS] = 1u;
+				updateSave = true;
+				break;
+			case 5:
+				Settings[SETTING_NUMVERSUSROUNDS] = 2u;
+				updateSave = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		int versusLevelSetting;
+		if (ini_sget(config, "GAME_SETTING", "VS_LEVEL", "%d", &versusLevelSetting) == 1) {
+			switch (versusLevelSetting) {
+			case 100:
+			case 200:
+			case 300:
+			case 400:
+			case 500:
+			case 600:
+			case 700:
+			case 800:
+			case 900:
+				Settings[SETTING_MAXVERSUSSECTION] = (versusLevelSetting / 100) - 1;
+				updateSave = true;
+				break;
+			case 999:
+				Settings[SETTING_MAXVERSUSSECTION] = 9u;
+				updateSave = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		int demoSoundSetting;
+		if (ini_sget(config, "GAME_SETTING", "DEMO_SOUND", "%d", &demoSoundSetting) == 1) {
+			Settings[SETTING_DEMOSOUND] = !!demoSoundSetting;
+			updateSave = true;
+		}
+
+		const char* const coinSlotSetting = ini_get(config, "GAME_SETTING", "COIN_SLOT");
+		if (coinSlotSetting) {
+			if (!StringCompareNoCase(coinSlotSetting, "Same")) {
+				Settings[SETTING_COINSLOT] = COINSLOT_SAME;
+				updateSave = true;
+			}
+			else if (!StringCompareNoCase(coinSlotSetting, "Individual")) {
+				Settings[SETTING_COINSLOT] = COINSLOT_INDIVIDUAL;
+				updateSave = true;
+			}
+		}
+
+		const char* const coinModeSetting = ini_get(config, "GAME_SETTING", "COIN_MODE");
+		if (coinModeSetting) {
+			if (!StringCompareNoCase(coinModeSetting, "Normal")) {
+				Settings[SETTING_COINMODE] = COINMODE_NORMAL;
+				updateSave = true;
+			}
+			else if (!StringCompareNoCase(coinModeSetting, "Double")) {
+				Settings[SETTING_COINMODE] = COINMODE_DOUBLE;
+				updateSave = true;
+			}
+			else if (!StringCompareNoCase(coinModeSetting, "Free Play")) {
+				Settings[SETTING_COINMODE] = COINMODE_FREEPLAY;
+				updateSave = true;
+			}
+		}
+
+		const char* const names[] = { "COIN1", "COIN2" };
+		int coins, credits;
+		for (size_t i = 0u; i < lengthof(names); i++) {
+			const char* const coinSetting = ini_get(config, "GAME_SETTING", names[i]);
+			if (coinSetting) {
+				char* fields[3];
+				const size_t len = strlen(coinSetting);
+				for (size_t j = 0u; j < lengthof(fields); j++) {
+					fields[j] = malloc(len + 1u);
+					assert(fields[j] != NULL);
+					if (!fields[j]) {
+						return false;
+					}
+				}
+				if (
+					ini_sget(config, "GAME_SETTING", names[i], "%d %s %s %d %s", &coins, fields[0], fields[1], &credits, fields[2]) == 5 &&
+					!StringCompareNoCase(fields[1], "For") &&
+					(!StringCompareNoCase(fields[0], "Coin") || !StringCompareNoCase(fields[0], "Coins")) &&
+					(!StringCompareNoCase(fields[2], "Credit") || !StringCompareNoCase(fields[2], "Credits"))
+				) {
+					if (credits == 1 && coins >= 1 && coins <= 6) {
+						Settings[SETTING_PRICE1P + i] = coins - 1;
+						updateSave = true;
+					}
+					else if (credits >= 2 && credits <= 4 && coins == 1) {
+						Settings[SETTING_PRICE1P + i] = credits + 4;
+						updateSave = true;
+					}
+				}
+				for (size_t j = 0u; j < lengthof(fields); j++) {
+					free(fields[j]);
+				}
+			}
+		}
+
+		int debugSetting;
+		if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY && ini_sget(config, "GAME_SETTING", "DEBUG", "%d", &debugSetting) == 1) {
+			Debug = !!debugSetting;
+		}
+
+		if (updateSave) {
+			SaveSettings();
+		}
+	}
+
+	ini_free(config);
 
 	printf("Finished reading configuration.\n\n");
 	return true;

@@ -81,9 +81,9 @@ void SetSystemGraphicDataPtr() {
 void ExitHandler(void) {
 	printf("Starting shutdown.\n\n");
 	CloseDisplay();
+	CloseConfig();
 	SaveEeprom();
 	CloseData();
-	CloseConfig();
 	if (!PHYSFS_deinit()) {
 		fprintf(stderr, "Failed PhysicsFS deinit: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
 	}
@@ -119,18 +119,18 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	}
 	printf("\n");
 
-	if (!OpenConfig()) {
-		fprintf(stderr, "Failed opening configuration\n");
-		return false;
-	}
-
 	if (!OpenData()) {
 		fprintf(stderr, "Failed opening data\n");
 		return false;
 	}
 
 	if (!OpenEeprom()) {
-		fprintf(stderr, "Failed openining EEP-ROM save data\n");
+		fprintf(stderr, "Failed opening EEP-ROM save data\n");
+		return false;
+	}
+
+	if (!OpenConfig()) {
+		fprintf(stderr, "Failed opening configuration\n");
 		return false;
 	}
 
@@ -184,7 +184,7 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 		BestTaDeathSectionTimes[section] = TIME(0, 42, 0);
 	}
 
-	if (Settings[SETTING_SCREENMODE] == SCREENMODE_FLIP) {
+	if (Settings[SETTING_SCREENMODE] == SCREENMODE_REVERSE) {
 		VideoSetting[0] |= 0xC0u; // Set horizontal/vertical screen flip.
 	}
 

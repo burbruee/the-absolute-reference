@@ -373,13 +373,12 @@ int ini_sget(
   va_start(args_list, scanfmt);
   const char *val = ini_get(ini, section, key);
   if (!val) {
-    return 0;
+    return EOF;
   }
   if (scanfmt) {
-    vsscanf(val, scanfmt, args_list);
-    return 1;
+    return vsscanf(val, scanfmt, args_list);
   } else {
-    return 0;
+    return EOF;
   }
 }
 

@@ -17,7 +17,7 @@ ini_t*      ini_create(const char *data, const size_t sz);
 int         ini_save(ini_t *ini, const char *filename);
 void        ini_free(ini_t *ini);
 const char* ini_get(ini_t *ini, const char *section, const char *key );
-int         ini_sget(ini_t *ini, const char *section, const char *key, const char *scanfmt, ...);
+int         ini_sget(ini_t *ini, const char *section, const char *key, const char *scanfmt, ...); // Returns the number of fields successfully read or EOF if there was an error in processing.
 int         ini_set(ini_t *ini, const char *section, const char *key, const char *val);
 int         ini_pset(ini_t *ini, const char *section, const char *key, const char *printfmt, ...);
 

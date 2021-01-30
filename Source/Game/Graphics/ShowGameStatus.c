@@ -400,12 +400,11 @@ void UNK_600FC50() {
 
 		const ObjectData* object1 = OBJECTPTR(0x14B);
 		const uint16_t layer = 110u;
-		if (Settings[SETTING_COINMODE] != COINMODE_FREE) {
-			const ObjectData* object0 = OBJECTPTR(0x155);
+		if (Settings[SETTING_COINMODE] != COINMODE_FREEPLAY) {
 			if (Settings[SETTING_COINSLOT] == COINSLOT_SAME) {
 				if (!CanStart(PLAYER1, false)) {
 					if (PayCoins[PLAYER1] != 0 || PayCoins[PLAYER2] != 0) {
-						ShowObject(object0, y, x, PALNUM_OBJECT, layer);
+						ShowObject(OBJECT_ADDCOINTITLE, y, x, PALNUM_OBJECT, layer);
 					}
 					else {
 						ShowObject(OBJECTPTR(0x15B), y, x, PALNUM_OBJECT, layer);
@@ -420,20 +419,20 @@ void UNK_600FC50() {
 					ShowObject(object1, y, 80, PALNUM_OBJECT, layer);
 				}
 				else if (PayCoins[PLAYER1] != 0) {
-					ShowObject(object0, y, 80, PALNUM_OBJECT, layer);
+					ShowObject(OBJECT_ADDCOINTITLE, y, 80, PALNUM_OBJECT, layer);
 				}
 				else {
 					ShowObject(OBJECTPTR(0x15B), y, 80, PALNUM_OBJECT, layer);
 				}
 
 				if (CanStart(PLAYER2, false)) {
-					ShowObject(object1, y, x, PALNUM_OBJECT, layer);
+					ShowObject(object1, y, 240, PALNUM_OBJECT, layer);
 				}
 				else if (PayCoins[PLAYER2] != 0) {
-					ShowObject(object0, y, x, PALNUM_OBJECT, layer);
+					ShowObject(OBJECT_ADDCOINTITLE, y, 240, PALNUM_OBJECT, layer);
 				}
 				else {
-					ShowObject(OBJECTPTR(0x15B), y, x, PALNUM_OBJECT, layer);
+					ShowObject(OBJECTPTR(0x15B), y, 240, PALNUM_OBJECT, layer);
 				}
 			}
 		}
@@ -446,7 +445,7 @@ void UNK_600FC50() {
 void ShowStartRequirement(Player* player) {
 	if (ScreenTime & 0x60) {
 		const uint16_t layer = 125u;
-		if (CanStart(player->num, false) || Settings[SETTING_COINMODE] == COINMODE_FREE) {
+		if (CanStart(player->num, false) || Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 			if (player->num == PLAYER1) {
 				DisplayObject(OBJECT_PUSH1PSTARTBUTTON, 100, player->screenPos[0], PALNUM_OBJECT, layer);
 			}
@@ -515,9 +514,9 @@ static const ObjectData* ObjectTablePrices[5] = {
 void ShowNumCoins(uint8_t numCoins, uint8_t price, int16_t x, int16_t y, bool last) {
 	const uint16_t layer = 110u;
 	ShowObject(ObjectTableStatusDigits[numCoins], y, x, PALNUM_OBJECT, layer);
-	ShowObject(ObjectTablePrices[price], y, x, PALNUM_OBJECT, layer);
+	ShowObject(ObjectTablePrices[price - 1], y, x, PALNUM_OBJECT, layer);
 	if (last) {
-		ShowObject(OBJECT_COINCOLON, y, x + 26, PALNUM_OBJECT, layer);
+		ShowObject(OBJECT_CREDIT, y, x + 26, PALNUM_OBJECT, layer);
 	}
 	else {
 		ShowObject(OBJECT_COINCOLON, y, x + 27, PALNUM_OBJECT, layer);
@@ -539,7 +538,7 @@ void ShowCredits() {
 	}
 
 	if (started != STARTED_ALL) {
-		if (Settings[SETTING_COINMODE] == COINMODE_FREE) {
+		if (Settings[SETTING_COINMODE] == COINMODE_FREEPLAY) {
 			ShowFree(started, 228);
 		}
 		else if (Settings[SETTING_COINSLOT] == COINSLOT_SAME) {
@@ -571,7 +570,7 @@ void ShowCredits() {
 					ShowNumCredits(Credits[PLAYER2], 267, 228);
 				}
 				else if (PayCoins[PLAYER2] != 0) {
-					ShowNumCoins(PayCoins[PLAYER2], (uint8_t)Settings[SETTING_PRICE2P], 251, 228, true);
+					ShowNumCoins(PayCoins[PLAYER2], (uint8_t)Settings[SETTING_PRICE1P], 251, 228, true);
 				}
 			}
 			if (Services != 0) {
