@@ -29,7 +29,7 @@ typedef struct MidiData {
 extern ROMDATA MidiData Midi;
 
 extern bool NoSound;
-extern int16_t UNK_60B181C;
+extern int16_t PcmFirstLeftChannel;
 extern int16_t UNK_60B186A;
 
 // TODO: Remove functions here that are only used in Sound.c.

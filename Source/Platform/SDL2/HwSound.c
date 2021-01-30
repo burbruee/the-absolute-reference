@@ -5,7 +5,7 @@
 static uint8_t SoundWaveTableRegs[256];
 
 void SoundControlStartInit() {
-	UNK_60B181C = 14u;
+	PcmFirstLeftChannel = 14u;
 	UNK_60B186A = 0;
 }
 

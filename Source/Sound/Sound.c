@@ -43,7 +43,7 @@ static uint16_t UNK_60B17D0[SNDPCM_NUMCHANNELS];
 static uint8_t UNK_60B1800[SNDPCM_NUMCHANNELS];
 static uint8_t UNK_60B1818;
 bool NoSound;
-int16_t UNK_60B181C;
+int16_t PcmFirstLeftChannel;
 static uint16_t UNK_60B181E;
 static int16_t UNK_60B1820[SNDPCM_NUMCHANNELS];
 static uint32_t UNK_60B1850;
@@ -79,7 +79,7 @@ void UNK_602DA6E(uint32_t arg0) {
 }
 
 void UNK_602DA90() {
-	UNK_60B181C = 0x000Eu;
+	PcmFirstLeftChannel = 14u;
 	UNK_602E586();
 	UNK_602EB84();
 	StopMusic();
@@ -216,7 +216,7 @@ void PlaySoundEffect(SoundEffect soundEffect) {
 	UNK_60B186C = soundEffect & 0x8000u;
 	const uint16_t soundEffectNum = soundEffect & 0x7FFFu;
 
-	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
+	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
 		if (UNK_60B17D0[i] == soundEffectNum) {
 			UNK_602E0FC(i, soundEffectNum);
 			return;
@@ -224,14 +224,14 @@ void PlaySoundEffect(SoundEffect soundEffect) {
 	}
 
 	for (int32_t i = 0; i < SNDPCM_NUMCHANNELS; i++) {
-		for (int32_t j = UNK_60B181C; j < SNDPCM_NUMCHANNELS; j++) {
+		for (int32_t j = PcmFirstLeftChannel; j < SNDPCM_NUMCHANNELS; j++) {
 			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] <= 0) {
 				UNK_602E0FC(j, soundEffectNum);
 				return;
 			}
 		}
 
-		for (int32_t j = UNK_60B181C; j < SNDPCM_NUMCHANNELS; j++) {
+		for (int32_t j = PcmFirstLeftChannel; j < SNDPCM_NUMCHANNELS; j++) {
 			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] != 0) {
 				UNK_60B1758[j]--;
 			}
@@ -256,7 +256,7 @@ void UNK_602E0FC(uint8_t pcmChannelNum, uint16_t soundEffectNum) {
 }
 
 void UNK_602E166() {
-	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
+	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
 		if (UNK_60B17A0[i] == 0u) {
 			if (UNK_60B1820[i] != 0u) {
 				UNK_60B1820[i]--;
@@ -274,13 +274,13 @@ void UNK_602E166() {
 				UNK_60B1758[i] = 0;
 				return;
 			}
-			UNK_60B1758[i] = SNDPCM_NUMCHANNELS - UNK_60B181C;
+			UNK_60B1758[i] = SNDPCM_NUMCHANNELS - PcmFirstLeftChannel;
 			CurrentPcmTotalLevel = MidiPtr->UNK_300[var0].UNK_2;
 			UNK_60B1865 = MidiPtr->UNK_300[var0].UNK_5;
 			CurrentWaveTableNum = MidiPtr->UNK_300[var0].UNK_0;
 			UNK_60B1867 = MidiPtr->UNK_300[var0].UNK_3;
 			UNK_60B1868 = 0x20u;
-			UNK_60B186A = 0x10u;
+			UNK_60B186A = 16;
 			CurrentPcmChannel = i;
 			UNK_602E30A();
 			UNK_60B1820[i] = 0x1A4u; // TODO: This might be a time value, TIME(0, 7, 0).
@@ -332,7 +332,7 @@ void UNK_602E30A() {
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + CurrentPcmChannel);
 	UNK_60B1770[CurrentPcmChannel] = 0u;
-	if ((int8_t)CurrentPcmChannel < UNK_60B181C) {
+	if ((int8_t)CurrentPcmChannel < PcmFirstLeftChannel) {
 		UNK_60B1788[CurrentPcmChannel] = UNK_60B1868 | 0x87u;
 	}
 	else {
@@ -356,13 +356,13 @@ void PlaySoundEffectCoin() {
 }
 
 void UNK_602E586() {
-	for (CurrentPcmChannel = (uint8_t)UNK_60B181C; CurrentPcmChannel < SNDPCM_NUMCHANNELS - 2; CurrentPcmChannel++) {
+	for (CurrentPcmChannel = (uint8_t)PcmFirstLeftChannel; CurrentPcmChannel < SNDPCM_NUMCHANNELS - 2; CurrentPcmChannel++) {
 		SoundFadeOutPcmChannel();
 	}
 }
 
 void StopMusic() {
-	for (CurrentPcmChannel = 0u; CurrentPcmChannel < UNK_60B181C; CurrentPcmChannel++) {
+	for (CurrentPcmChannel = 0u; CurrentPcmChannel < PcmFirstLeftChannel; CurrentPcmChannel++) {
 		SoundFadeOutPcmChannel();
 	}
 
@@ -561,7 +561,7 @@ void InitSound() {
 }
 
 void UNK_602EADC() {
-	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
+	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
 		UNK_60B1788[i] = 0u;
 		UNK_60B17A0[i] = 0u;
 		UNK_60B1758[i] = 0u;
@@ -589,7 +589,7 @@ void UNK_602EB84() {
 	UNK_60B1800[15] = 5u;
 	UNK_60B1800[14] = 5u;
 	UNK_60B181E = 0u;
-	for (int32_t i = UNK_60B181C; i < SNDPCM_NUMCHANNELS; i++) {
+	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
 		UNK_60B1758[i] = 0;
 		UNK_60B17D0[i] = 0xFFFFu;
 		UNK_60B1728[i][0] = 0xFFu;
@@ -684,7 +684,7 @@ void UNK_602ED40() {
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + channel);
 	UNK_60B1770[channel] = 0u;
-	if (channel < UNK_60B181C) {
+	if (channel < PcmFirstLeftChannel) {
 		UNK_60B1788[channel] = UNK_60B1868 | 0x87u;
 	}
 	else {
@@ -709,16 +709,16 @@ void UNK_602EF9C() {
 
 void UNK_602F026(uint8_t arg0) {
 	const int8_t channel = CurrentPcmChannel;
-	UNK_60B1728[CurrentPcmChannel][1] = 0xFFu;
+	UNK_60B1728[channel][1] = 0xFFu;
 	UNK_60B1728[channel][0] = 0xFFu;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + channel);
 	UNK_60B1758[channel] = 0;
 	UNK_60B1770[channel] = 1u;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, channel < UNK_60B181C ? arg0 | SNDPCM_PANPOTRIGHT : arg0 | SNDPCM_PANPOTLEFT);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, channel < PcmFirstLeftChannel ? arg0 | SNDPCM_PANPOTRIGHT : arg0 | SNDPCM_PANPOTLEFT);
 }
 
 void UNK_602F0D2(uint8_t arg0) {
@@ -727,12 +727,12 @@ void UNK_602F0D2(uint8_t arg0) {
 	}
 	CurrentPcmChannel = UNK_602F1BC();
 	UNK_60B1728[CurrentPcmChannel][1] = UNK_60B1865 + UNK_60B187C;
-	UNK_60B1758[CurrentPcmChannel] = UNK_60B181C + 1u;
+	UNK_60B1758[CurrentPcmChannel] = PcmFirstLeftChannel + 1u;
 	UNK_60B1728[CurrentPcmChannel][0] = arg0;
 	CurrentWaveTableNum = MidiPtr->UNK_0[arg0];
 	UNK_60B1868 = 0u;
 	UNK_602ED40();
-	for (uint8_t i = 0u; i < UNK_60B181C - 1; i++) {
+	for (uint8_t i = 0u; i < PcmFirstLeftChannel - 1; i++) {
 		if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
 			UNK_60B1770[i] = 1u;
 		}
@@ -741,7 +741,7 @@ void UNK_602F0D2(uint8_t arg0) {
 
 uint8_t UNK_602F1BC() {
 	uint8_t j = 0u;
-	for (uint8_t i = 1u; i < UNK_60B181C - 1; i++) {
+	for (uint8_t i = 1u; i < PcmFirstLeftChannel - 1; i++) {
 		if (UNK_60B1770[i] != 0 && UNK_60B1770[j] < UNK_60B1770[i]) {
 			j = i;
 		}
@@ -751,11 +751,11 @@ uint8_t UNK_602F1BC() {
 	}
 	int8_t i;
 	while (true) {
-		for (i = 0; UNK_60B1758[i] != 0 && i < UNK_60B181C - 1; i++);
-		if (i < UNK_60B181C - 1) {
+		for (i = 0; UNK_60B1758[i] != 0 && i < PcmFirstLeftChannel - 1; i++);
+		if (i < PcmFirstLeftChannel - 1) {
 			break;
 		}
-		for (int8_t j = 0; j < UNK_60B181C - 1; j++) {
+		for (int8_t j = 0; j < PcmFirstLeftChannel - 1; j++) {
 			if (UNK_60B1758[j] != 0 && --UNK_60B1758[j] == 0) {
 				UNK_60B1770[j] = 1u;
 			}
@@ -772,7 +772,7 @@ void UNK_602F2B0(uint8_t arg0) {
 
 	uint8_t i = 0u;
 	while (true) {
-		if (i >= UNK_60B181C - 1) {
+		if (i >= PcmFirstLeftChannel - 1) {
 			return;
 		}
 		if (UNK_60B1728[i][1] == UNK_60B1865 && UNK_60B1728[i][0] == arg0) {
@@ -782,7 +782,7 @@ void UNK_602F2B0(uint8_t arg0) {
 	}
 	CurrentPcmChannel = i;
 	UNK_602F026(0u);
-	for (uint8_t i = 0u; i < UNK_60B181C - 1; i++) {
+	for (uint8_t i = 0u; i < PcmFirstLeftChannel - 1; i++) {
 		if (UNK_60B1758[i] != 0) {
 			UNK_60B1758[i]++;
 		}
@@ -793,8 +793,8 @@ void UNK_602F2B0(uint8_t arg0) {
 }
 
 uint8_t UNK_602F386() {
-    int8_t j = UNK_60B181C - 1;
-	for (int8_t i = (int8_t)UNK_60B181C; i < UNK_60B181C; i++) {
+    int8_t j = PcmFirstLeftChannel - 1;
+	for (int8_t i = (int8_t)PcmFirstLeftChannel; i < PcmFirstLeftChannel; i++) {
         if (UNK_60B1770[i] != 0 && UNK_60B1770[j] < UNK_60B1770[i]) {
             j = i;
         }
@@ -804,11 +804,11 @@ uint8_t UNK_602F386() {
     }
 	int8_t i;
     while (true) {
-		for (i = (int8_t)(UNK_60B181C - 1); UNK_60B1758[i] != 0 && i < UNK_60B181C; i++);
-		if (i < UNK_60B181C) {
+		for (i = (int8_t)(PcmFirstLeftChannel - 1); UNK_60B1758[i] != 0 && i < PcmFirstLeftChannel; i++);
+		if (i < PcmFirstLeftChannel) {
 			break;
 		}
-		for (i = UNK_60B181C - 1; i < UNK_60B181C; i++) {
+		for (i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
             if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
                 UNK_60B1770[i] = 1u;
             }
@@ -833,7 +833,7 @@ void UNK_602F480() {
 	UNK_60B1865 = MidiPtr->UNK_100[UNK_60B1865].UNK_2[0];
 	UNK_60B1868 = 0x20u;
 	UNK_602ED40();
-	for (int8_t i = UNK_60B181C - 1; i < UNK_60B181C; i++) {
+	for (int8_t i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
 		if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
 			UNK_60B1770[i] = 1;
 		}
@@ -846,9 +846,9 @@ void UNK_602F57E() {
 	if (MidiPtr->UNK_100[UNK_60B1865].UNK_0 == 0xFFFFu) {
 		return;
 	}
-	i = UNK_60B181C - 1;
+	i = PcmFirstLeftChannel - 1;
 	while (true) {
-		if (i >= UNK_60B181C) {
+		if (i >= PcmFirstLeftChannel) {
 			return;
 		}
 		if (UNK_60B1728[i][1] == UNK_60B1865) {
@@ -858,7 +858,7 @@ void UNK_602F57E() {
 	}
 	CurrentPcmChannel = i;
 	UNK_602F026(0u);
-	for (int8_t i = UNK_60B181C - 1; i < UNK_60B181C; i++) {
+	for (int8_t i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
 		if (UNK_60B1758[i] != 0) {
 			UNK_60B1758[i]++;
 		}
