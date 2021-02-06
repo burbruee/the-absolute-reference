@@ -9,7 +9,9 @@
 #include <assert.h>
 #include <stdbool.h>
 
-SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];
+KeySetting InputConfigKeyboard[NUMINPUTS][8];
+
+KeySetting InputApplicationKeyboardQuit;
 
 SDL_Joystick* Joysticks[NUMPLAYERS];
 int InputConfigJoystickButtons[NUMPLAYERS][NUMINPUTS][8] = {
@@ -88,8 +90,11 @@ const char* const DefaultConfig =
 "SERVICE_COIN1 = Right Shift\n"
 "SERVICE_COIN2 = Keypad +\n"
 "SERVICE_ADDSERVICE = Tab\n"
-"SERVICE_TEST = Escape\n"
-"SERVICE_TILT = Backspace\n";
+"SERVICE_TEST = F2\n"
+"SERVICE_TILT = Backspace\n"
+"\n"
+"[INPUT_APPLICATION_KEYBOARD]\n"
+"QUIT = Escape\n";
 
 static int StringCompareNoCase(const char* a, const char* b) {
 	int cmp;
@@ -99,12 +104,121 @@ static int StringCompareNoCase(const char* a, const char* b) {
 
 static const char* const IniFileName = "taref.ini";
 
+static bool NextKey(KeySetting* const keySetting, const char* const keyName) {
+	const SDL_KeyCode code = SDL_GetKeyFromName(keyName);
+	if (code != SDLK_UNKNOWN) {
+		switch (code) {
+		case SDLK_LSHIFT: keySetting->mod |= KMOD_LSHIFT; break;
+		case SDLK_RSHIFT: keySetting->mod |= KMOD_RSHIFT; break;
+		case SDLK_LCTRL: keySetting->mod |= KMOD_LCTRL; break;
+		case SDLK_RCTRL: keySetting->mod |= KMOD_RCTRL; break;
+		case SDLK_LALT: keySetting->mod |= KMOD_LALT; break;
+		case SDLK_RALT: keySetting->mod |= KMOD_RALT; break;
+		case SDLK_LGUI: keySetting->mod |= KMOD_LGUI; break;
+		case SDLK_RGUI: keySetting->mod |= KMOD_RGUI; break;
+		case SDLK_MODE: keySetting->mod |= KMOD_MODE; break;
+		default:
+			if (keySetting->code == SDLK_UNKNOWN) {
+				keySetting->code = code;
+			}
+			else {
+				return false;
+			}
+			break;
+		}
+	}
+	else {
+		if (!StringCompareNoCase(keyName, "Ctrl")) {
+			keySetting->mod |= KMOD_CTRL;
+		}
+		else if (!StringCompareNoCase(keyName, "Shift")) {
+			keySetting->mod |= KMOD_SHIFT;
+		}
+		else if (!StringCompareNoCase(keyName, "Alt")) {
+			keySetting->mod |= KMOD_ALT;
+		}
+		else if (!StringCompareNoCase(keyName, "GUI")) {
+			keySetting->mod |= KMOD_GUI;
+		}
+		else {
+			return false;
+		}
+	}
+	return true;
+}
+
+static KeySetting GetKeySetting(const char* const setting) {
+	const size_t settingLen = strlen(setting);
+	if (setting == NULL || settingLen == 0u) {
+		return (KeySetting){ KMOD_NONE, SDLK_UNKNOWN };
+	}
+
+	KeySetting keySetting = { KMOD_NONE, SDLK_UNKNOWN };
+
+	char* const keyName = malloc(settingLen + 1u);
+	if (keyName == NULL) {
+		return keySetting;
+	}
+	keyName[0] = '\0';
+	char* const word = malloc(settingLen + 1u);
+	if (word == NULL) {
+		free(keyName);
+		return keySetting;
+	}
+
+	size_t start = 0u, end = 0u;
+	size_t numWords = 0u;
+	while (end < settingLen) {
+		while (start < settingLen && (setting[start] == ' ' || setting[start] == '\t')) {
+			start++;
+		}
+		if (start == settingLen) {
+			break;
+		}
+		end = start;
+		while (end < settingLen && setting[end] != ' ' && setting[end] != '\t') {
+			end++;
+		}
+		strncpy(word, &setting[start], end - start);
+		word[end - start] = '\0';
+		start = end;
+
+		if (!StringCompareNoCase(word, "And")) {
+			numWords = 0u;
+			if (NextKey(&keySetting, keyName)) {
+				keyName[0] = '\0';
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			if (numWords > 0u) {
+				strcat(keyName, " ");
+			}
+			strcat(keyName, word);
+			numWords++;
+		}
+	}
+
+	if (numWords == 0u || !NextKey(&keySetting, keyName)) {
+		keySetting = (KeySetting){ KMOD_NONE, SDLK_UNKNOWN };
+	}
+
+	free(word);
+	free(keyName);
+
+	return keySetting;
+}
+
 bool OpenConfig() {
 	for (size_t i = 0u; i < lengthof(InputConfigKeyboard); i++) {
 		for (size_t j = 0u; j < lengthof(*InputConfigKeyboard); j++) {
-			InputConfigKeyboard[i][j] = SDLK_UNKNOWN;
+			InputConfigKeyboard[i][j] = (KeySetting){ KMOD_NONE, SDLK_UNKNOWN };
 		}
 	}
+
+	InputApplicationKeyboardQuit = (KeySetting){ KMOD_NONE, SDLK_UNKNOWN };
 
 	for (size_t i = 0u; i < lengthof(Joysticks); i++) {
 		Joysticks[i] = NULL;
@@ -210,9 +324,9 @@ bool OpenConfig() {
 	{
 #define GET_KEY(input, button, i) \
 		do { \
-			const char* const keyName = ini_get(config, #input "_KEYBOARD", #button); \
-			if (keyName) { \
-				InputConfigKeyboard[input][i] = SDL_GetKeyFromName(keyName); \
+			const char* const setting = ini_get(config, #input "_KEYBOARD", #button); \
+			if (setting) { \
+				InputConfigKeyboard[input][i] = GetKeySetting(setting); \
 			} \
 		} while (0)
 
@@ -241,6 +355,13 @@ bool OpenConfig() {
 		GET_KEY(INPUT_SERVICE, SERVICE_TILT, 6);
 
 #undef GET_KEY
+	}
+
+	{
+		const char* setting = ini_get(config, "INPUT_APPLICATION_KEYBOARD", "QUIT");
+		if (setting) {
+			InputApplicationKeyboardQuit = GetKeySetting(setting);
+		}
 	}
 
 	if (SDL_NumJoysticks() > 0) {
@@ -412,6 +533,7 @@ bool OpenConfig() {
 			}
 		}
 	}
+
 	{
 		const char* const displayMode = ini_get(config, "VIDEO", "DISPLAY_MODE");
 		if (displayMode) {

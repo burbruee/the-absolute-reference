@@ -63,7 +63,7 @@ void UpdateItemDarkBlock(Item* item) {
 				itemPlayer->matrix[(MATRIX_HEIGHT - 1) * activatingPlayer->matrixWidth + col].block = NULLBLOCK;
 			}
 
-			item->darkFrames = 490;
+			item->darkFrames = TIME(0, 8, 0);
 			item->frames = 0;
 			item->darkSwitchTime = 0;
 			data->darkSwitchDelay = 12;

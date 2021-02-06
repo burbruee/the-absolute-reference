@@ -8,7 +8,14 @@ bool OpenConfig();
 void SaveConfig();
 void CloseConfig();
 
-extern SDL_Keycode InputConfigKeyboard[NUMINPUTS][8];
+typedef struct KeySetting {
+	SDL_Keymod mod;
+	SDL_Keycode code;
+} KeySetting;
+
+extern KeySetting InputConfigKeyboard[NUMINPUTS][8];
+
+extern KeySetting InputApplicationKeyboardQuit;
 
 extern SDL_Joystick* Joysticks[NUMPLAYERS];
 extern int InputConfigJoystickButtons[NUMPLAYERS][NUMINPUTS][8];

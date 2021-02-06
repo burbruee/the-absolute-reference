@@ -1,8 +1,13 @@
 #include "Main/TestLoop.h"
+#include "Main/Frame.h"
+#include "Game/Screen.h"
 #include <stdlib.h>
 
 MainLoopState RunTestLoop() {
-	// TODO: As a temporary way to test and have the game actually close, this exit call is placed here, causing the game to close if test mode is entered.
-	exit(EXIT_SUCCESS);
-	return MAINLOOP_ATTRACT; // Temporary solution to keep the game running, until test mode is implemented.
+	// This keeps execution in this function while the test input is held down.
+	while (UpdateFrame());
+
+	// For now, just restart back at the copyright screen, until test mode is implemented.
+	Screen = SCREEN_COPYRIGHT;
+	return MAINLOOP_ATTRACT;
 }

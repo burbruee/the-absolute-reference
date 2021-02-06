@@ -33,7 +33,7 @@
 #include <time.h>
 #include <assert.h>
 
-void InitVideo() {
+static void InitVideo() {
 	UNK_2405FFEA = 0x20u;
 	UNK_2405FFEC = 0x0Au;
 	UNK_2405FFED = 0x17u;
@@ -74,7 +74,7 @@ void InitVideo() {
 	SpriteNames[1] = SPRITENAME_TERMINATE;
 }
 
-void SetSystemGraphicDataPtr() {
+static void SetSystemGraphicDataPtr() {
 	SystemGraphicDataPtr = (SystemGraphicData*)SequenceDataTablePtr[7];
 }
 
@@ -208,25 +208,39 @@ bool PlatformInit(const int argc, const char* const* const argv) {
 	return true;
 }
 
+static bool KeyWithModsPressed(const KeySetting keySetting, const Uint8* const keyboardState, const SDL_Keymod modState) {
+#define CHECK_MOD(settingMod, modName) ((((settingMod) & (modName)) == KMOD_NONE) || (modState & (settingMod) & (modName)))
+#define CHECK_ALL_MODS(settingMod) (CHECK_MOD((settingMod), KMOD_SHIFT) && CHECK_MOD((settingMod), KMOD_CTRL) && CHECK_MOD((settingMod), KMOD_ALT) && CHECK_MOD((settingMod), KMOD_GUI))
+	if (keySetting.code != SDLK_UNKNOWN) {
+		if (keyboardState[SDL_GetScancodeFromKey(keySetting.code)] && CHECK_ALL_MODS(keySetting.mod)) {
+			return true;
+		}
+	}
+	else if (keySetting.mod != KMOD_NONE && CHECK_ALL_MODS(keySetting.mod)) {
+		return true;
+	}
+#undef CHECK_ALL_MODS
+#undef CHECK_MOD
+	return false;
+}
+
 void PlatformUpdateInputs() {
 	SDL_PumpEvents();
-
-	if (SDL_QuitRequested()) {
-		exit(EXIT_SUCCESS);
-	}
 
 	bool pressed[NUMINPUTS][8] = { 0 };
 
 	const Uint8* const keyboardState = SDL_GetKeyboardState(NULL);
+	SDL_Keymod modState = SDL_GetModState() & ~(KMOD_NUM | KMOD_CAPS);
 	for (size_t i = 0u; i < NUMINPUTS; i++) {
 		for (size_t j = 0u; j < 8u; j++) {
-			if (InputConfigKeyboard[i][j] != SDLK_UNKNOWN) {
-				SDL_Scancode scancode = SDL_GetScancodeFromKey(InputConfigKeyboard[i][j]);
-				if (keyboardState[scancode]) {
-					pressed[i][j] = true;
-				}
+			if (KeyWithModsPressed(InputConfigKeyboard[i][j], keyboardState, modState)) {
+				pressed[i][j] = true;
 			}
 		}
+	}
+
+	if (SDL_QuitRequested() || KeyWithModsPressed(InputApplicationKeyboardQuit, keyboardState, modState)) {
+		exit(EXIT_SUCCESS);
 	}
 
 	for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
@@ -276,7 +290,7 @@ void PlatformFrame() {
 
 	NumVblanks++;
 
-	SDL_Delay(0);
+	SDL_Delay(1);
 }
 
 #define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
