@@ -4,14 +4,14 @@
 #include "BuildData/BuildData.h"
 #include <assert.h>
 
-int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x) {
+int16_t UNK_602B7D8(const ObjectData* objectTable, int16_t y, int16_t x) {
     int16_t i = SpriteAdderNameTable[UNK_6061932.tempSprite[6]];
 	UNK_6061932.tempSprite[6]--;
-    SpriteAdders[i].data = data;
+    SpriteAdders[i].objectTable = objectTable;
     SpriteAdders[i].type = ADDSPRITE_5;
     SpriteAdders[i].y = y;
     SpriteAdders[i].x = x;
-    SpriteAdders[i].UNK_34 = UNK_6061932.UNK_10;
+    SpriteAdders[i].lineHeight = UNK_6061932.UNK_10;
     SpriteAdders[i].UNK_36 = 1;
     SpriteAdders[i].layer = (uint8_t)UNK_6061932.UNK_12;
     SpriteAdders[i].UNK_2C &= ~0x8000u;

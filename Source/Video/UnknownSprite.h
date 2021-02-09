@@ -3,7 +3,7 @@
 #include "Video/Video.h"
 #include <stdint.h>
 
-int16_t UNK_602B7D8(const void* data, int16_t y, int16_t x);
+int16_t UNK_602B7D8(const ObjectData* objectTable, int16_t y, int16_t x);
 // UNK_602B84A
 // UNK_602B8BC
 // UNK_602B8C2

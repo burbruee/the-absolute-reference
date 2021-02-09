@@ -17,7 +17,7 @@
 
 const int16_t UNK_60356C8[4] = { 0x00, 0x07, 0x0F, 0x1F };
 STRUCT_607D218* UNK_606005C = NULL;
-static void (**UNK_6060060)() = NULL;
+static void** UNK_6060060 = NULL;
 static uint16_t* UNK_6060064 = NULL; // TODO: Appears to be a pointer to an array of four (u)int16_t.
 static int16_t UNK_6060068 = 0; // NOTE: Appears to be a count of the number of active STRUCT_607D218 objects.
 AddSpriteData SpriteAdders[64];
@@ -123,7 +123,7 @@ void UNK_60237DE() {
 				int16_t i = UNK_60AD218->UNK_18;
 				for (void** var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 0; i--, var1 += 4u) {
 					UNK_6060064 = (uint16_t*)(var1 - 3);
-					UNK_6060060 = (void(**)())var1;
+					UNK_6060060 = var1;
 					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
@@ -134,14 +134,14 @@ void UNK_60237DE() {
 				int16_t i = UNK_60AD218->UNK_18;
 				for (void** var1 = &UNK_60AD218->UNK_300[4 * (15 - i) + 3]; i > 1; i--, var1 += 4u) {
 					UNK_6060064 = (uint16_t*)(var1 - 3);
-					UNK_6060060 = (void(**)())var1;
+					UNK_6060060 = var1;
 					(*(void(**)())var1)();
 					if (UNK_60AD21E) {
 						break;
 					}
 				}
 				if (!UNK_60AD21E) {
-					UNK_6060060 = (void(**)())&UNK_60AD218->UNK_300[4 * 15 + 2];
+					UNK_6060060 = &UNK_60AD218->UNK_300[4 * 15 + 2];
 					((void(*)())UNK_60AD218->UNK_300[4 * 15 + 2])();
 				}
 			}
@@ -260,29 +260,91 @@ void UNK_6023A98(STRUCT_607D218* arg0, void (*arg1)(), void* arg2, void* arg3) {
 	}
 }
 
-#if 0
 void UNK_6023B76(STRUCT_607D218* arg0) {
-	// TODO
+	void** var0 = &arg0->UNK_300[4 * 14 + 3];
+	for (uint16_t i = 0u; i < arg0->UNK_18; i++, var0 -= 4) {
+		*var0 = UNK_602378C;
+	}
+	arg0->UNK_18 = 0u;
+
+	uint8_t* var1 = arg0->UNK_1C;
+	for (uint16_t i = 0u; i < 4u; i += 1u, var1++) {
+		*var1 = 0u;
+	}
 }
 
 void UNK_6023BC4(STRUCT_607D218* arg0, void (*arg1)()) {
-	// TODO
+	void** var0 = &arg0->UNK_300[4 * 14 + 3];
+	for (uint16_t i = 0u; i < arg0->UNK_18; i++, var0 -= 4u) {
+		if (*var0 == arg1) {
+			if (i + 1 == arg0->UNK_18) {
+				arg0->UNK_18--;
+			}
+			*var0 = UNK_602378C;
+			if (var0 - 1 <= arg0) {
+				break;
+			}
+			else {
+				i++;
+				for (uint16_t j = 0u; j < 4; j++) {
+					if (arg0->UNK_1C[j] == i + 1u) {
+						arg0->UNK_1C[j] = 0u;
+						j = 4u;
+					}
+				}
+				break;
+			}
+		}
+	}
 }
 
-void UNK_6023C3E(STRUCT_607D218* arg0, void* arg1) {
-	// TODO
+void UNK_6023C3E(STRUCT_607D218* arg0, void** arg1) {
+	uint32_t var0 = (uint32_t)((((ptrdiff_t)((void**)&arg0->UNK_300[4 * 14 + 3] - arg1) / (sizeof(void**) * 4u)) & 0xFFFFu) + 1u);
+	if (var0 == arg0->UNK_18) {
+		arg0->UNK_18--;
+	}
+	*arg1 = UNK_602378C;
+	if (arg0 < (STRUCT_607D218 *)(arg1 - 1)) {
+		uint8_t* var1 = arg0->UNK_1C;
+		uint8_t* var2 = var1;
+		for (uint16_t uVar4 = 0u; uVar4 < 4; uVar4++, var1++, var2++) {
+			if ((int8_t)*var2 == var0) {
+				*var1 = 0u;
+				break;
+			}
+		}
+	}
 }
 
-void* UNK_6023C8A(STRUCT_607D218* arg0, void* arg1) {
-	// TODO
+void* UNK_6023C8A(STRUCT_607D218* param_1, void* param_2) {
+	void** var0 = &param_1->UNK_300[4 * 14 + 3];
+	for (int16_t i = 0; i < param_1->UNK_18; i++, var0 -= 4u) {
+		if (*var0 == param_2) {
+			return var0;
+		}
+	}
 	return NULL;
 }
 
-int32_t UNK_6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, int16_t arg4, int16_t arg5, int16_t arg6, int16_t arg7) {
-	// TODO
-	return 0u;
+uint32_t UNK_6023CBC(void (*arg0)(), uint32_t arg1, int16_t arg2, int16_t arg3, int16_t arg4, int16_t arg5, int16_t arg6, int16_t arg7) {
+	void** var0 = &UNK_606005C->UNK_300[4 * 14 + 3];
+	for (uint32_t i = 0u; i < UNK_606005C->UNK_18; i++, var0 -= 4) {
+		if (
+			*var0 == arg0 &&
+			((arg1 & 0x01) == 0 || ((int16_t*)(var0 - 3))[ 0] == arg2) &&
+			((arg1 & 0x02) == 0 || ((int16_t*)(var0 - 2))[-1] == arg3) &&
+			((arg1 & 0x04) == 0 || ((int16_t*)(var0 - 2))[ 0] == arg4) &&
+			((arg1 & 0x08) == 0 || ((int16_t*)(var0 - 1))[-1] == arg5) &&
+			((arg1 & 0x10) == 0 || ((int16_t*)(var0 - 1))[ 0] == arg6) &&
+			((arg1 & 0x20) == 0 || ((int16_t*)(var0 - 0))[-1] == arg7)
+		) {
+			UNK_6023C3E(UNK_606005C, var0);
+			return i;
+		}
+	}
+
+	return ~UINT32_C(0);
 }
-#endif
 
 STRUCT_607D218* UNK_6023DAE(STRUCT_607D218* arg0) {
 	if (UNK_6060068 >= lengthof(UNK_607CF10) - 1) {
@@ -428,12 +490,44 @@ STRUCT_607D218* UNK_6023EFE(void (**arg0)(), STRUCT_607D218* arg1) {
 	return var1;
 }
 
-#if 0
-void* UNK_6023FA4(void (**arg0)(), STRUCT_607D218* arg1) {
-	// TODO
-	return NULL;
+void* UNK_6023FA4(void** arg0, STRUCT_607D218* arg1) {
+	STRUCT_607D218* var0 = UNK_606005C;
+
+	if (arg1 == (STRUCT_607D218*)~((uintptr_t)0u)) {
+		arg1 = UNK_606005C;
+	}
+
+	STRUCT_607D218* var1 = UNK_6023DAE(arg1);
+	if (var1 == NULL) {
+		return NULL;
+	}
+	else {
+		void** var2 = &var1->UNK_300[4 * 15 + 3];
+		UNK_606005C = var1;
+		int16_t i = 1;
+		for (void* var3 = arg0[1]; var3 != NULL; var3 = arg0[i]) {
+			if (i < 4) {
+				*var2 = arg0[i];
+				var2--;
+			}
+			else {
+				if (i == 4) {
+					var2--;
+				}
+				*var2 = arg0[i];
+				var2 -= 4;
+			}
+
+			if (++i > 15) {
+				break;
+			}
+		}
+		var1->UNK_18 = i - 4;
+		((void(*)())*arg0)();
+		UNK_606005C = var0;
+		return var1;
+	}
 }
-#endif
 
 void UNK_6024030(STRUCT_607D218* arg0) {
 	STRUCT_607D218* var0 = UNK_606005C;
@@ -535,9 +629,9 @@ void UNK_6024244() {
 		AddSpriteData* var2 = &SpriteAdders[var1];
 		switch (var2->type) {
 		case ADDSPRITE_1:
-			while (CurrentPauseMode < PAUSEMODE_BG && --var2->UNK_34 <= 0) {
+			while (CurrentPauseMode < PAUSEMODE_BG && --var2->lineHeight <= 0) {
 				int16_t var3;
-				var2->UNK_34 = var2->UNK_36;
+				var2->lineHeight = var2->UNK_36;
 				if (!(var2->UNK_2C & 0x800u)) {
 					if (var2->animFrame < var2->UNK_28 - 1) {
 						var3 = var2->animFrame + 1;
@@ -546,7 +640,7 @@ void UNK_6024244() {
 						if (!(var2->UNK_2C & 0x200)) {
 							if (!(var2->UNK_2C & 0x400)) {
 								var2->animFrame = var2->UNK_28 - 1;
-								var2->type = 2u;
+								var2->type = ADDSPRITE_2;
 							}
 							else {
 								var2->animFrame--;
@@ -565,7 +659,7 @@ void UNK_6024244() {
 						if (!(var2->UNK_2C & 0x200)) {
 							if (!(var2->UNK_2C & 0x400)) {
 								var2->animFrame = var2->UNK_38;
-								var2->type = 2u;
+								var2->type = ADDSPRITE_2;
 							}
 							else {
 								var2->animFrame++;
@@ -612,7 +706,7 @@ void UNK_60243E8(AddSpriteData* arg0) {
 	int16_t numSprites;
 	const ObjectData* object;
 
-	object = arg0->data;
+	object = arg0->objectTable;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
@@ -739,7 +833,7 @@ void UNK_60243E8(AddSpriteData* arg0) {
 }
 
 void UNK_602471C(AddSpriteData* arg0) {
-	const ObjectData* object = arg0->data;
+	const ObjectData* object = arg0->objectTable;
 	for (int16_t frame = 0; frame < arg0->animFrame; frame++) {
 		object += OBJECT_GETNUMSPRITES(object);
 	}
@@ -897,7 +991,7 @@ int16_t AllocSpriteAdder() {
 	SpriteAdders[i].UNK_2E = 0u;
 	SpriteAdders[i].UNK_30 = 0;
 	SpriteAdders[i].UNK_32 = 0;
-	SpriteAdders[i].UNK_34 = 0;
+	SpriteAdders[i].lineHeight = 0;
 	SpriteAdders[i].animFrame = 0;
 	SpriteAdders[i].UNK_36 = 0;
 	SpriteAdders[i].UNK_28 = 0;
@@ -926,9 +1020,20 @@ void FreeSpriteAdder(int16_t arg0) {
 	return;
 }
 
+void UNK_6024C00(int16_t spriteAdderName) {
+	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
+		SpriteAdders[spriteAdderName].scaleY = UNSCALED;
+		SpriteAdders[spriteAdderName].scaleX = UNSCALED;
+		SpriteAdders[spriteAdderName].palNum = 0u;
+		SpriteAdders[spriteAdderName].bppAlphaTileTop = 0u;
+		SpriteAdders[spriteAdderName].layer = 16u;
+		SpriteAdders[spriteAdderName].type = ADDSPRITE_2;
+	}
+}
+
 void UNK_6024C3C(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData* objectTable) {
 	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
-		SpriteAdders[spriteAdderName].data = objectTable;
+		SpriteAdders[spriteAdderName].objectTable = objectTable;
 		SpriteAdders[spriteAdderName].y = y;
 		SpriteAdders[spriteAdderName].x = x;
 		if (SpriteAdders[spriteAdderName].type == ADDSPRITE_2) {
@@ -939,6 +1044,79 @@ void UNK_6024C3C(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData
 		}
 		SpriteAdders[spriteAdderName].animFrame = 0;
 	}
+}
+
+void UNK_6024C82(int16_t spriteAdderName, const ObjectData* objectTable) {
+	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
+		SpriteAdders[spriteAdderName].objectTable = objectTable;
+		if (SpriteAdders[spriteAdderName].type == ADDSPRITE_2) {
+			SpriteAdders[spriteAdderName].type = ADDSPRITE_2;
+		}
+		else {
+			SpriteAdders[spriteAdderName].type = ADDSPRITE_9;
+		}
+		SpriteAdders[spriteAdderName].animFrame = 0u;
+	}
+}
+
+void UNK_6024CBC(int16_t spriteAdderName, int16_t y, int16_t x, ObjectData* objectTable, int16_t animFrame) {
+	UNK_6024C3C(spriteAdderName, y, x, objectTable);
+	SpriteAdders[spriteAdderName].animFrame = animFrame;
+}
+
+void UNK_6024CF4(int16_t spriteAdderName, int16_t y, int16_t x, ObjectData* objectTable, int16_t animFrame, int16_t arg5, uint16_t arg6) {
+	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
+		SpriteAdders[spriteAdderName].objectTable = objectTable;
+		SpriteAdders[spriteAdderName].y = y;
+		SpriteAdders[spriteAdderName].x = x;
+		SpriteAdders[spriteAdderName].type = ADDSPRITE_1;
+		SpriteAdders[spriteAdderName].UNK_2C = (arg6 & 0x8F00u) | (SpriteAdders[spriteAdderName].UNK_2C & 0x70FFu) | 0x8000u;
+		SpriteAdders[spriteAdderName].lineHeight = arg5 + 1;
+		SpriteAdders[spriteAdderName].UNK_36 = arg5;
+		SpriteAdders[spriteAdderName].UNK_28 = animFrame;
+		SpriteAdders[spriteAdderName].UNK_38 = 0;
+		SpriteAdders[spriteAdderName].animFrame = (arg6 & 0x0800u) ? animFrame - 1 : 0;
+	}
+}
+
+void UNK_6024D74(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData* objectTable, int16_t animFrame, int16_t arg5, uint16_t arg6) {
+	if (spriteAdderName >= 0 && spriteAdderName < lengthof(SpriteAdders)) {
+		SpriteAdders[spriteAdderName].objectTable = objectTable;
+		SpriteAdders[spriteAdderName].y = y;
+		SpriteAdders[spriteAdderName].x = x;
+		SpriteAdders[spriteAdderName].type = ADDSPRITE_1;
+		SpriteAdders[spriteAdderName].UNK_2C = (arg6 & 0x8F00u) | (SpriteAdders[spriteAdderName].UNK_2C & 0x70FFu);
+		SpriteAdders[spriteAdderName].lineHeight = arg5 + 1;
+		SpriteAdders[spriteAdderName].UNK_36 = arg5;
+		SpriteAdders[spriteAdderName].UNK_28 = animFrame;
+		SpriteAdders[spriteAdderName].UNK_38 = 0;
+		SpriteAdders[spriteAdderName].animFrame = (arg6 & 0x0800u) ? animFrame - 1 : 0;
+	}
+}
+
+static uint32_t UNK_60618F0[16];
+
+bool UNK_6024DF0(int16_t arg0) {
+    
+	int32_t var0 = arg0 % lengthof(UNK_60618F0);
+    var0 = arg0 - var0;
+    if (var0 < 0) {
+		var0 += lengthof(UNK_60618F0) - 1;
+    }
+
+    int16_t i = var0 >> 4;
+    if (i < lengthof(UNK_60618F0) - 1) {
+        if (i < 0) {
+            i = 0;
+        }
+    }
+    else {
+        i = lengthof(UNK_60618F0) - 2;
+    }
+
+	uint32_t var1 = UNK_60618F0[i];
+	UNK_60618F0[i] = var1 + 1u;
+	return var1 & 1u;
 }
 
 // TODO: Could be InitBgIndex().
@@ -1124,6 +1302,17 @@ int32_t UNK_60257EE() {
 	return i;
 }
 
+void UNK_602585E(int16_t arg0) {
+	Bgs[arg0].UNK_0 = 0;
+
+	int16_t* var0 = Bgs[arg0].UNK_18;
+	for (int32_t i = 0; i < lengthoffield(Bg, UNK_18); i++, var0++) {
+		if (*var0 > 0) {
+			UNK_60AD228[*var0].UNK_0 = 0u;
+		}
+	}
+}
+
 int32_t UNK_6025918() {
 	int32_t bgIndex;
 
@@ -1162,6 +1351,48 @@ int32_t UNK_6025918() {
 	return bgIndex;
 }
 
+void UNK_60259D6(int16_t param_1) {
+	UNK_60AD228[param_1].UNK_0 = 0u;
+}
+
+int16_t UNK_60259EA(int16_t arg0, STRUCT_GameBg_0* arg1) {
+	int32_t var0 = Bgs[arg0].UNK_6;
+	if (Bgs[arg0].UNK_18[var0] == -1) {
+		Bgs[arg0].UNK_18[var0] = UNK_6025918();
+	}
+	int16_t var1 = Bgs[arg0].UNK_18[var0];
+
+	UNK_60AD228[var1].UNK_58 = 1;
+
+	int32_t var2 = Bgs[arg0].UNK_40;
+	UNK_60AD228[var1].UNK_28[0] -= var2;
+	UNK_60AD228[var1].UNK_28[1] -= var2;
+
+	Bgs[arg0].UNK_48 = 1;
+
+	if (UNK_60AD228[var1].UNK_10 != UNK_60AD228[var1].UNK_60) {
+		UNK_60AD228[var1].UNK_60 = UNK_60AD228[var1].UNK_10;
+		UNK_60AD228[var1].UNK_64 = UNK_60AD228[var1].UNK_14;
+	}
+
+	UNK_60AD228[var1].UNK_10 = arg1;
+	UNK_60AD228[var1].UNK_14 = 0;
+
+	for (BgMap* bgMap = arg1->UNK_0; bgMap != NULL; arg1++, bgMap = arg1->UNK_0) {
+		UNK_60AD228[var1].UNK_14 += arg1->UNK_0->header.UNK_6 * arg1->UNK_4;
+	}
+
+	UNK_60AD228[var1].UNK_4C = 0;
+	UNK_60AD228[var1].UNK_50 = 0;
+	return var1;
+}
+
+void UNK_6025AAC(int16_t arg0, STRUCT_GameBg_0* arg1, int32_t arg2, int32_t arg3) {
+	int16_t var0 = UNK_60259EA(arg0,arg1);
+	UNK_60AD228[var0].UNK_4C += arg2;
+	UNK_60AD228[var0].UNK_50 += arg3;
+}
+
 int32_t UNK_6025AE4(int16_t bgIndex, GameBg* gameBg) {
 	int16_t var0;
 	if (Bgs[bgIndex].UNK_18[Bgs[bgIndex].UNK_6] < 0) {
@@ -1190,6 +1421,76 @@ void UNK_6025B9A(int16_t bgIndex, GameBg* gameBg, int32_t arg2, int32_t arg3) {
 	int32_t var0 = UNK_6025AE4(bgIndex, gameBg);
 	UNK_60AD228[var0].UNK_4C += arg2;
 	UNK_60AD228[var0].UNK_50 += arg3;
+}
+
+void UNK_6025BDC(int16_t arg0) {
+	if (Bgs[arg0].UNK_18[Bgs[arg0].UNK_6] >= 0) {
+		UNK_60AD228[Bgs[arg0].UNK_18[Bgs[arg0].UNK_6]].UNK_60 = NULL;
+	}
+}
+
+void UNK_6025C1E(int16_t param_1, int16_t param_2, int16_t param_3) {
+	int16_t sVar1;
+	int32_t iVar2;
+	int16_t *psVar3;
+	int32_t iVar4;
+	int32_t *piVar5;
+	int32_t iVar8;
+	
+	if (Bgs[param_1].UNK_18[Bgs[param_1].UNK_6] >= 0) {
+		iVar2 = Bgs[param_1].UNK_18[Bgs[param_1].UNK_6];
+		sVar1 = UNK_60AD228[iVar2].UNK_54;
+
+		iVar4 = UNK_60AD228[iVar2].UNK_30[sVar1];
+		UNK_60AD228[iVar2].UNK_38[sVar1] += iVar4;
+
+		iVar8 = param_3 - UNK_60AD228[iVar2].UNK_34[sVar1];
+		UNK_60AD228[iVar2].UNK_3C[sVar1] += iVar8;
+
+		UNK_60AD228[iVar2].UNK_44 = 0;
+		UNK_60AD228[iVar2].UNK_4A = 0;
+
+		if (UNK_60AD228[iVar2].UNK_40[sVar1] < 0) {
+			if (iVar4 < 0) {
+				UNK_60AD228[iVar2].UNK_40[sVar1] = 1;
+				UNK_60AD228[iVar2].UNK_44 = 1;
+			}
+		}
+		else if (iVar4 > 0) {
+			UNK_60AD228[iVar2].UNK_40[sVar1] = -1;
+			UNK_60AD228[iVar2].UNK_44 = 1;
+		}
+
+		if (UNK_60AD228[iVar2].UNK_46[sVar1] < 0) {
+			if (iVar8 < 0) {
+				UNK_60AD228[iVar2].UNK_46[sVar1] = 1;
+				UNK_60AD228[iVar2].UNK_4A = 1;
+			}
+		}
+		else if (0 < iVar8) {
+			UNK_60AD228[iVar2].UNK_46[sVar1] = -1;
+			UNK_60AD228[iVar2].UNK_4A = 1;
+		}
+
+		if (UNK_60AD228[iVar2].UNK_58 == 1) {
+			UNK_60AD228[iVar2].UNK_5A = iVar8 < 1;
+			UNK_60AD228[iVar2].UNK_5C = iVar8 < 1;
+			UNK_60AD228[iVar2].UNK_58 = 0;
+		}
+		if (Bgs[param_1].UNK_48 == 1) {
+			Bgs[param_1].UNK_40 = 0;
+			Bgs[param_1].UNK_48 = 0;
+		}
+
+		UNK_60AD228[iVar2].UNK_18[sVar1] += param_2 - UNK_60AD228[iVar2].UNK_30[sVar1];
+		UNK_60AD228[iVar2].UNK_20[sVar1] += param_3 - UNK_60AD228[iVar2].UNK_34[sVar1];
+		UNK_60AD228[iVar2].UNK_28[sVar1] += param_3 - UNK_60AD228[iVar2].UNK_34[sVar1];
+		UNK_60AD228[iVar2].UNK_30[sVar1] = param_2;
+		UNK_60AD228[iVar2].UNK_34[sVar1] = param_3;
+
+		Bgs[param_1].UNK_40 += param_3 - Bgs[param_1].UNK_44;
+		Bgs[param_1].UNK_44 = param_3;
+	}
 }
 
 static void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t arg2);
@@ -1779,7 +2080,7 @@ static void VideoSetPal(void* palNumArg, void* numPalsArg, void* palArg) {
 
 static void VideoSetPalReverse(void*, void*, void*);
 
-void PalSetReverse(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
+void SetPalReverse(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
 	VideoSetters[NumVideoSetters].set = VideoSetPalReverse;
 	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)palNum;
 	VideoSetters[NumVideoSetters].args[1] = (void*)(uintptr_t)numPals;
@@ -1854,10 +2155,9 @@ void UNK_602AB9E() {
 	}
 }
 
-void UNK_602AC68(int16_t* arg0) {
-	int16_t var0 = arg0[0];
-	for (int16_t* var1 = arg0; var0 == 0x00A1; var1 += 4, var0 = var1[0]) {
-		// TODO: Figure out a way to translate the construction of a pointer here to portable code.
-		//SetPalList((uint8_t)var1[1], ((int32_t)var1[2] << 16) | var1[3]);
+void UNK_602AC68(void** arg0) {
+	int16_t var0 = ((int16_t*)arg0)[0];
+	for (void** var1 = arg0; var0 == 0x00A1; var1++, var0 = ((int16_t*)var1)[0]) {
+		SetPalList(((int16_t*)arg0)[1], *((Color***)(arg0 + 1)));
 	}
 }

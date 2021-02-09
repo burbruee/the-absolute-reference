@@ -34,15 +34,26 @@ uint32_t NumVblanks = 0u;
 bool VblankFinished = false;
 
 void UNK_602ACB0() {
-	UNK_6060024 = 0xFFFFu;
-	UNK_6060028 = 0u;
 	UNK_FFFFFE10 = 1u;
-	UNK_FFFFFE11 = 1u;
 	UNK_FFFFFE12 = 0u;
 	UNK_FFFFFE13 = 0u;
+	UNK_FFFFFE11 = 1u;
+	UNK_FFFFFE16 = 2u;
 	UNK_FFFFFE14 = 0xFFu;
 	UNK_FFFFFE15 = 0xFFu;
-	UNK_FFFFFE16 = 2u;
+	UNK_6060024 = 0xFFFFu;
+	UNK_6060028 = 0u;
+}
+
+void UNK_602ACE0(uint16_t arg0) {
+	UNK_FFFFFE10 = 1u;
+	UNK_FFFFFE12 = 1u;
+	UNK_FFFFFE13 = 0u;
+	UNK_FFFFFE14 = (uint8_t)(arg0 >> 8);
+	UNK_FFFFFE15 = (uint8_t)(arg0 >> 0);
+	UNK_FFFFFE10 = 0u;
+	UNK_6060024 = arg0;
+	UNK_6060028 = 0u;
 }
 
 bool UpdateFrame() {
