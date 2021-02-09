@@ -281,7 +281,7 @@ int32_t UNK_60257EE();
 void UNK_602585E(int16_t);
 int32_t UNK_6025918();
 void UNK_60259D6(int16_t);
-int16_t UNK_60259EA(int16_t, int32_t*);
+int16_t UNK_60259EA(int16_t, STRUCT_GameBg_0*);
 void UNK_6025AAC(int16_t, STRUCT_GameBg_0*, int32_t, int32_t);
 int32_t UNK_6025AE4(int16_t, GameBg*);
 void UNK_6025B9A(int16_t, GameBg*, int32_t, int32_t);

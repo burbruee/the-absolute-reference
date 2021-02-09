@@ -282,7 +282,8 @@ bool OpenConfig() {
 			fprintf(stderr, "Failed opening \"%s\" for writing.\n\n", IniFileName);
 			return false;
 		}
-		if (PHYSFS_write(iniFile, DefaultConfig, strlen(DefaultConfig), 1u) == 0u) {
+		const PHYSFS_sint64 defaultConfigLen = strlen(DefaultConfig);
+		if (PHYSFS_writeBytes(iniFile, DefaultConfig, defaultConfigLen) < defaultConfigLen) {
 			fprintf(stderr, "Failed writing \"%s\".\n\n", IniFileName);
 			return false;
 		}
