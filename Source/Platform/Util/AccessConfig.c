@@ -105,7 +105,7 @@ static int StringCompareNoCase(const char* a, const char* b) {
 static const char* const IniFileName = "taref.ini";
 
 static bool NextKey(KeySetting* const keySetting, const char* const keyName) {
-	const SDL_KeyCode code = SDL_GetKeyFromName(keyName);
+	const SDL_Keycode code = SDL_GetKeyFromName(keyName);
 	if (code != SDLK_UNKNOWN) {
 		switch (code) {
 		case SDLK_LSHIFT: keySetting->mod |= KMOD_LSHIFT; break;
