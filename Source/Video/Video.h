@@ -96,6 +96,8 @@ struct STRUCT_607D218 {
 	Fixed32 UNK_28;
 	Fixed32 UNK_2C;
 	uint16_t UNK_30; // TODO: Might be bool.
+	int16_t UNK_52;
+	uint32_t UNK_80[4];
 	void* UNK_100[4][32];
 	void* UNK_300[16 * 4];
 };
@@ -158,14 +160,14 @@ typedef struct STRUCT_60AD228 {
 	int16_t UNK_54;
 	int16_t UNK_56;
 	int16_t UNK_58;
-	int16_t UNK_5A;
-	int16_t UNK_5C;
+	int16_t UNK_5A[2];
 	STRUCT_GameBg_0* UNK_60;
 	int32_t UNK_64;
 } STRUCT_60AD228;
 
 extern STRUCT_60AD228 UNK_60AD228[11];
 
+struct Bg;
 typedef struct Bg {
 	int16_t UNK_0;
 	int16_t UNK_2;
@@ -180,24 +182,20 @@ typedef struct Bg {
 	int32_t UNK_14;
 	int16_t UNK_18[11];
 	int8_t UNK_2E[2];
-	int32_t UNK_30;
-	int32_t UNK_34;
+	void (*UNK_30)(struct Bg*);
+	void (*UNK_34)(struct Bg*);
 	int16_t UNK_38[4];
 	int32_t UNK_40;
 	int32_t UNK_44;
 	int16_t UNK_48;
 	int32_t UNK_4C;
-
-	// TODO: Maybe these should be merged into uint32_t UNK_50[2][448].
-	// These might be used for temporarily storing the background map tile
-	// data, before being written to background RAM.
-	uint32_t UNK_50[448];
-	uint32_t UNK_750[448];
+	uint32_t UNK_50[3][224];
+	uint16_t UNK_AD0[2][224];
 } Bg;
 
 extern Bg Bgs[4];
 
-void UNK_6023788();
+void UNK_6023788(Bg*);
 
 void UNK_602378C();
 
@@ -279,7 +277,7 @@ void UNK_602523C();
 void UNK_602526A(void*, void*, void*);
 int32_t UNK_60257EE();
 void UNK_602585E(int16_t);
-int32_t UNK_6025918();
+int16_t UNK_6025918();
 void UNK_60259D6(int16_t);
 int16_t UNK_60259EA(int16_t, STRUCT_GameBg_0*);
 void UNK_6025AAC(int16_t, STRUCT_GameBg_0*, int32_t, int32_t);
@@ -287,16 +285,26 @@ int32_t UNK_6025AE4(int16_t, GameBg*);
 void UNK_6025B9A(int16_t, GameBg*, int32_t, int32_t);
 void UNK_6025BDC(int16_t);
 void UNK_6025C1E(int16_t, int16_t, int16_t);
-void UNK_6025DFC();
+void UNK_6025DFC(int16_t);
 void UNK_6026530(int16_t, STRUCT_60AD228*, int16_t, int16_t, int16_t);
 void UNK_6026698(int16_t bgNum, STRUCT_GameBg_0*, STRUCT_60AD228*, int16_t, int16_t, int16_t, int16_t, int16_t);
 void UNK_60267E4(int16_t bgIndex, int32_t);
 void UNK_602682A(int16_t, int16_t, int16_t, bool);
 void UNK_6026870(int16_t bgIndex, int16_t, int16_t bank);
 STRUCT_GameBg_0* UNK_6026AAC(int16_t, int16_t, int16_t*, int16_t*);
-//UNK_6026B90
 //UNK_6026BBA
-//UNK_6026D40
+
+typedef struct STRUCT_6026D40 {
+	uint16_t UNK_0;
+	uint16_t UNK_2;
+	uint8_t UNK_4;
+	uint8_t UNK_6;
+	uint8_t UNK_8;
+	uint8_t UNK_9;
+	uint16_t UNK_A;
+} STRUCT_6026D40;
+void UNK_6026BBA(int16_t, STRUCT_6026D40*, int32_t, int32_t);
+
 //UNK_6026F1E
 //UNK_6026F68
 void UNK_6026FCA(int16_t bgIndex, int16_t arg1);
@@ -323,15 +331,13 @@ void SetBgDarkness(int16_t bgIndex, int16_t darkness);
 //UNK_6028ABA
 //UNK_6028D36
 //UNK_6028F36
-void SetRastersBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetScanlinesBank doesn't use it. -Brandon McGriff
+void SetRastersBank(uint8_t bankNum); // NOTE: I assume the argument was the bank number, but VideoSetRastersBank doesn't use it. -Brandon McGriff
 void VideoSetRastersBank(void*, void*, void*);
 void UNK_6029498(int16_t);
 //UNK_6029498
 void UNK_60294C0(void* arg0, void* unused1, void* unused2);
 void SetOverlayRastersColor(Color color);
 void UNK_6029546(int16_t arg0, int16_t arg1, int16_t arg2, int16_t arg3);
-//UNK_602970C
-//UNK_602975E
 // Runs all the video setters.
 void SetVideo();
 // Disables all video setters.

@@ -99,6 +99,7 @@ set(EXECUTABLE_SOURCES
 	"../../Video/Pal.c"
 	"../../Video/SpriteInit.c"
 	"../../Video/UnknownSprite.c"
+	"../../Video/UNK_600F1A8.c"
 	"../../Video/Video.c"
 )
 set(EXECUTABLE_HEADERS
@@ -207,6 +208,7 @@ set(EXECUTABLE_HEADERS
 	"../../Video/PalNum.h"
 	"../../Video/SpriteInit.h"
 	"../../Video/UnknownSprite.h"
+	"../../Video/UNK_600F1A8.h"
 	"../../Video/Video.h"
 	"../../Video/VideoDefs.h"
 )

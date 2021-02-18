@@ -3,6 +3,7 @@
 #include "Video/HwSprite.h"
 #include "Video/VideoDefs.h"
 #include "Video/GameBg.h"
+#include "Video/UNK_600F1A8.h"
 #include "Main/Frame.h"
 #include "Lib/LibC.h"
 #include "Lib/Fixed.h"
@@ -85,8 +86,14 @@ static STRUCT_60B0FE0 UNK_60B0FE0[2][20];
 static int16_t UNK_60B13A0[2];
 static bool UNK_60B13A4;
 static int16_t UNK_60B13AE;
+static int16_t UNK_60B13B0;
+static int16_t UNK_60B13B2;
+static int16_t UNK_60B13A6;
+static int16_t UNK_60B13A8;
+static int16_t UNK_60b13AA;
+static int16_t UNK_60B13AC;
 
-void UNK_6023788() {
+void UNK_6023788(Bg* arg0) {
 	// Empty.
 }
 
@@ -1097,22 +1104,21 @@ void UNK_6024D74(int16_t spriteAdderName, int16_t y, int16_t x, const ObjectData
 uint32_t UNK_60618F0[16];
 
 bool UNK_6024DF0(int16_t arg0) {
-    
 	int32_t var0 = arg0 % lengthof(UNK_60618F0);
-    var0 = arg0 - var0;
-    if (var0 < 0) {
+	var0 = arg0 - var0;
+	if (var0 < 0) {
 		var0 += lengthof(UNK_60618F0) - 1;
-    }
+	}
 
-    int16_t i = var0 >> 4;
-    if (i < lengthof(UNK_60618F0) - 1) {
-        if (i < 0) {
-            i = 0;
-        }
-    }
-    else {
-        i = lengthof(UNK_60618F0) - 2;
-    }
+	int16_t i = var0 >> 4;
+	if (i < lengthof(UNK_60618F0) - 1) {
+		if (i < 0) {
+			i = 0;
+		}
+	}
+	else {
+		i = lengthof(UNK_60618F0) - 2;
+	}
 
 	uint32_t var1 = UNK_60618F0[i];
 	UNK_60618F0[i] = var1 + 1u;
@@ -1129,8 +1135,8 @@ void UNK_6024E5C(int16_t i) {
 	Bgs[i].darkness = 0;
 	Bgs[i].UNK_10 = 0;
 	Bgs[i].UNK_14 = 0;
-	Bgs[i].UNK_30 = 0;
-	Bgs[i].UNK_34 = 0;
+	Bgs[i].UNK_30 = NULL;
+	Bgs[i].UNK_34 = NULL;
 	Bgs[i].UNK_8 = 0;
 	Bgs[i].UNK_40 = 0;
 	Bgs[i].UNK_44 = 0;
@@ -1204,12 +1210,12 @@ void UNK_6025078() {
 }
 
 void UNK_60251B8(int16_t bgIndex, uint32_t* arg1, uint32_t* arg2) {
-	for (size_t i = 0; i < 0xE0u; i += 8u) {
+	for (size_t i = 0; i < lengthoffield(Bg, UNK_50[0]); i += 8u) {
 		for (size_t j = 0; j < 8u; j++) {
-			arg1[i + j] = Bgs[bgIndex].UNK_50[i + j + 0x00u];
+			arg1[i + j] = Bgs[bgIndex].UNK_50[0][i + j];
 		}
 		for (size_t j = 0; j < 8u; j++) {
-			arg2[i + j] = Bgs[bgIndex].UNK_50[i + j + 0xE0u];
+			arg2[i + j] = Bgs[bgIndex].UNK_50[1][i + j];
 		}
 	}
 }
@@ -1313,16 +1319,16 @@ void UNK_602585E(int16_t arg0) {
 	}
 }
 
-int32_t UNK_6025918() {
-	int32_t bgIndex;
+int16_t UNK_6025918() {
+	int16_t bgIndex;
 
-	for (bgIndex = 1; bgIndex < 11; bgIndex++) {
+	for (bgIndex = 1; bgIndex < lengthof(UNK_60AD228); bgIndex++) {
 		if (UNK_60AD228[bgIndex].UNK_0 == 0u) {
 			break;
 		}
 	}
 
-	if (bgIndex < 11) {
+	if (bgIndex < lengthof(UNK_60AD228)) {
 		UNK_60AD228[bgIndex].UNK_0 = 1u;
 		UNK_60AD228[bgIndex].UNK_10 = NULL;
 		UNK_60AD228[bgIndex].UNK_60 = NULL;
@@ -1466,8 +1472,8 @@ void UNK_6025C1E(int16_t arg0, int16_t arg1, int16_t arg2) {
 		}
 
 		if (UNK_60AD228[var0].UNK_58 == 1) {
-			UNK_60AD228[var0].UNK_5A = var3 < 1;
-			UNK_60AD228[var0].UNK_5C = var3 < 1;
+			UNK_60AD228[var0].UNK_5A[0] = var3 < 1;
+			UNK_60AD228[var0].UNK_5A[1] = var3 < 1;
 			UNK_60AD228[var0].UNK_58 = 0;
 		}
 		if (Bgs[arg0].UNK_48 == 1) {
@@ -1483,6 +1489,273 @@ void UNK_6025C1E(int16_t arg0, int16_t arg1, int16_t arg2) {
 
 		Bgs[arg0].UNK_40 += arg2 - Bgs[arg0].UNK_44;
 		Bgs[arg0].UNK_44 = arg2;
+	}
+}
+
+void UNK_6025DFC(int16_t arg0) {
+	const int16_t var0 = Bgs[arg0].UNK_6;
+	if (Bgs[arg0].UNK_18[var0] >= 0) {
+		const int32_t var1 = Bgs[arg0].UNK_18[var0];
+		STRUCT_60AD228* const struct0 = &UNK_60AD228[var1];
+		const int16_t bank = struct0->UNK_54;
+		const int16_t var3 = -struct0->UNK_18[bank] / 16 - struct0->UNK_4C / 16;
+		uint32_t var4;
+		if (Bgs[arg0].UNK_10 == 0) {
+			var4 = 20;
+		}
+		else {
+			var4 = 28;
+		}
+		if (var4 > 30) {
+			var4 = 30;
+		}
+		const int16_t var5 = -struct0->UNK_18[bank] / 16;
+		int16_t var6;
+		int16_t var7;
+		if (struct0->UNK_4A != 0 && struct0->UNK_46[bank] == -1) {
+			STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, -16 - struct0->UNK_28[bank] / 16 - struct0->UNK_50 / 16, &var6, &var7);
+			UNK_6026698(
+				arg0,
+				struct1,
+				struct0,
+				bank,
+				var3,
+				var6,
+				-16 - struct0->UNK_20[bank] / 16,
+				var5
+			);
+			struct0->UNK_3C[bank] += 16;
+		}
+		if (struct0->UNK_4A != 0 && struct0->UNK_46[bank] == 1) {
+			STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, var4 - struct0->UNK_28[bank] / 16 - struct0->UNK_50 / 16, &var6, &var7);
+			UNK_6026698(
+				arg0,
+				struct1,
+				struct0,
+				bank,
+				var3,
+				var6,
+				var4 - struct0->UNK_20[bank] / 16,
+				var5
+			);
+			struct0->UNK_3C[bank] -= 16;
+		}
+		if (struct0->UNK_5A[bank] == 1) {
+			STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, var4 - struct0->UNK_50 / 16, &var6, &var7);
+			UNK_6026698(
+				arg0,
+				struct1,
+				struct0,
+				bank,
+				var3,
+				var6,
+				var4 + struct0->UNK_28[bank] / 16 - struct0->UNK_20[bank] / 16,
+				var5
+			);
+			struct0->UNK_5A[bank] = 0;
+		}
+		if (struct0->UNK_5A[bank] == -1) {
+			STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, -struct0->UNK_50 / 16 - 1, &var6, &var7);
+			UNK_6026698(
+				arg0,
+				struct1,
+				struct0,
+				bank,
+				var3,
+				var6,
+				struct0->UNK_28[bank] / 16 - struct0->UNK_20[bank] / 16 - 16,
+				var5
+			);
+			struct0->UNK_5A[bank] = 0;
+		}
+		if (struct0->UNK_3C[bank] < 0) {
+			if (struct0->UNK_3C[bank] / 16 < -20) {
+				UNK_6026870(arg0, var0, bank);
+			}
+			else {
+				int16_t var9 = struct0->UNK_3C[bank];
+				int32_t var11 = var4 - (struct0->UNK_28[bank] + var9 + 16) / 16 - struct0->UNK_50 / 16;
+				uint32_t var10 = (var4 - struct0->UNK_20[bank] + var9 + 16) / 16;
+				for (int16_t var15 = var9 / 16; var15 < 0; var15++, var11++, var10++) {
+					STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, var11, &var6, &var7);
+					UNK_6026698(
+						arg0,
+						struct1,
+						struct0,
+						bank,
+						var3,
+						var6,
+						var10,
+						-struct0->UNK_18[bank] / 16
+					);
+				}
+			}
+			struct0->UNK_3C[bank] %= 16;
+		}
+		if (struct0->UNK_3C[bank] > 0) {
+			if (struct0->UNK_3C[bank] / 16 <= 20) {
+				const int32_t var9 = struct0->UNK_3C[bank];
+				for (int32_t
+					var3 = var9 / 16,
+					var10 = (var9 - struct0->UNK_20[bank]) / 16 - 2,
+					var11 = (var9 - struct0->UNK_28[bank]) / 16 - struct0->UNK_50 / 16 - 2;
+					var3 > 0;
+					var3++, var10--, var11--
+				) {
+					STRUCT_GameBg_0* const struct1 = UNK_6026AAC(arg0, var11, &var6, &var7);
+					UNK_6026698(
+						arg0,
+						struct1,
+						struct0,
+						bank,
+						var3,
+						var6,
+						var10,
+						-struct0->UNK_18[bank] / 16
+					);
+				}
+			}
+			else {
+				UNK_6026870(arg0, var0, bank);
+			}
+			struct0->UNK_3C[bank] %= 16;
+		}
+		if (struct0->UNK_44 != 0 && struct0->UNK_40[bank] == -1) {
+			UNK_6026530(
+				arg0,
+				struct0,
+				bank,
+				-struct0->UNK_18[bank] / 16 - struct0->UNK_4C / 16 - 1,
+				-struct0->UNK_18[bank] / 16 - 1
+			);
+			struct0->UNK_38[bank] += 16;
+		}
+		if (struct0->UNK_44 != 0 && struct0->UNK_40[bank] == 1) {
+			UNK_6026530(
+				arg0,
+				struct0,
+				bank,
+				(224 - struct0->UNK_18[bank]) / 16 - struct0->UNK_4C / 16,
+				(224 - struct0->UNK_18[bank]) / 16
+			);
+			struct0->UNK_38[bank] -= 16;
+		}
+		if (struct0->UNK_38[bank] < 0) {
+			if (struct0->UNK_38[bank] / 16 < -14) {
+				UNK_6026870(arg0, var0, bank);
+			}
+			else {
+				int16_t var12 = struct0->UNK_38[bank];
+				int16_t var13 = (224 + var12 - struct0->UNK_18[bank]) / 16 - struct0->UNK_4C / 16;
+				int16_t var14 = (224 + var12 - struct0->UNK_18[bank]) / 16;
+				if (var12 < 0) {
+					var12 += 15;
+				}
+				for (var12 /= 16; var12 < 0; var12++, var13++, var14++) {
+					UNK_6026530(arg0, struct0, bank, var13, var14);
+				}
+			}
+			struct0->UNK_38[bank] %= 16;
+		}
+		if (struct0->UNK_38[bank] > 0) {
+			if (struct0->UNK_38[bank] / 16 < 15) {
+				int16_t var12 = struct0->UNK_38[bank];
+				int16_t var13 = (var12 - struct0->UNK_18[bank]) / 16 - struct0->UNK_4C / 16 - 2;
+				int16_t var14 = (var12 - struct0->UNK_18[bank]) / 16 - 2;
+				if (var12 < 0) {
+					var12 += 15;
+				}
+				for (var12 /= 16; var12 > 0; var12--, var13--, var14--) {
+					UNK_6026530(arg0, struct0, bank, var13, var14);
+				}
+			}
+			else {
+				UNK_6026870(arg0, var0, bank);
+			}
+			struct0->UNK_38[bank] %= 16;
+		}
+	}
+}
+
+void UNK_6026530(int16_t arg0, STRUCT_60AD228* arg1, int16_t bank, int16_t arg3, int16_t arg4) {
+	arg1->UNK_56 = 1;
+
+	int32_t var2;
+	if (Bgs[arg0].UNK_10 == 0) {
+		var2 = 20u;
+	}
+	else {
+		var2 = 28;
+	}
+	if (var2 > 28) {
+		var2 = 28;
+	}
+	RAMDATA uint32_t* const var3 = arg1->UNK_4[bank];
+	for (
+		int32_t i = -2,
+		var0 = (-32 - arg1->UNK_20[bank]) / 16,
+		var1 = (-32 - arg1->UNK_28[bank]) / 16 - arg1->UNK_50 / 16;
+		var2 + 2 > i;
+		i++, var0++, var1++
+	) {
+		int16_t var4;
+		int16_t var5;
+		STRUCT_GameBg_0* const struct0 = UNK_6026AAC(arg0, var1, &var4, &var5);
+		if (!(struct0->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL)) {
+			const BgMap16* const bgMap = (const BgMap16* const)struct0->UNK_0;
+			int32_t var6 = arg3 % bgMap->header.UNK_4;
+			if (var6 < 0) {
+				var6 += struct0->UNK_0->header.UNK_4;
+			}
+			var3[(arg4 & 0xFu) * 32 + var0 % 32] = struct0->UNK_0->header.tileInfo | bgMap->names[var6 + var4 * bgMap->header.UNK_4];
+		}
+		else {
+			const BgMap32* const bgMap = (const BgMap32* const)struct0->UNK_0;
+			int32_t var6 = arg3 % bgMap->header.UNK_4;
+			if (var6 < 0) {
+				var6 += struct0->UNK_0->header.UNK_4;
+			}
+			var3[(arg4 & 0xFu) * 32 + var0 % 32] = bgMap->names[var6 + var4 * bgMap->header.UNK_4];
+		}
+	}
+}
+
+void UNK_6026698(int16_t bgNum, STRUCT_GameBg_0* arg1, STRUCT_60AD228* arg2, int16_t arg3, int16_t arg4, int16_t arg5, int16_t arg6, int16_t arg7) {
+	arg2->UNK_56 = 1;
+	uint32_t* const var0 = arg2->UNK_4[arg3];
+	int16_t var1;
+	if (Bgs[bgNum].UNK_10 == 0) {
+		var1 = 14;
+	}
+	else {
+		var1 = 16;
+	}
+	if (var1 > 14) {
+		var1 = 14;
+	}
+	uint32_t var2 = arg7 - 1;
+	int32_t var3 = arg4 - 1;
+	if (!(arg1->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL)) {
+		const BgMap16* const bgMap = (const BgMap16* const)arg1->UNK_0;
+		const uint16_t var4 = bgMap->header.UNK_4;
+		for (int32_t var5 = -1; var5 < var1 + 1; var2++, var3++, var5++) {
+			int32_t var6 = var3 % arg1->UNK_0->header.UNK_4;
+			if (var6 < 0) {
+				var6 += arg1->UNK_0->header.UNK_4;
+			}
+			var0[(var2 & 0xFu) * 32 + arg6 % 32] = arg1->UNK_0->header.tileInfo | bgMap->names[var6 + arg5 * var4];
+		}
+	}
+	else {
+		const BgMap32* const bgMap = (const BgMap32* const)arg1->UNK_0;
+		const uint16_t var4 = bgMap->header.UNK_4;
+		for (int32_t var5 = -1; var5 < var1 + 1; var2++, var3++, var5++) {
+			int32_t var6 = var3 % arg1->UNK_0->header.UNK_4;
+			if (var6 < 0) {
+				var6 += (int16_t)(arg1->UNK_0->header).UNK_4;
+			}
+			var0[(var2 & 0xFu) * 32 + arg6 % 32] = bgMap->names[var6 + arg5 * var4];
+		}
 	}
 }
 
@@ -1521,7 +1794,7 @@ void UNK_6026870(int16_t bgIndex, int16_t arg1, int16_t bank) {
 			int16_t var0 = 0;
 			int16_t var4 = 0;
 			for (int32_t i = 0; i < 32; i++, var6++) {
-				RAMDATA uint32_t* var7 = &UNK_60AD228[var1].UNK_4[bank][(i + var3) & 0x1Fu];
+				RAMDATA uint32_t* var7 = &UNK_60AD228[var1].UNK_4[bank][(i + var3) % 32];
 				const STRUCT_GameBg_0* var8 = UNK_6026AAC(bgIndex, var6, &var4, &var0);
 				if (var8->UNK_0->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
 					const BgMap32* const bgMap32 = (const BgMap32* const)var8->UNK_0;
@@ -1595,6 +1868,94 @@ STRUCT_GameBg_0* UNK_6026AAC(int16_t bgIndex, int16_t arg1, int16_t* arg2, int16
 	return struct0;
 }
 
+static void UNK_6026D40(int16_t arg0, int16_t arg1, int16_t arg2, STRUCT_6026D40* arg3, int32_t arg4, int32_t arg5);
+
+static void UNK_6026B90(void* arg0, void* arg1, void* arg2, void* arg3, void* arg4) {
+	UNK_6026D40((int16_t)(intptr_t)arg0, (int16_t)(intptr_t)arg1 >> 15, (int16_t)(intptr_t)arg1, (STRUCT_6026D40*)arg2, (int32_t)(intptr_t)arg3, (int32_t)(intptr_t)arg4);
+}
+
+void UNK_6026BBA(int16_t arg0, STRUCT_6026D40* arg1, int32_t arg2, int32_t arg3) {
+	const int16_t var0 = Bgs[arg0].UNK_18[Bgs[arg0].UNK_6];
+	if (var0 >= 0) {
+		const int16_t var1 = UNK_60AD228[var0].UNK_54;
+		UNK_6026D40(arg0, Bgs[arg0].UNK_6, var1, arg1, arg2, arg3);
+		STRUCT_60B0FE0* const struct0 = &UNK_60B0FE0[UNK_60B13A4][UNK_60B13A0[UNK_60B13A4]];
+		struct0->set = UNK_6026B90;
+		struct0->args[0] = (void*)(intptr_t)arg0;
+		struct0->args[1] = (void*)(((uintptr_t)Bgs[arg0].UNK_6 << 16) | (var1 == 0));
+		struct0->args[2] = (void*)arg1;
+		struct0->args[3] = (void*)(intptr_t)arg2;
+		struct0->args[4] = (void*)(intptr_t)arg3;
+		UNK_60B13A0[UNK_60B13A4]++;
+	}
+}
+
+static void UNK_6026D40(int16_t arg0, int16_t arg1, int16_t arg2, STRUCT_6026D40* arg3, int32_t arg4, int32_t arg5) {
+	const int16_t var0 = Bgs[arg0].UNK_18[arg1];
+	if (var0 >= 0) {
+		const int32_t var1 = (arg5 - UNK_60AD228[var0].UNK_50) / 16;
+		const int32_t var2 = (arg4 - UNK_60AD228[var0].UNK_4C) / 16;
+		RAMDATA uint32_t* const var3 = UNK_60AD228[var0].UNK_4[arg2];
+		const int32_t var4 = arg3->UNK_2 >> 10;
+		for (int32_t i = 0; i < var4; i++, arg3++) {
+			uint16_t var5 = arg3->UNK_0;
+			if (!(var5 & 0x0200u)) {
+				var5 &= 0x03FFu;
+			}
+			else {
+				var5 |= 0xFC00u;
+			}
+			uint16_t var6 = arg3->UNK_2;
+			if ((var6 & 0x0200u) == 0) {
+				var6 &= 0x03FFu;
+			}
+			else {
+				var6 |= 0xFC00u;
+			}
+			int32_t var7 = var5 / 16;
+			int32_t var8 = var6 / 16;
+			uint32_t var9 = ((uint32_t)(arg3->UNK_9 & 0xFu) << 16) | arg3->UNK_A;
+			for (uint16_t var10 = 0; var10 <= (arg3->UNK_4 & 0xFu); var10++) {
+				const int16_t var11 = var2 + var10 + var7;
+				for (uint16_t var12 = 0; var12 <= (arg3->UNK_6 & 0xFu); var12++, var9++) {
+					const int32_t var13 = UNK_60AD228[var0].UNK_18[arg2] >> 4;
+					if (var11 >= var13 && var11 < var13 + 16) {
+						var3[(var11 & 0xFu) * 32 + (var1 + var12 + var8) % 32] = (arg3->UNK_8 << 24) | var9;
+					}
+				}
+			}
+		}
+	}
+}
+
+void UNK_6026F1E(int16_t arg0) {
+	if (Bgs[arg0].UNK_30 == NULL) {
+		if (Bgs[arg0].UNK_34 != 0) {
+			Bgs[arg0].UNK_34(&Bgs[arg0]);
+		}
+	}
+	else {
+		Bgs[arg0].UNK_30(&Bgs[arg0]);
+		Bgs[arg0].UNK_30 = NULL;
+	}
+}
+
+void UNK_6026F68(int16_t param_1, int16_t param_2, int16_t param_3) {
+	if (param_2 == 0) {
+		Bgs[param_1].UNK_30 = NULL;
+	}
+	else {
+		Bgs[param_1].UNK_30 = UNK_600F1A8(param_2);
+	}
+
+	if (param_3 == 0) {
+		Bgs[param_1].UNK_34 = NULL;
+	}
+	else {
+		Bgs[param_1].UNK_34 = UNK_600F1A8(param_3);
+	}
+}
+
 void UNK_6026FCA(int16_t bgIndex, int16_t arg1) {
 	Bgs[bgIndex].UNK_2 = arg1;
 }
@@ -1603,9 +1964,219 @@ void UNK_6026FDC(int16_t arg0, int16_t arg1) {
 	Bgs[arg0].UNK_A = arg1;
 }
 
+void UNK_6026FEE(int16_t arg0, int16_t arg1) {
+	Bgs[arg0].UNK_6 = arg1;
+}
+
+void UNK_6027000(int16_t arg0, int16_t arg1) {
+	Bgs[arg0].UNK_4 = arg1;
+}
+
 void SetBgDarkness(int16_t bgIndex, int16_t darkness) {
 	Bgs[bgIndex].darkness = darkness;
 }
+
+void UNK_602703E(int16_t arg0, int16_t arg1) {
+	Bgs[arg0].UNK_C = arg1;
+}
+
+void UNK_6027050(Bg* arg0) {
+	arg0->UNK_10 = (arg0->UNK_10 + 1) % 2;
+	if (arg0->UNK_10 == 0) {
+		if (arg0->UNK_8 != 0) {
+			UNK_60AD228[arg0->UNK_8].UNK_0 = 0u;
+			arg0->UNK_8 = 0;
+		}
+	}
+	else if (arg0->UNK_8 == 0) {
+		arg0->UNK_8 = UNK_6025918();
+	}
+	else {
+		UNK_60AD228[arg0->UNK_8].UNK_0 = 0u;
+		arg0->UNK_8 = UNK_6025918();
+	}
+}
+
+void UNK_60270E2(int32_t arg0) {
+	UNK_60B13B0 = (int16_t)(UNK_606005C->UNK_80[arg0] >> 16);
+	UNK_60B13B2 = (int16_t)(UNK_606005C->UNK_80[arg0] >>  0);
+
+	UNK_60B13AE = 1;
+	UNK_60267E4(UNK_606005C->UNK_52, 0);
+	UNK_60B13AE = 0;
+}
+
+void UNK_6027140() {
+	UNK_60B13AE = 0;
+	UNK_60B13B0 = 0;
+
+	const int16_t bgIndex = UNK_606005C->UNK_52;
+	uint32_t* data00 = Bgs[bgIndex].UNK_50[0];
+	uint32_t* data01 = Bgs[bgIndex].UNK_50[2];
+	uint16_t* data10 = Bgs[bgIndex].UNK_AD0[0];
+	uint16_t* data11 = Bgs[bgIndex].UNK_AD0[1];
+
+	UNK_60B13B2 = 0;
+	UNK_60B13A6 = 0;
+	UNK_60B13A8 = 0;
+	UNK_60b13AA = 0;
+	UNK_60B13AC = 0;
+
+	for (uint32_t i = 0u; i < lengthoffield(Bg, UNK_50[0]); i += 0x20u, data00 += 0x20u, data01 += 0x20u, data10 += 0x20u, data11 += 0x20u) {
+		data00[0x00] = 0;
+		data00[0x01] = 0;
+		data00[0x02] = 0;
+		data00[0x03] = 0;
+		data00[0x04] = 0;
+		data00[0x05] = 0;
+		data00[0x06] = 0;
+		data00[0x07] = 0;
+		data01[0x00] = 0;
+		data01[0x01] = 0;
+		data01[0x02] = 0;
+		data01[0x03] = 0;
+		data01[0x04] = 0;
+		data01[0x05] = 0;
+		data01[0x06] = 0;
+		data01[0x07] = 0;
+
+		data10[0x00] = 0;
+		data10[0x01] = 0;
+		data10[0x02] = 0;
+		data10[0x03] = 0;
+		data10[0x04] = 0;
+		data10[0x05] = 0;
+		data10[0x06] = 0;
+		data10[0x07] = 0;
+		data11[0x00] = 0;
+		data11[0x01] = 0;
+		data11[0x02] = 0;
+		data11[0x03] = 0;
+		data11[0x04] = 0;
+		data11[0x05] = 0;
+		data11[0x06] = 0;
+		data11[0x07] = 0;
+
+		data00[0x08] = 0;
+		data00[0x09] = 0;
+		data00[0x0A] = 0;
+		data00[0x0B] = 0;
+		data00[0x0C] = 0;
+		data00[0x0D] = 0;
+		data00[0x0E] = 0;
+		data00[0x0F] = 0;
+		data01[0x08] = 0;
+		data01[0x09] = 0;
+		data01[0x0A] = 0;
+		data01[0x0B] = 0;
+		data01[0x0C] = 0;
+		data01[0x0D] = 0;
+		data01[0x0E] = 0;
+		data01[0x0F] = 0;
+
+		data10[0x08] = 0;
+		data10[0x09] = 0;
+		data10[0x0A] = 0;
+		data10[0x0B] = 0;
+		data10[0x0C] = 0;
+		data10[0x0D] = 0;
+		data10[0x0E] = 0;
+		data10[0x0F] = 0;
+		data11[0x08] = 0;
+		data11[0x09] = 0;
+		data11[0x0A] = 0;
+		data11[0x0B] = 0;
+		data11[0x0C] = 0;
+		data11[0x0D] = 0;
+		data11[0x0E] = 0;
+		data11[0x0F] = 0;
+
+		data00[0x10] = 0;
+		data00[0x11] = 0;
+		data00[0x12] = 0;
+		data00[0x13] = 0;
+		data00[0x14] = 0;
+		data00[0x15] = 0;
+		data00[0x16] = 0;
+		data00[0x17] = 0;
+		data01[0x10] = 0;
+		data01[0x11] = 0;
+		data01[0x12] = 0;
+		data01[0x13] = 0;
+		data01[0x14] = 0;
+		data01[0x15] = 0;
+		data01[0x16] = 0;
+		data01[0x17] = 0;
+
+		data10[0x10] = 0;
+		data10[0x11] = 0;
+		data10[0x12] = 0;
+		data10[0x13] = 0;
+		data10[0x14] = 0;
+		data10[0x15] = 0;
+		data10[0x16] = 0;
+		data10[0x17] = 0;
+		data11[0x10] = 0;
+		data11[0x11] = 0;
+		data11[0x12] = 0;
+		data11[0x13] = 0;
+		data11[0x14] = 0;
+		data11[0x15] = 0;
+		data11[0x16] = 0;
+		data11[0x17] = 0;
+
+		data00[0x18] = 0;
+		data00[0x19] = 0;
+		data00[0x1A] = 0;
+		data00[0x1B] = 0;
+		data00[0x1C] = 0;
+		data00[0x1D] = 0;
+		data00[0x1E] = 0;
+		data00[0x1F] = 0;
+		data01[0x18] = 0;
+		data01[0x19] = 0;
+		data01[0x1A] = 0;
+		data01[0x1B] = 0;
+		data01[0x1C] = 0;
+		data01[0x1D] = 0;
+		data01[0x1E] = 0;
+		data01[0x1F] = 0;
+
+		data10[0x18] = 0;
+		data10[0x19] = 0;
+		data10[0x1A] = 0;
+		data10[0x1B] = 0;
+		data10[0x1C] = 0;
+		data10[0x1D] = 0;
+		data10[0x1E] = 0;
+		data10[0x1F] = 0;
+		data11[0x18] = 0;
+		data11[0x19] = 0;
+		data11[0x1A] = 0;
+		data11[0x1B] = 0;
+		data11[0x1C] = 0;
+		data11[0x1D] = 0;
+		data11[0x1E] = 0;
+		data11[0x1F] = 0;
+	}
+}
+
+// TODO
+//UNK_60273D0
+//UNK_60276F0
+//UNK_6027700
+//UNK_6027710
+//UNK_602790A
+//UNK_6027BB4
+//UNK_6027F60
+//UNK_602820E
+//UNK_6028212
+//UNK_6028408
+//UNK_60285E6
+//UNK_6028868
+//UNK_6028ABA
+//UNK_6028D36
+//UNK_6028F36
 
 void SetRastersBank(uint8_t bankNum) {
 	VideoSetters[NumVideoSetters++].set = VideoSetRastersBank;
@@ -1657,7 +2228,7 @@ static void VideoSetOverlayRastersColor(void* color, void* unused1, void* unused
 
 static void UNK_602970C();
 static void UNK_602975E();
-static void (* UNK_60356D0[4])() = {
+static void (*UNK_60356D0[4])() = {
 	UNK_602970C,
 	UNK_602970C,
 	NULL,
@@ -2049,6 +2620,49 @@ void EnablePalCycles() {
 	NoPalCycles = false;
 }
 
+static void UNK_602A4CC(void* arg0, void* arg1, void* arg2);
+
+void UNK_602A45E(uint8_t palNum, uint8_t numPals, uint8_t scale, const Color* pal0, const Color* pal1) {
+	VideoSetters[NumVideoSetters].set = UNK_602A4CC;
+
+	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)((scale << 24) | (numPals << 16) | (palNum << 0));
+	VideoSetters[NumVideoSetters].args[1] = pal0;
+	VideoSetters[NumVideoSetters].args[2] = pal1;
+
+	NumVideoSetters++;
+}
+
+static void UNK_602A4CC(void* scaleNumPalsPalNum, void* pal0Arg, void* pal1Arg) {
+	const uint8_t palNum = (uint8_t)((uintptr_t)scaleNumPalsPalNum >> 0);
+	const uint8_t numPals = (uint8_t)((uintptr_t)scaleNumPalsPalNum >> 16);
+	const Color* const pal0 = (const Color*)pal0Arg;
+	const Color* const pal1 = (const Color*)pal1Arg;
+	Color tempPal[NUMPALCOLORS_4BPP];
+	const uint32_t scale1 = (int32_t)(((uintptr_t)scaleNumPalsPalNum >> 24) & 0xFFu);
+	const uint32_t scale0 = 0x40u - scale1;
+
+	for (size_t i = 0u; i < numPals; i++) {
+		for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+			const Color color0 = pal0[j];
+			const Color color1 = pal1[j];
+
+			// NOTE: This isn't identical to the original. The math was adapted
+			// to use the COLOR_* macros.
+			tempPal[j] = COLOR(
+				((scale0 * (COLOR_GETR(color0) & 0xFCu) + scale1 * (COLOR_GETR(color1) & 0xFCu)) >> 6) & 0xFCu,
+				((scale0 * (COLOR_GETG(color0) & 0xFCu) + scale1 * (COLOR_GETG(color1) & 0xFCu)) >> 6) & 0xFCu,
+				((scale0 * (COLOR_GETB(color0) & 0xFCu) + scale1 * (COLOR_GETB(color1) & 0xFCu)) >> 6) & 0xFCu,
+				0u
+			);
+		}
+
+		for (size_t j = 0u; j < NUMPALCOLORS_4BPP; j++) {
+			PALRAM[(palNum + i) * NUMPALCOLORS_4BPP + j] = tempPal[j];
+		}
+	}
+
+}
+
 static void VideoSetPal(void* palNumArg, void* numPalsArg, void* palArg);
 
 void SetPal(const uint8_t palNum, const uint8_t numPals, const Color* pal) {
@@ -2143,6 +2757,38 @@ void UNK_602AA64() {
 void UNK_602AB9E() {
 	for (size_t i = 0u; i < lengthof(UNK_6064550); i++) {
 		UNK_6064550[i].src = NULL;
+	}
+}
+
+void UNK_602ABB8(int16_t palNum, int16_t colorNum, int32_t delay, const Color* srcPal) {
+	RAMDATA Color* const dstPal = &PALRAM[palNum * NUMPALCOLORS_4BPP + colorNum];
+	size_t i = 0u;
+	if (UNK_6064550[0].dst != dstPal && UNK_6064550[0].src != NULL) {
+		for (i++; i < lengthof(UNK_6064550); i++) {
+			if (UNK_6064550[i].dst == dstPal || UNK_6064550[i].src == NULL) {
+				break;
+			}
+		}
+	}
+	UNK_6064550[i].src = srcPal;
+	UNK_6064550[i].dst = dstPal;
+	UNK_6064550[i].delay = delay;
+	UNK_6064550[i].frames = (int8_t)delay;
+	UNK_6064550[i].index = 0;
+}
+
+void UNK_602AC1E(int16_t palNum, int16_t colorNum) {
+	size_t i = 0;
+	if (UNK_6064550[0].dst != &PALRAM[palNum * NUMPALCOLORS_4BPP + colorNum]) {
+		for (i++; i < lengthof(UNK_6064550); i++) {
+			if (UNK_6064550[i].dst == &PALRAM[palNum * NUMPALCOLORS_4BPP + colorNum]) {
+				break;
+			}
+		}
+	}
+	if (i < lengthof(UNK_6064550)) {
+		UNK_6064550[i].src = NULL;
+		UNK_6064550[i].dst = NULL;
 	}
 }
 
