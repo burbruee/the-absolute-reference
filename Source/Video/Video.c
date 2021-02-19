@@ -2626,8 +2626,8 @@ void UNK_602A45E(uint8_t palNum, uint8_t numPals, uint8_t scale, const Color* pa
 	VideoSetters[NumVideoSetters].set = UNK_602A4CC;
 
 	VideoSetters[NumVideoSetters].args[0] = (void*)(uintptr_t)((scale << 24) | (numPals << 16) | (palNum << 0));
-	VideoSetters[NumVideoSetters].args[1] = pal0;
-	VideoSetters[NumVideoSetters].args[2] = pal1;
+	VideoSetters[NumVideoSetters].args[1] = (void*)pal0;
+	VideoSetters[NumVideoSetters].args[2] = (void*)pal1;
 
 	NumVideoSetters++;
 }
@@ -2792,9 +2792,8 @@ void UNK_602AC1E(int16_t palNum, int16_t colorNum) {
 	}
 }
 
-void UNK_602AC68(void** arg0) {
-	int16_t var0 = ((int16_t*)arg0)[0];
-	for (void** var1 = arg0; var0 == 0x00A1; var1++, var0 = ((int16_t*)var1)[0]) {
-		SetPalList((uint8_t)((int16_t*)arg0)[1], (const Color**)*(arg0 + 1));
+void UNK_602AC68(const STRUCT_602AC68* arg0) {
+	for (const STRUCT_602AC68* var0 = arg0; var0->UNK_0 == 0x00A1; var0++) {
+		SetPalList((uint8_t)var0->palNum, var0->palList);
 	}
 }

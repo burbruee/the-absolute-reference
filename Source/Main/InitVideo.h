@@ -1,0 +1,4 @@
+
+void InitVideo();
+
+void SetSystemGraphicDataPtr();

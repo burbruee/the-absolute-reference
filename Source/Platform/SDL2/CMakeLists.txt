@@ -11,6 +11,7 @@ list(APPEND EXECUTABLE_SOURCES
 
 	"AccessDisplay.c"
 	"HwSound.c"
+	"Main.c"
 	"PlatformUpdate.c"
 )
 list(APPEND EXECUTABLE_HEADERS

@@ -87,7 +87,7 @@ set(EXECUTABLE_SOURCES
 	"../../Main/AttractLoop.c"
 	"../../Main/Frame.c"
 	"../../Main/GameLoop.c"
-	"../../Main/Main.c"
+	"../../Main/InitVideo.c"
 	"../../Main/MainLoop.c"
 	"../../Main/TestLoop.c"
 
@@ -192,6 +192,7 @@ set(EXECUTABLE_HEADERS
 	"../../Main/DemoReplayInput.h"
 	"../../Main/Frame.h"
 	"../../Main/GameLoop.h"
+	"../../Main/InitVideo.h"
 	"../../Main/MainLoop.h"
 	"../../Main/TestLoop.h"
 

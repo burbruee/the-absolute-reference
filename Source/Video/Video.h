@@ -374,5 +374,12 @@ void UNK_602AA64();
 void UNK_602AB9E();
 //UNK_602ABB8
 //UNK_602AC1E
-void UNK_602AC68(void**);
+
+typedef struct STRUCT_602AC68 {
+	uint16_t UNK_0;
+	uint16_t palNum;
+	const Color** palList;
+} STRUCT_602AC68;
+
+void UNK_602AC68(const STRUCT_602AC68*);
 // NOTE: This should probably only contain functions from AllocSpriteLayerNames to UNK_602AC68.
