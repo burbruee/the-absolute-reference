@@ -36,7 +36,7 @@ static void ExitHandler(void) {
 static bool Init(int argc, char** argv) {
 	// Non-TAP, platform initialization.
 	printf("Starting SDL2 platform init.\n\n");
-	
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Error with SDL_Init: %s\n", SDL_GetError());
 		return false;
