@@ -141,7 +141,7 @@ extern STRUCT_607D218* UNK_6064750;
 typedef struct STRUCT_60AD228 {
 	uint16_t UNK_0;
 	RAMDATA uint32_t* UNK_4[2];
-	uint16_t UNK_C[2];
+	int16_t UNK_C[2];
 	STRUCT_GameBg_0* UNK_10;
 	int32_t UNK_14;
 	int32_t UNK_18[2];

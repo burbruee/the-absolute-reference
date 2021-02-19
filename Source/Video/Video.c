@@ -5,6 +5,7 @@
 #include "Video/GameBg.h"
 #include "Video/UNK_600F1A8.h"
 #include "Main/Frame.h"
+#include "Lib/Math.h"
 #include "Lib/LibC.h"
 #include "Lib/Fixed.h"
 #include "Lib/Macros.h"
@@ -1174,7 +1175,7 @@ void UNK_6024ED8() {
 		for (size_t bank = 0u; bank < 2u; bank++) {
 			// TODO: Create a RAM macro here, once this is better understood.
 			UNK_60AD228[i].UNK_4[bank] = &GRAPHICSRAM[(0x5000u + i * 0x1000u + bank * 0x800u) / sizeof(uint32_t)];
-			UNK_60AD228[i].UNK_C[bank] = (uint16_t)(bank + i * 2 + 10u);
+			UNK_60AD228[i].UNK_C[bank] = (int16_t)(bank + i * 2 + 10u);
 		}
 		UNK_60AD228[i].UNK_10 = NULL;
 		UNK_60AD228[i].UNK_14 = 0;
@@ -1244,13 +1245,13 @@ static inline void BgSet(const uint8_t bgIndex, uint8_t* const tilemapBank, uint
 		*tilemapBank = UNK_60AD228[i].UNK_C[tilemapBankIndex] & 0xFFu;
 		if (Bgs[bgIndex].UNK_10 == 0) {
 			UNK_60AD228[i].UNK_4[tilemapBankIndex][0xFCu + bgIndex] =
-				(UNK_60AD228[spriteAdderName].UNK_18[palNum] << 16) |
+				((uint32_t)(UNK_60AD228[spriteAdderName].UNK_18[palNum] & 0xFFu) << 16) |
 				(UNK_60AD228[spriteAdderName].UNK_20[palNum] & 0x1FFu);
 			UNK_60AD228[i].UNK_4[tilemapBankIndex][0x1FCu + bgIndex] =
 				((uint32_t)Bgs[bgIndex].UNK_A << 24) |
-				UNK_60AD228[spriteAdderName].UNK_C[tilemapBankIndex] |
-				(Bgs[bgIndex].darkness << 8) |
-				(Bgs[bgIndex].UNK_C << 15);
+				((uint32_t)Bgs[bgIndex].UNK_C << 15) |
+				((uint32_t)Bgs[bgIndex].darkness << 8) |
+				(uint16_t)UNK_60AD228[spriteAdderName].UNK_C[tilemapBankIndex];
 		}
 		else {
 			*tilemapBank |= 0x80u;
@@ -2285,8 +2286,45 @@ void UNK_6027700(void* arg0) {
 	UNK_60B13AA = arg0 != NULL;
 }
 
+// NOTE: These were originally in ROM, yet some are written to below.
+Angle UNK_3B9E4 = 0u;
+int32_t UNK_3B9E8 = 0;
+int32_t UNK_3B9EC = 1;
+
+void UNK_6027710(Bg* bg) {
+    const int32_t var2 = bg->UNK_18[bg->UNK_6];
+	const int16_t var0 = UNK_60AD228[var2].UNK_54;
+    const uint32_t var1 =
+		((uint32_t)bg->UNK_A << 24) | 
+		((uint32_t)bg->UNK_C << 15) |
+		((uint32_t)bg->darkness << 8) |
+		(uint32_t)UNK_60AD228[var2].UNK_C[var0];
+
+    Angle angle = UNK_3B9E4;
+    for (int32_t i = 0; i < 224; i++, angle += 3u) {
+		const Fixed32 cosResult = Cos(angle);
+		const Fixed32 sinResult = Sin(angle);
+        bg->UNK_50[1][i] = var1;
+		int16_t x = (int16_t)((cosResult.value * UINT64_C(0x0F0000)) >> 32);
+		int16_t y = (int16_t)((sinResult.value * UINT64_C(0x1F0000)) >> 32);
+		bg->UNK_50[0][i] =
+			(((UNK_60AD228[var2].UNK_18[var0] - x) & 0x3FFu) << 16) |
+			 ((UNK_60AD228[var2].UNK_20[var0] - y - 0x40) & 0x3FFu);
+    }
+
+	UNK_3B9E4 += 3;
+    UNK_3B9E8 += UNK_3B9EC;
+    if (UNK_3B9E8 < 0x40) {
+        if (UNK_3B9E8 < 1) {
+            UNK_3B9EC = 1;
+        }
+    }
+    else {
+        UNK_3B9EC = -1;
+    }
+}
+
 // TODO
-//UNK_6027710
 //UNK_602790A
 //UNK_6027BB4
 //UNK_6027F60
