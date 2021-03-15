@@ -149,7 +149,7 @@ GameLoopState InitGameLoop() {
 	SetPal(226u, 10u, PALPTR(0x1C2));
 	SetPal(236u, 10u, PALPTR(0x1CC));
 	SetPal(246u, 10u, PALPTR(0x1D6));
-	UNK_602E56A();
+	DisableQuiet();
 	SettingsValid();
 	return GAMELOOP_START;
 }
@@ -495,7 +495,7 @@ static GameLoopState StartGameLoop() {
 	UNK_602EB4C();
 	UNK_602EC5C();
 	UNK_602E6B8();
-	UNK_602E586();
+	FadeSoundEffects();
 	StopMusic();
 	SetPcmVolumeRight(5);
 	Game.music = -1;
@@ -613,7 +613,7 @@ static GameLoopState StartGameLoop() {
 		if (UNK_6064750 == NULL) {
 			CheckSaveRankings();
 			UNK_602406E();
-			UNK_602E586();
+			FadeSoundEffects();
 			return GAMELOOP_STOP;
 		}
 	} while (!UpdateFrame());

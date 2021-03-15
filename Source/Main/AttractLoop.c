@@ -442,7 +442,7 @@ static ScreenState StartVersionTitleScreen() {
 			return SCREEN_TESTMODE;
 		}
 	}
-	UNK_602E56A();
+	DisableQuiet();
 	EnableSound();
 	UNK_602AA16();
 	UNK_6029498(6);
@@ -577,10 +577,10 @@ static ScreenState StartDemoScreen() {
 	do {
 		if (UNK_6064750 == NULL) {
 			InitVideoSetters();
-			UNK_602E586();
+			FadeSoundEffects();
 			StopMusic();
 			SetPcmVolumeRight(7u);
-			UNK_602E560();
+			EnableQuiet();
 			if (!Settings[SETTING_DEMOSOUND]) {
 				DisableSound();
 			}
@@ -666,7 +666,7 @@ static ScreenState StartDemoScreen() {
 					InitPlayers();
 					Demo = false;
 					StopMusic();
-					UNK_602E586();
+					FadeSoundEffects();
 					return SCREEN_VERSIONTITLE;
 				}
 				if (UNK_6064750 == NULL) break;
@@ -729,7 +729,7 @@ static ScreenState StartDemoScreen() {
 					InitPlayers();
 					Demo = false;
 					StopMusic();
-					UNK_602E586();
+					FadeSoundEffects();
 					return nextScreen;
 				}
 				InitSeed += Rand(1192u) + 1u;
@@ -739,7 +739,7 @@ static ScreenState StartDemoScreen() {
 						InitPlayers();
 						Demo = false;
 						StopMusic();
-						UNK_602E586();
+						FadeSoundEffects();
 						return SCREEN_TESTMODE;
 					}
 				}
@@ -751,7 +751,7 @@ static ScreenState StartDemoScreen() {
 						InitPlayers();
 						Demo = false;
 						StopMusic();
-						UNK_602E586();
+						FadeSoundEffects();
 						return SCREEN_TESTMODE;
 					}
 				}
@@ -759,7 +759,7 @@ static ScreenState StartDemoScreen() {
 				InitPlayers();
 				Demo = false;
 				StopMusic();
-				UNK_602E586();
+				FadeSoundEffects();
 
 				switch (Screen) {
 				case SCREEN_TWINDEMO:

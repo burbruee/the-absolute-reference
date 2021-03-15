@@ -960,7 +960,7 @@ void UNK_602471C(AddSpriteData* arg0) {
 	}
 }
 
-void WriteSpriteLayers() {
+void UpdateSpriteLayers() {
 	// Convert from layers to a linear name sequence.
 	int16_t nameIndex = SPRITE_FIRST;
 	SpriteNames[0] = 0u;
@@ -2891,12 +2891,12 @@ static void VideoSetPalList(void* palNumArg, void* palListArg, void* unused2) {
 
 void UNK_602AA16() {
 	UNK_60294C0((void*)(uintptr_t)7u, NULL, NULL);
-	VideoSetOverlayRastersColor((void*)(uintptr_t)0u, NULL, NULL);
+	VideoSetOverlayRastersColor((void*)(uintptr_t)COLOR(0x00, 0x00, 0x00, 0x00), NULL, NULL);
 }
 
 void UNK_602AA4C() {
-	UNK_60294C0((void*)(uintptr_t)0x07u, NULL, NULL);
-	VideoSetOverlayRastersColor((void*)(uintptr_t)0x000000FFu, NULL, NULL);
+	UNK_60294C0((void*)(uintptr_t)7u, NULL, NULL);
+	VideoSetOverlayRastersColor((void*)(uintptr_t)COLOR(0x00, 0x00, 0x00, 0xFF), NULL, NULL);
 }
 
 void UNK_602AA64() {

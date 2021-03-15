@@ -4,10 +4,10 @@
 #define SNDPCM_NUMCHANNELS 24
 
 typedef enum SoundRegisterRead {
-	SNDREGRD_STATUS,
-	SNDREGRD_FM1 = 1,
-	SNDREGRD_FM3 = 3,
-	SNDREGRD_PCM = 5
+	SNDREGRD_STATUS = 0,
+	SNDREGRD_FM1    = 1,
+	SNDREGRD_FM3    = 3,
+	SNDREGRD_PCM    = 5
 } SoundRegisterRead;
 
 typedef enum SoundRegisterWrite {
@@ -75,7 +75,7 @@ typedef enum SoundRegisterPcm {
 	SNDREGPCM_KEYSETTING       = 0x68,
 	SNDREGPCM_DAMP             = 0x68,
 	SNDREGPCM_LFORESET         = 0x68,
-	SNDREGPCM_OUTPUTCHANNEL    = 0x68,
+	SNDREGPCM_DATAOUT          = 0x68,
 	SNDREGPCM_PANPOT           = 0x68,
 
 	SNDREGPCM_CHANNELREGS6     = 0x80,
@@ -94,6 +94,7 @@ typedef enum SoundRegisterPcm {
 	SNDREGPCM_RELEASERATE      = 0xC8,
 	SNDREGPCM_RATECORRECTION   = 0xC8,
 
+	SNDREGPCM_CHANNELREGS10    = 0xE0,
 	SNDREGPCM_TREMOLODEPTH     = 0xE0,
 
 	// These control the stereo mixing of the FM and PCM audio.
@@ -101,12 +102,13 @@ typedef enum SoundRegisterPcm {
 	SNDREGPCM_MIXCONTROLPCM = 0xF9
 } SoundRegisterPcm;
 
-#define SNDPCM_MEMSETTING(memAccess, memType, waveTblHeader) (uint8_t)( \
-	(((memAccess)     & 1) << 0) | \
+#define SNDPCM_MEMSETTING(memMode, memType, waveTblHeader) (uint8_t)( \
+	(((memMode)       & 1) << 0) | \
 	(((memType)	      & 1) << 1) | \
 	(((waveTblHeader) & 7) << 2)   \
 )
 
+#define SNDPCM_KEY(on) ((on) ? 0x80u : 0x00u)
 #define SNDPCM_PANPOTSILENT 8u
 #define SNDPCM_PANPOTLEFT   (SNDPCM_PANPOTSILENT + 1u)
 #define SNDPCM_PANPOTRIGHT  (SNDPCM_PANPOTSILENT - 1u)

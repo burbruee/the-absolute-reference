@@ -2,4 +2,6 @@
 /*.kdev4
 /.kdev4
 /build*
+/out
 CMakeLists.txt.user
+CMakeSettings.json

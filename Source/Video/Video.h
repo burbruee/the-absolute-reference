@@ -255,7 +255,7 @@ void InitSpriteAdders();
 void UNK_6024244();
 void UNK_60243E8(AddSpriteData* arg0);
 void UNK_602471C(AddSpriteData* arg0);
-void WriteSpriteLayers();
+void UpdateSpriteLayers();
 void InitSpriteLayers();
 int16_t AllocSpriteAdder();
 void FreeSpriteAdder(int16_t i);

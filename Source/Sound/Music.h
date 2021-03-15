@@ -11,5 +11,8 @@ typedef enum Music {
 	MUSIC_5,
 	MUSIC_6,
 	MUSIC_7,
+	NUMMUSIC,
 	MUSIC_STOP = -1
 } Music;
+
+extern Music CurrentMusic;

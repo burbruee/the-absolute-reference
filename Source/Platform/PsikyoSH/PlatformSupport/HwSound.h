@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HwData.h"
+#include "Sound/Sound.h"
 #include <stdint.h>
 
 #define SOUNDCTRL_STARTINIT() \
@@ -9,7 +10,7 @@ do { \
 	int32_t delay1; \
 	for (delay0 = 0, delay1 = 0; delay1 < 1000; delay0++, delay1++); \
 	EEPROM[0] = 0x02u; \
-	UNK_60B181C = 14; \
+	PcmFirstLeftChannel = 14; \
 	UNK_60B186A = 0; \
 	for (delay1 = 0; delay1 < delay0; delay1++); \
 } while (0)

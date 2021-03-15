@@ -16,9 +16,6 @@ ROMDATA Color PalSmallText[NUMPALCOLORS_4BPP];
 
 // NOTE: For constant data loaded into RAM, take the RAM address and subtract 0x5FFF860 to get the address in program ROM.
 
-#define NUMTILEROMS 16
-#define TILEDATA_SIZE (TILEROM_SIZE * NUMTILEROMS)
-
 uint8_t* TileData;
 static const char* const TileRomFileNames[NUMTILEROMS] = {
     "roms/tgm2/81ts_3l.u6",
@@ -87,9 +84,12 @@ static const size_t BgMapRomOffsets[] = {
 	ROMOFFSET_BGMAPVERSUS
 };
 
-#define ROMOFFSET_OBJECTDATA 0xA5D00u
+#define ROMOFFSET_OBJECTDATA 0xA5D08u
 
-uint8_t* MidiNotes;
+uint8_t* SoundRomData;
+static const char* SoundRomFileName = "roms/tgm2/97ts_snd.u52";
+
+static uint8_t* MidiNotes;
 #define ROMOFFSET_MIDI 0x40088u
 #define ROMOFFSET_MIDINOTES 0x41788u
 #define MIDINOTES_LENGTH 0x12BCAu
@@ -225,7 +225,7 @@ static bool Mount(const char* locationNoExtension) {
 	return true;
 }
 
-bool OpenData() {
+bool MountRoms() {
 	if (!Mount("roms/tgm2")) {
 		fprintf(stderr, "Failed to mount location \"roms/tgm2\"\n");
 		return false;
@@ -246,219 +246,293 @@ bool OpenData() {
 	}
 	printf("\n");
 
-	{
-		TileData = malloc(TILEDATA_SIZE);
-		if (!TileData) {
-			fprintf(stderr, "Failed allocating memory for tile data\n");
-			return false;
-		}
-		uint8_t* const tileDataTemp = malloc(NUMTILEROMS * TILEROM_SIZE);
-		if (!tileDataTemp) {
-			fprintf(stderr, "Failed allocating memory for tile data temporary storage\n");
-			return false;
-		}
-		for (size_t i = 0u; i < NUMTILEROMS; i++) {
-			PHYSFS_File* const tileFile = PHYSFS_openRead(TileRomFileNames[i]);
-			if (!tileFile || PHYSFS_readBytes(tileFile, &tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE) != TILEROM_SIZE) {
-				if (tileFile) {
-					PHYSFS_close(tileFile);
-				}
-				fprintf(stderr, "Failed opening tile ROM file \"%s\"\n", TileRomFileNames[i]);
-				return false;
-			}
-			else {
-				PHYSFS_close(tileFile);
-			}
-		}
-		uint8_t* tilePtr = TileData;
-		for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
-			const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE];
-			const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE];
-			for (size_t j = 0u; j < TILEROM_SIZE * 2u; j += 4u) {
-				*tilePtr++ = *tileLow++;
-				*tilePtr++ = *tileLow++;
-				*tilePtr++ = *tileHigh++;
-				*tilePtr++ = *tileHigh++;
-			}
-		}
-		free(tileDataTemp);
+	return true;
+}
+
+uint8_t* OpenProgramData() {
+	uint8_t* const programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+	if (!programData) {
+		fprintf(stderr, "Failed allocating program data\n");
+		return NULL;
+	}
+	uint8_t* const programTemp = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
+	if (!programTemp) {
+		fprintf(stderr, "Failed allocating program data temporary storage\n");
+		free(programData);
+		return NULL;
 	}
 
-	{
-		uint8_t* programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
-		if (!programData) {
-			fprintf(stderr, "Failed allocating program data\n");
-			return false;
-		}
-		uint8_t* programTemp = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
-		if (!programTemp) {
-			fprintf(stderr, "Failed allocating program data temporary storage\n");
-			return false;
-		}
-		PHYSFS_File* const programHighFile = PHYSFS_openRead(ProgramRomFileNames[1]);
-		if (!programHighFile || PHYSFS_readBytes(programHighFile, &programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
-			fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[1]);
-			if (programHighFile) {
-				PHYSFS_close(programHighFile);
-			}
-			free(programTemp);
-			free(programData);
-			return false;
-		}
-		PHYSFS_File* const programLowFile = PHYSFS_openRead(ProgramRomFileNames[0]);
-		if (!programLowFile || PHYSFS_readBytes(programLowFile, &programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
-			fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[0]);
-			if (programLowFile) {
-				PHYSFS_close(programLowFile);
-			}
-			if (programHighFile) {
-				PHYSFS_close(programHighFile);
-			}
-			free(programTemp);
-			free(programData);
-			return false;
-		}
-		PHYSFS_close(programLowFile);
-		PHYSFS_close(programHighFile);
-		uint8_t* programPtr = programData;
-		uint8_t* programHigh = &programTemp[PROGRAMROM_SIZE * 0];
-		uint8_t* programLow = &programTemp[PROGRAMROM_SIZE * 1];
-		for (size_t i = 0u; i < PROGRAMROM_SIZE * NUMPROGRAMROMS; i += 4u) {
-			*programPtr++ = programHigh[1];
-			*programPtr++ = programHigh[0];
-			programHigh += 2;
-			*programPtr++ = programLow[1];
-			*programPtr++ = programLow[0];
-			programLow += 2;
+	PHYSFS_File* const programHighFile = PHYSFS_openRead(ProgramRomFileNames[1]);
+	if (!programHighFile || PHYSFS_readBytes(programHighFile, &programTemp[PROGRAMROM_SIZE * 0], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
+		fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[1]);
+		if (programHighFile) {
+			PHYSFS_close(programHighFile);
 		}
 		free(programTemp);
-
-		for (size_t i = 0u; i < DEMOREPLAY_LENGTH * NUMPLAYERS; i++) {
-			DemoReplayInputTwin[i] = programData[ROMOFFSET_DEMOREPLAYINPUTTWIN + i];
-			DemoReplayInputDoubles[i] = programData[ROMOFFSET_DEMOREPLAYINPUTDOUBLES + i];
-			DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
+		free(programData);
+		return NULL;
+	}
+	PHYSFS_File* const programLowFile = PHYSFS_openRead(ProgramRomFileNames[0]);
+	if (!programLowFile || PHYSFS_readBytes(programLowFile, &programTemp[PROGRAMROM_SIZE * 1], PROGRAMROM_SIZE) != PROGRAMROM_SIZE) {
+		fprintf(stderr, "Failed opening program ROM \"%s\"", ProgramRomFileNames[0]);
+		if (programLowFile) {
+			PHYSFS_close(programLowFile);
 		}
-
-		memcpy(Pal.header, &programData[ROMOFFSET_PAL], sizeof(Pal.header));
-		for (size_t i = 0u; i < lengthof(Pal.data); i++) {
-			Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
+		if (programHighFile) {
+			PHYSFS_close(programHighFile);
 		}
+		free(programTemp);
+		free(programData);
+		return NULL;
+	}
+	PHYSFS_close(programLowFile);
+	PHYSFS_close(programHighFile);
 
-		for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
-			Pal1[i] = ROMCOLOR(&programData[ROMOFFSET_PAL1], i * 4u);
-			PalSmallText[i] = ROMCOLOR(&programData[ROMOFFSET_PALSMALLTEXT], i * 4u);
-			UNK_6032884[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6032884], i * 4u);
-			UNK_60328C4[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_60328C4], i * 4u);
-			PalCycleTextPal0[i] = ROMCOLOR(&programData[ROMOFFSET_PALCYCLETEXTPAL0], i * 4u);
-			UNK_6033790[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6033790], i * 4u);
-		}
+	uint8_t* programPtr = programData;
+	uint8_t* programHigh = &programTemp[PROGRAMROM_SIZE * 0];
+	uint8_t* programLow = &programTemp[PROGRAMROM_SIZE * 1];
+	for (size_t i = 0u; i < PROGRAMROM_SIZE * NUMPROGRAMROMS; i += 4u) {
+		*programPtr++ = programHigh[1];
+		*programPtr++ = programHigh[0];
+		programHigh += 2;
+		*programPtr++ = programLow[1];
+		*programPtr++ = programLow[0];
+		programLow += 2;
+	}
+	free(programTemp);
 
-		for (size_t i = 0u; i < lengthof(BgMapTable); i++) {
-			BgMapTable[i]->header.tileInfo =
-				((uint32_t)programData[BgMapRomOffsets[i] + 0] << 24) |
-				((uint32_t)programData[BgMapRomOffsets[i] + 1] << 16) |
-				((uint32_t)programData[BgMapRomOffsets[i] + 2] <<  8) |
-				((uint32_t)programData[BgMapRomOffsets[i] + 3] <<  0);
-			BgMapTable[i]->header.UNK_4 =
-				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 0] << 8) |
-				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 1] << 0);
-			BgMapTable[i]->header.UNK_6 =
-				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 0] << 8) |
-				((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 1] << 0);
-			assert(BgMapTable[i]->header.UNK_4 == 0x78u && BgMapTable[i]->header.UNK_6 == 0x50u);
+	return programData;
+}
 
-			uint8_t* programPtr = &programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + sizeoffield(BgMapHeader, UNK_6)];
-			if (BgMapTable[i]->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
-				assert(((BgMap32*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap32*)BgMapTable[i])->header.UNK_6 == 0x50u);
-				uint32_t* name = ((BgMap32*)BgMapTable[i])->names;
-				for (size_t i = 0u; i < lengthoffield(BgMap32, names); i++, name++, programPtr += sizeof(uint32_t)) {
-					*name =
-						((uint32_t)programPtr[0] << 24) |
-						((uint32_t)programPtr[1] << 16) |
-						((uint32_t)programPtr[2] <<  8) |
-						((uint32_t)programPtr[3] <<  0);
-				}
+void CloseProgramData(const uint8_t* const programData) {
+	free(programData);
+}
+
+bool OpenTiles() {
+	TileData = malloc(TILEDATA_SIZE);
+	if (!TileData) {
+		fprintf(stderr, "Failed allocating memory for tile data\n");
+		return false;
+	}
+	uint8_t* const tileDataTemp = malloc(TILEDATA_SIZE);
+	if (!tileDataTemp) {
+		fprintf(stderr, "Failed allocating memory for tile data temporary storage\n");
+		return false;
+	}
+	for (size_t i = 0u; i < NUMTILEROMS; i++) {
+		PHYSFS_File* const tileFile = PHYSFS_openRead(TileRomFileNames[i]);
+		if (!tileFile || PHYSFS_readBytes(tileFile, &tileDataTemp[i * TILEROM_SIZE], TILEROM_SIZE) != TILEROM_SIZE) {
+			if (tileFile) {
+				PHYSFS_close(tileFile);
 			}
-			else {
-				assert(((BgMap16*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap16*)BgMapTable[i])->header.UNK_6 == 0x50u);
-				uint16_t* name = ((BgMap16*)BgMapTable[i])->names;
-				for (size_t i = 0u; i < lengthoffield(BgMap16, names); i++, name++, programPtr += sizeof(uint16_t)) {
-					*name =
-						((uint16_t)programPtr[0] << 8) |
-						((uint16_t)programPtr[1] << 0);
-				}
-			}
-		}
-
-		memcpy(Objects.header, &programData[ROMOFFSET_OBJECTDATA], sizeof(Objects.header));
-		for (size_t i = 0u; i < lengthof(Objects.data); i++) {
-			for (size_t j = 0u; j < 6u; j++) {
-				Objects.data[i][j] =
-					((uint16_t)programData[ROMOFFSET_OBJECTDATA + sizeof(Objects.header) + i * sizeof(ObjectData) + j * sizeof(uint16_t) + 0u] << 8) |
-					           programData[ROMOFFSET_OBJECTDATA + sizeof(Objects.header) + i * sizeof(ObjectData) + j * sizeof(uint16_t) + 1u];
-			}
-		}
-
-		uint8_t* midiData = &programData[ROMOFFSET_MIDI];
-
-		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_0); i++) {
-			Midi.UNK_0[i] = ((uint16_t)midiData[sizeof(uint16_t) * i + 0u] << 8) | midiData[sizeof(uint16_t) * i + 1u];
-		}
-		midiData += lengthoffield(MidiData, UNK_0) * sizeof(uint16_t);
-
-		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_100); i++) {
-			STRUCT_MidiData_100* const data = &Midi.UNK_100[i];
-			data->UNK_0 =
-				((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 0u] << 8) |
-				           midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 1u];
-			data->UNK_2[0] = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 2u];
-			data->UNK_2[1] = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 3u];
-		}
-		midiData += lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2);
-
-		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_300); i++) {
-			STRUCT_40388* const data = &Midi.UNK_300[i];
-			data->UNK_0 =
-				((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 0u] << 8) |
-				           midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 1u];
-			data->UNK_2 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 2u];
-			data->UNK_3 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 3u];
-			data->UNK_4 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 4u];
-			data->UNK_5 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 5u];
-		}
-		midiData += lengthoffield(MidiData, UNK_300) * (sizeof(uint16_t) + sizeof(uint8_t) * 4);
-
-		// TODO: Load data pointers into Midi.UNK_F00 here.
-		MidiNotes = malloc(MIDINOTES_LENGTH);
-		if (!MidiNotes) {
-			fprintf(stderr, "Failed allocating MIDI notes buffer\n");
+			fprintf(stderr, "Failed opening tile ROM file \"%s\"\n", TileRomFileNames[i]);
 			return false;
 		}
-		memcpy(MidiNotes, &programData[ROMOFFSET_MIDINOTES], MIDINOTES_LENGTH);
-		for (size_t i = 0u; i < lengthoffield(MidiData, UNK_F00); i++) {
-			for (size_t j = 0u; j < lengthoffield(MidiData, UNK_F00[0]); j++) {
-				uint32_t offset =
-					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 0u] << 24) |
-					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 1u] << 16) |
-					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 2u] <<  8) |
-					((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 3u] <<  0);
-				if (offset == 0u) {
-					Midi.UNK_F00[i][j] = NULL;
-				}
-				else {
-					Midi.UNK_F00[i][j] = &MidiNotes[offset - ROMOFFSET_MIDINOTES];
-				}
+		else {
+			PHYSFS_close(tileFile);
+		}
+	}
+	uint8_t* tilePtr = TileData;
+	for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
+		const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE];
+		const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE];
+		for (size_t j = 0u; j < TILEROM_SIZE * 2u; j += 4u) {
+			*tilePtr++ = *tileLow++;
+			*tilePtr++ = *tileLow++;
+			*tilePtr++ = *tileHigh++;
+			*tilePtr++ = *tileHigh++;
+		}
+	}
+	free(tileDataTemp);
+
+	return true;
+}
+
+void CloseTiles() {
+	free(TileData);
+}
+
+void LoadReplays(const uint8_t* const programData) {
+	for (size_t i = 0u; i < DEMOREPLAY_LENGTH * NUMPLAYERS; i++) {
+		DemoReplayInputTwin[i] = programData[ROMOFFSET_DEMOREPLAYINPUTTWIN + i];
+		DemoReplayInputDoubles[i] = programData[ROMOFFSET_DEMOREPLAYINPUTDOUBLES + i];
+		DemoReplayInputVersus[i] = programData[ROMOFFSET_DEMOREPLAYINPUTVERSUS + i];
+	}
+}
+
+void LoadPals(const uint8_t* const programData) {
+	memcpy(Pal.header, &programData[ROMOFFSET_PAL], sizeof(Pal.header));
+	for (size_t i = 0u; i < lengthof(Pal.data); i++) {
+		Pal.data[i] = ROMCOLOR(&programData[ROMOFFSET_PAL + sizeof(Pal.header)], i * 4u);
+	}
+
+	for (size_t i = 0u; i < NUMPALCOLORS_4BPP; i++) {
+		Pal1[i] = ROMCOLOR(&programData[ROMOFFSET_PAL1], i * 4u);
+		PalSmallText[i] = ROMCOLOR(&programData[ROMOFFSET_PALSMALLTEXT], i * 4u);
+		UNK_6032884[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6032884], i * 4u);
+		UNK_60328C4[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_60328C4], i * 4u);
+		PalCycleTextPal0[i] = ROMCOLOR(&programData[ROMOFFSET_PALCYCLETEXTPAL0], i * 4u);
+		UNK_6033790[i] = ROMCOLOR(&programData[ROMOFFSET_UNK_6033790], i * 4u);
+	}
+}
+
+void LoadBgMaps(const uint8_t* const programData) {
+	for (size_t i = 0u; i < lengthof(BgMapTable); i++) {
+		BgMapTable[i]->header.tileInfo =
+			((uint32_t)programData[BgMapRomOffsets[i] + 0] << 24) |
+			((uint32_t)programData[BgMapRomOffsets[i] + 1] << 16) |
+			((uint32_t)programData[BgMapRomOffsets[i] + 2] <<  8) |
+			((uint32_t)programData[BgMapRomOffsets[i] + 3] <<  0);
+		BgMapTable[i]->header.UNK_4 =
+			((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 0] << 8) |
+			((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + 1] << 0);
+		BgMapTable[i]->header.UNK_6 =
+			((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 0] << 8) |
+			((uint16_t)programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + 1] << 0);
+		assert(BgMapTable[i]->header.UNK_4 == 0x78u && BgMapTable[i]->header.UNK_6 == 0x50u);
+
+		const uint8_t* programPtr = &programData[BgMapRomOffsets[i] + sizeoffield(BgMapHeader, tileInfo) + sizeoffield(BgMapHeader, UNK_4) + sizeoffield(BgMapHeader, UNK_6)];
+		if (BgMapTable[i]->header.tileInfo & BGMAPTILEINFO_PERTILEPAL) {
+			assert(((BgMap32*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap32*)BgMapTable[i])->header.UNK_6 == 0x50u);
+			uint32_t* name = ((BgMap32*)BgMapTable[i])->names;
+			for (size_t i = 0u; i < lengthoffield(BgMap32, names); i++, name++, programPtr += sizeof(uint32_t)) {
+				*name =
+					((uint32_t)programPtr[0] << 24) |
+					((uint32_t)programPtr[1] << 16) |
+					((uint32_t)programPtr[2] <<  8) |
+					((uint32_t)programPtr[3] <<  0);
 			}
 		}
-
-		free(programData);
+		else {
+			assert(((BgMap16*)BgMapTable[i])->header.UNK_4 == 0x78u && ((BgMap16*)BgMapTable[i])->header.UNK_6 == 0x50u);
+			uint16_t* name = ((BgMap16*)BgMapTable[i])->names;
+			for (size_t i = 0u; i < lengthoffield(BgMap16, names); i++, name++, programPtr += sizeof(uint16_t)) {
+				*name =
+					((uint16_t)programPtr[0] << 8) |
+					((uint16_t)programPtr[1] << 0);
+			}
+		}
 	}
+}
+
+void LoadObjects(const uint8_t* const programData) {
+	for (size_t i = 0u; i < lengthof(Objects.data); i++) {
+		for (size_t j = 0u; j < 6u; j++) {
+			Objects.data[i][j] =
+				((uint16_t)programData[ROMOFFSET_OBJECTDATA + i * sizeof(ObjectData) + j * sizeof(uint16_t) + 0u] << 8) |
+						   programData[ROMOFFSET_OBJECTDATA + i * sizeof(ObjectData) + j * sizeof(uint16_t) + 1u];
+		}
+	}
+}
+
+bool OpenSound(const uint8_t* const programData) {
+	SoundRomData = malloc(SNDROM_SIZE);
+	if (!SoundRomData) {
+		fprintf(stderr, "Failed allocating memory for the sound ROM\n\n");
+		return false;
+	}
+	PHYSFS_File* const soundFile = PHYSFS_openRead(SoundRomFileName);
+	if (!soundFile || PHYSFS_readBytes(soundFile, SoundRomData, SNDROM_SIZE) != SNDROM_SIZE) {
+		if (soundFile) {
+			PHYSFS_close(soundFile);
+		}
+		free(SoundRomData);
+		fprintf(stderr, "Failed opening sound ROM file \"%s\"\n\n", SoundRomFileName);
+		return false;
+	}
+	else {
+		PHYSFS_close(soundFile);
+	}
+
+	const uint8_t* midiData = &programData[ROMOFFSET_MIDI];
+
+	for (size_t i = 0u; i < lengthoffield(MidiData, musicWaves); i++) {
+		Midi.musicWaves[i] = ((uint16_t)midiData[sizeof(uint16_t) * i + 0u] << 8) | midiData[sizeof(uint16_t) * i + 1u];
+	}
+	midiData += lengthoffield(MidiData, musicWaves) * sizeof(uint16_t);
+
+	for (size_t i = 0u; i < lengthoffield(MidiData, UNK_100); i++) {
+		STRUCT_MidiData_100* const data = &Midi.UNK_100[i];
+		data->wave =
+			((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 0u] << 8) |
+					   midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 1u];
+		data->nextOctaveFrequency = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 2) * i + 2u];
+	}
+	midiData += lengthoffield(MidiData, UNK_100) * (sizeof(uint16_t) + sizeof(uint8_t) * 2);
+
+	for (size_t i = 0u; i < lengthoffield(MidiData, soundEffectWaves); i++) {
+		SoundEffectWaveData* const data = &Midi.soundEffectWaves[i];
+		data->wave =
+			((uint16_t)midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 0u] << 8) |
+					   midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 1u];
+		data->totalLevel = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 2u];
+		data->UNK_3 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 3u];
+		data->UNK_4 = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 4u];
+		data->octaveFrequency = midiData[(sizeof(uint16_t) + sizeof(uint8_t) * 4) * i + 5u];
+	}
+	midiData += lengthoffield(MidiData, soundEffectWaves) * (sizeof(uint16_t) + sizeof(uint8_t) * 4);
+
+	MidiNotes = malloc(MIDINOTES_LENGTH);
+	if (!MidiNotes) {
+		fprintf(stderr, "Failed allocating MIDI notes buffer\n");
+		return false;
+	}
+	memcpy(MidiNotes, &programData[ROMOFFSET_MIDINOTES], MIDINOTES_LENGTH);
+	for (size_t i = 0u; i < lengthoffield(MidiData, barNotes); i++) {
+		for (size_t j = 0u; j < lengthoffield(MidiData, barNotes[0]); j++) {
+			uint32_t offset =
+				((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 0u] << 24) |
+				((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 1u] << 16) |
+				((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 2u] <<  8) |
+				((uint32_t)midiData[sizeof(uint32_t) * 16u * i + sizeof(uint32_t) * j + 3u] <<  0);
+			if (offset == 0u) {
+				Midi.barNotes[i][j] = NULL;
+			}
+			else {
+				Midi.barNotes[i][j] = &MidiNotes[offset - ROMOFFSET_MIDINOTES];
+			}
+		}
+	}
+
+	return true;
+}
+
+void CloseSound() {
+	free(MidiNotes);
+	free(SoundRomData);
+}
+
+bool OpenData() {
+	if (!MountRoms()) {
+		return false;
+	}
+
+	uint8_t* const programData = OpenProgramData();
+	if (!programData) {
+		return false;
+	}
+
+	if (!OpenTiles()) {
+		CloseProgramData(programData);
+		return false;
+	}
+	LoadReplays(programData);
+	LoadPals(programData);
+	LoadBgMaps(programData);
+	LoadObjects(programData);
+	if (!OpenSound(programData)) {
+		CloseTiles();
+		CloseProgramData(programData);
+		return false;
+	}
+
+	CloseProgramData(programData);
 
 	printf("Successfully loaded data from ROMs.\n\n");
 	return true;
 }
 
 void CloseData() {
-	free(TileData);
-	free(MidiNotes);
+	CloseSound();
+	CloseTiles();
 }

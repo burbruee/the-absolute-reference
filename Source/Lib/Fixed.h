@@ -15,6 +15,38 @@
 // Shorthand for initialization, guaranteed to initialize correctly, regardless of system endianness. Can be used for initializing any fixed point type, where valid.
 #define FIXED(i, f) { .integer = (i), .fraction = (f) }
 
+typedef union Fixed64 {
+	struct {
+#if BIGEND
+		int32_t integer;
+		uint32_t fraction;
+#else
+		uint32_t fraction;
+		int32_t integer;
+#endif
+	};
+	int64_t value;
+} Fixed64;
+
+#define F64(i, f) (Fixed64) { .integer = (int32_t)(i), .fraction = (uint32_t)(f) }
+#define F64V(i, f) ((((int64_t)(i) & 0xFFFFFFFF) << 32) | ((uint32_t)(f)))
+
+typedef union UFixed64 {
+	struct {
+#if BIGEND
+		uint32_t integer;
+		uint32_t fraction;
+#else
+		uint32_t fraction;
+		uint32_t integer;
+#endif
+	};
+	uint64_t value;
+} UFixed64;
+
+#define UF64(i, f) (UFixed64) { .integer = (uint32_t)(i), .fraction = (uint32_t)(f) }
+#define UF64V(i, f) ((((uint64_t)(i) & 0xFFFFFFFF) << 32) | ((uint32_t)(f)))
+
 typedef union Fixed32 {
 	struct {
 #if BIGEND

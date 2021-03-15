@@ -1,4 +1,5 @@
 #include "Sound/Sound.h"
+#include "Sound/SoundDefs.h"
 #include "Main/Frame.h"
 #include "Input/Credit.h"
 #include "Eeprom/Eeprom.h"
@@ -6,7 +7,7 @@
 #include "HwSound.h"
 #include <stdbool.h>
 
-static const int16_t SoundFNumTable[17][12] = {
+static const int16_t FrequencyLists[17][12] = {
 	{ 0x0000, 0x003D, 0x007D, 0x00C2, 0x010A, 0x0157, 0x01A8, 0x01FE, 0x025A, 0x02BA, 0x0321, 0x038D },
 	{ 0x0000, 0x003D, 0x007D, 0x00C2, 0x010A, 0x0157, 0x01A8, 0x01FE, 0x025A, 0x02BA, 0x0321, 0x038D },
 	{ 0x0000, 0x003D, 0x007D, 0x00C2, 0x010A, 0x0157, 0x01A8, 0x01FE, 0x025A, 0x02BA, 0x0321, 0x038D },
@@ -26,45 +27,50 @@ static const int16_t SoundFNumTable[17][12] = {
 	{ 0x0000, 0x003D, 0x007D, 0x00C2, 0x010A, 0x0157, 0x01A8, 0x01FE, 0x025A, 0x02BA, 0x0321, 0x038D }
 };
 
-typedef struct STRUCT_60B1638 {
-	int8_t UNK_0;
-	uint8_t* UNK_4;
-	uint8_t* UNK_8;
-} STRUCT_60B1638;
-static STRUCT_60B1638 UNK_60B1638[16];
-static uint8_t UNK_60B16F8[16][3];
+typedef struct BarData {
+	int8_t measureSeconds;
+	uint8_t* currentNote;
+	uint8_t* notesStart;
+} BarData;
+static BarData Bars[NUMBARS];
+static uint8_t UNK_60B16F8[NUMBARS][3];
 
 static uint8_t UNK_60B1728[SNDPCM_NUMCHANNELS][2];
 static int8_t UNK_60B1758[SNDPCM_NUMCHANNELS];
 static uint8_t UNK_60B1770[SNDPCM_NUMCHANNELS];
-static uint8_t UNK_60B1788[SNDPCM_NUMCHANNELS];
-static uint16_t UNK_60B17A0[SNDPCM_NUMCHANNELS];
-static uint16_t UNK_60B17D0[SNDPCM_NUMCHANNELS];
+static uint8_t KeyLfoPanpot[SNDPCM_NUMCHANNELS];
+
+// This contains sound effect constants with 1 added; when a channel index of this array is 0, that channel has no sound effect assigned to it.
+static uint16_t QueuedSoundEffects[SNDPCM_NUMCHANNELS];
+
+static SoundEffect PlayingSoundEffects[SNDPCM_NUMCHANNELS];
 static uint8_t UNK_60B1800[SNDPCM_NUMCHANNELS];
-static uint8_t UNK_60B1818;
+static bool Quiet;
 bool NoSound;
-int16_t PcmFirstLeftChannel;
+int16_t NumMusicChannels;
 static uint16_t UNK_60B181E;
-static int16_t UNK_60B1820[SNDPCM_NUMCHANNELS];
-static uint32_t UNK_60B1850;
+static int16_t SoundEffectFadeFrames[SNDPCM_NUMCHANNELS];
+static uint32_t BarsDuration;
 static uint32_t UNK_60B1858;
-static uint8_t UNK_60B1860;
-static uint16_t CurrentWaveTableNum;
-static uint8_t UNK_60B1865;
-static uint8_t CurrentPcmTotalLevel;
+static uint8_t BarsSeconds;
+static uint16_t CurrentWave;
+static uint8_t CurrentOctaveFrequency;
+static uint8_t CurrentTotalLevel;
 static uint8_t UNK_60B1867;
-static uint8_t UNK_60B1868;
-static uint8_t CurrentPcmChannel; // TODO: Appears voice numbers are assigned to this.
-int16_t UNK_60B186A;
-static uint16_t UNK_60B186C;
+static uint8_t LfoReset;
+static uint8_t CurrentChannel; // TODO: Appears voice numbers are assigned to this.
+int16_t CurrentFrequencyList;
+static uint16_t DeactivateSoundEffect;
 static uint8_t PcmMixRight;
 static uint8_t PcmMixLeft;
 static uint32_t UNK_60B1870;
-static uint32_t UNK_60B1874;
+
+// This contains a music constant with 1 added; when this is 0, the next music won't be changed on sound update.
+static uint32_t QueuedMusic;
 static uint32_t UNK_60B1878;
 static uint32_t UNK_60B187C;
 
-static void UNK_602DBE2(STRUCT_60B1638* const arg0);
+static void OutputBar(BarData* const bar);
 
 void UNK_602DA38(uint32_t arg0) {
 	UNK_60B1870 = arg0;
@@ -78,35 +84,35 @@ void UNK_602DA6E(uint32_t arg0) {
 	UNK_60B187C = arg0;
 }
 
-void UNK_602DA90() {
-	PcmFirstLeftChannel = 14u;
-	UNK_602E586();
+void ResetSound() {
+	NumMusicChannels = 14u;
+	FadeSoundEffects();
 	UNK_602EB84();
 	StopMusic();
-	UNK_602EADC();
+	StopSoundEffects();
 	UNK_60B1870 = 0u;
-	UNK_60B1874 = 0u;
+	QueuedMusic = 0u;
 }
 
-void UNK_602DAD4() {
-	UNK_602EF9C();
-	UNK_602E166();
-	UNK_60B1850 += UNK_60B1858 * NumVblanks;
+void UpdateSound() {
+	SetKeyLfoPanpot();
+	OutputSoundEffects();
+	BarsDuration += UNK_60B1858 * NumVblanks;
 	NumVblanks = 0u;
-	UNK_60B1860 = UNK_60B1850 / 60;
-	UNK_60B1850 %= 60;
+	BarsSeconds = BarsDuration / TIME(0, 1, 0);
+	BarsDuration %= TIME(0, 1, 0);
 	UNK_6060028 = 0u;
 
-	for (int8_t i = 0; i < 16; i++) {
-		if (UNK_60B1638[i].UNK_4 != NULL) {
-			UNK_602DBE2(&UNK_60B1638[i]);
+	for (int8_t i = 0; i < NUMBARS; i++) {
+		if (Bars[i].currentNote != NULL) {
+			OutputBar(&Bars[i]);
 		}
 	}
 
-	if (UNK_60B1878 != 0u && UNK_60B1870 != 0u && UNK_60B1874 != 0u) {
-		UNK_6064767 = 0xFFu;
-		PlayMusic(UNK_60B1874 - 1);
-		UNK_60B1874 = 0u;
+	if (UNK_60B1878 != 0u && UNK_60B1870 != 0u && QueuedMusic != 0u) {
+		CurrentMusic = MUSIC_STOP;
+		PlayMusic(QueuedMusic - 1);
+		QueuedMusic = 0u;
 	}
 
 	if (UNK_60B181E != 0u) {
@@ -115,66 +121,83 @@ void UNK_602DAD4() {
 	UNK_60B1878 = 0u;
 }
 
-static void UNK_602DBE2(STRUCT_60B1638* const arg0) {
-	for (int8_t var0 = UNK_60B1860, var1; var0 != 0;) {
-		if (var0 < arg0->UNK_0) {
-			arg0->UNK_0 -= var0;
+/*
+*/
+
+typedef enum NoteType {
+	NOTETYPE_80 = 0x80,
+	NOTETYPE_90 = 0x90,
+	NOTETYPE_A0 = 0xA0,
+	NOTETYPE_RESTARTBAR = 0xB0,
+	NOTETYPE_C0 = 0xC0,
+
+	NOTETYPE_MASK = 0xF0
+} NoteType;
+
+typedef enum NoteInfo {
+	NOTEINFO_BAREND = 0xD3
+} NoteInfo;
+
+static void OutputBar(BarData* const bar) {
+	for (int8_t seconds = BarsSeconds, info; seconds != 0;) {
+		if (seconds < bar->measureSeconds) {
+			bar->measureSeconds -= seconds;
 			return;
 		}
-		var0 -= arg0->UNK_0;
+		seconds -= bar->measureSeconds;
 
-		for (var1 = *arg0->UNK_4; var1 & 0x80u; var1 = *arg0->UNK_4) {
-			arg0->UNK_4++;
-			uint8_t var2 = var1 & 0x0Fu;
-			uint8_t var3 = var1 & 0xF0u;
-			if (var3 == 0x80u) {
-				UNK_60B1865 = *arg0->UNK_4++;
-				CurrentPcmTotalLevel = *arg0->UNK_4++;
-				UNK_60B16F8[var2][1] = CurrentPcmTotalLevel;
-				if (UNK_60B16F8[var2][2] == 0) {
-					UNK_60B186A = var2;
-					if (var2 == 9u) {
+		for (info = *bar->currentNote; info & 0x80u; info = *bar->currentNote) {
+			bar->currentNote++;
+			uint8_t frequencyListIndex = info & 0x0Fu;
+			NoteType type = info & NOTETYPE_MASK;
+			if (type == 0x80u) {
+				CurrentOctaveFrequency = *bar->currentNote++;
+				CurrentTotalLevel = *bar->currentNote++;
+				UNK_60B16F8[frequencyListIndex][1] = CurrentTotalLevel;
+				if (UNK_60B16F8[frequencyListIndex][2] == 0) {
+					CurrentFrequencyList = frequencyListIndex;
+					if (frequencyListIndex == 9u) {
 						UNK_602F480();
 					}
 					else {
-						UNK_602F0D2(UNK_60B16F8[var2][0]);
+						OutputMusicWave(UNK_60B16F8[frequencyListIndex][0]);
 					}
 				}
 			}
-			else if (var3 == 0x90u) {
-				UNK_60B1865 = *arg0->UNK_4++;
-				if (var2 == 9u) {
+			else if (type == 0x90u) {
+				CurrentOctaveFrequency = *bar->currentNote++;
+				if (frequencyListIndex == 9u) {
 					UNK_602F57E();
 				}
 				else {
-					UNK_602F2B0(UNK_60B16F8[var2][0]);
+					UNK_602F2B0(UNK_60B16F8[frequencyListIndex][0]);
 				}
 			}
-			else if (var3 == 0xC0u) {
-				UNK_60B16F8[var2][0] = *arg0->UNK_4++;
+			else if (type == 0xC0u) {
+				UNK_60B16F8[frequencyListIndex][0] = *bar->currentNote++;
 			}
-			else if (var1 == 0xD3u) {
-				arg0->UNK_4 = NULL;
+			else if (info == 0xD3u) {
+				bar->currentNote = NULL;
 				return;
 			}
-			else if (var3 == 0xA0u) {
-				arg0->UNK_8 = arg0->UNK_4;
+			else if (type == 0xA0u) {
+				bar->notesStart = bar->currentNote;
 			}
-			else if (var3 == 0xB0u) {
-				arg0->UNK_4 = arg0->UNK_8;
-				if (var2 == lengthof(UNK_60B16F8) - 1) {
+			else if (type == 0xB0u) {
+				bar->currentNote = bar->notesStart;
+				if (frequencyListIndex == lengthof(UNK_60B16F8) - 1) {
 					UNK_60B1878 = 1u;
 				}
 			}
-			else if (var1 == 0xD0u) {
-				UNK_60B1858 = *arg0->UNK_4++;
-				UNK_60B1850 = 0u;
+			else if (info == 0xD0u) {
+				UNK_60B1858 = *bar->currentNote++;
+				BarsDuration = 0u;
 				UNK_6060028 = 0u;
 				NumVblanks = 0u;
 			}
 		}
-		arg0->UNK_0 = var1;
-		arg0->UNK_4++;
+		bar->measureSeconds = info;
+		bar->currentNote++;
 	}
 }
 
@@ -182,22 +205,22 @@ void PlayMusic(Music music) {
 	if (NoSound) {
 		return;
 	}
-	if (UNK_60B1870 != 0u && UNK_6064767 != 0xFFu) {
-		UNK_60B1874 = music + 1u;
+	if (UNK_60B1870 != 0u && CurrentMusic != MUSIC_STOP) {
+		QueuedMusic = music + 1u;
 		return;
 	}
 
-	UNK_60B1850 = 0u;
+	BarsDuration = 0u;
 	UNK_60B1858 = 60u;
-	UNK_6064767 = music;
+	CurrentMusic = music;
 	UNK_602EB4C();
 
 	for (int32_t i = 0; i < lengthof(UNK_60B16F8); i++) {
 		UNK_60B16F8[i][0] = 0u;
 		UNK_60B16F8[i][1] = 0u;
-		UNK_60B1638[i].UNK_0 = 0u;
-		UNK_60B1638[i].UNK_4 = MidiPtr->UNK_F00[music][i];
-		UNK_60B1638[i].UNK_8 = UNK_60B1638[i].UNK_4;
+		Bars[i].measureSeconds = 0u;
+		Bars[i].currentNote = MidiPtr->barNotes[music][i];
+		Bars[i].notesStart = Bars[i].currentNote;
 	}
 
 	UNK_6060028 = 0u;
@@ -206,93 +229,93 @@ void PlayMusic(Music music) {
 
 void PlaySoundEffect(SoundEffect soundEffect) {
 	if (soundEffect == SOUNDEFFECT_COIN) {
-		UNK_602E56A();
-		UNK_60B181E = 0x3Cu;
+		DisableQuiet();
+		UNK_60B181E = TIME(0, 1, 0);
 	}
 	else if (NoSound) {
 		return;
 	}
 
-	UNK_60B186C = soundEffect & 0x8000u;
-	const uint16_t soundEffectNum = soundEffect & 0x7FFFu;
+	DeactivateSoundEffect = soundEffect & 0x8000u;
+	const SoundEffect soundEffectNum = soundEffect & 0x7FFFu;
 
-	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
-		if (UNK_60B17D0[i] == soundEffectNum) {
-			UNK_602E0FC(i, soundEffectNum);
+	for (int32_t soundEffectChannel = NumMusicChannels; soundEffectChannel < SNDPCM_NUMCHANNELS; soundEffectChannel++) {
+		if (PlayingSoundEffects[soundEffectChannel] == soundEffectNum) {
+			QueueSoundEffect(soundEffectChannel, soundEffectNum);
 			return;
 		}
 	}
 
-	for (int32_t i = 0; i < SNDPCM_NUMCHANNELS; i++) {
-		for (int32_t j = PcmFirstLeftChannel; j < SNDPCM_NUMCHANNELS; j++) {
-			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] <= 0) {
-				UNK_602E0FC(j, soundEffectNum);
+	for (int32_t channel = 0; channel < SNDPCM_NUMCHANNELS; channel++) {
+		for (int32_t soundEffectChannel = NumMusicChannels; soundEffectChannel < SNDPCM_NUMCHANNELS; soundEffectChannel++) {
+			if (UNK_60B1800[soundEffectChannel] == (MidiPtr->soundEffectWaves[soundEffectNum % lengthoffield(MidiData, soundEffectWaves)].UNK_4 & 7) && UNK_60B1758[soundEffectChannel] <= 0) {
+				QueueSoundEffect(soundEffectChannel, soundEffectNum);
 				return;
 			}
 		}
 
-		for (int32_t j = PcmFirstLeftChannel; j < SNDPCM_NUMCHANNELS; j++) {
-			if (UNK_60B1800[j] == (MidiPtr->UNK_300[soundEffectNum % lengthoffield(MidiData, UNK_300)].UNK_4 & 7) && UNK_60B1758[j] != 0) {
+		for (int32_t j = NumMusicChannels; j < SNDPCM_NUMCHANNELS; j++) {
+			if (UNK_60B1800[j] == (MidiPtr->soundEffectWaves[soundEffectNum % lengthoffield(MidiData, soundEffectWaves)].UNK_4 & 7) && UNK_60B1758[j] != 0) {
 				UNK_60B1758[j]--;
 			}
 		}
 	}
 }
 
-void UNK_602E0FC(uint8_t pcmChannelNum, uint16_t soundEffectNum) {
-	if (UNK_60B17A0[pcmChannelNum] == 0u) {
-		CurrentPcmChannel = pcmChannelNum;
-		SoundFadeOutPcmChannel();
+void QueueSoundEffect(uint8_t channel, SoundEffect soundEffect) {
+	if (QueuedSoundEffects[channel] == 0u) {
+		CurrentChannel = channel;
+		FadeCurrentChannel();
 	}
 
-	if (UNK_60B186C != 0u) {
-		UNK_60B1758[pcmChannelNum] = 0;
-		UNK_60B17D0[pcmChannelNum] = 0xFFFFu;
-		UNK_60B17A0[pcmChannelNum] = 0u;
+	if (DeactivateSoundEffect) {
+		UNK_60B1758[channel] = 0;
+		PlayingSoundEffects[channel] = SOUNDEFFECT_INACTIVE;
+		QueuedSoundEffects[channel] = 0u;
 	}
 	else {
-		UNK_60B17A0[pcmChannelNum] = soundEffectNum + 1u;
+		QueuedSoundEffects[channel] = soundEffect + 1u;
 	}
 }
 
-void UNK_602E166() {
-	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
-		if (UNK_60B17A0[i] == 0u) {
-			if (UNK_60B1820[i] != 0u) {
-				UNK_60B1820[i]--;
-				if (UNK_60B1820[i] < 4) {
-					CurrentPcmChannel = i;
-					SoundFadeOutPcmChannel();
+void OutputSoundEffects() {
+	for (int32_t channel = NumMusicChannels; channel < SNDPCM_NUMCHANNELS; channel++) {
+		if (!QueuedSoundEffects[channel]) {
+			if (SoundEffectFadeFrames[channel] != 0u) {
+				SoundEffectFadeFrames[channel]--;
+				if (SoundEffectFadeFrames[channel] < 4) {
+					CurrentChannel = channel;
+					FadeCurrentChannel();
 				}
 			}
 		}
 		else {
-			uint16_t var0 = UNK_60B17A0[i] - 1;
-			UNK_60B17A0[i] = 0;
-			UNK_60B17D0[i] = var0;
-			if (UNK_60B1800[i] == 0 && UNK_60B181E != 0 && var0 != 0) {
-				UNK_60B1758[i] = 0;
+			SoundEffect soundEffect = QueuedSoundEffects[channel] - 1;
+			QueuedSoundEffects[channel] = 0u;
+			PlayingSoundEffects[channel] = soundEffect;
+			if (UNK_60B1800[channel] == 0 && UNK_60B181E != 0 && soundEffect != SOUNDEFFECT_COIN) {
+				UNK_60B1758[channel] = 0;
 				return;
 			}
-			UNK_60B1758[i] = SNDPCM_NUMCHANNELS - PcmFirstLeftChannel;
-			CurrentPcmTotalLevel = MidiPtr->UNK_300[var0].UNK_2;
-			UNK_60B1865 = MidiPtr->UNK_300[var0].UNK_5;
-			CurrentWaveTableNum = MidiPtr->UNK_300[var0].UNK_0;
-			UNK_60B1867 = MidiPtr->UNK_300[var0].UNK_3;
-			UNK_60B1868 = 0x20u;
-			UNK_60B186A = 16;
-			CurrentPcmChannel = i;
-			UNK_602E30A();
-			UNK_60B1820[i] = 0x1A4u; // TODO: This might be a time value, TIME(0, 7, 0).
+			UNK_60B1758[channel] = SNDPCM_NUMCHANNELS - NumMusicChannels;
+			CurrentTotalLevel = MidiPtr->soundEffectWaves[soundEffect].totalLevel;
+			CurrentOctaveFrequency = MidiPtr->soundEffectWaves[soundEffect].octaveFrequency;
+			CurrentWave = MidiPtr->soundEffectWaves[soundEffect].wave;
+			UNK_60B1867 = MidiPtr->soundEffectWaves[soundEffect].UNK_3;
+			LfoReset = 0x20u;
+			CurrentFrequencyList = 16;
+			CurrentChannel = channel;
+			OutputSoundEffectCurrentWave();
+			SoundEffectFadeFrames[channel] = TIME(0, 7, 0);
 		}
 	}
 }
 
-void UNK_602E30A() {
+void OutputSoundEffectCurrentWave() {
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	// Write: 0011 8000
+	// Write: 0011 1000
 	// Key On = 0, won't repeatedly play notes.
 	// Damp = 0, dampen volume based on set decay rate.
 	// LFO Reset = 1, deactivate and reset low frequency oscillator.
@@ -300,78 +323,80 @@ void UNK_602E30A() {
 	// Panpot = 8, set output level of left/right channels to negative infinity (no output).
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0x38u);
 
-	const int32_t octave = UNK_60B1865 / 12;
-	const int32_t var2 = UNK_60B1865 % 12;
+	const int32_t octave = CurrentOctaveFrequency / 12;
+	const int32_t frequency = CurrentOctaveFrequency % 12;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	// Set octave and upper 3 bits of F number.
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ((octave - 5) << 4) | ((SoundFNumTable[UNK_60B186A][var2] >> 7) & 7));
+	// Set octave and upper 3 bits of frequency.
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ((octave - 5) << 4) | ((FrequencyLists[CurrentFrequencyList][frequency] >> 7) & 7));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS2 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS2 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	// Set lower 7 bits of F number and upper one bit of wave table number.
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (SoundFNumTable[UNK_60B186A][var2] << 1) | ((CurrentWaveTableNum >> 8) & 1));
+	// Set lower 7 bits of frequency and upper one bit of wave table number.
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (FrequencyLists[CurrentFrequencyList][frequency] << 1) | ((CurrentWave >> 8) & 1));
 
-	// BUG: The intent was probably to check whether var3 is negative here, but the original code ended up doing an unsigned comparison. Unsigned comparisons are default when an unsigned value is in a comparison.
-	uint32_t var3 = CurrentPcmTotalLevel;
-	if (var3 < 0) {
-		var3 += 3;
+	// BUG: The intent was probably to check whether totalLevel is negative here, but the original code ended up doing an unsigned comparison. Unsigned comparisons are default when an unsigned value is in a comparison.
+	uint32_t totalLevel = CurrentTotalLevel;
+	if (totalLevel < 0) {
+		totalLevel += 3;
 	}
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentPcmChannel);
-	if (UNK_60B1818 != 0) {
-		CurrentPcmTotalLevel = ((var3 >> 2) + (CurrentPcmTotalLevel >> 1)) | 1;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_TOTALLEVEL + CurrentChannel);
+	if (Quiet) {
+		CurrentTotalLevel = ((totalLevel >> 2) + (CurrentTotalLevel >> 1)) | 1;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentPcmTotalLevel << 1));
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentTotalLevel << 1));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + CurrentPcmChannel);
-	UNK_60B1770[CurrentPcmChannel] = 0u;
-	if ((int8_t)CurrentPcmChannel < PcmFirstLeftChannel) {
-		UNK_60B1788[CurrentPcmChannel] = UNK_60B1868 | 0x87u;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + CurrentChannel);
+	UNK_60B1770[CurrentChannel] = 0u;
+	if ((int8_t)CurrentChannel < NumMusicChannels) {
+		// Use LFO reset setting, channel key on, set channel sound position to right-only.
+		KeyLfoPanpot[CurrentChannel] = LfoReset | SNDPCM_KEY(true) | SNDPCM_PANPOTRIGHT;
 	}
 	else {
-		UNK_60B1788[CurrentPcmChannel] = UNK_60B1868 | 0x89u;
+		// Use LFO reset setting, channel key on, set channel sound position to left-only.
+		KeyLfoPanpot[CurrentChannel] = LfoReset | SNDPCM_KEY(true) | SNDPCM_PANPOTLEFT;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWaveTableNum & 0xFFu);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWave & 0xFFu);
 }
 
-void UNK_602E560() {
-	UNK_60B1818 = 1u;
+void EnableQuiet() {
+	Quiet = true;
 }
 
-void UNK_602E56A() {
-	UNK_60B1818 = 0u;
+void DisableQuiet() {
+	Quiet = false;
 }
 
 void PlaySoundEffectCoin() {
-	UNK_602E56A();
+	DisableQuiet();
 	PlaySoundEffect(SOUNDEFFECT_COIN);
 }
 
-void UNK_602E586() {
-	for (CurrentPcmChannel = (uint8_t)PcmFirstLeftChannel; CurrentPcmChannel < SNDPCM_NUMCHANNELS - 2; CurrentPcmChannel++) {
-		SoundFadeOutPcmChannel();
+void FadeSoundEffects() {
+	for (CurrentChannel = (uint8_t)NumMusicChannels; CurrentChannel < SNDPCM_NUMCHANNELS - 2; CurrentChannel++) {
+		FadeCurrentChannel();
 	}
 }
 
 void StopMusic() {
-	for (CurrentPcmChannel = 0u; CurrentPcmChannel < PcmFirstLeftChannel; CurrentPcmChannel++) {
-		SoundFadeOutPcmChannel();
+	for (CurrentChannel = 0u; CurrentChannel < NumMusicChannels; CurrentChannel++) {
+		FadeCurrentChannel();
 	}
 
-	for (int32_t i = 0; i < lengthof(UNK_60B1638); i++) {
-		UNK_60B1638[i].UNK_4 = NULL;
+	for (int32_t i = 0; i < NUMBARS; i++) {
+		Bars[i].currentNote = NULL;
 	}
 
-	UNK_6064767 = 0xFFu;
-	UNK_60B1874 = 0u;
+	CurrentMusic = MUSIC_STOP;
+	QueuedMusic = 0u;
 }
 
 void DisableSound() {
@@ -517,9 +542,9 @@ void InitSound() {
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0u);
 
 	for (int8_t i = 0; i < SNDPCM_NUMCHANNELS; i++) {
-		CurrentPcmChannel = i;
+		CurrentChannel = i;
 
-		SoundFadeOutPcmChannel();
+		FadeCurrentChannel();
 
 		SoundStatusWaitNotBusy();
 		SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + i);
@@ -553,28 +578,28 @@ void InitSound() {
 	UNK_602EC5C();
 	UNK_602E6B8();
 
-	UNK_60B1818 = 0u;
+	Quiet = false;
 	NoSound = false;
 	PcmMixRight = 0u;
 	PcmMixLeft = 0u;
 	UNK_60B187C = 0u;
 }
 
-void UNK_602EADC() {
-	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
-		UNK_60B1788[i] = 0u;
-		UNK_60B17A0[i] = 0u;
-		UNK_60B1758[i] = 0u;
-		UNK_60B1770[i] = 1u;
+void StopSoundEffects() {
+	for (int32_t channel = NumMusicChannels; channel < SNDPCM_NUMCHANNELS; channel++) {
+		KeyLfoPanpot[channel] = 0u;
+		QueuedSoundEffects[channel] = 0u;
+		UNK_60B1758[channel] = 0u;
+		UNK_60B1770[channel] = 1u;
 	}
 	UNK_6060028 = 0u;
 }
 
 void UNK_602EB4C() {
 	StopMusic();
-	UNK_602EADC();
+	StopSoundEffects();
 	UNK_60B1870 = 0u;
-	UNK_60B1874 = 0u;
+	QueuedMusic = 0u;
 }
 
 void UNK_602EB84() {
@@ -589,17 +614,17 @@ void UNK_602EB84() {
 	UNK_60B1800[15] = 5u;
 	UNK_60B1800[14] = 5u;
 	UNK_60B181E = 0u;
-	for (int32_t i = PcmFirstLeftChannel; i < SNDPCM_NUMCHANNELS; i++) {
-		UNK_60B1758[i] = 0;
-		UNK_60B17D0[i] = 0xFFFFu;
-		UNK_60B1728[i][0] = 0xFFu;
-		UNK_60B1728[i][1] = 0xFFu;
-		UNK_60B1820[i] = 0;
+	for (int32_t channel = NumMusicChannels; channel < SNDPCM_NUMCHANNELS; channel++) {
+		UNK_60B1758[channel] = 0;
+		PlayingSoundEffects[channel] = SOUNDEFFECT_INACTIVE;
+		UNK_60B1728[channel][0] = 0xFFu;
+		UNK_60B1728[channel][1] = 0xFFu;
+		SoundEffectFadeFrames[channel] = 0;
 	}
 }
 
 void UNK_602EC5C() {
-	UNK_602E586();
+	FadeSoundEffects();
 	UNK_602EB84();
 }
 
@@ -613,15 +638,15 @@ void SoundStatusWaitNotLoading() {
 	SNDCTRL_STATUSWAIT(SNDSTATUS_LOADING);
 }
 
-void SoundFadeOutPcmChannel() {
+void FadeCurrentChannel() {
 	// Set current channel's volume level to maximum.
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0xFFu);
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	// Write: 0111 1000
 	// Key On = 0, won't repeatedly play notes.
@@ -632,189 +657,185 @@ void SoundFadeOutPcmChannel() {
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0x78u);
 }
 
-void UNK_602ED40() {
-	const int8_t channel = CurrentPcmChannel;
-
-	// Set current channel's volume level to maximum.
+void OutputCurrentWave() {
+	// Immediately set current channel's volume level to minimum.
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS4 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0xFFu);
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentPcmChannel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	// Write: 0011 1000
+	// Write: 0011 0000
 	// Key On = 0, won't repeatedly play notes.
 	// Damp = 0, dampen channel volume according to the current dampening setting.
 	// LFO Reset = 1, deactivate and reset low frequency oscillator.
 	// Ch = 1, make the selected channel output without mixing with FM output.
-	// Panpot = 8, set output level of left/right channels to negative infinity (no output).
+	// Panpot = 0, set output level of left/right channels to normal level.
 	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, 0x30u);
 
-	const int32_t octave = UNK_60B1865 / 12;
-	const int32_t var2 = UNK_60B1865 % 12;
+	const int32_t octave = CurrentOctaveFrequency / 12;
+	const int32_t frequency = CurrentOctaveFrequency % 12;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + channel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS3 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	// Set current PCM channel's upper three bits of the F number and the octave.
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ((SoundFNumTable[UNK_60B186A][var2] >> 7) & 7) | ((octave - 5) << 4));
+	// Set current PCM channel's upper three bits of the frequency and the octave.
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG,  ((octave - 5) << 4) | (FrequencyLists[CurrentFrequencyList][frequency] >> 7) & 7);
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS2 + channel);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS2 + CurrentChannel);
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 	// Set current PCM channel's lower seven bits of the F number and upper bit of the wave table number.
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (SoundFNumTable[UNK_60B186A][var2] << 1) | ((CurrentWaveTableNum >> 8) & 1));
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, (FrequencyLists[CurrentFrequencyList][frequency] << 1) | ((CurrentWave >> 8) & 1));
 
-	// BUG: The intent was probably to check whether var3 is negative here, but the original code ended up doing an unsigned comparison.
-	uint32_t var3 = CurrentPcmTotalLevel;
-	if (var3 < 0) {
-		var3 += 3;
+	// BUG: The intent was probably to check whether totalLevel is negative here, but the original code ended up doing an unsigned comparison.
+	uint32_t totalLevel = CurrentTotalLevel;
+	if (totalLevel < 0) {
+		totalLevel += 3;
 	}
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_TOTALLEVEL + channel);
-	if (UNK_60B1818 != 0) {
-		CurrentPcmTotalLevel = (var3 >> 2) + (CurrentPcmTotalLevel >> 1);
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_TOTALLEVEL + CurrentChannel);
+	if (Quiet) {
+		CurrentTotalLevel = (totalLevel >> 2) + (CurrentTotalLevel >> 1);
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentPcmTotalLevel << 1));
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, ~(CurrentTotalLevel << 1));
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + channel);
-	UNK_60B1770[channel] = 0u;
-	if (channel < PcmFirstLeftChannel) {
-		UNK_60B1788[channel] = UNK_60B1868 | 0x87u;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_WAVETBLNUMN0TON7 + CurrentChannel);
+	UNK_60B1770[CurrentChannel] = 0u;
+	if (CurrentChannel < NumMusicChannels) {
+		// Use LFO reset setting, channel key on, set channel sound position to right-only.
+		KeyLfoPanpot[CurrentChannel] = LfoReset | SNDPCM_KEY(true) | SNDPCM_PANPOTRIGHT;
 	}
 	else {
-		UNK_60B1788[channel] = UNK_60B1868 | 0x89u;
+		// Use LFO reset setting, channel key on, set channel sound position to left-only.
+		KeyLfoPanpot[CurrentChannel] = LfoReset | SNDPCM_KEY(true) | SNDPCM_PANPOTLEFT;
 	}
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWaveTableNum & 0xFF);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentWave & 0xFF);
 }
 
-void UNK_602EF9C() {
+void SetKeyLfoPanpot() {
 	SoundStatusWaitNotLoading();
 	for (uint8_t regNum = SNDREGPCM_CHANNELREGS5, channel = 0u; channel < SNDPCM_NUMCHANNELS; regNum++, channel++) {
-		if (UNK_60B1788[channel] != 0u) {
+		if (KeyLfoPanpot[channel] != 0u) {
 			SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
 			SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, regNum);
 			SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-			SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, UNK_60B1788[channel]);
-			UNK_60B1788[channel] = 0u;
+			SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, KeyLfoPanpot[channel]);
+			KeyLfoPanpot[channel] = 0u;
 		}
 	}
 }
 
-void UNK_602F026(uint8_t arg0) {
-	const int8_t channel = CurrentPcmChannel;
-	UNK_60B1728[channel][1] = 0xFFu;
-	UNK_60B1728[channel][0] = 0xFFu;
+void UNK_602F026(uint8_t keyDampLfoDataOut) {
+	UNK_60B1728[CurrentChannel][1] = 0xFFu;
+	UNK_60B1728[CurrentChannel][0] = 0xFFu;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + channel);
-	UNK_60B1758[channel] = 0;
-	UNK_60B1770[channel] = 1u;
+	SNDCTRL_WRITE(SNDREGWR_SELECTPCMREG, SNDREGPCM_CHANNELREGS5 + CurrentChannel);
+
+	UNK_60B1758[CurrentChannel] = 0;
+	UNK_60B1770[CurrentChannel] = 1u;
 
 	SNDCTRL_STATUSWAIT(SNDSTATUS_BUSY);
-	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, channel < PcmFirstLeftChannel ? arg0 | SNDPCM_PANPOTRIGHT : arg0 | SNDPCM_PANPOTLEFT);
+	SNDCTRL_WRITE(SNDREGWR_WRITEPCMREG, CurrentChannel < NumMusicChannels ? keyDampLfoDataOut | SNDPCM_PANPOTRIGHT : keyDampLfoDataOut | SNDPCM_PANPOTLEFT);
 }
 
-void UNK_602F0D2(uint8_t arg0) {
-	if (MidiPtr->UNK_0[arg0] == 0xFFFFu) {
+void OutputMusicWave(uint8_t waveIndex) {
+	if (MidiPtr->musicWaves[waveIndex] == 0xFFFFu) {
 		return;
 	}
-	CurrentPcmChannel = UNK_602F1BC();
-	UNK_60B1728[CurrentPcmChannel][1] = UNK_60B1865 + UNK_60B187C;
-	UNK_60B1758[CurrentPcmChannel] = PcmFirstLeftChannel + 1u;
-	UNK_60B1728[CurrentPcmChannel][0] = arg0;
-	CurrentWaveTableNum = MidiPtr->UNK_0[arg0];
-	UNK_60B1868 = 0u;
-	UNK_602ED40();
-	for (uint8_t i = 0u; i < PcmFirstLeftChannel - 1; i++) {
+	CurrentChannel = AllocMusicChannel();
+	UNK_60B1728[CurrentChannel][1] = CurrentOctaveFrequency + UNK_60B187C;
+	UNK_60B1758[CurrentChannel] = NumMusicChannels + 1u;
+	UNK_60B1728[CurrentChannel][0] = waveIndex;
+	CurrentWave = MidiPtr->musicWaves[waveIndex];
+	LfoReset = 0u;
+	OutputCurrentWave();
+	for (uint8_t i = 0u; i < NumMusicChannels - 1; i++) {
 		if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
 			UNK_60B1770[i] = 1u;
 		}
 	}
 }
 
-uint8_t UNK_602F1BC() {
-	uint8_t j = 0u;
-	for (uint8_t i = 1u; i < PcmFirstLeftChannel - 1; i++) {
-		if (UNK_60B1770[i] != 0 && UNK_60B1770[j] < UNK_60B1770[i]) {
-			j = i;
+uint8_t AllocMusicChannel() {
+	uint8_t allocChannel = 0u;
+	for (int8_t channel = 1; channel < NumMusicChannels - 1; channel++) {
+		if (UNK_60B1770[channel] != 0 && UNK_60B1770[allocChannel] < UNK_60B1770[channel]) {
+			allocChannel = channel;
 		}
 	}
-	if (UNK_60B1770[j] != 0) {
-		return j;
+	if (UNK_60B1770[allocChannel] != 0) {
+		return allocChannel;
 	}
-	int8_t i;
 	while (true) {
-		for (i = 0; UNK_60B1758[i] != 0 && i < PcmFirstLeftChannel - 1; i++);
-		if (i < PcmFirstLeftChannel - 1) {
-			break;
+		int8_t allocChannel;
+		for (allocChannel = 0; UNK_60B1758[allocChannel] != 0 && allocChannel < NumMusicChannels - 1; allocChannel++);
+		if (allocChannel < NumMusicChannels - 1) {
+			return allocChannel;
 		}
-		for (int8_t j = 0; j < PcmFirstLeftChannel - 1; j++) {
-			if (UNK_60B1758[j] != 0 && --UNK_60B1758[j] == 0) {
-				UNK_60B1770[j] = 1u;
+		for (int8_t channel = 0; channel < NumMusicChannels - 1; channel++) {
+			if (UNK_60B1758[channel] != 0 && --UNK_60B1758[channel] == 0) {
+				UNK_60B1770[channel] = 1u;
 			}
 		}
 	}
-	return i;
 }
 
-void UNK_602F2B0(uint8_t arg0) {
-	
-	if (MidiPtr->UNK_0[arg0] == 0xFFFFu) {
+void UNK_602F2B0(uint8_t waveIndex) {
+	if (MidiPtr->musicWaves[waveIndex] == 0xFFFFu) {
 		return;
 	}
-
-	uint8_t i = 0u;
+	int8_t channel = 0;
 	while (true) {
-		if (i >= PcmFirstLeftChannel - 1) {
+		if (channel >= NumMusicChannels - 1) {
 			return;
 		}
-		if (UNK_60B1728[i][1] == UNK_60B1865 && UNK_60B1728[i][0] == arg0) {
+		if (UNK_60B1728[channel][1] == CurrentOctaveFrequency && UNK_60B1728[channel][0] == waveIndex) {
 			break;
 		}
-		i++;
+		channel++;
 	}
-	CurrentPcmChannel = i;
+	CurrentChannel = channel;
 	UNK_602F026(0u);
-	for (uint8_t i = 0u; i < PcmFirstLeftChannel - 1; i++) {
-		if (UNK_60B1758[i] != 0) {
-			UNK_60B1758[i]++;
+	for (int8_t channel = 0; channel < NumMusicChannels - 1; channel++) {
+		if (UNK_60B1758[channel] != 0) {
+			UNK_60B1758[channel]++;
 		}
-		if (UNK_60B1770[i] != 0) {
-			UNK_60B1770[i]++;
+		if (UNK_60B1770[channel] != 0) {
+			UNK_60B1770[channel]++;
 		}
 	}
 }
 
 uint8_t UNK_602F386() {
-    int8_t j = PcmFirstLeftChannel - 1;
-	for (int8_t i = (int8_t)PcmFirstLeftChannel; i < PcmFirstLeftChannel; i++) {
-        if (UNK_60B1770[i] != 0 && UNK_60B1770[j] < UNK_60B1770[i]) {
-            j = i;
+    int8_t allocChannel = NumMusicChannels - 1;
+	for (int8_t channel = (int8_t)NumMusicChannels; channel < NumMusicChannels; channel++) {
+        if (UNK_60B1770[channel] != 0 && UNK_60B1770[allocChannel] < UNK_60B1770[channel]) {
+            allocChannel = channel;
         }
     }
-    if (UNK_60B1770[j] != 0) {
-        return j;
+    if (UNK_60B1770[allocChannel] != 0) {
+        return allocChannel;
     }
-	int8_t i;
     while (true) {
-		for (i = (int8_t)(PcmFirstLeftChannel - 1); UNK_60B1758[i] != 0 && i < PcmFirstLeftChannel; i++);
-		if (i < PcmFirstLeftChannel) {
-			break;
+		int8_t allocChannel;
+		for (allocChannel = NumMusicChannels - 1; UNK_60B1758[allocChannel] != 0 && allocChannel < NumMusicChannels; allocChannel++);
+		if (allocChannel < NumMusicChannels) {
+			return allocChannel;
 		}
-		for (i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
-            if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
-                UNK_60B1770[i] = 1u;
+		for (int8_t channel = NumMusicChannels - 1; channel < NumMusicChannels; channel++) {
+            if (UNK_60B1758[channel] != 0 && --UNK_60B1758[channel] == 0) {
+                UNK_60B1770[channel] = 1u;
             }
         }
     }
-	return i;
 }
 
 void UNK_602F46C() {
@@ -822,18 +843,18 @@ void UNK_602F46C() {
 }
 
 void UNK_602F480() {
-	if (MidiPtr->UNK_100[UNK_60B1865].UNK_0 == 0xFFFFu) {
+	if (MidiPtr->UNK_100[CurrentOctaveFrequency].wave == 0xFFFFu) {
 		return;
 	}
-	CurrentPcmChannel = UNK_602F386();
-	UNK_60B1758[CurrentPcmChannel] = 3u;
-	UNK_60B1728[CurrentPcmChannel][1] = UNK_60B1865;
-	UNK_60B1728[CurrentPcmChannel][0] = 0xFFu;
-	CurrentWaveTableNum = MidiPtr->UNK_100[UNK_60B1865].UNK_0;
-	UNK_60B1865 = MidiPtr->UNK_100[UNK_60B1865].UNK_2[0];
-	UNK_60B1868 = 0x20u;
-	UNK_602ED40();
-	for (int8_t i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
+	CurrentChannel = UNK_602F386();
+	UNK_60B1758[CurrentChannel] = 3u;
+	UNK_60B1728[CurrentChannel][1] = CurrentOctaveFrequency;
+	UNK_60B1728[CurrentChannel][0] = 0xFFu;
+	CurrentWave = MidiPtr->UNK_100[CurrentOctaveFrequency].wave;
+	CurrentOctaveFrequency = MidiPtr->UNK_100[CurrentOctaveFrequency].nextOctaveFrequency;
+	LfoReset = 0x20u;
+	OutputCurrentWave();
+	for (int8_t i = NumMusicChannels - 1; i < NumMusicChannels; i++) {
 		if (UNK_60B1758[i] != 0 && --UNK_60B1758[i] == 0) {
 			UNK_60B1770[i] = 1;
 		}
@@ -841,29 +862,27 @@ void UNK_602F480() {
 }
 
 void UNK_602F57E() {
-	uint8_t i;
-	
-	if (MidiPtr->UNK_100[UNK_60B1865].UNK_0 == 0xFFFFu) {
+	if (MidiPtr->UNK_100[CurrentOctaveFrequency].wave == 0xFFFFu) {
 		return;
 	}
-	i = PcmFirstLeftChannel - 1;
+	int8_t channel = NumMusicChannels - 1;
 	while (true) {
-		if (i >= PcmFirstLeftChannel) {
+		if (channel >= NumMusicChannels) {
 			return;
 		}
-		if (UNK_60B1728[i][1] == UNK_60B1865) {
+		if (UNK_60B1728[channel][1] == CurrentOctaveFrequency) {
 			break;
 		}
-		i += 1;
+		channel++;
 	}
-	CurrentPcmChannel = i;
+	CurrentChannel = channel;
 	UNK_602F026(0u);
-	for (int8_t i = PcmFirstLeftChannel - 1; i < PcmFirstLeftChannel; i++) {
-		if (UNK_60B1758[i] != 0) {
-			UNK_60B1758[i]++;
+	for (int8_t channel = NumMusicChannels - 1; channel < NumMusicChannels; channel++) {
+		if (UNK_60B1758[channel] != 0) {
+			UNK_60B1758[channel]++;
 		}
-		if (UNK_60B1770[i] != 0) {
-			UNK_60B1770[i]++;
+		if (UNK_60B1770[channel] != 0) {
+			UNK_60B1770[channel]++;
 		}
 	}
 }

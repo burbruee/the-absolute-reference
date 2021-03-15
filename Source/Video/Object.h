@@ -136,7 +136,6 @@ enum ObjectBits {
                                                  ((*(object))[5] = ((*(object))[5] & ~OBJECT_TILEBOTTOM) | OBJECT_TOTILEBOTTOM(tile)))
 
 typedef struct ObjectDataTable {
-	char header[8];
 	ObjectData data[0x6DC];
 } ObjectDataTable;
 
