@@ -48,6 +48,7 @@ else()
 		target_link_libraries(${EXECUTABLE_NAME}
 			PRIVATE
 				${PHYSFS_LIBRARY}
+				m
 		)
 		target_include_directories(${EXECUTABLE_NAME}
 			PRIVATE
