@@ -249,7 +249,7 @@ bool MountRoms() {
 	return true;
 }
 
-uint8_t* OpenProgramData() {
+const uint8_t* OpenProgramData() {
 	uint8_t* const programData = malloc(PROGRAMROM_SIZE * NUMPROGRAMROMS);
 	if (!programData) {
 		fprintf(stderr, "Failed allocating program data\n");
@@ -288,16 +288,13 @@ uint8_t* OpenProgramData() {
 	PHYSFS_close(programLowFile);
 	PHYSFS_close(programHighFile);
 
-	uint8_t* programPtr = programData;
-	uint8_t* programHigh = &programTemp[PROGRAMROM_SIZE * 0];
-	uint8_t* programLow = &programTemp[PROGRAMROM_SIZE * 1];
-	for (size_t i = 0u; i < PROGRAMROM_SIZE * NUMPROGRAMROMS; i += 4u) {
-		*programPtr++ = programHigh[1];
-		*programPtr++ = programHigh[0];
-		programHigh += 2;
-		*programPtr++ = programLow[1];
-		*programPtr++ = programLow[0];
-		programLow += 2;
+	for (size_t j = 0u; j < NUMPROGRAMROMS; j++) {
+		uint8_t* programPtr = programData + j * 2;
+		uint8_t* programSrc = &programTemp[PROGRAMROM_SIZE * j];
+		for (size_t i = 0u; i < PROGRAMROM_SIZE * NUMPROGRAMROMS; i += 4u, programSrc += 2, programPtr += 2) {
+			*programPtr++ = programSrc[1];
+			*programPtr++ = programSrc[0];
+		}
 	}
 	free(programTemp);
 
@@ -305,7 +302,7 @@ uint8_t* OpenProgramData() {
 }
 
 void CloseProgramData(const uint8_t* const programData) {
-	free(programData);
+	free((void*)programData);
 }
 
 bool OpenTiles() {
@@ -333,12 +330,15 @@ bool OpenTiles() {
 		}
 	}
 	uint8_t* tilePtr = TileData;
-	for (size_t i = 0u; i < NUMTILEROMS; i += 2u) {
-		const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE];
-		const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE];
-		for (size_t j = 0u; j < TILEROM_SIZE * 2u; j += 4u) {
+	for (size_t i = 0u; i < NUMTILEROMS; i += 2) {
+		for (const uint8_t* tileLow = &tileDataTemp[(i + 0) * TILEROM_SIZE], * tileEnd = tileLow + TILEROM_SIZE; tileLow < tileEnd;) {
 			*tilePtr++ = *tileLow++;
 			*tilePtr++ = *tileLow++;
+			tilePtr += 2;
+		}
+		tilePtr -= TILEROM_SIZE * 2;
+		for (const uint8_t* tileHigh = &tileDataTemp[(i + 1) * TILEROM_SIZE], * tileEnd = tileHigh + TILEROM_SIZE; tileHigh < tileEnd;) {
+			tilePtr += 2;
 			*tilePtr++ = *tileHigh++;
 			*tilePtr++ = *tileHigh++;
 		}
@@ -507,7 +507,7 @@ bool OpenData() {
 		return false;
 	}
 
-	uint8_t* const programData = OpenProgramData();
+	const uint8_t* const programData = OpenProgramData();
 	if (!programData) {
 		return false;
 	}

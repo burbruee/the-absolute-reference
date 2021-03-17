@@ -1,6 +1,7 @@
 #include "Platform/Util/AccessEeprom.h"
 #include "Platform/Util/AccessConfig.h"
 #include "Platform/Util/AccessData.h"
+#include "Platform/Util/AccessPaths.h"
 #include "Platform/SDL2/AccessDisplay.h"
 #include "Platform/Util/Render.h"
 #include "Video/Pal.h"
@@ -26,9 +27,7 @@ static void ExitHandler(void) {
 	CloseConfig();
 	SaveEeprom();
 	CloseData();
-	if (!PHYSFS_deinit()) {
-		fprintf(stderr, "Failed PhysicsFS deinit: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
-	}
+	ClosePaths();
 	SDL_Quit();
 	printf("Finished shutdown, exiting.\n");
 }
@@ -42,21 +41,10 @@ static bool Init(int argc, char** argv) {
 		return false;
 	}
 
-	if (!PHYSFS_init(argv[0])) {
-		fprintf(stderr, "Error with PHYSFS_init: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+	if (!OpenPaths(argv[0])) {
+		fprintf(stderr, "Failed opening paths\n");
 		return false;
 	}
-
-	if (!PHYSFS_setSaneConfig("nightmareci", "taref", "ZIP", 0, 0)) {
-		fprintf(stderr, "Error setting sane PhysicsFS config: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
-		return false;
-	}
-
-	printf("Search path directories:\n");
-	for (char** searchPath = PHYSFS_getSearchPath(); searchPath != NULL && *searchPath != NULL; searchPath++) {
-		printf("%s\n", *searchPath);
-	}
-	printf("\n");
 
 	if (!OpenData()) {
 		fprintf(stderr, "Failed opening data\n");

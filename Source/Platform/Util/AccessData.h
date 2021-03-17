@@ -10,7 +10,7 @@ bool MountRoms();
 // "Open" functions need their corresponding "Close" function called when you're done with the data they open.
 // "Load" functions don't need anything closed, they merely read from programData and write to statically-allocated global data.
 
-uint8_t* OpenProgramData();
+const uint8_t* OpenProgramData();
 void CloseProgramData(const uint8_t* const programData);
 
 #define TILEROM_SIZE 0x200000

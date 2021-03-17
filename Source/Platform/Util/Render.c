@@ -133,6 +133,7 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 
 // TODO: Implement remaining background features.
 static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, const uint8_t priority) {
+	assert(VIDEO_HEIGHT % 16u == 0u && VIDEO_WIDTH % 16u == 0u);
 	for (size_t layer = 0u; layer < 4u; layer++) {
 		const size_t bgBank = BgMapBank[layer] & 0x7Fu;
 		const uint32_t* const layerData = &GRAPHICSRAM[(bgBank * 0x800u + layer * 4u) / sizeof(uint32_t)];
@@ -163,7 +164,6 @@ static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, co
 		}
 		const uint32_t alpha = alphaTemp;
 
-		assert(VIDEO_HEIGHT % 16u == 0u && VIDEO_WIDTH % 16u == 0u);
 		for (int16_t y = 0; y < VIDEO_HEIGHT; y++) {
 			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
 				const uint32_t bgTile = GRAPHICSRAM[(tileBank * 0x800u) / sizeof(uint32_t) + (((((y - scrollY) >> 4) & heightMask) << 5) | (((x - scrollX) >> 4) & 0x1Fu))];

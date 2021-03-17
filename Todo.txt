@@ -46,26 +46,3 @@ per-pixel paletted rendering, rather than caching the objects in 32bpp textures
 first draft). And, since the object handling will be done by the frontend
 rather than with the PsikyoSH code, layers can be directly rendered in-order,
 allowing per-layer batching.
-
-This may be related to the "object group" (or whatever they are) functions,
-that haven't been explored much yet.
-#include "Video.h"
-#include <stdint.h>
-#include <stdbool.h>
-bool _0x6024DF0(int16_t arg0) {
-	int32_t var0 = arg0 - arg0 % 16;
-	if (var0 < 0) {
-		var0 += 15;
-	}
-	// var0 is now the largest multiple of 16 less than or equal to arg0.
-
-	int16_t var1 = var0 / 16;
-	if (var1 >= 15) {
-		var1 = 14;
-	}
-	else if (var1 < 0) {
-		var1 = 0;
-	}
-
-	return _0x60618F0[var1]++ & true;
-}

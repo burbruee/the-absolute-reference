@@ -1,9 +1,7 @@
-set(EXECUTABLE_SOURCES
-	"Main.c"
+AddBinarySDL2(
+	sndplay
+	EXECUTABLE
+	SOURCES "Main.c"
+	HEADERS ${PLATFORM_HEADERS}
+	LIBRARIES PlatformSDL2
 )
-set(EXECUTABLE_HEADERS
-	${GAME_HEADERS}
-	${PLATFORM_HEADERS}
-)
-set(EXECUTABLE_NAME sndplay)
-include(../../AddExecutable.cmake)

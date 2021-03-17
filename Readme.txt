@@ -18,8 +18,7 @@ If you don't provide an INI, a default one only having keyboard controls will
 be created.
 
 You can copy over your MAME "eeprom", probably in nvram\tgm2p\eeprom, to here,
-to use your old save data. Also, currently this is the only way to get settings,
-such as free play, set for this game, by setting them in MAME first:
+to use your old save data.
 C:\Users\<your-username-here>\AppData\Roaming\nightmareci\taref\nvram\tgm2p\eeprom
 
 You don't have to copy in an "eeprom" file; a default one will be created if you

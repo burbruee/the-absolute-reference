@@ -1,7 +1,12 @@
+include(AddBinarySDL2.cmake)
+
 set(PLATFORM_SOURCES
+	${GAME_SOURCES}
+
 	"${SRC}/Platform/Util/AccessConfig.c"
 	"${SRC}/Platform/Util/AccessData.c"
 	"${SRC}/Platform/Util/AccessEeprom.c"
+	"${SRC}/Platform/Util/AccessPaths.c"
 	"${SRC}/Platform/Util/Eeprom.c"
 	"${SRC}/Platform/Util/EepromData.c"
 	"${SRC}/Platform/Util/HwData.c"
@@ -14,9 +19,12 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/SDL2/PlatformUpdate.c"
 )
 set(PLATFORM_HEADERS
+	${GAME_HEADERS}
+
 	"${SRC}/Platform/Util/AccessConfig.h"
 	"${SRC}/Platform/Util/AccessData.h"
 	"${SRC}/Platform/Util/AccessEeprom.h"
+	"${SRC}/Platform/Util/AccessPaths.h"
 	"${SRC}/Platform/Util/Color.h"
 	"${SRC}/Platform/Util/EepromData.h"
 	"${SRC}/Platform/Util/HwData.h"
@@ -26,19 +34,20 @@ set(PLATFORM_HEADERS
 
 	"${SRC}/Platform/SDL2/AccessDisplay.h"
 )
-set(LIBRARY_SOURCES ${GAME_SOURCES} ${PLATFORM_SOURCES})
-set(LIBRARY_HEADERS ${GAME_SOURCES} ${PLATFORM_HEADERS})
-set(LIBRARY_NAME PlatformSDL2)
-include(AddLibrary.cmake)
+AddBinarySDL2(
+	PlatformSDL2
+	LIBRARY
+	SOURCES ${PLATFORM_SOURCES}
+	HEADERS ${PLATFORM_HEADERS}
+	LIBRARIES ""
+)
 
-set(EXECUTABLE_SOURCES
-	"Main.c"
+AddBinarySDL2(
+	taref
+	EXECUTABLE
+	SOURCES "Main.c"
+	HEADERS ${PLATFORM_HEADERS}
+	LIBRARIES PlatformSDL2
 )
-set(EXECUTABLE_HEADERS
-	${GAME_HEADERS}
-	${PLATFORM_HEADERS}
-)
-set(EXECUTABLE_NAME taref)
-include(AddExecutable.cmake)
 
 add_subdirectory(Tool)

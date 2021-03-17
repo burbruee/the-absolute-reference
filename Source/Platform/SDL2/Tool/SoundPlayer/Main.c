@@ -1,4 +1,5 @@
 #include "Platform/Util/AccessData.h"
+#include "Platform/Util/AccessPaths.h"
 #include "HwSound.h"
 #include "SDL.h"
 #include "physfs.h"
@@ -10,21 +11,15 @@
 #include <assert.h>
 
 int main(int argc, char* argv[]) {
-	if (!PHYSFS_init(argv[0])) {
-		fprintf(stderr, "Error with PHYSFS_init: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
-		return false;
-	}
-
-	if (!PHYSFS_setSaneConfig("nightmareci", "taref", "ZIP", 0, 0)) {
-		fprintf(stderr, "Error setting sane PhysicsFS config: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
-		return false;
+	if (!OpenPaths(argv[0])) {
+		return EXIT_FAILURE;
 	}
 
 	if (!MountRoms()) {
 		return EXIT_FAILURE;
 	}
 
-	uint8_t* const programData = OpenProgramData();
+	const uint8_t* const programData = OpenProgramData();
 	if (!programData) {
 		return false;
 	}
@@ -152,5 +147,6 @@ int main(int argc, char* argv[]) {
 	SDL_CloseAudioDevice(deviceId);
 	SDL_Quit();
 	CloseSound();
+	ClosePaths();
 	return EXIT_SUCCESS;
 }
