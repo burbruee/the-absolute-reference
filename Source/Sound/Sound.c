@@ -121,9 +121,6 @@ void UpdateSound() {
 	UNK_60B1878 = 0u;
 }
 
-/*
-*/
-
 typedef enum NoteType {
 	NOTETYPE_80 = 0x80,
 	NOTETYPE_90 = 0x90,
@@ -254,9 +251,9 @@ void PlaySoundEffect(SoundEffect soundEffect) {
 			}
 		}
 
-		for (int32_t j = NumMusicChannels; j < SNDPCM_NUMCHANNELS; j++) {
-			if (UNK_60B1800[j] == (MidiPtr->soundEffectWaves[soundEffectNum % lengthoffield(MidiData, soundEffectWaves)].UNK_4 & 7) && UNK_60B1758[j] != 0) {
-				UNK_60B1758[j]--;
+		for (int32_t soundEffectChannel = NumMusicChannels; soundEffectChannel < SNDPCM_NUMCHANNELS; soundEffectChannel++) {
+			if (UNK_60B1800[soundEffectChannel] == (MidiPtr->soundEffectWaves[soundEffectNum % lengthoffield(MidiData, soundEffectWaves)].UNK_4 & 7) && UNK_60B1758[soundEffectChannel] != 0) {
+				UNK_60B1758[soundEffectChannel]--;
 			}
 		}
 	}

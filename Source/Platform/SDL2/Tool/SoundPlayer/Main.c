@@ -1,5 +1,9 @@
 #include "Platform/Util/AccessData.h"
 #include "Platform/Util/AccessPaths.h"
+#include "Platform/SDL2/AccessSound.h"
+#include "Platform/SDL2/PlatformSupport/PlatformUpdate.h"
+#include "Main/Frame.h"
+#include "Sound/Sound.h"
 #include "HwSound.h"
 #include "SDL.h"
 #include "physfs.h"
@@ -8,52 +12,10 @@
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <stdbool.h>
 #include <assert.h>
 
-int main(int argc, char* argv[]) {
-	if (!OpenPaths(argv[0])) {
-		return EXIT_FAILURE;
-	}
-
-	if (!MountRoms()) {
-		return EXIT_FAILURE;
-	}
-
-	const uint8_t* const programData = OpenProgramData();
-	if (!programData) {
-		return false;
-	}
-
-	if (!OpenSound(programData)) {
-		CloseProgramData(programData);
-		return EXIT_FAILURE;
-	}
-
-	CloseProgramData(programData);
-
-	SDL_Init(SDL_INIT_AUDIO);
-
-	const uint8_t* const soundRom = SoundRomData;
-	SDL_AudioSpec spec;
-	spec.freq = 44100 / 2;
-	spec.format = AUDIO_S16SYS; /**< Audio data format */
-	spec.channels = 1u;         /**< Number of channels: 1 mono, 2 stereo */
-	spec.silence = 0u;          /**< Audio buffer silence value (calculated) */
-	spec.samples = 0u;          /**< Audio buffer size in sample FRAMES (total samples divided by channel count) */
-	spec.padding = 0u;          /**< Necessary for some compile environments */
-	spec.size = 0u;	            /**< Audio buffer size in bytes (calculated) */
-	spec.callback = NULL;       /**< Callback that feeds the audio device (NULL to use SDL_QueueAudio()). */
-	spec.userdata = NULL;       /**< Userdata passed to callback (ignored for NULL callbacks). */
-
-	SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice(NULL, 0, &spec, NULL, 0);
-	if (deviceId == 0) {
-		fprintf(stderr, "Failed opening audio device: %s\n", SDL_GetError());
-		SDL_Quit();
-		return EXIT_FAILURE;
-	}
-
-	SDL_PauseAudioDevice(deviceId, 0);
-
+bool PlayWaves(SDL_AudioDeviceID deviceId, SDL_AudioSpec* spec, const uint8_t* const soundRom) {
 	for (size_t waveNum = 0u; waveNum < 384u; waveNum++) {
 		const uint8_t* const headerData = &soundRom[waveNum * 12u];
 		WaveTableHeader header;
@@ -138,15 +100,112 @@ int main(int argc, char* argv[]) {
 			free(buffer);
 			SDL_Quit();
 			CloseSound();
-			return EXIT_FAILURE;
+			return false;
 		}
 		free(buffer);
-		SDL_Delay((Uint32)(1000.0 * ((double)(header.endAddress * sizeof(int16_t)) / spec.channels / spec.freq / (SDL_AUDIO_BITSIZE(spec.format) / 8))));
+		SDL_Delay((Uint32)(1000.0 * ((double)(header.endAddress * sizeof(int16_t)) / spec->channels / spec->freq / (SDL_AUDIO_BITSIZE(spec->format) / 8))));
+	}
+	return true;
+}
+
+int main(int argc, char* argv[]) {
+	SDL_Init(SDL_INIT_AUDIO);
+
+	if (!OpenSound()) {
+		return EXIT_FAILURE;
 	}
 
+	if (!OpenPaths(argv[0])) {
+		return EXIT_FAILURE;
+	}
+
+	if (!MountRoms()) {
+		return EXIT_FAILURE;
+	}
+
+	const uint8_t* const programData = OpenProgramData();
+	if (!programData) {
+		return false;
+	}
+
+	if (!OpenSoundData(programData)) {
+		CloseProgramData(programData);
+		return EXIT_FAILURE;
+	}
+
+	CloseProgramData(programData);
+
+#if 1
+	SDL_AudioSpec spec;
+	spec.freq = 44100 / 2;
+	spec.format = AUDIO_S16SYS; /**< Audio data format */
+	spec.channels = 1u;         /**< Number of channels: 1 mono, 2 stereo */
+	spec.silence = 0u;          /**< Audio buffer silence value (calculated) */
+	spec.samples = 0u;          /**< Audio buffer size in sample FRAMES (total samples divided by channel count) */
+	spec.padding = 0u;          /**< Necessary for some compile environments */
+	spec.size = 0u;	            /**< Audio buffer size in bytes (calculated) */
+	spec.callback = NULL;       /**< Callback that feeds the audio device (NULL to use SDL_QueueAudio()). */
+	spec.userdata = NULL;       /**< Userdata passed to callback (ignored for NULL callbacks). */
+
+	SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice(NULL, 0, &spec, NULL, 0);
+	if (deviceId == 0) {
+		fprintf(stderr, "Failed opening audio device: %s\n", SDL_GetError());
+		SDL_Quit();
+		return EXIT_FAILURE;
+	}
+	SDL_PauseAudioDevice(deviceId, 0);
+	if (!PlayWaves(deviceId, &spec, SoundRomData)) {
+		return EXIT_FAILURE;
+	}
 	SDL_CloseAudioDevice(deviceId);
-	SDL_Quit();
+#else
+	SoundStart();
+	SoundReset();
+
+	InitSound();
+	StopMusic();
+	DisableQuiet();
+	UNK_602EB4C();
+	UNK_602EC5C();
+	UNK_602E6B8();
+	FadeSoundEffects();
+	StopMusic();
+	SetPcmVolumeRight(5);
+
+	printf("Playing sound...\n");
+
+	uint32_t frames = 0u;
+	const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
+	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * performanceFrequency);
+	PlatformCurrentTime = SDL_GetPerformanceCounter();
+	PlatformTimeAccumulator = 0u;
+
+	PlayMusic(MUSIC_7);
+	while (frames < TIME(0, 15, 0)) {
+		NumVblanks = 1u;
+		UpdateSound();
+
+		while (PlatformTimeAccumulator < gameFrameDuration) {
+			SDL_Delay(1u);
+
+			Uint64 newTime = SDL_GetPerformanceCounter();
+			Uint64 delay = newTime - PlatformCurrentTime;
+			if (delay > performanceFrequency / 4u) {
+				delay = performanceFrequency / 4u;
+			}
+			PlatformCurrentTime = newTime;
+
+			PlatformTimeAccumulator += delay;
+		}
+		PlatformTimeAccumulator -= gameFrameDuration;
+		frames++;
+	}
+	printf("Shutting down.\n");
+#endif
+
 	CloseSound();
+	SDL_Quit();
+	CloseSoundData();
 	ClosePaths();
 	return EXIT_SUCCESS;
 }

@@ -1105,7 +1105,7 @@ void UpdateSiren(Player* player) {
 	// vanish row.
 	for (int16_t row = player->matrixHeight - 6; row < player->matrixHeight - 1; row++) {
 		for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-			if (MATRIX(player, row, col).block == NULLBLOCK) {
+			if (MATRIX(player, row, col).block != NULLBLOCK) {
 				numBlocks++;
 			}
 		}

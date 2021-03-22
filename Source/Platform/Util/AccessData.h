@@ -18,8 +18,8 @@ void CloseProgramData(const uint8_t* const programData);
 #define TILEDATA_SIZE (TILEROM_SIZE * NUMTILEROMS)
 
 extern uint8_t* TileData;
-bool OpenTiles();
-void CloseTiles();
+bool OpenTileData();
+void CloseTileData();
 
 void LoadReplays(const uint8_t* const programData);
 
@@ -33,8 +33,8 @@ void LoadObjects(const uint8_t* const programData);
 
 #define SNDROM_SIZE 0x400000
 extern uint8_t* SoundRomData;
-bool OpenSound(const uint8_t* const programData);
-void CloseSound();
+bool OpenSoundData(const uint8_t* const programData);
+void CloseSoundData();
 
 // Convenience function that opens all data.
 bool OpenData();

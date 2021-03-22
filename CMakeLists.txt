@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
+project("TheAbsoluteReference" VERSION 0.4.0 LANGUAGES C)
+
 if(NOT PLATFORM_NAME)
 	set(PLATFORM_NAME "SDL2")
 endif()
@@ -222,7 +224,5 @@ set(GAME_HEADERS
 	"${SRC}/Platform/${PLATFORM_NAME}/PlatformSupport/PlatformTypes.h"
 	"${SRC}/Platform/${PLATFORM_NAME}/PlatformSupport/PlatformUpdate.h"
 )
-
-project("TheAbsoluteReference" VERSION 0.3.0 LANGUAGES C)
 
 add_subdirectory("${SRC}/Platform/${PLATFORM_NAME}")

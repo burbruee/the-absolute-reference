@@ -3,6 +3,7 @@
 #include "Platform/Util/AccessData.h"
 #include "Platform/Util/AccessPaths.h"
 #include "Platform/SDL2/AccessDisplay.h"
+#include "Platform/SDL2/AccessSound.h"
 #include "Platform/Util/Render.h"
 #include "Video/Pal.h"
 #include "Game/PalNum.h"
@@ -16,6 +17,7 @@
 #include "Main/MainLoop.h"
 #include "Input/Input.h"
 #include "PlatformUpdate.h"
+#include "HwSound.h"
 #include "SDL.h"
 #include "physfs.h"
 #include <stdio.h>
@@ -23,6 +25,7 @@
 
 static void ExitHandler(void) {
 	printf("Starting shutdown.\n\n");
+	CloseSound();
 	CloseDisplay();
 	CloseConfig();
 	SaveEeprom();
@@ -36,7 +39,7 @@ static bool Init(int argc, char** argv) {
 	// Non-TAP, platform initialization.
 	printf("Starting SDL2 platform init.\n\n");
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Error with SDL_Init: %s\n", SDL_GetError());
 		return false;
 	}
@@ -63,6 +66,13 @@ static bool Init(int argc, char** argv) {
 
 	if (!OpenDisplay()) {
 		fprintf(stderr, "Failed opening display\n");
+		return false;
+	}
+
+	SoundStart();
+	SoundReset();
+	if (!OpenSound()) {
+		fprintf(stderr, "Failed opening sound\n");
 		return false;
 	}
 

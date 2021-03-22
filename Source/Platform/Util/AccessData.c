@@ -305,7 +305,7 @@ void CloseProgramData(const uint8_t* const programData) {
 	free((void*)programData);
 }
 
-bool OpenTiles() {
+bool OpenTileData() {
 	TileData = malloc(TILEDATA_SIZE);
 	if (!TileData) {
 		fprintf(stderr, "Failed allocating memory for tile data\n");
@@ -348,7 +348,7 @@ bool OpenTiles() {
 	return true;
 }
 
-void CloseTiles() {
+void CloseTileData() {
 	free(TileData);
 }
 
@@ -425,7 +425,7 @@ void LoadObjects(const uint8_t* const programData) {
 	}
 }
 
-bool OpenSound(const uint8_t* const programData) {
+bool OpenSoundData(const uint8_t* const programData) {
 	SoundRomData = malloc(SNDROM_SIZE);
 	if (!SoundRomData) {
 		fprintf(stderr, "Failed allocating memory for the sound ROM\n\n");
@@ -497,7 +497,7 @@ bool OpenSound(const uint8_t* const programData) {
 	return true;
 }
 
-void CloseSound() {
+void CloseSoundData() {
 	free(MidiNotes);
 	free(SoundRomData);
 }
@@ -512,7 +512,7 @@ bool OpenData() {
 		return false;
 	}
 
-	if (!OpenTiles()) {
+	if (!OpenTileData()) {
 		CloseProgramData(programData);
 		return false;
 	}
@@ -520,8 +520,8 @@ bool OpenData() {
 	LoadPals(programData);
 	LoadBgMaps(programData);
 	LoadObjects(programData);
-	if (!OpenSound(programData)) {
-		CloseTiles();
+	if (!OpenSoundData(programData)) {
+		CloseTileData();
 		CloseProgramData(programData);
 		return false;
 	}
@@ -533,6 +533,6 @@ bool OpenData() {
 }
 
 void CloseData() {
-	CloseSound();
-	CloseTiles();
+	CloseSoundData();
+	CloseTileData();
 }

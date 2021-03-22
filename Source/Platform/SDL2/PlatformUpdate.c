@@ -93,8 +93,6 @@ void PlatformFrame() {
 	SDL_Delay(1);
 }
 
-#define FRAME_DURATION (1.0 / (57272700.0 / 8.0 / 443.0 / 262.0))
-
 static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
 	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());

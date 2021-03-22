@@ -3,118 +3,17 @@
 #include "Sound/Sound.h"
 #include "Lib/Fixed.h"
 #include "Lib/Macros.h"
+#include "Platform/Util/AccessData.h"
+#include "Platform/SDL2/AccessSound.h"
 #include "SDL.h"
+#include <string.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include <inttypes.h>
 #include <assert.h>
 
-// The OPL4 runs at half the main oscillator frequency.
-#define CLOCKHZ (57272700 / 2)
-
-#define TIMER_NEVER (~UINT64_C(0))
-
-typedef struct PcmTimerData {
-	bool enabled;
-	uint8_t count;
-	uint64_t start;
-	uint64_t next;
-	uint64_t period;
-	uint64_t expire;
-} PcmTimerData;
-
-typedef enum TimerNum {
-	TIMER_A,
-	TIMER_B,
-	TIMER_BUSY,
-	TIMER_LOADING,
-	NUMTIMERS
-} TimerNum;
-
-typedef struct PcmChannelData {
-	size_t num;
-
-	uint16_t wave;
-	int16_t frequency;
-	int8_t octave;
-	int8_t preverb;
-	int8_t damping;
-	int8_t dataOut;
-	int8_t levelDirect;
-	int8_t totalLevel;
-	int8_t panpot;
-	int8_t lfo;
-	int8_t vibrato;
-	int8_t tremolo;
-
-	int8_t attackRate;
-	int8_t decay1Rate;
-	int8_t decayLevel;
-	int8_t decay2Rate;
-	int8_t rateCorrection;
-	int8_t releaseRate;
-
-	Fixed32 sampleStride;
-	Fixed64 samplePos;
-
-	bool playing;
-	int8_t keyOn;
-	int8_t bits;
-
-	uint32_t startAddress;
-	uint32_t loopAddress;
-	uint32_t endAddress;
-
-	int32_t envelopeStride;
-	uint32_t envelopeVolume;
-	uint32_t envelopeVolumeStride;
-	uint32_t envelopeVolumeLimit;
-	int8_t envelopePreverb;
-} PcmChannelData;
-
-typedef struct SoundData {
-	SoundExpansionFlag expansion;
-
-	uint8_t waveTableHeader;
-	bool memMode;
-	bool memType;
-
-	bool busy;
-	bool loading;
-	uint8_t currentIrq;
-	bool irqLine;
-
-	uint8_t fmLeft, fmRight;
-	uint8_t pcmLeft, pcmRight;
-
-	Fixed32 volumes[0x400];
-	int32_t panLeft[16], panRight[16];
-	Fixed32 mixLevels[8];
-
-	PcmTimerData timers[NUMTIMERS];
-	uint64_t timerBase;
-	int32_t hz;
-	int32_t rate;
-
-	uint8_t enable;
-
-	uint8_t fmRegs[2][0x100];
-	uint8_t nextFmReg;
-	void (*writeFmPort)(const uint8_t i, const uint8_t value);
-	uint8_t lastFmData;
-
-	uint8_t pcmRegs[0x100];
-	uint8_t nextPcmReg;
-
-	PcmChannelData pcmChannels[SNDPCM_NUMCHANNELS];
-
-	size_t address;
-	uint8_t rom[0x400000];
-	uint8_t ram[0x400000];
-} SoundData;
-
-static SoundData Sound;
+SoundData Sound;
 
 void PcmTimerAdjust(PcmTimerData* const timer, const uint64_t startDelay, const uint64_t next, const uint64_t period) {
 	timer->next = next;
@@ -281,11 +180,42 @@ static const uint32_t AttackRateTable[64] = {
 	0x00000000u
 };
 
+const int32_t VolumeTable[1024] = {
+	0x00010000, 0x0000F525, 0x0000EAC0, 0x0000E0CC, 0x0000D744, 0x0000CE24, 0x0000C567, 0x0000BD08, 0x0000B504, 0x0000AD58, 0x0000A5FE, 0x00009EF5, 0x00009837, 0x000091C3, 0x00008B95, 0x000085AA,
+	0x00008000, 0x00007A92, 0x00007560, 0x00007066, 0x00006BA2, 0x00006712, 0x000062B3, 0x00005E84, 0x00005A82, 0x000056AC, 0x000052FF, 0x00004F7A, 0x00004C1B, 0x000048E1, 0x000045CA, 0x000042D5,
+	0x00004000, 0x00003D49, 0x00003AB0, 0x00003833, 0x000035D1, 0x00003389, 0x00003159, 0x00002F42, 0x00002D41, 0x00002B56, 0x0000297F, 0x000027BD, 0x0000260D, 0x00002470, 0x000022E5, 0x0000216A,
+	0x00002000, 0x00001EA4, 0x00001D58, 0x00001C19, 0x00001AE8, 0x000019C4, 0x000018AC, 0x000017A1, 0x000016A0, 0x000015AB, 0x000014BF, 0x000013DE, 0x00001306, 0x00001238, 0x00001172, 0x000010B5,
+	0x00001000, 0x00000F52, 0x00000EAC, 0x00000E0C, 0x00000D74, 0x00000CE2, 0x00000C56, 0x00000BD0, 0x00000B50, 0x00000AD5, 0x00000A5F, 0x000009EF, 0x00000983, 0x0000091C, 0x000008B9, 0x0000085A,
+	0x00000800, 0x000007A9, 0x00000756, 0x00000706, 0x000006BA, 0x00000671, 0x0000062B, 0x000005E8, 0x000005A8, 0x0000056A, 0x0000052F, 0x000004F7, 0x000004C1, 0x0000048E, 0x0000045C, 0x0000042D,
+	0x00000400, 0x000003D4, 0x000003AB, 0x00000383, 0x0000035D, 0x00000338, 0x00000315, 0x000002F4, 0x000002D4, 0x000002B5, 0x00000297, 0x0000027B, 0x00000260, 0x00000247, 0x0000022E, 0x00000216,
+	0x00000200, 0x000001EA, 0x000001D5, 0x000001C1, 0x000001AE, 0x0000019C, 0x0000018A, 0x0000017A, 0x0000016A, 0x0000015A, 0x0000014B, 0x0000013D, 0x00000130, 0x00000123, 0x00000117, 0x0000010B,
+	0x00000100, 0x000000F5, 0x000000EA, 0x000000E0, 0x000000D7, 0x000000CE, 0x000000C5, 0x000000BD, 0x000000B5, 0x000000AD, 0x000000A5, 0x0000009E, 0x00000098, 0x00000091, 0x0000008B, 0x00000085,
+	0x00000080, 0x0000007A, 0x00000075, 0x00000070, 0x0000006B, 0x00000067, 0x00000062, 0x0000005E, 0x0000005A, 0x00000056, 0x00000052, 0x0000004F, 0x0000004C, 0x00000048, 0x00000045, 0x00000042,
+	0x00000040, 0x0000003D, 0x0000003A, 0x00000038, 0x00000035, 0x00000033, 0x00000031, 0x0000002F, 0x0000002D, 0x0000002B, 0x00000029, 0x00000027, 0x00000026, 0x00000024, 0x00000022, 0x00000021,
+	0x00000020, 0x0000001E, 0x0000001D, 0x0000001C, 0x0000001A, 0x00000019, 0x00000018, 0x00000017, 0x00000016, 0x00000015, 0x00000014, 0x00000013, 0x00000013, 0x00000012, 0x00000011, 0x00000010,
+	0x00000010, 0x0000000F, 0x0000000E, 0x0000000E, 0x0000000D, 0x0000000C, 0x0000000C, 0x0000000B, 0x0000000B, 0x0000000A, 0x0000000A, 0x00000009, 0x00000009, 0x00000009, 0x00000008, 0x00000008,
+	0x00000008, 0x00000007, 0x00000007, 0x00000007, 0x00000006, 0x00000006, 0x00000006, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000004, 0x00000004, 0x00000004, 0x00000004, 0x00000004,
+	0x00000004, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000003, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002,
+	0x00000002, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001
+	// Init remaining elements to zero.
+};
+
+const int32_t PanLeftTable[16] = {
+	0x0000, 0x0008, 0x0010, 0x0018, 0x0020, 0x0028, 0x0030, 0x0100, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+};
+const int32_t PanRightTable[16] = {
+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0100, 0x0100, 0x0030, 0x0028, 0x0020, 0x0018, 0x0010, 0x0008
+};
+
+const int32_t MixLevelTable[8] = {
+	0x91C3, 0x6712, 0x48E1, 0x3389, 0x2470, 0x19C4, 0x1238, 0x0000
+};
+
 static void IrqCheck() {
 	Sound.irqLine = !!Sound.currentIrq;
 }
 
-static int32_t PcmChannelComputeRate(PcmChannelData* const channel, int32_t value) {
+int32_t PcmChannelComputeRate(PcmChannelData* const channel, int32_t value) {
 	int32_t result, octave;
 
 	if (value == 0) {
@@ -316,7 +246,7 @@ static int32_t PcmChannelComputeRate(PcmChannelData* const channel, int32_t valu
 	}
 }
 
-static uint32_t PcmChannelComputeDecayEnvelopeVolumeStep(PcmChannelData* const channel, int32_t value) {
+uint32_t PcmChannelComputeDecayEnvelopeVolumeStep(PcmChannelData* const channel, int32_t value) {
 	int32_t rate;
 
 	if (channel->damping) {
@@ -338,13 +268,13 @@ static uint32_t PcmChannelComputeDecayEnvelopeVolumeStep(PcmChannelData* const c
 	}
 }
 
-void PcmChannelComputeFrequencyStride(PcmChannelData* const channel) {
+void PcmChannelComputeSampleStride(PcmChannelData* const channel) {
 	int32_t octave = channel->octave;
 	if (octave & 8) {
 		octave |= -8;
 	}
 
-	channel->sampleStride.value = ((channel->frequency | 0x400) << (octave + 8)) >> 3;
+	channel->sampleStride = ((channel->frequency | 0x400) << (octave + 8)) >> 3;
 }
 
 void PcmChannelComputeEnvelope(PcmChannelData* const channel) {
@@ -413,11 +343,11 @@ static void PcmChannelRetriggerNote(PcmChannelData* const channel) {
 		channel->playing = true;
 	}
 
-	channel->samplePos = F64(0, 0x00000000u);
+	channel->samplePos = 0u;
 	channel->envelopeStride = 0;
 	channel->envelopePreverb = 0;
 
-	PcmChannelComputeFrequencyStride(channel);
+	PcmChannelComputeSampleStride(channel);
 	PcmChannelComputeEnvelope(channel);
 }
 
@@ -458,7 +388,6 @@ static void SoundRegisterFmWritePortA(const uint8_t i, const uint8_t value) {
 		IrqCheck();
 
 	default:
-		fprintf(stderr, "Unsupported FM port A sound register write of register %"PRIu8" with data 0x%02"PRIX8".\n", i, value);
 		break;
 	}
 }
@@ -474,7 +403,6 @@ static void SoundRegisterFmWritePortB(const uint8_t i, const uint8_t value) {
 		break;
 
 	default:
-		fprintf(stderr, "Unsupported FM port B sound register write of register %"PRIu8" with data 0x%02"PRIX8".\n", i, value);
 		break;
 	}
 }
@@ -482,6 +410,8 @@ static void SoundRegisterFmWritePortB(const uint8_t i, const uint8_t value) {
 static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 	uint8_t nextValue = value;
 	if (i >= SNDREGPCM_CHANNELREGS1 && i < SNDREGPCM_CHANNELREGS10 + SNDPCM_NUMCHANNELS) {
+		SDL_LockMutex(ChannelsMutex);
+
 		const size_t channelNum = (i - SNDREGPCM_CHANNELREGS1) % SNDPCM_NUMCHANNELS;
 		PcmChannelData* const channel = &Sound.pcmChannels[channelNum];
 
@@ -495,16 +425,15 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 			else {
 				offset = ((size_t)Sound.waveTableHeader << 19) + ((size_t)channel->wave - 0x180u) * 12u;
 			}
-			assert(offset < lengthoffield(SoundData, rom));
 
-			const uint8_t* const data = Sound.rom + offset;
+			const uint8_t* const data = SoundRomData + offset;
 			channel->bits = (data[0] & 0xC0u) >> 6;
 			channel->startAddress = (((uint32_t)data[0] & 0x3Fu) << 16) | ((uint32_t)data[1] << 8) | data[2];
 			channel->loopAddress = ((uint32_t)data[3] << 24) | ((uint32_t)data[4] << 16);
 			channel->endAddress = ((((uint32_t)data[5] << 24) | ((uint32_t)data[6] << 16)) - 0x10000u) ^ 0xFFFF0000u;
 
 			for (size_t j = 7u; j < 12u; j++) {
-				SoundRegisterPcmWrite(i, (uint8_t)(SNDREGPCM_CHANNELREGS1 + channelNum + (j - 2u) * 24u, data[j]));
+				SoundRegisterPcmWrite((uint8_t)(SNDREGPCM_CHANNELREGS1 + channelNum + (j - 2u) * 24u), data[j]);
 			}
 
 			Sound.loading = true;
@@ -524,7 +453,7 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 			channel->wave = ((uint16_t)(value & 1u) << 8) | (channel->wave & 0xFFu);
 			channel->frequency = (channel->frequency & 0x380) | (value >> 1);
 			if (channel->playing && ((value ^ Sound.pcmRegs[i]) & 0xFEu)) {
-				PcmChannelComputeFrequencyStride(channel);
+				PcmChannelComputeSampleStride(channel);
 				PcmChannelComputeEnvelope(channel);
 			}
 			break;
@@ -538,7 +467,7 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 
 				if (channel->playing) {
 					channel->envelopePreverb = 0;
-					PcmChannelComputeFrequencyStride(channel);
+					PcmChannelComputeSampleStride(channel);
 					PcmChannelComputeEnvelope(channel);
 				}
 			}
@@ -605,9 +534,10 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 			break;
 
 		default:
-			fprintf(stderr, "Unsupported PCM sound register write of register %"PRIu8" with data 0x%02"PRIX8".\n", i, value);
 			break;
 		}
+
+		SDL_UnlockMutex(ChannelsMutex);
 	}
 	else {
 		switch (i) {
@@ -652,7 +582,6 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 			break;
 
 		default:
-			fprintf(stderr, "Unsupported PCM sound register write of register %"PRIu8" with data 0x%02"PRIX8".\n", i, value);
 			break;
 		}
 	}
@@ -672,26 +601,11 @@ void SoundStart() {
 		Sound.timers[i].expire = TIMER_NEVER;
 	}
 
+	SDL_LockMutex(ChannelsMutex);
 	for (size_t i = 0u; i < lengthoffield(SoundData, pcmChannels); i++) {
 		Sound.pcmChannels[i].num = i;
 	}
-
-	for (size_t i = 0u; i < 0x100; i++) {
-		Sound.volumes[i].value = (int32_t)(pow(2.0, (-0.375 / 6.0) * i) * 65536.0);
-	}
-	for (size_t i = 0x100; i < lengthoffield(SoundData, volumes); i++) {
-		Sound.volumes[i] = F32(0, 0x0000u);
-	}
-
-	for (size_t i = 0u; i < lengthoffield(SoundData, panLeft); i++) {
-		Sound.panLeft[i] = (int32_t)(i < 7u ? i << 3 : i < 9u ? 0x100u : 0x000u);
-		Sound.panRight[i] = (int32_t)(i < 8u ? 0u : i < 10u ? 0x100u : (lengthoffield(SoundData, panRight) - i) * 8u);
-	}
-
-	for (size_t i = 0u; i < lengthoffield(SoundData, mixLevels) - 1u; i++) {
-		Sound.mixLevels[i] = Sound.volumes[8u * i + 13u];
-	}
-	Sound.mixLevels[lengthoffield(SoundData, mixLevels) - 1u] = F32(0, 0x0000u);
+	SDL_UnlockMutex(ChannelsMutex);
 
 	// TODO: OPL3 init.
 }
@@ -712,6 +626,7 @@ void SoundReset() {
 	Sound.writeFmPort = SoundRegisterFmWritePortA;
 	Sound.address = 0u;
 
+	SDL_LockMutex(ChannelsMutex);
 	for (size_t i = 0u; i < lengthoffield(SoundData, pcmChannels); i++) {
 		PcmChannelData* const channel = &Sound.pcmChannels[i];
 
@@ -732,6 +647,7 @@ void SoundReset() {
 		channel->envelopeStride = 5;
 		PcmChannelComputeEnvelope(channel);
 	}
+	SDL_UnlockMutex(ChannelsMutex);
 
 	PcmTimerReset(&Sound.timers[TIMER_A], TIMER_NEVER);
 	PcmTimerReset(&Sound.timers[TIMER_B], TIMER_NEVER);
@@ -781,7 +697,7 @@ uint8_t SoundControlRead(const uint8_t i) {
 				break;
 
 			case SNDREGPCM_MEMDATA:
-				data = Sound.rom[Sound.address];
+				data = SoundRomData[Sound.address];
 				Sound.address = (Sound.address + 1) & 0x3FFFFFu;
 				break;
 
@@ -793,7 +709,6 @@ uint8_t SoundControlRead(const uint8_t i) {
 		break;
 
 	default:
-		fprintf(stderr, "Unsupported sound control read of register %"PRIu8"\n", i);
 		break;
 	}
 
@@ -806,7 +721,7 @@ void SoundControlWrite(const uint8_t i, const uint8_t value) {
 	case SNDREGWR_SELECTFMREGB:
 		PcmTimerBusyStart(false);
 		Sound.writeFmPort = (i & 2u) ? SoundRegisterFmWritePortB : SoundRegisterFmWritePortA;
-		Sound.lastFmData = value;
+		Sound.nextFmReg = value;
 		// TODO: OPL3 write.
 		break;
 
@@ -832,7 +747,6 @@ void SoundControlWrite(const uint8_t i, const uint8_t value) {
 		break;
 
 	default:
-		fprintf(stderr, "Unsupported sound control write of register %"PRIu8" with data 0x%02"PRIX8"\n", i, value);
 		break;
 	}
 }

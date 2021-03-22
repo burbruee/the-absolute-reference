@@ -15,6 +15,7 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/Util/RomData.c"
 
 	"${SRC}/Platform/SDL2/AccessDisplay.c"
+	"${SRC}/Platform/SDL2/AccessSound.c"
 	"${SRC}/Platform/SDL2/HwSound.c"
 	"${SRC}/Platform/SDL2/PlatformUpdate.c"
 )
@@ -33,6 +34,7 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/Util/Render.h"
 
 	"${SRC}/Platform/SDL2/AccessDisplay.h"
+	"${SRC}/Platform/SDL2/AccessSound.h"
 )
 AddBinarySDL2(
 	PlatformSDL2
