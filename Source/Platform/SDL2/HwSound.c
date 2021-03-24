@@ -740,7 +740,6 @@ void SoundControlWrite(const uint8_t i, const uint8_t value) {
 	case SNDREGWR_WRITEPCMREG:
 		PcmTimerBusyStart(true);
 		if (Sound.expansion & SNDEXP_NEW2) {
-			// TODO: Update audio stream here.
 			PcmTimerBusyStart(true);
 			SoundRegisterPcmWrite(Sound.nextPcmReg, value);
 		}

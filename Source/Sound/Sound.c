@@ -136,18 +136,19 @@ typedef enum NoteInfo {
 } NoteInfo;
 
 static void OutputBar(BarData* const bar) {
-	for (int8_t seconds = BarsSeconds, info; seconds != 0;) {
+	for (int8_t seconds = BarsSeconds; seconds != 0;) {
 		if (seconds < bar->measureSeconds) {
 			bar->measureSeconds -= seconds;
 			return;
 		}
 		seconds -= bar->measureSeconds;
 
+		uint8_t info;
 		for (info = *bar->currentNote; info & 0x80u; info = *bar->currentNote) {
 			bar->currentNote++;
 			uint8_t frequencyListIndex = info & 0x0Fu;
 			NoteType type = info & NOTETYPE_MASK;
-			if (type == 0x80u) {
+			if (type == NOTETYPE_80) {
 				CurrentOctaveFrequency = *bar->currentNote++;
 				CurrentTotalLevel = *bar->currentNote++;
 				UNK_60B16F8[frequencyListIndex][1] = CurrentTotalLevel;
@@ -161,7 +162,7 @@ static void OutputBar(BarData* const bar) {
 					}
 				}
 			}
-			else if (type == 0x90u) {
+			else if (type == NOTETYPE_90) {
 				CurrentOctaveFrequency = *bar->currentNote++;
 				if (frequencyListIndex == 9u) {
 					UNK_602F57E();
@@ -170,17 +171,17 @@ static void OutputBar(BarData* const bar) {
 					UNK_602F2B0(UNK_60B16F8[frequencyListIndex][0]);
 				}
 			}
-			else if (type == 0xC0u) {
+			else if (type == NOTETYPE_C0) {
 				UNK_60B16F8[frequencyListIndex][0] = *bar->currentNote++;
 			}
-			else if (info == 0xD3u) {
+			else if (info == NOTEINFO_BAREND) {
 				bar->currentNote = NULL;
 				return;
 			}
-			else if (type == 0xA0u) {
+			else if (type == NOTETYPE_A0) {
 				bar->notesStart = bar->currentNote;
 			}
-			else if (type == 0xB0u) {
+			else if (type == NOTETYPE_RESTARTBAR) {
 				bar->currentNote = bar->notesStart;
 				if (frequencyListIndex == lengthof(UNK_60B16F8) - 1) {
 					UNK_60B1878 = 1u;

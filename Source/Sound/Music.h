@@ -10,7 +10,7 @@ typedef enum Music {
 	MUSIC_4,
 	MUSIC_5,
 	MUSIC_6,
-	MUSIC_7,
+	MUSIC_SELECTMODE,
 	NUMMUSIC,
 	MUSIC_STOP = -1
 } Music;

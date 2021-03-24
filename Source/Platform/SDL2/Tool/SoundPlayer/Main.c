@@ -180,9 +180,9 @@ int main(int argc, char* argv[]) {
 	PlatformCurrentTime = SDL_GetPerformanceCounter();
 	PlatformTimeAccumulator = 0u;
 
-	PlayMusic(MUSIC_7);
-	while (frames < TIME(0, 15, 0)) {
-		NumVblanks = 1u;
+	PlayMusic(MUSIC_SELECTMODE);
+	NumVblanks = 1u;
+	while (frames < TIME(2, 0, 0)) {
 		UpdateSound();
 
 		while (PlatformTimeAccumulator < gameFrameDuration) {
@@ -197,8 +197,12 @@ int main(int argc, char* argv[]) {
 
 			PlatformTimeAccumulator += delay;
 		}
-		PlatformTimeAccumulator -= gameFrameDuration;
-		frames++;
+		NumVblanks = 0u;
+		while (PlatformTimeAccumulator > gameFrameDuration) {
+			PlatformTimeAccumulator -= gameFrameDuration;
+			frames++;
+			NumVblanks++;
+		}
 	}
 	printf("Shutting down.\n");
 #endif

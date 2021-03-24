@@ -126,7 +126,7 @@ bool OpenSound() {
 	}
 
 	SDL_AudioSpec spec;
-	spec.freq = 37000;
+	spec.freq = 37286;
 	spec.format = AUDIO_S16SYS;   /**< Audio data format */
 	spec.channels = 2u;           /**< Number of channels: 1 mono, 2 stereo */
 	spec.silence = 0u;            /**< Audio buffer silence value (calculated) */

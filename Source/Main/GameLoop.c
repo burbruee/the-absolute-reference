@@ -915,7 +915,7 @@ void UpdateGameMusic() {
 
 			switch (CurrentGameMusic) {
 			case GAMEMUSIC_0:
-				music = MUSIC_7;
+				music = MUSIC_SELECTMODE;
 				break;
 
 			default:
