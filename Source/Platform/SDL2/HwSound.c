@@ -410,8 +410,6 @@ static void SoundRegisterFmWritePortB(const uint8_t i, const uint8_t value) {
 static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 	uint8_t nextValue = value;
 	if (i >= SNDREGPCM_CHANNELREGS1 && i < SNDREGPCM_CHANNELREGS10 + SNDPCM_NUMCHANNELS) {
-		SDL_LockMutex(ChannelsMutex);
-
 		const size_t channelNum = (i - SNDREGPCM_CHANNELREGS1) % SNDPCM_NUMCHANNELS;
 		PcmChannelData* const channel = &Sound.pcmChannels[channelNum];
 
@@ -536,8 +534,6 @@ static void SoundRegisterPcmWrite(const uint8_t i, const uint8_t value) {
 		default:
 			break;
 		}
-
-		SDL_UnlockMutex(ChannelsMutex);
 	}
 	else {
 		switch (i) {
@@ -601,11 +597,9 @@ void SoundStart() {
 		Sound.timers[i].expire = TIMER_NEVER;
 	}
 
-	SDL_LockMutex(ChannelsMutex);
 	for (size_t i = 0u; i < lengthoffield(SoundData, pcmChannels); i++) {
 		Sound.pcmChannels[i].num = i;
 	}
-	SDL_UnlockMutex(ChannelsMutex);
 
 	// TODO: OPL3 init.
 }
@@ -626,7 +620,6 @@ void SoundReset() {
 	Sound.writeFmPort = SoundRegisterFmWritePortA;
 	Sound.address = 0u;
 
-	SDL_LockMutex(ChannelsMutex);
 	for (size_t i = 0u; i < lengthoffield(SoundData, pcmChannels); i++) {
 		PcmChannelData* const channel = &Sound.pcmChannels[i];
 
@@ -647,7 +640,6 @@ void SoundReset() {
 		channel->envelopeStride = 5;
 		PcmChannelComputeEnvelope(channel);
 	}
-	SDL_UnlockMutex(ChannelsMutex);
 
 	PcmTimerReset(&Sound.timers[TIMER_A], TIMER_NEVER);
 	PcmTimerReset(&Sound.timers[TIMER_B], TIMER_NEVER);

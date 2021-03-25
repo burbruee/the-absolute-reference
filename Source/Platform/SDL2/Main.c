@@ -71,6 +71,7 @@ static bool Init(int argc, char** argv) {
 
 	SoundStart();
 	SoundReset();
+	InitSound(); // This TAP sound init call has to be here, so the game's sound data is initialized before the stream updating thread is created.
 	if (!OpenSound()) {
 		fprintf(stderr, "Failed opening sound\n");
 		return false;
@@ -86,10 +87,11 @@ static bool Init(int argc, char** argv) {
 	// TAP initialization.
 	// TODO: Implement more of the initialization like the original, such as ROM checks.
 	printf("Starting game init.\n\n");
+	SDL_LockMutex(AudioMutex);
+
 	UNK_602ACB0();
 	ScreenTime = 0u;
 	NumVideoSetters = 0u;
-	InitSound();
 	UNK_6023790();
 	InitCredits();
 	InitVideo();
@@ -138,6 +140,7 @@ static bool Init(int argc, char** argv) {
 	SetPal(80u, 1u, PALPTR(0x1E1));
 	UpdateFrame();
 
+	SDL_UnlockMutex(AudioMutex);
 	printf("Finished game init.\n\n");
 
 	// TODO: Return init success status, such as returning false if ROMs have

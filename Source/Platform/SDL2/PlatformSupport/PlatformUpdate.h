@@ -15,3 +15,5 @@ void PlatformFrame();
 
 void PlatformFinishUpdate();
 #define PLATFORM_FINISHUPDATE() PlatformFinishUpdate()
+
+#define PLATFORM_UPDATESOUND()

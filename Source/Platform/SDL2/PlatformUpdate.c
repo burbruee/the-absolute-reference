@@ -2,6 +2,7 @@
 #include "Platform/Util/AccessConfig.h"
 #include "Platform/Util/AccessData.h"
 #include "Platform/SDL2/AccessDisplay.h"
+#include "Platform/SDL2/AccessSound.h"
 #include "Platform/Util/Render.h"
 #include "Main/Frame.h"
 
@@ -85,16 +86,22 @@ void PlatformUpdateInputs() {
 }
 
 void PlatformFrame() {
+	SDL_UnlockMutex(AudioMutex);
+
 	// TODO: Implement more fully. This is just a placeholder to have some level of functionality.
 	RandScale += (uint32_t)SDL_GetPerformanceCounter();
 
 	NumVblanks++;
 
 	SDL_Delay(1);
+
+	SDL_LockMutex(AudioMutex);
 }
 
 static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
+	SDL_UnlockMutex(AudioMutex);
+
 	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());
 
 	if (PlatformTimeAccumulator < gameFrameDuration || VsyncUpdateRate) {
@@ -137,6 +144,7 @@ void PlatformFinishUpdate() {
 		}
 
 		if (VsyncUpdateRate) {
+			SDL_LockMutex(AudioMutex);
 			return;
 		}
 
@@ -151,4 +159,6 @@ void PlatformFinishUpdate() {
 	}
 
 	PlatformTimeAccumulator -= gameFrameDuration;
+
+	SDL_LockMutex(AudioMutex);
 }

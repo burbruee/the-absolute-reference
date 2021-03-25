@@ -111,10 +111,6 @@ bool PlayWaves(SDL_AudioDeviceID deviceId, SDL_AudioSpec* spec, const uint8_t* c
 int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_AUDIO);
 
-	if (!OpenSound()) {
-		return EXIT_FAILURE;
-	}
-
 	if (!OpenPaths(argv[0])) {
 		return EXIT_FAILURE;
 	}
@@ -157,12 +153,18 @@ int main(int argc, char* argv[]) {
 	if (!PlayWaves(deviceId, &spec, SoundRomData)) {
 		return EXIT_FAILURE;
 	}
+
 	SDL_CloseAudioDevice(deviceId);
 #else
 	SoundStart();
 	SoundReset();
-
 	InitSound();
+	if (!OpenSound()) {
+		return EXIT_FAILURE;
+	}
+
+	SDL_LockMutex(AudioMutex);
+
 	StopMusic();
 	DisableQuiet();
 	UNK_602EB4C();
@@ -172,8 +174,6 @@ int main(int argc, char* argv[]) {
 	StopMusic();
 	SetPcmVolumeRight(5);
 
-	printf("Playing sound...\n");
-
 	uint32_t frames = 0u;
 	const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
 	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * performanceFrequency);
@@ -181,10 +181,10 @@ int main(int argc, char* argv[]) {
 	PlatformTimeAccumulator = 0u;
 
 	PlayMusic(MUSIC_SELECTMODE);
-	NumVblanks = 1u;
-	while (frames < TIME(2, 0, 0)) {
-		UpdateSound();
+	SDL_UnlockMutex(AudioMutex);
 
+	printf("Playing sound...\n");
+	while (frames < TIME(2, 0, 0)) {
 		while (PlatformTimeAccumulator < gameFrameDuration) {
 			SDL_Delay(1u);
 
@@ -197,17 +197,16 @@ int main(int argc, char* argv[]) {
 
 			PlatformTimeAccumulator += delay;
 		}
-		NumVblanks = 0u;
 		while (PlatformTimeAccumulator > gameFrameDuration) {
 			PlatformTimeAccumulator -= gameFrameDuration;
 			frames++;
-			NumVblanks++;
 		}
 	}
+
 	printf("Shutting down.\n");
+	CloseSound();
 #endif
 
-	CloseSound();
 	SDL_Quit();
 	CloseSoundData();
 	ClosePaths();

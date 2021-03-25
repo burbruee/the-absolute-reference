@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 extern SDL_AudioDeviceID AudioDevice;
-extern SDL_mutex* ChannelsMutex;
+extern SDL_mutex* AudioMutex;
 
 bool OpenSound();
 void CloseSound();

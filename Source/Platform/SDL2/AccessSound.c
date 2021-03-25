@@ -1,17 +1,22 @@
 #include "Platform/SDL2/AccessSound.h"
 #include "Platform/Util/AccessData.h"
+#include "Main/Frame.h"
 #include "HwSound.h"
 #include <string.h>
 
-SDL_AudioDeviceID AudioDevice;
-SDL_mutex* ChannelsMutex;
+SDL_AudioDeviceID AudioDevice = 0;
+SDL_mutex* AudioMutex = NULL;
 
 static void UpdateStream(void* userdata, Uint8* stream, int size) {
+	SDL_LockMutex(AudioMutex);
+
+	NumVblanks = 1u;
+	UpdateSound();
+
 	memset(stream, 0, size);
 	Sint16* stream16 = (Sint16*)stream;
 	int length = size / sizeof(Sint16);
 
-	SDL_LockMutex(ChannelsMutex);
 	for (size_t i = 0u; i < lengthof(Sound.pcmChannels); i++) {
 		PcmChannelData* const channel = &Sound.pcmChannels[i];
 		if (channel->playing) {
@@ -116,11 +121,12 @@ static void UpdateStream(void* userdata, Uint8* stream, int size) {
 			}
 		}
 	}
-	SDL_UnlockMutex(ChannelsMutex);
+
+	SDL_UnlockMutex(AudioMutex);
 }
 
 bool OpenSound() {
-	if (!(ChannelsMutex = SDL_CreateMutex())) {
+	if (!(AudioMutex = SDL_CreateMutex())) {
 		fprintf(stderr, "Failed creating audio mutex: %s\n", SDL_GetError());
 		return false;
 	}
@@ -130,7 +136,8 @@ bool OpenSound() {
 	spec.format = AUDIO_S16SYS;   /**< Audio data format */
 	spec.channels = 2u;           /**< Number of channels: 1 mono, 2 stereo */
 	spec.silence = 0u;            /**< Audio buffer silence value (calculated) */
-	spec.samples = 4096u;         /**< Audio buffer size in sample FRAMES (total samples divided by channel count) */
+	// The number of samples set here is approximately how many samples a single video frame takes, which is how much audio should be generated after a call of UpdateSound.
+	spec.samples = 605u;          /**< Audio buffer size in sample FRAMES (total samples divided by channel count) */
 	spec.padding = 0u;            /**< Necessary for some compile environments */
 	spec.size = 0u;	              /**< Audio buffer size in bytes (calculated) */
 	spec.callback = UpdateStream; /**< Callback that feeds the audio device (NULL to use SDL_QueueAudio()). */
@@ -147,6 +154,13 @@ bool OpenSound() {
 }
 
 void CloseSound() {
-	SDL_CloseAudioDevice(AudioDevice);
-	AudioDevice = 0;
+	if (AudioDevice) {
+		SDL_CloseAudioDevice(AudioDevice);
+		AudioDevice = 0;
+	}
+
+	if (AudioMutex) {
+		SDL_DestroyMutex(AudioMutex);
+		AudioMutex = NULL;
+	}
 }
