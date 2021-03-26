@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-project("TheAbsoluteReference" VERSION 0.4.2 LANGUAGES C)
+project("TheAbsoluteReference" VERSION 0.4.3 LANGUAGES C)
 
 if(NOT PLATFORM_NAME)
 	set(PLATFORM_NAME "SDL2")
