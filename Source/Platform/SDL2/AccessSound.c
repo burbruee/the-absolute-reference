@@ -17,6 +17,9 @@ static void UpdateStream(void* userdata, Uint8* stream, int size) {
 	Sint16* stream16 = (Sint16*)stream;
 	int length = size / sizeof(Sint16);
 
+	const int32_t
+		mixLeft = MixLevelTable[Sound.pcmLeft],
+		mixRight = MixLevelTable[Sound.pcmRight];
 	for (size_t i = 0u; i < lengthof(Sound.pcmChannels); i++) {
 		PcmChannelData* const channel = &Sound.pcmChannels[i];
 		if (channel->playing) {
@@ -28,8 +31,8 @@ static void UpdateStream(void* userdata, Uint8* stream, int size) {
 					}
 
 					const Sint16 sample = (Sint16)SoundRomData[channel->startAddress + (channel->samplePos >> 16)] << 8;
-					stream16[i + 0] += (sample * VolumeTable[channel->totalLevel +  PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
-					stream16[i + 1] += (sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
+					stream16[i + 0] += (((sample * VolumeTable[channel->totalLevel + PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixLeft) >> 16;
+					stream16[i + 1] += (((sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixRight) >> 16;
 
 					channel->samplePos += channel->sampleStride;
 
@@ -54,8 +57,8 @@ static void UpdateStream(void* userdata, Uint8* stream, int size) {
 					const Sint16 sample =
 						((Sint16)SoundRomData[channel->startAddress + (channel->samplePos >> 17) * 3u + (((channel->samplePos >> 16) & 1u) << 1u)] << 8u) |
 						(((Sint16)SoundRomData[channel->startAddress + (channel->samplePos >> 17) * 3u + 1u] << (((channel->samplePos >> 16) & 1u) << 2u)) & 0xF0u);
-					stream16[i + 0] += (sample * VolumeTable[channel->totalLevel +  PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
-					stream16[i + 1] += (sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
+					stream16[i + 0] += (((sample * VolumeTable[channel->totalLevel + PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixLeft) >> 16;
+					stream16[i + 1] += (((sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixRight) >> 16;
 
 					channel->samplePos += channel->sampleStride;
 
@@ -80,8 +83,8 @@ static void UpdateStream(void* userdata, Uint8* stream, int size) {
 					const Sint16 sample =
 						((Sint16)SoundRomData[channel->startAddress + (channel->samplePos >> 16) * 2 + 0] << 8) |
 						((Sint16)SoundRomData[channel->startAddress + (channel->samplePos >> 16) * 2 + 1] << 0);
-					stream16[i + 0] += (sample * VolumeTable[channel->totalLevel +  PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
-					stream16[i + 1] += (sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17;
+					stream16[i + 0] += (((sample * VolumeTable[channel->totalLevel + PanLeftTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixLeft) >> 16;
+					stream16[i + 1] += (((sample * VolumeTable[channel->totalLevel + PanRightTable[channel->panpot] + (channel->envelopeVolume >> 23)]) >> 17) * mixRight) >> 16;
 
 					channel->samplePos += channel->sampleStride;
 

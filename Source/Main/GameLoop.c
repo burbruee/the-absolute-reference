@@ -27,8 +27,8 @@ static uint16_t NumVersusCementFrames = 0u;
 static uint16_t UNK_6079294 = 0u;
 
 // These are used in UpdateGameMusic.
-static uint8_t UNK_6079296 = 0u;
-static uint8_t UNK_6079297 = 0u;
+static uint8_t CurrentGameMusicVolume = 0u;
+static uint8_t CurrentGameMusicMaxVolume = 0u;
 static GameMusic CurrentGameMusic = GAMEMUSIC_0;
 GameMusic NextGameMusic = GAMEMUSIC_0;
 static uint8_t UNK_607929A = 0u; // TODO: FSM state. In range [0, 2].
@@ -63,8 +63,8 @@ void InitGame() {
 	StopMusic();
 
 	// TODO: These all control game music. Check UpdateGameMusic to figure out their names.
-	UNK_6079296 = 0u;
-	UNK_6079297 = 0u;
+	CurrentGameMusicVolume = 0u;
+	CurrentGameMusicMaxVolume = 0u;
 	UNK_607929A = 0u;
 	CurrentGameMusic = GAMEMUSIC_0;
 	NextGameMusic = 0u;
@@ -893,25 +893,25 @@ void UpdateGameMusic() {
 			}
 			else {
 				UNK_607929A = 1u;
-				UNK_6079297 = 0u;
+				CurrentGameMusicMaxVolume = 0u;
 			}
 		}
 		break;
 
 	case 1u:
-		if (UNK_6079297 < UNK_6079296) {
+		if (CurrentGameMusicVolume > CurrentGameMusicMaxVolume) {
 			if (UNK_3A8CF[CurrentGameMusic][0] == 0u) {
-				UNK_6079296 = UNK_6079297;
+				CurrentGameMusicVolume = CurrentGameMusicMaxVolume;
 			}
 			else if (ScreenTime % UNK_3A8CF[CurrentGameMusic][0] == 0u) {
-				UNK_6079296--;
+				CurrentGameMusicVolume--;
 			}
 
-			SetPcmVolumeRight(UNK_6079296);
+			SetPcmVolumeRight(CurrentGameMusicVolume);
 		}
 		else {
 			UNK_607929A = 2u;
-			UNK_6079297 = 5u;
+			CurrentGameMusicMaxVolume = 5u;
 
 			switch (CurrentGameMusic) {
 			case GAMEMUSIC_0:
@@ -961,17 +961,17 @@ void UpdateGameMusic() {
 			}
 
 			Game.music = CurrentGameMusic;
-			SetPcmVolumeRight(UNK_6079296);
+			SetPcmVolumeRight(CurrentGameMusicVolume);
 		}
 		break;
 
 	case 2u:
-		if (UNK_6079297 > UNK_6079296) {
+		if (CurrentGameMusicMaxVolume > CurrentGameMusicVolume) {
 			if (UNK_3A8CF[CurrentGameMusic][1] == 0u) {
-				UNK_6079296 = UNK_6079297;
+				CurrentGameMusicVolume = CurrentGameMusicMaxVolume;
 			}
 			else if (ScreenTime % UNK_3A8CF[CurrentGameMusic][1] == 0u) {
-				UNK_6079296++;
+				CurrentGameMusicVolume++;
 			}
 		}
 		else {
@@ -979,7 +979,7 @@ void UpdateGameMusic() {
 			UNK_607929A = 0u;
 		}
 
-		SetPcmVolumeRight(UNK_6079296);
+		SetPcmVolumeRight(CurrentGameMusicVolume);
 		break;
 
 	default:

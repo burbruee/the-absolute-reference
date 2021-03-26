@@ -181,6 +181,7 @@ int main(int argc, char* argv[]) {
 	PlatformTimeAccumulator = 0u;
 
 	PlayMusic(MUSIC_SELECTMODE);
+	SetPcmVolumeRight(7u);
 	SDL_UnlockMutex(AudioMutex);
 
 	printf("Playing sound...\n");
