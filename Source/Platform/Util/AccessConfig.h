@@ -34,3 +34,18 @@ extern int DisplayDimensions[2];
 extern int Vsync;
 
 extern int VsyncUpdateRate;
+
+extern bool AudioMuted;
+
+typedef enum MixingSetting {
+	MIXING_MONO,
+	MIXING_STEREO
+} MixingSetting;
+extern MixingSetting AudioMixing;
+
+typedef enum SpeakersSetting {
+	SPEAKERS_LEFT  = 1 << 0,
+	SPEAKERS_RIGHT = 1 << 1,
+	SPEAKERS_BOTH  = SPEAKERS_LEFT | SPEAKERS_RIGHT
+} SpeakersSetting;
+extern SpeakersSetting AudioSpeakers;

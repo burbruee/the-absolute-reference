@@ -65,6 +65,10 @@ int Vsync = 0;
 
 int VsyncUpdateRate = 0;
 
+bool AudioMuted = false;
+MixingSetting AudioMixing = MIXING_MONO;
+SpeakersSetting AudioSpeakers = SPEAKERS_BOTH;
+
 const char* const DefaultConfig =
 "[INPUT_BUTTONS1P_KEYBOARD]\n"
 "BUTTON_START = Return\n"
@@ -258,6 +262,10 @@ bool OpenConfig() {
 	Vsync = 0;
 
 	VsyncUpdateRate = 0;
+
+	AudioMuted = false;
+	AudioMixing = MIXING_MONO;
+	AudioSpeakers = SPEAKERS_BOTH;
 
 	const char* writeDir = PHYSFS_getWriteDir();
 	if (!writeDir) {
@@ -765,7 +773,7 @@ bool OpenConfig() {
 					!StringCompareNoCase(fields[1], "For") &&
 					(!StringCompareNoCase(fields[0], "Coin") || !StringCompareNoCase(fields[0], "Coins")) &&
 					(!StringCompareNoCase(fields[2], "Credit") || !StringCompareNoCase(fields[2], "Credits"))
-				) {
+					) {
 					if (credits == 1 && coins >= 1 && coins <= 6) {
 						Settings[SETTING_PRICE1P + i] = coins - 1;
 						updateSave = true;
@@ -788,6 +796,36 @@ bool OpenConfig() {
 
 		if (updateSave) {
 			SaveSettings();
+		}
+	}
+
+	{
+		int mutedSetting;
+		if (ini_sget(config, "AUDIO", "MUTED", "%d", &mutedSetting) == 1) {
+			AudioMuted = !!mutedSetting;
+		}
+
+		const char* mixingSetting;
+		if ((mixingSetting = ini_get(config, "AUDIO", "MIXING"))) {
+			if (StringCompareNoCase(mixingSetting, "Mono") == 0) {
+				AudioMixing = MIXING_MONO;
+			}
+			else if (StringCompareNoCase(mixingSetting, "Stereo") == 0) {
+				AudioMixing = MIXING_STEREO;
+			}
+		}
+
+		const char* speakersSetting;
+		if ((speakersSetting = ini_get(config, "AUDIO", "SPEAKERS"))) {
+			if (StringCompareNoCase(speakersSetting, "Both") == 0) {
+				AudioSpeakers = SPEAKERS_BOTH;
+			}
+			else if (StringCompareNoCase(speakersSetting, "Left") == 0) {
+				AudioSpeakers = SPEAKERS_LEFT;
+			}
+			else if (StringCompareNoCase(speakersSetting, "Right") == 0) {
+				AudioSpeakers = SPEAKERS_RIGHT;
+			}
 		}
 	}
 

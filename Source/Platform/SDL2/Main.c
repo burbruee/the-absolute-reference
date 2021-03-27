@@ -25,6 +25,11 @@
 
 static void ExitHandler(void) {
 	printf("Starting shutdown.\n\n");
+	if (AudioMutex) {
+		// If exiting from the game code, this is currently locked, so it needs to be unlocked to allow the audio thread to close.
+		// It's harmless to unlock it if it doesn't need to be unlocked.
+		SDL_UnlockMutex(AudioMutex);
+	}
 	CloseSound();
 	CloseDisplay();
 	CloseConfig();
