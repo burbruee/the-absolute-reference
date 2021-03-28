@@ -5,6 +5,7 @@
 #include "Platform/SDL2/AccessSound.h"
 #include "Platform/Util/Render.h"
 #include "Main/Frame.h"
+#include "Input/Button.h"
 
 Uint64 PlatformCurrentTime;
 Uint64 PlatformTimeAccumulator;
@@ -73,6 +74,17 @@ void PlatformUpdateInputs() {
 		}
 	}
 
+	// Clean SOCDs.
+	for (PlayerNum playerNum = PLAYER1; playerNum < NUMPLAYERS; playerNum++) {
+		if (pressed[playerNum][4] && pressed[playerNum][5]) {
+			pressed[playerNum][4] = false;
+			pressed[playerNum][5] = false;
+		}
+		if (pressed[playerNum][6] && pressed[playerNum][7]) {
+			pressed[playerNum][6] = false;
+			pressed[playerNum][7] = false;
+		}
+	}
 	for (size_t i = 0u; i < NUMINPUTS; i++) {
 		for (size_t j = 0u; j < 8u; j++) {
 			if (pressed[i][j]) {
