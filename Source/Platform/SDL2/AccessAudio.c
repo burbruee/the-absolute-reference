@@ -1,4 +1,4 @@
-#include "Platform/SDL2/AccessSound.h"
+#include "Platform/SDL2/AccessAudio.h"
 #include "Platform/Util/AccessData.h"
 #include "Platform/Util/AccessConfig.h"
 #include "Main/Frame.h"
@@ -129,7 +129,7 @@ static void UpdateStreamStereoRight(void* userdata, Uint8* stream, int size) {
 }
 
 
-bool OpenSound() {
+bool OpenAudio() {
 	if (!(AudioMutex = SDL_CreateMutex())) {
 		fprintf(stderr, "Failed creating audio mutex: %s\n", SDL_GetError());
 		return false;
@@ -144,8 +144,6 @@ bool OpenSound() {
 		spec.format = AUDIO_S16SYS;
 		// The number of samples set here is approximately how many samples a single video frame takes, which is how much audio should be generated after a call of UpdateSound.
 		spec.samples = 605u;
-		spec.padding = 0u;
-		spec.size = 0u;
 		switch (AudioMixing) {
 		case MIXING_MONO:
 			spec.channels = 1u;
@@ -177,7 +175,7 @@ bool OpenSound() {
 	return true;
 }
 
-void CloseSound() {
+void CloseAudio() {
 	if (AudioDevice) {
 		SDL_CloseAudioDevice(AudioDevice);
 		AudioDevice = 0;

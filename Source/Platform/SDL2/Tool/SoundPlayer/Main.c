@@ -1,6 +1,6 @@
+#include "Platform/SDL2/AccessAudio.h"
 #include "Platform/Util/AccessData.h"
 #include "Platform/Util/AccessPaths.h"
-#include "Platform/SDL2/AccessSound.h"
 #include "Platform/SDL2/PlatformSupport/PlatformUpdate.h"
 #include "Main/Frame.h"
 #include "Sound/Sound.h"
@@ -99,7 +99,7 @@ bool PlayWaves(SDL_AudioDeviceID deviceId, SDL_AudioSpec* spec, const uint8_t* c
 			SDL_CloseAudioDevice(deviceId);
 			free(buffer);
 			SDL_Quit();
-			CloseSound();
+			CloseAudio();
 			return false;
 		}
 		free(buffer);
@@ -136,10 +136,7 @@ int main(int argc, char* argv[]) {
 	spec.freq = 44100 / 2;
 	spec.format = AUDIO_S16SYS; /**< Audio data format */
 	spec.channels = 1u;         /**< Number of channels: 1 mono, 2 stereo */
-	spec.silence = 0u;          /**< Audio buffer silence value (calculated) */
 	spec.samples = 0u;          /**< Audio buffer size in sample FRAMES (total samples divided by channel count) */
-	spec.padding = 0u;          /**< Necessary for some compile environments */
-	spec.size = 0u;	            /**< Audio buffer size in bytes (calculated) */
 	spec.callback = NULL;       /**< Callback that feeds the audio device (NULL to use SDL_QueueAudio()). */
 	spec.userdata = NULL;       /**< Userdata passed to callback (ignored for NULL callbacks). */
 
@@ -159,7 +156,7 @@ int main(int argc, char* argv[]) {
 	SoundStart();
 	SoundReset();
 	InitSound();
-	if (!OpenSound()) {
+	if (!OpenAudio()) {
 		return EXIT_FAILURE;
 	}
 
@@ -205,7 +202,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	printf("Shutting down.\n");
-	CloseSound();
+	CloseAudio();
 #endif
 
 	SDL_Quit();

@@ -4,7 +4,6 @@
 #include "Lib/Fixed.h"
 #include "Lib/Macros.h"
 #include "Platform/Util/AccessData.h"
-#include "Platform/SDL2/AccessSound.h"
 #include "SDL.h"
 #include <string.h>
 #include <math.h>

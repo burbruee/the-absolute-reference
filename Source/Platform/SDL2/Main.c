@@ -2,8 +2,8 @@
 #include "Platform/Util/AccessConfig.h"
 #include "Platform/Util/AccessData.h"
 #include "Platform/Util/AccessPaths.h"
+#include "Platform/SDL2/AccessAudio.h"
 #include "Platform/SDL2/AccessDisplay.h"
-#include "Platform/SDL2/AccessSound.h"
 #include "Platform/Util/Render.h"
 #include "Video/Pal.h"
 #include "Game/PalNum.h"
@@ -30,7 +30,7 @@ static void ExitHandler(void) {
 		// It's harmless to unlock it if it doesn't need to be unlocked.
 		SDL_UnlockMutex(AudioMutex);
 	}
-	CloseSound();
+	CloseAudio();
 	CloseDisplay();
 	CloseConfig();
 	SaveEeprom();
@@ -77,7 +77,7 @@ static bool Init(int argc, char** argv) {
 	SoundStart();
 	SoundReset();
 	InitSound(); // This TAP sound init call has to be here, so the game's sound data is initialized before the stream updating thread is created.
-	if (!OpenSound()) {
+	if (!OpenAudio()) {
 		fprintf(stderr, "Failed opening sound\n");
 		return false;
 	}
