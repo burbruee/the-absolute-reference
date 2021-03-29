@@ -34,7 +34,7 @@ void ShowGameOverFade(Player* player) {
 		entity->update = UpdateEntityGameOverFade;
 		entity->fadesPerFrame = 1;
 
-		uint32_t fadeDelay = (player->modeFlags & MODE_INVISIBLE) ? TIME(0, 6, 0) : 0u;
+		uint32_t fadeDelay = (player->modeFlags & MODE_INVISIBLE) ? TIME(0, 4, 0) : 0u;
 		entity->data.unionData.player = player;
 		ENTITY_INST_DATA_PTR(GameOverFadeData, data, entity);
 		for (int16_t row = 0; row < FIELD_HEIGHT + 1; row++) {
@@ -62,50 +62,45 @@ static void UpdateEntityGameOverFade(Entity* entity) {
 				entity->fadesPerFrame = 3;
 			}
 
-			if (entity->fadesPerFrame > 0) {
-				for (int16_t fades = 0; fades < entity->fadesPerFrame; fades++) {
-					for (int16_t row = 1; row < player->matrixHeight; row++) {
-						if (data->fadeRows[row - 1].delay == 0) {
-							if (data->fadeRows[row - 1].brightness < 5) {
-								int16_t fadeFrames = data->fadeRows[row - 1].frames;
-								if (fadeFrames % 2 == 0) {
-									data->fadeRows[row - 1].brightness++;
-								}
-
-								for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-									if ((MATRIX(player, row, col).block & BLOCK_TYPE) >= BLOCKTYPE_I) {
-										MATRIX(player, row, col).brightness = data->fadeRows[row - 1].brightness;
-									}
-								}
-							}
-							else if (data->fadeRows[row - 1].brightness == 5) {
+			for (int16_t fades = 0; fades < entity->fadesPerFrame; fades++) {
+				for (int16_t row = 1; row < player->matrixHeight; row++) {
+					if (data->fadeRows[row - 1].delay == 0) {
+						if (data->fadeRows[row - 1].brightness < 5) {
+							if (data->fadeRows[row - 1].frames++ % 2 == 0) {
 								data->fadeRows[row - 1].brightness++;
-								for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
-									Block* block = &MATRIX(player, row, col).block;
-									if ((*block & BLOCK_TYPE) >= BLOCKTYPE_I) {
-										*block = NULLBLOCK;
-									}
+							}
+
+							for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
+								if ((MATRIX(player, row, col).block & BLOCK_TYPE) >= BLOCKTYPE_I) {
+									MATRIX(player, row, col).brightness = data->fadeRows[row - 1].brightness;
 								}
 							}
 						}
-						else {
-							data->fadeRows[row - 1].delay--;
+						else if (data->fadeRows[row - 1].brightness == 5) {
+							data->fadeRows[row - 1].brightness++;
+							for (int16_t col = 1; col < player->matrixWidth - 1; col++) {
+								Block* block = &MATRIX(player, row, col).block;
+								if ((*block & BLOCK_TYPE) >= BLOCKTYPE_I) {
+									*block = NULLBLOCK;
+								}
+							}
 						}
 					}
+					else {
+						data->fadeRows[row - 1].delay--;
+					}
 				}
+			}
 
-				if (data->fadeRows[FIELD_HEIGHT].brightness >= 6) {
-					entity->states[0]++;
-					player->showGameOver = true;
-				}
+			if (data->fadeRows[FIELD_HEIGHT].brightness >= 6) {
+				entity->states[0]++;
+				player->showGameOver = true;
 			}
 		}
-		else if (entity->states[0] == STATE_CHECKENDFADE) {
-			if ((player->nowFlags & NOW_GAMEOVER) || (player->nowFlags & NOW_INIT)) {
-				player->activeItemType = ITEMTYPE_NULL;
-				ItemDescriptions[player->num] = ITEMTYPE_NULL;
-				FreeEntity(entity);
-			}
+		else if (entity->states[0] == STATE_CHECKENDFADE && ((player->nowFlags & NOW_GAMEOVER) || (player->nowFlags & NOW_INIT))) {
+			player->activeItemType = ITEMTYPE_NULL;
+			ItemDescriptions[player->num] = ITEMTYPE_NULL;
+			FreeEntity(entity);
 		}
 	}
 }
