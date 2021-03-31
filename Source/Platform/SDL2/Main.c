@@ -4,7 +4,7 @@
 #include "Platform/Util/AccessPaths.h"
 #include "Platform/SDL2/AccessAudio.h"
 #include "Platform/SDL2/AccessDisplay.h"
-#include "Platform/Util/Render.h"
+#include "Platform/Util/Render/Render.h"
 #include "Video/Pal.h"
 #include "Game/PalNum.h"
 #include "Game/Graphics/Entity.h"

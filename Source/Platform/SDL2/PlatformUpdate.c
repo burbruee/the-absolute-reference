@@ -3,7 +3,7 @@
 #include "Platform/Util/AccessData.h"
 #include "Platform/SDL2/AccessAudio.h"
 #include "Platform/SDL2/AccessDisplay.h"
-#include "Platform/Util/Render.h"
+#include "Platform/Util/Render/Render.h"
 #include "Main/Frame.h"
 #include "Input/Button.h"
 
@@ -114,7 +114,7 @@ static Color Framebuffer[VIDEO_HEIGHT * VIDEO_WIDTH];
 void PlatformFinishUpdate() {
 	SDL_UnlockMutex(AudioMutex);
 
-	const Uint64 gameFrameDuration = (Uint64)(FRAME_DURATION * SDL_GetPerformanceFrequency());
+	const Uint64 gameFrameDuration = (Uint64)((1.0 / FRAME_RATE) * SDL_GetPerformanceFrequency());
 
 	if (PlatformTimeAccumulator < gameFrameDuration || VsyncUpdateRate) {
 		Render(Framebuffer, TileData);

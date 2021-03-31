@@ -11,8 +11,9 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/Util/EepromData.c"
 	"${SRC}/Platform/Util/HwData.c"
 	"${SRC}/Platform/Util/ini.c"
-	"${SRC}/Platform/Util/Render.c"
 	"${SRC}/Platform/Util/RomData.c"
+
+	"${SRC}/Platform/Util/Render/Render.c"
 
 	"${SRC}/Platform/SDL2/AccessAudio.c"
 	"${SRC}/Platform/SDL2/AccessDisplay.c"
@@ -31,7 +32,8 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/Util/HwData.h"
 	"${SRC}/Platform/Util/ini.h"
 	"${SRC}/Platform/Util/Macros.h"
-	"${SRC}/Platform/Util/Render.h"
+
+	"${SRC}/Platform/Util/Render/Render.h"
 
 	"${SRC}/Platform/SDL2/AccessAudio.h"
 	"${SRC}/Platform/SDL2/AccessDisplay.h"

@@ -1,4 +1,4 @@
-#include "Platform/Util/Render.h"
+#include "Platform/Util/Render/Render.h"
 #include "Video/VideoDefs.h"
 #include "Video/Object.h"
 #include "Video/HwSprite.h"
@@ -78,6 +78,10 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 				alphaTemp = (alphaTemp << 2) | (alphaTemp >> 4);
 			}
 			const uint32_t alpha = alphaTemp;
+			// Skip fully transparent sprites.
+			if (alpha != PIXELALPHA && (alpha & 0xFFu) == 0x00u) {
+				continue;
+			}
 			const uint32_t tile = OBJECT_GETTILE(sprite);
 
 			const int16_t renderW = (((w << 24) / scaleX) + 0x200) >> 10;
@@ -108,19 +112,29 @@ static void RenderSprites(Color* const framebuffer, const uint8_t* const tileDat
 						] >> (4 * !(tileOffsetX & 1) * !bpp)
 					) & ((0xF0u * bpp) | 0x0Fu);
 
+					// Skip fully transparent pixels.
 					if (palOffset == 0u) {
 						continue;
 					}
 					else {
-						const Color* const color = &PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
 						uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
+						const Color* const color = &PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
 						Color* const pixel = &framebuffer[(y + offsetY) * VIDEO_WIDTH + x + offsetX];
-						*pixel = COLOR(
-							((uint32_t)COLOR_GETR(*color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							((uint32_t)COLOR_GETG(*color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							((uint32_t)COLOR_GETB(*color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-							0u
-						);
+						// Skip fully transparent pixels.
+						if (blendAlpha == 0x00u) {
+							continue;
+						}
+						else if (blendAlpha == 0xFFu) {
+							*pixel = *color;
+						}
+						else {
+							*pixel = COLOR(
+								((uint32_t)COLOR_GETR(*color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+								((uint32_t)COLOR_GETG(*color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+								((uint32_t)COLOR_GETB(*color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+								0u
+							);
+						}
 					}
 				}
 			}
@@ -163,27 +177,38 @@ static void RenderBg(Color* const framebuffer, const uint8_t* const tileData, co
 			alphaTemp = (alphaTemp << 2) | (alphaTemp >> 4);
 		}
 		const uint32_t alpha = alphaTemp;
+		// Skip fully transparent tiles.
+		if (alpha != PIXELALPHA && (alpha & 0xFFu) == 0x00u) {
+			continue;
+		}
 
 		for (int16_t y = 0; y < VIDEO_HEIGHT; y++) {
 			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
 				const uint32_t bgTile = GRAPHICSRAM[(tileBank * 0x800u) / sizeof(uint32_t) + (((((y - scrollY) >> 4) & heightMask) << 5) | (((x - scrollX) >> 4) & 0x1Fu))];
 				const size_t tile = bgTile & 0x7FFFFu;
-				if (tile == 0u) {
-					continue;
-				}
 				assert((tile << bpp) >= 0x18000u);
+				const size_t palOffset = tileData[((tile << bpp) - 0x18000u) * 0x80u + (((((y - scrollY) & 0xFu) << 4) + ((x - scrollX) & 0xFu)) >> (1 - bpp))];
+				uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
 
 				const size_t palNum = bgTile >> 24;
-				const size_t palOffset = tileData[((tile << bpp) - 0x18000u) * 0x80u + (((((y - scrollY) & 0xFu) << 4) + ((x - scrollX) & 0xFu)) >> (1 - bpp))];
 				const Color color = PALRAM[palNum * NUMPALCOLORS_4BPP + palOffset];
-				uint32_t blendAlpha = ((alpha == PIXELALPHA) ? AlphaTable[palOffset] : alpha) & 0xFFu;
 				Color* const pixel = &framebuffer[y * VIDEO_WIDTH + x];
-				*pixel = COLOR(
-					((uint32_t)COLOR_GETR(color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					((uint32_t)COLOR_GETG(color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					((uint32_t)COLOR_GETB(color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					0u
-				);
+
+				// Skip fully transparent pixels.
+				if (tile == 0u || blendAlpha == 0x00u) {
+					continue;
+				}
+				else if (blendAlpha == 0xFFu) {
+					*pixel = color;
+				}
+				else {
+					*pixel = COLOR(
+						((uint32_t)COLOR_GETR(color) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+						((uint32_t)COLOR_GETG(color) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+						((uint32_t)COLOR_GETB(color) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
+						0u
+					);
+				}
 			}
 		}
 	}
@@ -203,14 +228,24 @@ static void RenderOverlayRasters(Color* const framebuffer, const uint8_t priorit
 		}
 		else if (COLOR_GETA(rasters[y]) & 0x7Fu) {
 			const uint32_t blendAlpha = (COLOR_GETA(rasters[y]) & 0x7Fu) * 2u;
-			for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
-				Color* const pixel = &framebuffer[y * VIDEO_WIDTH + x];
-				*pixel = COLOR(
-					((uint32_t)COLOR_GETR(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETR(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					((uint32_t)COLOR_GETG(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETG(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					((uint32_t)COLOR_GETB(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETB(*pixel) * (0xFFu - blendAlpha)) / 0xFFu,
-					0u
-				);
+			Color* const row = &framebuffer[y * VIDEO_WIDTH];
+			if (blendAlpha == 0x00u) {
+				continue;
+			}
+			else if (blendAlpha == 0xFFu) {
+				for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+					row[x] = rasters[y];
+				}
+			}
+			else {
+				for (int16_t x = 0; x < VIDEO_WIDTH; x++) {
+					row[x] = COLOR(
+						((uint32_t)COLOR_GETR(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETR(row[x]) * (0xFFu - blendAlpha)) / 0xFFu,
+						((uint32_t)COLOR_GETG(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETG(row[x]) * (0xFFu - blendAlpha)) / 0xFFu,
+						((uint32_t)COLOR_GETB(rasters[y]) * blendAlpha + (uint32_t)COLOR_GETB(row[x]) * (0xFFu - blendAlpha)) / 0xFFu,
+						0u
+					);
+				}
 			}
 		}
 	}
