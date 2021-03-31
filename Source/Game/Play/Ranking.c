@@ -18,6 +18,7 @@
 #include "Sound/SoundEffect.h"
 #include "Eeprom/Eeprom.h"
 #include "Lib/LibC.h"
+#include <assert.h>
 
 static Ranking MasterTodaysBestRankings[NUMRANKINGPLACES];
 static uint16_t MasterTodaysBestMedalRankings[NUMRANKINGPLACES];
@@ -275,7 +276,8 @@ static void ShowRankingScore(uint32_t score, int16_t y, int16_t x) {
 
 	x += 60;
 	for (int16_t i = 0; i < 6; i++, x -= 12) {
-		DisplayObject(ObjectTableRankingDigits[(score & 0xFu) % 10u], y, x, 0u, 110u);
+		assert(score % 10u < lengthof(ObjectTableRankingDigits));
+		DisplayObject(ObjectTableRankingDigits[score % 10u], y, x, 0u, 110u);
 		if ((score /= 10u) == 0u) {
 			break;
 		}
