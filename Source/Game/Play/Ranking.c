@@ -1268,10 +1268,10 @@ static void ShowPlayRankingDoubles(NewRankingData* newRanking, EntryFlash entryF
 	uint8_t flashPal = ScreenTime % 4 ? 8u : 0u;
 
 	ShowRankingName(newRanking->nameEntries[PLAYER1].name, 167, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER1].numChars > 3 ? flashPal : 0u, 110u);
-	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER1].charIndex] - ' '], 167, 124 + newRanking->nameEntries[PLAYER1].numChars * 16, flashPal, 110u);
 	ShowStatusNumEx(newRanking->nameEntries[PLAYER1].player->level, 169, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 
 	ShowRankingName(newRanking->nameEntries[PLAYER2].name, 185, 124, entryFlash == ENTRYFLASH_TRUE || newRanking->nameEntries[PLAYER2].numChars > 3 ? flashPal : 0u, 110u);
-	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER2].charIndex] - ' '], 185, 124 + newRanking->nameEntries[PLAYER2].charIndex * 16, flashPal, 110u);
+	DisplayObject(ObjectTableRankingChars[*NameEntryChars[newRanking->nameEntries[PLAYER2].charIndex] - ' '], 185, 124 + newRanking->nameEntries[PLAYER2].numChars * 16, flashPal, 110u);
 	ShowStatusNumEx(newRanking->nameEntries[PLAYER2].player->level, 187, 189, 0u, 110u, 3, false, NUMALIGN_RIGHT);
 }

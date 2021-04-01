@@ -377,7 +377,7 @@ void CheckNextSection(Player* player) {
 
 uint32_t NumFieldBlocks(Player* player) {
 	uint32_t numFieldBlocks = 0u;
-	for (int16_t col = 0; col < MATRIX_SINGLEWIDTH - 1; col++) {
+	for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 		for (int16_t row = 1; row < MATRIX_HEIGHT - 1; row++) {
 			if (MATRIX(player, row, col).block & BLOCK_TYPE) {
 				numFieldBlocks++;

@@ -229,17 +229,17 @@ void UpdateItemFreeFall(Item* item) {
 
 		case STATE_COLLAPSE:
 			if (data->numLines != 0) {
+				PlaySoundEffect(SOUNDEFFECT_COLLAPSE);
 				for (int16_t row = 1; row < MATRIX_HEIGHT - 1 - data->numLines; row++) {
 					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
 						MATRIX(activatingPlayer, row, col) = MATRIX(activatingPlayer, row + data->numLines, col);
 					}
 				}
-			}
-
-			for (int16_t row = MATRIX_HEIGHT - 1 - data->numLines; row < MATRIX_HEIGHT - 1; row++) {
-				for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
-					MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
-					MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
+				for (int16_t row = MATRIX_HEIGHT - 1 - data->numLines; row < MATRIX_HEIGHT - 1; row++) {
+					for (int16_t col = 1; col < MATRIX_SINGLEWIDTH - 1; col++) {
+						MATRIX(activatingPlayer, row, col).block = NULLBLOCK;
+						MATRIX(activatingPlayer, row, col).itemType = ITEMTYPE_NULL;
+					}
 				}
 			}
 
