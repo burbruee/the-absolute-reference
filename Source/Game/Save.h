@@ -6,8 +6,6 @@
 
 extern uint32_t CoinCount;
 
-// TODO: UNK_6065644 ... UNK_606564C. Might be save-related.
-
 typedef struct SaveData {
 	uint32_t header[44 / sizeof(uint32_t)]; // TODO: Investigate what length the header should be. For now, this is the entirety of data that precedes the first field of the save data struct.
 	uint32_t coinCount;

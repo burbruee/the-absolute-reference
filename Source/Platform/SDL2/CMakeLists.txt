@@ -1,5 +1,3 @@
-include(AddBinarySDL2.cmake)
-
 set(PLATFORM_SOURCES
 	${GAME_SOURCES}
 
@@ -38,20 +36,39 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/SDL2/AccessAudio.h"
 	"${SRC}/Platform/SDL2/AccessDisplay.h"
 )
-AddBinarySDL2(
+
+find_package(SDL2 REQUIRED)
+find_package(PhysFS REQUIRED)
+
+include(${SRC}/Platform/Util/AddBinary.cmake)
+
+AddBinary(
 	PlatformSDL2
 	LIBRARY
-	SOURCES ${PLATFORM_SOURCES}
-	HEADERS ${PLATFORM_HEADERS}
-	LIBRARIES ""
+	SOURCES ${PLATFORM_SOURCES} ${PLATFORM_HEADERS}
+	LIBRARIES
+		SDL2::SDL2
+		${PHYSFS_LIBRARY}
 )
 
-AddBinarySDL2(
+AddBinary(
 	taref
 	EXECUTABLE
-	SOURCES "Main.c"
-	HEADERS ${PLATFORM_HEADERS}
-	LIBRARIES PlatformSDL2
+	SOURCES "Game.c" ${PLATFORM_HEADERS}
+	LIBRARIES
+		PlatformSDL2
+		SDL2::SDL2
+		SDL2::SDL2main
+		${PHYSFS_LIBRARY}
 )
 
-add_subdirectory(Tool)
+AddBinary(
+	sndplay
+	EXECUTABLE
+	SOURCES "SoundPlayer.c" ${PLATFORM_HEADERS}
+	LIBRARIES
+		PlatformSDL2
+		SDL2::SDL2
+		SDL2::SDL2main
+		${PHYSFS_LIBRARY}
+)

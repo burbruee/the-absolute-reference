@@ -1,7 +1,0 @@
-AddBinarySDL2(
-	sndplay
-	EXECUTABLE
-	SOURCES "Main.c"
-	HEADERS ${PLATFORM_HEADERS}
-	LIBRARIES PlatformSDL2
-)

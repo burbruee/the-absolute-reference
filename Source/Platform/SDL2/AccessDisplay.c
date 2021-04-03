@@ -31,11 +31,14 @@ bool OpenDisplay() {
 		fprintf(stderr, "Failed creating renderer: %s\n", SDL_GetError());
 		return false;
 	}
+	if (SDL_SetRenderDrawBlendMode(Renderer, SDL_BLENDMODE_NONE) < 0) {
+		fprintf(stderr, "Failed setting blend mode of renderer: %s\n", SDL_GetError());
+		return false;
+	}
 	if (SDL_RenderSetLogicalSize(Renderer, VIDEO_WIDTH, VIDEO_HEIGHT) < 0) {
 		fprintf(stderr, "Failed setting renderer logical size: %s\n", SDL_GetError());
 		return false;
 	}
-	// TODO: Make the whole-display clearing match the backdrop line colors set in the game code.
 	if (SDL_SetRenderDrawColor(Renderer, 0u, 0u, 0u, SDL_ALPHA_OPAQUE) < 0) {
 		fprintf(stderr, "Failed setting render draw color: %s\n", SDL_GetError());
 		return false;

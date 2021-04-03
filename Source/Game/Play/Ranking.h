@@ -118,8 +118,6 @@ typedef enum RankingScreenState {
 
 ScreenState ShowRankingScreen(RankingScreenState rankingScreen);
 
-// TODO: Functions from UNK_6011D28 to UNK_6012828. I think they handle the
-// rankings shown in the demo screen.
 void CheckSaveRankings();
 void SaveRankings();
 bool LoadRankings();
