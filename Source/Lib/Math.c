@@ -88,6 +88,102 @@ uint8_t UNK_602B4E4(int32_t arg0, int32_t arg1) {
 	return retval;
 }
 
+static int16_t UNK_60357E4[32] = {
+	0x019, 0x032, 0x04C, 0x065,
+	0x07E, 0x098, 0x0B2, 0x0CC,
+	0x0E6, 0x100, 0x11B, 0x137,
+	0x152, 0x16E, 0x18B, 0x1A8,
+	0x1C6, 0x1E4, 0x203, 0x223,
+	0x244, 0x266, 0x288, 0x2AC,
+	0x2D1, 0x2F7, 0x31F, 0x348,
+	0x373, 0x3A0, 0x3CF, 0x400
+};
+
+uint8_t UNK_602B5C8(int32_t arg0, int32_t arg1) {
+    if (arg0 == 0) {
+        if (-1 < arg1) {
+            return 0x00u;
+        }
+		else {
+			return 0x80u;
+		}
+    }
+    if (arg1 == 0) {
+        if (-1 < arg0) {
+            return 0x40u;
+        }
+		else {
+			return 0xC0u;
+		}
+    }
+
+    int8_t var0;
+    int8_t var1 = -1;
+    int32_t var2 = arg0;
+    if (arg0 < 1) {
+        if (-1 < arg1) {
+            if (arg1 < -arg0) {
+                var0 = -0x40;
+                var1 = 1;
+                var2 = arg1;
+                arg1 = -arg0;
+            }
+            else {
+                var0 = 0;
+                var2 = -arg0;
+            }
+        }
+        else if (arg0 <= arg1) {
+            var0 = -0x40;
+            var2 = arg1;
+            arg1 = arg0;
+        }
+		else {
+			var0 = -0x80;
+			var1 = 1;
+		}
+    }
+    else if (arg1 < 1) {
+		arg1 = -arg1;
+		if (arg1 < arg0) {
+			var0 = 0x40;
+			var1 = 1;
+			var2 = arg1;
+			arg1 = arg0;
+		}
+		else {
+			var0 = -0x80;
+			var1 = 1;
+		}
+	}
+	else if (arg1 <= arg0) {
+		var0 = 0x40;
+		var2 = arg1;
+		arg1 = arg0;
+	}
+	else {
+		var0 = 0;
+		var1 = 1;
+    }
+
+	int32_t var3 = (var2 << 10) / arg1;
+
+    int16_t var4 = 0x10;
+	for (int16_t var5 = 0, var6 = 0x20; var5 != var4 && var6 != var4;) {
+		int16_t var7;
+        if (var3 < UNK_60357E4[var4]) {
+            var7 = var5;
+            var6 = var4;
+        }
+		else {
+			var7 = var4;
+		}
+        var4 = (var7 + var6) >> 1;
+        var5 = var7;
+    }
+    return (uint8_t)((var4 + 1) * var1 + var0);
+}
+
 Fixed32 Sin(Angle angle) {
 	if (angle < 64u) {
 		return TrigTable[angle];
