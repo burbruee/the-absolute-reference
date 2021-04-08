@@ -9,6 +9,7 @@
 #include "Video/Object.h"
 #include "Sound/Sound.h"
 #include "PlatformTypes.h"
+#include <assert.h>
 
 typedef enum MedalState {
 	MEDALSTATE_NULL,
@@ -239,8 +240,8 @@ void UpdateRecoverMedal(Player* player) {
 	}
 }
 
-static const uint16_t RequiredRotateMedalLevel[NUMMEDALCOLORS] = { 300u, 700u, 999u };
-static const uint8_t RequiredRotateMedalRotationVs[NUMMEDALCOLORS] = { 12u, 12u, 12u };
+static const uint16_t RequiredRotateMedalLevel[NUMMEDALCOLORS + 3] = { 300u, 700u, 999u, (12u << 8) | 12u, (12u << 8) | 0xFFu, 0xFFFF };
+static const int8_t RequiredRotateMedalRotationVs[NUMMEDALCOLORS + 3] = { 12, 12, 12, 0xFF, 0xFF, 0xFF };
 void UpdateRotateMedal(Player* player) {
 	if (player->medalColors[MEDALTYPE_RO] < NUMMEDALCOLORS) {
 		if (player->numActiveRotations > 4u) {
@@ -251,7 +252,19 @@ void UpdateRotateMedal(Player* player) {
 		}
 		player->numRotateBlocks++;
 		if (player->level >= RequiredRotateMedalLevel[player->nextRotateMedalColor]) {
-			uint32_t rotationsV = (player->numRotations * 10u) / player->numRotateBlocks;
+			int32_t rotationsV = (player->numRotations * 10) / player->numRotateBlocks;
+			// BUG: While debugging something else using the game's debug mode,
+			// and skipping sections to the end of the game, I observed this
+			// accessing index 3 of the RequiredRotateMedalRotationVs array;
+			// that occurs when awarding a gold medal. The original has three
+			// 0xFFu bytes after the intended initial three values, so I added
+			// them to account for this bug. Leaving it as-is should be fine.
+			// The original could encounter extremely buggy behavior if the bug
+			// were to show up, namely the palette cycle code for medals would
+			// end up getting invalid palettes, if the if-block here is entered
+			// when accessing a 0xFFu value.
+			// -Brandon McGriff
+			assert(rotationsV < 0xFF);
 			if (rotationsV >= RequiredRotateMedalRotationVs[player->nextRotateMedalColor++]) {
 				player->medalColors[MEDALTYPE_RO] = player->nextRotateMedalColor;
 				Medals[player->num][MEDALTYPE_RO].color = player->medalColors[MEDALTYPE_RO];

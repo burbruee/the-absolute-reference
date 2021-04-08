@@ -68,6 +68,7 @@ typedef struct StaffData {
 } StaffData;
 
 #define scrollY values[0]
+#define grandMaster values[1]
 #define scrollPixels values[2]
 #define fireworksCycleFrames values[3]
 
@@ -108,12 +109,19 @@ void ShowStaff(Player* player) {
 	int16_t staffObjectIndex = 1;
 	int16_t staffRows[NUMSTAFFOBJECTS];
 	int16_t staffRow = 6;
-	#define SET_STAFF(section, objectTable, rowHeight) \
+	// BUG: The original would read staffRows[0] below, but never initializes
+	// it in this function. The value read is data left over on the stack from
+	// previously executed code, and ends up being 1, so we have to set it here
+	// to match the original behavior.
+	// -Brandon McGriff
+	staffRows[0] = 1;
+
+	#define SET_STAFF(section, objectTable) \
 		case section: \
 			for (int16_t j = 0; j < lengthof(objectTable); j++, staffObjectIndex++) { \
 				assert(staffObjectIndex < NUMSTAFFOBJECTS); \
 				staffRows[staffObjectIndex] = staffRow; \
-				staffRow += rowHeight; \
+				staffRow += 2; \
 				assert(objectTable[j] != NULL); \
 				ObjectTableStaff[player->num][staffObjectIndex] = objectTable[j]; \
 			} \
@@ -121,11 +129,11 @@ void ShowStaff(Player* player) {
 	ObjectTableStaff[player->num][0] = OBJECT_STAFF;
 	for (int16_t i = 0; i < NUMSTAFFSECTIONS; i++) {
 		switch (staffSections[i]) {
-		SET_STAFF(STAFF_BGDESIGN, objectTableBgDesignStaff, 2);
-		SET_STAFF(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff, 4);
-		SET_STAFF(STAFF_VISUALDESIGN, objectTableVisualDesignStaff, 4);
-		SET_STAFF(STAFF_PROGRAMMER, objectTableProgrammerStaff, 4);
-		SET_STAFF(STAFF_SOUND, objectTableSoundStaff, 6);
+		SET_STAFF(STAFF_BGDESIGN, objectTableBgDesignStaff);
+		SET_STAFF(STAFF_EFFECTDESIGN, objectTableEffectDesignStaff);
+		SET_STAFF(STAFF_VISUALDESIGN, objectTableVisualDesignStaff);
+		SET_STAFF(STAFF_PROGRAMMER, objectTableProgrammerStaff);
+		SET_STAFF(STAFF_SOUND, objectTableSoundStaff);
 		default: continue;
 		}
 		staffRow += 3;
@@ -144,7 +152,7 @@ void ShowStaff(Player* player) {
 		staffEntity->data.unionData.player = player;
 		StaffFireworkFrames[player->num] = 15u;
 		staffEntity->scrollY = 0;
-		staffEntity->values[1] = 0;
+		staffEntity->grandMaster = false;
 		staffEntity->scrollPixels = VIDEO_HEIGHT;
 		staffEntity->fireworksCycleFrames = 1;
 		ENTITY_INST_DATA_PTR(StaffData, data, staffEntity);
@@ -260,7 +268,16 @@ static void UpdateEntityStaff(Entity* entity) {
 	}
 
 	if (player->modeFlags & MODE_MASTER) {
-		if (entity->scrollY > 3700) {
+		if (entity->scrollY <= 3700) {
+			if (player->nowFlags & NOW_STOPPED) {
+				if ((player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED && !(player->modeFlags & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE))) {
+					PlaySoundEffect(SOUNDEFFECT_LEVELUP);
+					player->grade = PLAYERGRADE_M;
+				}
+				FreeEntity(entity);
+			}
+		}
+		else {
 			data->skip = true;
 			player->miscFlags |= MISC_ORANGELINE;
 			player->nowFlags |= NOW_NOUPDATE;
@@ -292,44 +309,41 @@ static void UpdateEntityStaff(Entity* entity) {
 			}
 			FreeEntity(entity);
 		}
-		else if (player->nowFlags & NOW_STOPPED) {
-			if ((player->mGradeFlags & MGRADE_QUALIFIED) == MGRADE_QUALIFIED && !(player->modeFlags & ~(MODE_NORMAL | MODE_MASTER | MODE_DOUBLES | MODE_VERSUS | MODE_INVISIBLE))) {
-				PlaySoundEffect(SOUNDEFFECT_LEVELUP);
-				player->grade = PLAYERGRADE_M;
-			}
-			FreeEntity(entity);
-		}
 	}
-	else if (entity->scrollY >= 2220) {
-		player->nowFlags &= ~NOW_NOUPDATE;
-		if (!(player->nowFlags & NOW_STOPPED)) {
-			player->miscFlags |= MISC_ORANGELINE;
-			LockActiveBlock(player, LOCKTYPE_GAMEOVER);
-			if (GameFlags & GAME_DOUBLES) {
-				LockActiveBlock(player->otherPlayer, LOCKTYPE_GAMEOVER);
+	else {
+		if (entity->scrollY < 2220) {
+			if (entity->scrollPixels <= 0) {
+				data->skip = true;
+				if (player->modeFlags & MODE_TADEATH) {
+					if (player->level >= 999u) {
+						UpdateEntityDeathComplete(entity);
+					}
+					else {
+						UpdateEntityDeathIncomplete(entity);
+					}
+				}
+				else if (player->modeFlags & MODE_TGMPLUS) {
+					UpdateEntityTgmPlusComplete(entity);
+				}
+				else if (player->modeFlags & MODE_NORMAL) {
+					UpdateEntityNormalComplete(entity);
+				}
+				else {
+					UpdateEntityDoublesComplete(entity);
+				}
 			}
-		}
-		NextPlayGameOver(player);
-		FreeEntity(entity);
-	}
-	else if (entity->scrollPixels <= 0) {
-		data->skip = true;
-		if (player->modeFlags & MODE_TADEATH) {
-			if (player->level >= 999u) {
-				UpdateEntityDeathComplete(entity);
-			}
-			else {
-				UpdateEntityDeathIncomplete(entity);
-			}
-		}
-		else if (player->modeFlags & MODE_TGMPLUS) {
-			UpdateEntityTgmPlusComplete(entity);
-		}
-		else if (player->modeFlags & MODE_NORMAL) {
-			UpdateEntityNormalComplete(entity);
 		}
 		else {
-			UpdateEntityDoublesComplete(entity);
+			player->nowFlags &= ~NOW_NOUPDATE;
+			if (!(player->nowFlags & NOW_STOPPED)) {
+				player->miscFlags |= MISC_ORANGELINE;
+				LockActiveBlock(player, LOCKTYPE_GAMEOVER);
+				if (GameFlags & GAME_DOUBLES) {
+					LockActiveBlock(player->otherPlayer, LOCKTYPE_GAMEOVER);
+				}
+			}
+			NextPlayGameOver(player);
+			FreeEntity(entity);
 		}
 	}
 
@@ -353,7 +367,7 @@ static void ShowGrandMasterCongratulations(Player* player) {
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityGrandMasterCongratulations;
 		entity->frames = 600;
-		entity->values[1] = 1;
+		entity->grandMaster = true;
 		entity->data.unionData.player = player;
 		player->scale = 123;
 	}
@@ -407,7 +421,7 @@ static void ShowRetryForGrandMaster(Player* player) {
 	if ((entity = AllocEntity()) != NULL) {
 		entity->update = UpdateEntityRetryForGrandMaster;
 		entity->frames = 600;
-		entity->values[1] = 1;
+		entity->grandMaster = true;
 		entity->data.unionData.player = player;
 	}
 }
@@ -485,7 +499,9 @@ static void UpdateStaffFireworks(Entity* entity, Player* player, uint16_t delay)
 static void UpdateEntityDeathComplete(Entity* entity) {
 	Player* player = entity->data.unionData.player;
 
-	DisplayObjectEx(OBJECT_RETRYFORGRANDMASTER, 100, player->screenPos[0], 179u, 125u, 0x3F, 0x3F, false);
+	player->nowFlags |= NOW_NOUPDATE;
+
+	DisplayObjectEx(OBJECT_GRANDMASTERCONGRATULATIONS, 100, player->screenPos[0], 179u, 125u, 0x3F, 0x3F, false);
 
 	UpdateStaffFireworks(entity, player, 15u);
 }
